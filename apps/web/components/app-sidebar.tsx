@@ -56,22 +56,22 @@ export function AppSidebar() {
   const getHrefForNavItem = (id: NavItemId): string => {
     const routes: Record<NavItemId, string> = {
       overview: "/dashboard",
-      "my-tasks": "/dashboard/tasks",
-      projects: "/dashboard/projects",
-      analytics: "/dashboard/analytics",
-      prompts: "/dashboard/prompts",
-      settings: "/dashboard/settings",
+      "my-tasks": "/tasks",
+      projects: "/",
+      analytics: "/analytics",
+      prompts: "/prompts",
+      settings: "/settings",
     }
     return routes[id] ?? "#"
   }
 
   const isItemActive = (id: NavItemId): boolean => {
     if (id === "overview") return pathname === "/dashboard"
-    if (id === "projects") return pathname.startsWith("/dashboard/projects")
-    if (id === "my-tasks") return pathname.startsWith("/dashboard/tasks")
-    if (id === "analytics") return pathname.startsWith("/dashboard/analytics")
-    if (id === "prompts") return pathname.startsWith("/dashboard/prompts")
-    if (id === "settings") return pathname.startsWith("/dashboard/settings")
+    if (id === "projects") return pathname === "/" || pathname.startsWith("/projects")
+    if (id === "my-tasks") return pathname.startsWith("/tasks")
+    if (id === "analytics") return pathname.startsWith("/analytics")
+    if (id === "prompts") return pathname.startsWith("/prompts")
+    if (id === "settings") return pathname.startsWith("/settings")
     return false
   }
 
