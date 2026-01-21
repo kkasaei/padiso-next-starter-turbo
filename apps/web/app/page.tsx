@@ -1,12 +1,17 @@
-import { Button } from "@workspace/ui/components/button"
+import { Suspense } from "react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { ProjectsContent } from "@/components/projects-content"
+import { SidebarProvider, SidebarInset } from "@workspace/ui/components/sidebar"
 
 export default function Page() {
   return (
-    <div className="flex items-center justify-center min-h-svh">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Hello World</h1>
-        <Button size="sm">Button</Button>
-      </div>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Suspense fallback={null}>
+          <ProjectsContent />
+        </Suspense>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

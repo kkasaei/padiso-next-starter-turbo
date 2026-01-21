@@ -1,17 +1,19 @@
-import { Geist, Geist_Mono } from "next/font/google"
-
-import "@workspace/ui/globals.css"
+import type React from "react"
+import type { Metadata, Viewport } from "next"
+import { Analytics } from "@vercel/analytics/next"
+import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/providers"
+import "./globals.css"
 
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+export const metadata: Metadata = {
+  title: "SearchFit Turbo",
+  description: "SearchFit.ai - AI-powered search engine",
+}
+
+export const viewport: Viewport = {
+  themeColor: "#3b82f6",
+}
 
 export default function RootLayout({
   children,
@@ -20,10 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
-      >
-        <Providers>{children}</Providers>
+      <body className={`font-sans antialiased`}>
+        <Providers>
+          {children}
+          <Analytics />
+          <Toaster richColors closeButton />
+        </Providers>
       </body>
     </html>
   )
