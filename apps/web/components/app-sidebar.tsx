@@ -9,7 +9,6 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
@@ -29,9 +28,10 @@ import {
   Layout,
   Question,
   CaretRight,
-  CaretUpDown,
 } from "@phosphor-icons/react/dist/ssr"
 import { activeProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
+import { useUser } from "@clerk/nextjs"
+import { SidebarHeaderContent } from "@/components/sidebar-header"
 
 const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }>> = {
   inbox: Tray,
@@ -49,6 +49,8 @@ const footerItemIcons: Record<SidebarFooterItemId, React.ComponentType<{ classNa
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { user } = useUser()
+
 
   const getHrefForNavItem = (id: NavItemId): string => {
     if (id === "my-tasks") return "/tasks"
@@ -72,22 +74,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="border-border/40 border-r-0 shadow-none border-none">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-800 text-primary-foreground shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)]">
-              <img src="/logo-wrapper.png" alt="Logo" className="h-4 w-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">Workspace</span>
-              <span className="text-xs text-muted-foreground">Pro plan</span>
-            </div>
-          </div>
-          <button className="rounded-md p-1 hover:bg-accent">
-            <CaretUpDown className="h-4 w-4 text-muted-foreground" />
-          </button>
-        </div>
-      </SidebarHeader>
+      <SidebarHeaderContent />
 
       <SidebarContent className="px-0 gap-0">
         <SidebarGroup>
@@ -176,12 +163,12 @@ export function AppSidebar() {
 
         <div className="mt-2 flex items-center gap-3 rounded-lg p-2 hover:bg-accent cursor-pointer">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/avatar-profile.jpg" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src={user?.imageUrl} />
+            <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-1 flex-col">
-            <span className="text-sm font-medium">Jason D</span>
-            <span className="text-xs text-muted-foreground">jason.duong@mail.com</span>
+            <span className="text-sm font-medium">{user?.fullName}</span>
+            <span className="text-xs text-muted-foreground">{user?.emailAddresses[0]?.emailAddress ?? "No email"}</span>
           </div>
           <CaretRight className="h-4 w-4 text-muted-foreground" />
         </div>

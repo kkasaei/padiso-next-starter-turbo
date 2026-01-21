@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/providers"
+import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css"
 
 
@@ -21,14 +22,21 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
-        <Providers>
-          {children}
-          <Analytics />
-          <Toaster richColors closeButton />
-        </Providers>
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      signInUrl="/auth/sign-in"
+      signUpUrl="/auth/sign-up"
+      afterSignOutUrl="/"
+    >
+      <html lang="en" suppressHydrationWarning>
+        <body className={`font-sans antialiased`}>
+          <Providers>
+            {children}
+            <Analytics />
+            <Toaster richColors closeButton />
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
