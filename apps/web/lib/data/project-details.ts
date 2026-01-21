@@ -176,7 +176,7 @@ function userFromName(name: string, role?: string): User {
   }
 }
 
-function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
+export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
   const picUsers = p.members.length ? p.members.map((n) => userFromName(n, "PIC")) : [userFromName("Jason Duong", "PIC")]
   const today = new Date()
 

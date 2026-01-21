@@ -7,14 +7,17 @@ import { ProjectTimeline } from "@/components/project-timeline"
 import { ProjectCardsView } from "@/components/project-cards-view"
 import { ProjectBoardView } from "@/components/project-board-view"
 import { ProjectWizard } from "@/components/project-wizard/ProjectWizard"
-import { computeFilterCounts, projects } from "@/lib/data/projects"
+import { computeFilterCounts, type Project } from "@/lib/data/projects"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip, type ViewOptions } from "@/lib/view-options"
 import { chipsToParams, paramsToChips } from "@/lib/url/filters"
+import { useProjects } from "@/hooks/use-projects"
 
 export function ProjectsContent() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const { data: projects = [], isLoading } = useProjects()
 
   const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
 
@@ -76,7 +79,8 @@ export function ProjectsContent() {
     router.replace(url, { scroll: false })
   }
   const filteredProjects = useMemo(() => {
-    let list = projects.slice()
+    if (isLoading) return []
+    let list = (projects as Project[]).slice()
 
     // Apply showClosedProjects toggle
     if (!viewOptions.showClosedProjects) {
@@ -111,7 +115,17 @@ export function ProjectsContent() {
     if (viewOptions.ordering === "alphabetical") sorted.sort((a, b) => a.name.localeCompare(b.name))
     if (viewOptions.ordering === "date") sorted.sort((a, b) => (a.endDate?.getTime() || 0) - (b.endDate?.getTime() || 0))
     return sorted
-  }, [filters, viewOptions, projects])
+  }, [filters, viewOptions, projects, isLoading])
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 flex-col bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+        <div className="p-6">
+          <div className="text-sm text-muted-foreground">Loading projects...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col bg-background mx-2 my-2 border border-border rounded-lg min-w-0">

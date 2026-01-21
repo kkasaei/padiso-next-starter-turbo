@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
 import { ChartBar, DotsSixVertical, FolderSimple, Plus, Sparkle } from "@phosphor-icons/react/dist/ssr"
 import {
@@ -16,8 +16,11 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
-import { projects, type Project, type FilterCounts } from "@/lib/data/projects"
-import { getProjectDetailsById, getProjectTasks, type ProjectTask } from "@/lib/data/project-details"
+import { type Project, type FilterCounts } from "@/lib/data/projects"
+import { getProjectTasks, type ProjectTask } from "@/lib/data/project-details"
+import { useProjects } from "@/hooks/use-projects"
+import { useProject } from "@/hooks/use-projects"
+import { baseDetailsFromListItem } from "@/lib/data/project-details"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
 import { TaskWeekBoardView } from "@/components/tasks/TaskWeekBoardView"
 import {
@@ -40,15 +43,42 @@ import { cn } from "@workspace/ui/lib/utils"
 import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/tasks/TaskQuickCreateModal"
 
 export function MyTasksPage() {
-  const [groups, setGroups] = useState<ProjectTaskGroup[]>(() => {
-    return projects
-      .map((project) => {
-        const details = getProjectDetailsById(project.id)
-        const tasks = getProjectTasks(details)
-        return { project, tasks }
-      })
-      .filter((group) => group.tasks.length > 0)
-  })
+  const { data: projectsData = [], isLoading } = useProjects()
+  
+  const [groups, setGroups] = useState<ProjectTaskGroup[]>([])
+
+  // Load project tasks when projects data is available
+  useEffect(() => {
+    if (projectsData.length > 0) {
+      const projectGroups = projectsData
+        .map((projectData) => {
+          // Transform tRPC project to ProjectListItem format
+          const projectListItem = {
+            id: projectData.id,
+            name: projectData.name,
+            taskCount: projectData.taskCount,
+            progress: projectData.progress,
+            startDate: projectData.startDate,
+            endDate: projectData.endDate,
+            status: projectData.status,
+            priority: projectData.priority,
+            tags: projectData.tags || [],
+            members: projectData.members || [],
+            client: projectData.client,
+            typeLabel: projectData.typeLabel,
+            durationLabel: projectData.durationLabel,
+            tasks: [],
+          }
+          
+          const details = baseDetailsFromListItem(projectListItem)
+          const tasks = getProjectTasks(details)
+          return { project: projectData as Project, tasks }
+        })
+        .filter((group) => group.tasks.length > 0)
+      
+      setGroups(projectGroups)
+    }
+  }, [projectsData])
 
   const [filters, setFilters] = useState<FilterChipType[]>([{ key: "members", value: "jason" }])
   const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
@@ -92,14 +122,33 @@ export function MyTasksPage() {
   const handleTaskCreated = (task: ProjectTask) => {
     setGroups((prev) => {
       const projectExists = prev.some((g) => g.project.id === task.projectId)
-      const project = projects.find((p) => p.id === task.projectId)
+      const project = projectsData.find((p) => p.id === task.projectId)
 
       const ensureGroup = (current: ProjectTaskGroup[]): ProjectTaskGroup[] => {
         if (projectExists || !project) return current
-        const details = getProjectDetailsById(project.id)
+        
+        // Transform tRPC project to ProjectListItem format
+        const projectListItem = {
+          id: project.id,
+          name: project.name,
+          taskCount: project.taskCount,
+          progress: project.progress,
+          startDate: project.startDate,
+          endDate: project.endDate,
+          status: project.status,
+          priority: project.priority,
+          tags: project.tags || [],
+          members: project.members || [],
+          client: project.client,
+          typeLabel: project.typeLabel,
+          durationLabel: project.durationLabel,
+          tasks: [],
+        }
+        
+        const details = baseDetailsFromListItem(projectListItem)
         const existingTasks = getProjectTasks(details)
         return [
-          { project, tasks: [...existingTasks, task] },
+          { project: project as Project, tasks: [...existingTasks, task] },
           ...current,
         ]
       }

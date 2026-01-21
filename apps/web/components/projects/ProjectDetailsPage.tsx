@@ -1,12 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { LinkSimple, SquareHalf } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { AnimatePresence, motion } from "motion/react"
 
 import type { ProjectDetails } from "@/lib/data/project-details"
-import { getProjectDetailsById } from "@/lib/data/project-details"
+import { baseDetailsFromListItem } from "@/lib/data/project-details"
+import { useProject } from "@/hooks/use-projects"
 import { Breadcrumbs } from "@/components/projects/Breadcrumbs"
 import { ProjectHeader } from "@/components/projects/ProjectHeader"
 import { ScopeColumns } from "@/components/projects/ScopeColumns"
@@ -34,26 +35,34 @@ type LoadState =
   | { status: "ready"; project: ProjectDetails }
 
 export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
-  const [state, setState] = useState<LoadState>({ status: "loading" })
+  const { data: projectData, isLoading, error } = useProject(projectId)
   const [showMeta, setShowMeta] = useState(true)
   const [isWizardOpen, setIsWizardOpen] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-    setState({ status: "loading" })
-
-    const delay = 600 + Math.floor(Math.random() * 301)
-    const t = setTimeout(() => {
-      if (cancelled) return
-      const project = getProjectDetailsById(projectId)
-      setState({ status: "ready", project })
-    }, delay)
-
-    return () => {
-      cancelled = true
-      clearTimeout(t)
+  // Transform tRPC project data to ProjectDetails format
+  const project = useMemo<ProjectDetails | null>(() => {
+    if (!projectData) return null
+    
+    // Convert tRPC project to the format expected by baseDetailsFromListItem
+    const projectListItem = {
+      id: projectData.id,
+      name: projectData.name,
+      taskCount: projectData.taskCount,
+      progress: projectData.progress,
+      startDate: projectData.startDate,
+      endDate: projectData.endDate,
+      status: projectData.status,
+      priority: projectData.priority,
+      tags: projectData.tags || [],
+      members: projectData.members || [],
+      client: projectData.client,
+      typeLabel: projectData.typeLabel,
+      durationLabel: projectData.durationLabel,
+      tasks: [], // TODO: Load tasks separately if needed
     }
-  }, [projectId])
+    
+    return baseDetailsFromListItem(projectListItem)
+  }, [projectData])
 
   const copyLink = useCallback(async () => {
     if (!navigator.clipboard) {
@@ -72,9 +81,9 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
   const breadcrumbs = useMemo(
     () => [
       { label: "Projects", href: "/" },
-      { label: state.status === "ready" ? state.project.name : "Project Details" },
+      { label: project?.name ?? "Project Details" },
     ],
-    [state.status, state.status === "ready" ? state.project.name : null]
+    [project?.name]
   )
 
   const openWizard = useCallback(() => {
@@ -85,11 +94,21 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
     setIsWizardOpen(false)
   }, [])
 
-  if (state.status === "loading") {
+  if (isLoading) {
     return <ProjectDetailsSkeleton />
   }
 
-  const project = state.project
+  if (error || !project) {
+    return (
+      <div className="flex flex-1 flex-col bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+        <div className="p-6">
+          <div className="text-sm text-destructive">
+            {error?.message ?? "Project not found"}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col min-w-0 m-2 border border-border rounded-lg">

@@ -4,9 +4,10 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { CalendarBlank, ChartBar, Paperclip, Tag as TagIcon, Microphone, UserCircle, X, Folder, Rows } from '@phosphor-icons/react/dist/ssr'
 
-import { projects, type Project } from '@/lib/data/projects'
+import { type Project } from '@/lib/data/projects'
 import type { ProjectTask, ProjectDetails, User } from '@/lib/data/project-details'
-import { getProjectDetailsById } from '@/lib/data/project-details'
+import { baseDetailsFromListItem } from '@/lib/data/project-details'
+import { useProject, useProjects } from '@/hooks/use-projects'
 import { getAvatarUrl } from '@/lib/assets/avatars'
 import { Button } from '@workspace/ui/components/button'
 import { Switch } from '@workspace/ui/components/switch'
@@ -87,15 +88,65 @@ function toUser(option: AssigneeOption | undefined): User | undefined {
   }
 }
 
-function getWorkstreamsForProject(projectId: string | undefined): { id: string; label: string }[] {
-  if (!projectId) return []
-  let details: ProjectDetails
+function useWorkstreamsForProject(projectId: string | undefined): { id: string; label: string }[] {
+  const { data: projectData } = useProject(projectId || "")
+  
+  if (!projectId || !projectData) return []
+  
   try {
-    details = getProjectDetailsById(projectId)
+    // Transform tRPC project to ProjectListItem format
+    const projectListItem = {
+      id: projectData.id,
+      name: projectData.name,
+      taskCount: projectData.taskCount,
+      progress: projectData.progress,
+      startDate: projectData.startDate,
+      endDate: projectData.endDate,
+      status: projectData.status,
+      priority: projectData.priority,
+      tags: projectData.tags || [],
+      members: projectData.members || [],
+      client: projectData.client,
+      typeLabel: projectData.typeLabel,
+      durationLabel: projectData.durationLabel,
+      tasks: [],
+    }
+    
+    const details = baseDetailsFromListItem(projectListItem)
+    return (details.workstreams ?? []).map((ws) => ({ id: ws.id, label: ws.name }))
   } catch {
     return []
   }
-  return (details.workstreams ?? []).map((ws) => ({ id: ws.id, label: ws.name }))
+}
+
+// Helper function that uses the hook internally - for use in component
+function getWorkstreamsForProject(projectId: string | undefined, projectData: ReturnType<typeof useProject>['data']): { id: string; label: string }[] {
+  if (!projectId || !projectData) return []
+  
+  try {
+    // Transform tRPC project to ProjectListItem format
+    const projectListItem = {
+      id: projectData.id,
+      name: projectData.name,
+      taskCount: projectData.taskCount,
+      progress: projectData.progress,
+      startDate: projectData.startDate,
+      endDate: projectData.endDate,
+      status: projectData.status,
+      priority: projectData.priority,
+      tags: projectData.tags || [],
+      members: projectData.members || [],
+      client: projectData.client,
+      typeLabel: projectData.typeLabel,
+      durationLabel: projectData.durationLabel,
+      tasks: [],
+    }
+    
+    const details = baseDetailsFromListItem(projectListItem)
+    return (details.workstreams ?? []).map((ws) => ({ id: ws.id, label: ws.name }))
+  } catch {
+    return []
+  }
 }
 
 export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, editingTask, onTaskUpdated }: TaskQuickCreateModalProps) {
@@ -107,6 +158,10 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
   const [projectId, setProjectId] = useState<string | undefined>(undefined)
   const [workstreamId, setWorkstreamId] = useState<string | undefined>(undefined)
   const [workstreamName, setWorkstreamName] = useState<string | undefined>(undefined)
+  
+  // Get all projects and current project data
+  const { data: allProjects = [] } = useProjects()
+  const { data: projectData } = useProject(projectId || "")
 
   const [assignee, setAssignee] = useState<AssigneeOption | undefined>(ASSIGNEE_OPTIONS[0])
   const [status, setStatus] = useState<StatusOption>(STATUS_OPTIONS[0])
@@ -157,7 +212,11 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     const defaultProjectId = context?.projectId
     setProjectId(defaultProjectId)
 
-    const workstreams = getWorkstreamsForProject(defaultProjectId)
+    // Get project data for workstreams
+    const defaultProjectData = defaultProjectId 
+      ? allProjects.find((p) => p.id === defaultProjectId)
+      : undefined
+    const workstreams = getWorkstreamsForProject(defaultProjectId, defaultProjectData)
     const initialWorkstream = workstreams.find((ws) => ws.id === context?.workstreamId)
 
     setWorkstreamId(initialWorkstream?.id)
@@ -173,16 +232,16 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     setTargetDate(undefined)
     setPriority(PRIORITY_OPTIONS[0])
     setSelectedTag(undefined)
-  }, [open, context?.projectId, context?.workstreamId, context?.workstreamName, editingTask])
+  }, [open, context?.projectId, context?.workstreamId, context?.workstreamName, editingTask, allProjects])
 
   const projectOptions = useMemo(
-    () => projects.map((p) => ({ id: p.id, label: p.name })),
-    [],
+    () => allProjects.map((p) => ({ id: p.id, label: p.name })),
+    [allProjects],
   )
 
   const workstreamOptions = useMemo(
-    () => getWorkstreamsForProject(projectId),
-    [projectId],
+    () => getWorkstreamsForProject(projectId, projectData),
+    [projectId, projectData],
   )
 
   useEffect(() => {
@@ -207,7 +266,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     if (editingTask) {
       const effectiveProjectId = projectId ?? editingTask.projectId
       const project: Project | undefined = effectiveProjectId
-        ? projects.find((p) => p.id === effectiveProjectId)
+        ? allProjects.find((p) => p.id === effectiveProjectId)
         : undefined
 
       const updatedTask: ProjectTask = {
@@ -232,10 +291,10 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       return
     }
 
-    const effectiveProjectId = projectId ?? projects[0]?.id
+    const effectiveProjectId = projectId ?? allProjects[0]?.id
     if (!effectiveProjectId) return
 
-    const project: Project | undefined = projects.find((p) => p.id === effectiveProjectId)
+    const project: Project | undefined = allProjects.find((p) => p.id === effectiveProjectId)
     if (!project) return
 
     const newTask: ProjectTask = {

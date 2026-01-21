@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
-import { projects as initialProjects, type Project } from "@/lib/data/projects"
+import { type Project } from "@/lib/data/projects"
+import { useProjects } from "@/hooks/use-projects"
 import {
   differenceInCalendarDays,
   addDays,
@@ -31,11 +32,23 @@ import { PriorityGlyphIcon } from "@/components/priority-badge"
 // This controls the initial viewport and the vertical "today" line.
 const FIXED_TODAY = new Date(2024, 0, 23) // 23 Jan 2024
 
-// projects imported from lib/data
-
 export function ProjectTimeline() {
-  const [projects, setProjects] = useState(initialProjects)
-  const [expandedProjects, setExpandedProjects] = useState<string[]>(initialProjects.map((p) => p.id))
+  const { data: projectsData = [], isLoading } = useProjects()
+  const [projects, setProjects] = useState<Project[]>([])
+  const [expandedProjects, setExpandedProjects] = useState<string[]>([])
+
+  // Update projects when data loads
+  useEffect(() => {
+    if (projectsData.length > 0) {
+      // Transform tRPC data to match Project type (add tasks array)
+      const transformedProjects = projectsData.map((p) => ({
+        ...p,
+        tasks: [], // TODO: Load tasks separately if needed
+      })) as Project[]
+      setProjects(transformedProjects)
+      setExpandedProjects(transformedProjects.map((p) => p.id))
+    }
+  }, [projectsData])
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [viewMode, setViewMode] = useState<"Day" | "Week" | "Month" | "Quarter">("Week")
   const [zoom, setZoom] = useState(1)
@@ -314,6 +327,16 @@ export function ProjectTimeline() {
     })
     setEditStartDate(item.startDate.toISOString().split('T')[0])
     setEditEndDate(item.endDate.toISOString().split('T')[0])
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden bg-background min-w-0">
+        <div className="p-6">
+          <div className="text-sm text-muted-foreground">Loading timeline...</div>
+        </div>
+      </div>
+    )
   }
 
   return (
