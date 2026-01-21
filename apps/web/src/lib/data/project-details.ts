@@ -178,6 +178,7 @@ function userFromName(name: string, role?: string): User {
 
 export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
   const picUsers = p.members.length ? p.members.map((n) => userFromName(n, "PIC")) : [userFromName("Jason Duong", "PIC")]
+  const primaryUser = picUsers[0]! // Always defined due to fallback above
   const today = new Date()
 
   return {
@@ -213,7 +214,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
             status: "done",
             dueLabel: "Today",
             dueTone: "muted",
-            assignee: picUsers[0],
+            assignee: primaryUser,
             startDate: today,
           },
           {
@@ -222,7 +223,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
             status: "in-progress",
             dueLabel: "Tomorrow",
             dueTone: "warning",
-            assignee: picUsers[0],
+            assignee: primaryUser,
             startDate: addDays(today, 1),
           },
           {
@@ -305,7 +306,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "audio",
         status: "completed",
         addedDate: new Date(2025, 6, 12),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         audioData: {
           duration: "00:02:21",
           fileName: "project-review-meeting.mp3",
@@ -338,7 +339,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "meeting",
         status: "completed",
         addedDate: new Date(2024, 8, 18),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Discussion about current sprint goals, open issues, and next steps for the design handoff.",
       },
@@ -348,7 +349,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "general",
         status: "completed",
         addedDate: new Date(2024, 8, 18),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Client shared feedback on the latest homepage iteration. Main concern is clarity of the hero copy.",
       },
@@ -358,7 +359,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "general",
         status: "completed",
         addedDate: new Date(2024, 8, 17),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Ideas for onboarding improvements, including checklists, progress indicators, and inline tips.",
       },
@@ -368,7 +369,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "general",
         status: "completed",
         addedDate: new Date(2024, 8, 17),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Copy options for the hero section headline and supporting description for A/B testing.",
       },
@@ -378,7 +379,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "meeting",
         status: "processing",
         addedDate: new Date(2024, 8, 17),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Notes about trade-offs between performance and flexibility for the new dashboard widgets.",
       },
@@ -388,7 +389,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "general",
         status: "completed",
         addedDate: new Date(2024, 8, 16),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "High-level roadmap for the next two quarters focusing on analytics and collaboration features.",
       },
@@ -398,7 +399,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
         noteType: "general",
         status: "completed",
         addedDate: new Date(2024, 8, 16),
-        addedBy: picUsers[0],
+        addedBy: primaryUser,
         content:
           "Rough brainstorming around potential integrations and automation opportunities.",
       },
@@ -454,7 +455,7 @@ export function getProjectDetailsById(id: string): ProjectDetails {
       p2: ["Visual polish & motion guidelines"],
     }
 
-    const primaryAssignee = details.backlog.picUsers[0]
+    const primaryAssignee = details.backlog.picUsers[0]!
     const today = new Date()
 
     const filesBaseDate = new Date(2024, 8, 18)

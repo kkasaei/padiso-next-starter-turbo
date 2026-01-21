@@ -15,7 +15,7 @@ export function useProjects() {
 }
 
 export function useProject(id: string) {
-  return trpc.project.getById.useQuery({ id });
+  return trpc.project.getById.useQuery({ id }, { enabled: !!id });
 }
 
 export function useCreateProject() {

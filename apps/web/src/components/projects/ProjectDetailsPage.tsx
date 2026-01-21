@@ -139,11 +139,11 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
       <div className="flex flex-1 flex-col bg-background px-2 my-0 rounded-b-lg min-w-0 border-t">
         <div className="px-4">
-          <div className="mx-auto w-full max-w-7xl">
+          <div className="mx-auto w-full">
 
             <div
               className={
-                "mt-0 grid grid-cols-1 gap-15 " +
+                "mt-0 grid grid-cols-1 gap-4 " +
                 (showMeta
                   ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,320px)]"
                   : "lg:grid-cols-[minmax(0,1fr)_minmax(0,0px)]")
