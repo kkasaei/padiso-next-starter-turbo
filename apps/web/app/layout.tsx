@@ -8,7 +8,7 @@ import "./globals.css"
 
 
 export const metadata: Metadata = {
-  title: "SearchFit Turbo",
+  title: "SearchFIT",
   description: "SearchFit.ai - AI-powered search engine",
 }
 

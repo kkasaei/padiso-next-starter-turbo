@@ -1,6 +1,6 @@
-export type NavItemId = "inbox" | "my-tasks" | "projects" | "clients" | "performance"
+export type NavItemId = "overview" | "my-tasks" | "projects" | "analytics" | "prompts" | "settings"
 
-export type SidebarFooterItemId = "settings" | "templates" | "help"
+export type SidebarFooterItemId = "roadmap" | "changelog" | "support" | "feedbacks"
 
 export type NavItem = {
     id: NavItemId
@@ -9,11 +9,10 @@ export type NavItem = {
     isActive?: boolean
 }
 
-export type ActiveProjectSummary = {
+export type FavouriteProject = {
     id: string
     name: string
     color: string
-    progress: number
 }
 
 export type SidebarFooterItem = {
@@ -22,22 +21,24 @@ export type SidebarFooterItem = {
 }
 
 export const navItems: NavItem[] = [
-    { id: "inbox", label: "Inbox", badge: 24 },
+    { id: "overview", label: "Overview" },
     { id: "my-tasks", label: "My task" },
     { id: "projects", label: "Projects", isActive: true },
-    { id: "clients", label: "Clients" },
-    { id: "performance", label: "Performance" },
+    { id: "analytics", label: "Analytics" },
+    { id: "prompts", label: "Prompts" },
+    { id: "settings", label: "Settings" },
 ]
 
-export const activeProjects: ActiveProjectSummary[] = [
-    { id: "ai-learning", name: "AI Learning Platform", color: "var(--chart-5)", progress: 25 },
-    { id: "fintech-app", name: "Fintech Mobile App", color: "var(--chart-3)", progress: 80 },
-    { id: "ecommerce-admin", name: "E-commerce Admin", color: "var(--chart-3)", progress: 65 },
-    { id: "healthcare-app", name: "Healthcare Booking App", color: "var(--chart-2)", progress: 10 },
+export const favouriteProjects: FavouriteProject[] = [
+    { id: "ai-learning", name: "AI Learning Platform", color: "var(--chart-5)" },
+    { id: "fintech-app", name: "Fintech Mobile App", color: "var(--chart-3)" },
+    { id: "ecommerce-admin", name: "E-commerce Admin", color: "var(--chart-1)" },
+    { id: "healthcare-app", name: "Healthcare Booking App", color: "var(--chart-2)" },
 ]
 
 export const footerItems: SidebarFooterItem[] = [
-    { id: "settings", label: "Settings" },
-    { id: "templates", label: "Templates" },
-    { id: "help", label: "Help" },
+    { id: "roadmap", label: "Roadmap" },
+    { id: "changelog", label: "Change Log" },
+    { id: "support", label: "Support" },
+    { id: "feedbacks", label: "Feedbacks" },
 ]

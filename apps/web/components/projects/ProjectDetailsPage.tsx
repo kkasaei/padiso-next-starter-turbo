@@ -111,7 +111,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
   }
 
   return (
-    <div className="flex flex-1 flex-col min-w-0 m-2 border border-border rounded-lg">
+    <div className="flex flex-1 flex-col min-w-0 m-2 rounded-xl bg-background">
       <div className="flex items-center justify-between gap-4 px-4 py-4">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />

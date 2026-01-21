@@ -14,37 +14,38 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { Input } from "@workspace/ui/components/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { ProgressCircle } from "@/components/progress-circle"
 import {
-  MagnifyingGlass,
-  Tray,
+  SquaresFour,
   CheckSquare,
   Folder,
-  Users,
   ChartBar,
+  Lightning,
   Gear,
-  Layout,
-  Question,
+  MapTrifold,
+  ClockCounterClockwise,
+  Headset,
+  PaperPlaneTilt,
   CaretRight,
 } from "@phosphor-icons/react/dist/ssr"
-import { activeProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
+import { favouriteProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
 import { useUser } from "@clerk/nextjs"
 import { SidebarHeaderContent } from "@/components/sidebar-header"
 
 const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }>> = {
-  inbox: Tray,
+  overview: SquaresFour,
   "my-tasks": CheckSquare,
   projects: Folder,
-  clients: Users,
-  performance: ChartBar,
+  analytics: ChartBar,
+  prompts: Lightning,
+  settings: Gear,
 }
 
 const footerItemIcons: Record<SidebarFooterItemId, React.ComponentType<{ className?: string }>> = {
-  settings: Gear,
-  templates: Layout,
-  help: Question,
+  roadmap: MapTrifold,
+  changelog: ClockCounterClockwise,
+  support: Headset,
+  feedbacks: PaperPlaneTilt,
 }
 
 export function AppSidebar() {
@@ -53,22 +54,24 @@ export function AppSidebar() {
 
 
   const getHrefForNavItem = (id: NavItemId): string => {
-    if (id === "my-tasks") return "/tasks"
-    if (id === "projects") return "/"
-    if (id === "inbox") return "/" // placeholder
-    return "#"
+    const routes: Record<NavItemId, string> = {
+      overview: "/dashboard",
+      "my-tasks": "/tasks",
+      projects: "/",
+      analytics: "/analytics",
+      prompts: "/prompts",
+      settings: "/settings",
+    }
+    return routes[id] ?? "#"
   }
 
   const isItemActive = (id: NavItemId): boolean => {
-    if (id === "projects") {
-      return pathname === "/" || pathname.startsWith("/projects")
-    }
-    if (id === "my-tasks") {
-      return pathname.startsWith("/tasks")
-    }
-    if (id === "inbox") {
-      return false
-    }
+    if (id === "overview") return pathname === "/dashboard"
+    if (id === "projects") return pathname === "/" || pathname.startsWith("/projects")
+    if (id === "my-tasks") return pathname.startsWith("/tasks")
+    if (id === "analytics") return pathname.startsWith("/analytics")
+    if (id === "prompts") return pathname.startsWith("/prompts")
+    if (id === "settings") return pathname.startsWith("/settings")
     return false
   }
 
@@ -77,18 +80,7 @@ export function AppSidebar() {
       <SidebarHeaderContent />
 
       <SidebarContent className="px-0 gap-0">
-        <SidebarGroup>
-          <div className="relative px-0 py-0">
-            <MagnifyingGlass className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search"
-              className="h-9 rounded-lg bg-muted/50 pl-8 text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/20 border-border border shadow-none"
-            />
-            <kbd className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-              <span className="text-xs">⌘</span>K
-            </kbd>
-          </div>
-        </SidebarGroup>
+
 
         <SidebarGroup>
           <SidebarGroupContent>
@@ -126,14 +118,17 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="px-3 text-xs font-medium text-muted-foreground">
-            Active Projects
+            Favourite Projects
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {activeProjects.map((project) => (
+              {favouriteProjects.map((project) => (
                 <SidebarMenuItem key={project.name}>
                   <SidebarMenuButton className="h-9 rounded-lg px-3 group">
-                    <ProgressCircle progress={project.progress} color={project.color} size={18} />
+                    <span 
+                      className="h-3 w-3 rounded-full shrink-0" 
+                      style={{ backgroundColor: project.color }}
+                    />
                     <span className="flex-1 truncate text-sm">{project.name}</span>
                     <span className="opacity-0 group-hover:opacity-100 rounded p-0.5 hover:bg-accent">
                       <span className="text-muted-foreground text-lg">···</span>

@@ -667,7 +667,7 @@ export function ProjectTimeline() {
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    {project.startDate.toLocaleDateString("vi")} - {project.endDate.toLocaleDateString("vi")}
+                    {new Date(project.startDate).toLocaleDateString("vi")} - {new Date(project.endDate).toLocaleDateString("vi")}
                   </div>
                 </div>
               </div>
