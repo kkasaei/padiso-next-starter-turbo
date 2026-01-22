@@ -100,7 +100,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
   if (error || !project) {
     return (
-      <div className="flex flex-1 flex-col bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+      <div className="flex flex-1 flex-col bg-background rounded-lg min-w-0">
         <div className="p-6">
           <div className="text-sm text-destructive">
             {error?.message ?? "Project not found"}
@@ -111,8 +111,8 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
   }
 
   return (
-    <div className="flex flex-1 flex-col min-w-0 m-2 rounded-xl bg-background">
-      <div className="flex items-center justify-between gap-4 px-4 py-4">
+    <div className="flex flex-1 flex-col min-w-0 my-2 rounded-xl bg-background">
+      <div className="h-[73px] flex items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-3">
           <ProjectSidebarTrigger />
           <div className="hidden sm:block">
@@ -219,7 +219,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
 function ProjectDetailsSkeleton() {
   return (
-    <div className="flex flex-1 flex-col bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+    <div className="flex flex-1 flex-col bg-background my-2 rounded-lg min-w-0">
       <div className="p-6">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-24" />
