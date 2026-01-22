@@ -5,7 +5,7 @@ import { useMemo } from "react"
 import { useProject } from "@/hooks/use-projects"
 import { Breadcrumbs } from "@/components/projects/Breadcrumbs"
 import { ProjectSidebarTrigger } from "@/components/project-sidebar"
-import ProjectDetailsMain from "@/components/projects/projectDetailsMain"
+import ProjectDetailsMain from "@/components/projects/project-details"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
 type ProjectDetailsPageProps = {
