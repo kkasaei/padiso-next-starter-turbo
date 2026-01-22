@@ -14,21 +14,24 @@ import {
   Check,
   Plus,
   House,
-  ChartLine,
   MagnifyingGlassPlus,
-  PaintBrush,
   GearSix,
+  Wrench,
 } from "@phosphor-icons/react/dist/ssr"
 import { useProjects } from "@/hooks/use-projects"
 import { favouriteProjects } from "@/lib/data/sidebar"
 import { cn } from "@/lib/utils"
+import { SparkleIcon } from "@phosphor-icons/react/dist/ssr"
+import { BotIcon, ChartColumnBigIcon } from "lucide-react"
 
 // Navigation items for project detail pages
 const projectNavItems = [
   { id: "overview", label: "Overview", icon: House, path: "" },
-  { id: "tracking", label: "Tracking", icon: ChartLine, path: "/tracking" },
+  { id: "tracking", label: "Tracking", icon: ChartColumnBigIcon, path: "/tracking" },
   { id: "website-audit", label: "Website Audit", icon: MagnifyingGlassPlus, path: "/audit" },
-  { id: "studio", label: "Studio", icon: PaintBrush, path: "/studio" },
+  { id: "Agents", label: "Agents", icon: BotIcon, path: "/agents" },
+  { id: "studio", label: "Studio", icon: SparkleIcon, path: "/studio" },
+  { id: "tools", label: "Tools", icon: Wrench, path: "/tools" },
   { id: "settings", label: "Settings", icon: GearSix, path: "/settings" },
 ] as const
 
