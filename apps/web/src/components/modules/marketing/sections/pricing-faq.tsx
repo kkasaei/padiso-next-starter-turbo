@@ -8,7 +8,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from '@/components/ui/accordion';
+} from '@workspace/ui/components/accordion';
 
 import { GridSection } from '@/components/modules/fragments/grid-section';
 

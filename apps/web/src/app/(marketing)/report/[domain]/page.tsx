@@ -17,12 +17,11 @@ import {
   ReportShareCard,
   ReportContentSections
 } from '@/components/modules/public-report/report';
-import { useReportData } from '@/hooks/use-report-data';
-import { useReportSharing } from '@/hooks/use-report-sharing';
-import { usePDFDownload } from '@/hooks/use-pdf-download';
+import { useReportData } from '@workspace/ui/hooks/use-report-data';
+import { useReportSharing } from '@workspace/ui/hooks/use-report-sharing';
+import { usePDFDownload } from '@workspace/ui/hooks/use-pdf-download';
 import { calculateAverageScore, generateReportUrl, formatDomain } from '@/lib/report-utils';
-import { REPORT_CONFIG } from '@/constants/report';
-import { checkUnlockStatus } from '@/actions/report/check-unlock-status';
+import { REPORT_CONFIG } from '@/lib/common/constants';
 
 /**
  * Report Page Component

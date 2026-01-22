@@ -11,7 +11,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage
-} from '@/components/ui/avatar';
+} from '@workspace/ui/components/avatar';
 
 import { GridSection } from '@/components/modules/fragments/grid-section';
 import { SiteHeading } from '@/components/modules/fragments/site-heading';

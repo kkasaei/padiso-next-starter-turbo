@@ -6,7 +6,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   /* config options here */
-  // Increase timeout for server actions (especially project creation with AI generation)
+  // Increase body size limit for server actions (especially project creation with AI generation)
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',

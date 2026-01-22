@@ -1,9 +1,6 @@
 import { type Metadata } from 'next';
-import { prisma } from '@/lib/db';
-import { calculateAverageScore, formatDomain } from '@/lib/report-utils';
 import { APP_NAME } from '@/lib/common/app';
 import { baseURL } from '@/routes';
-import type { AEOReport } from '@/schemas/aeo-report';
 
 interface ReportLayoutProps {
   children: React.ReactNode;
@@ -20,77 +17,23 @@ export async function generateMetadata({
   params: Promise<{ domain: string }>;
 }): Promise<Metadata> {
   const { domain } = await params;
-  const formattedDomain = formatDomain(domain);
+  const formattedDomain = decodeURIComponent(domain);
 
-  // Fetch report data to get the score and OG image
-  let averageScore: number | null = null;
-  let reportExists = false;
-  let ogImageUrl: string | null = null;
-  let providerScores: { chatgpt?: number; perplexity?: number; gemini?: number } = {};
-
-  try {
-    const report = await prisma.publicReport.findUnique({
-      where: { domain },
-      select: {
-        data: true,
-        ogImageUrl: true,
-        createdAt: true
-      }
-    });
-
-    if (report && report.data) {
-      const reportData = report.data as AEOReport;
-      averageScore = calculateAverageScore(reportData.llmProviders);
-      reportExists = true;
-      ogImageUrl = report.ogImageUrl;
-
-      // Extract individual provider scores
-      providerScores = {
-        chatgpt: reportData.llmProviders.find(p =>
-          p.name?.toLowerCase().includes('chatgpt') ||
-          p.name?.toLowerCase().includes('openai')
-        )?.score,
-        perplexity: reportData.llmProviders.find(p =>
-          p.name?.toLowerCase().includes('perplexity')
-        )?.score,
-        gemini: reportData.llmProviders.find(p =>
-          p.name?.toLowerCase().includes('gemini')
-        )?.score
-      };
-    }
-  } catch (error) {
-    console.error('Error fetching report for metadata:', error);
-  }
-
-  // Build metadata
-  const title = reportExists
-    ? `${formattedDomain} - AEO Performance Report (Score: ${averageScore}/100) | ${APP_NAME}`
-    : `${formattedDomain} - AEO Performance Report | ${APP_NAME}`;
-
-  const description = reportExists
-    ? `${formattedDomain} scored ${averageScore}/100 in AI Answer Engine Optimization. See how this site performs across ChatGPT, Perplexity, and other AI search engines. Get your free AEO report now!`
-    : `Comprehensive AI Answer Engine Optimization (AEO) report for ${formattedDomain}. Analyze performance across ChatGPT, Perplexity, Claude, and Gemini. Get actionable insights to improve your visibility in AI-powered search.`;
+  // TODO: Replace with actual data fetching when database is set up
+  // This should fetch from publicReport table to get:
+  // - report data (llmProviders scores)
+  // - ogImageUrl (CDN URL for social sharing)
+  // - createdAt timestamp
+  // 
+  // Example implementation:
+  // const report = await db.publicReport.findUnique({ where: { domain } });
+  // const averageScore = report ? calculateAverageScore(report.data.llmProviders) : null;
+  // const ogImageUrl = report?.ogImageUrl ?? null;
 
   const reportUrl = `${baseURL}/report/${domain}`;
-
-  // Use CDN OG image if available, otherwise fall back to dynamic API route
-  const finalOgImageUrl = ogImageUrl // Use CDN URL if available
-    ? ogImageUrl
-    : reportExists && averageScore !== null
-    ? (() => {
-        const params = new URLSearchParams({
-          domain: formattedDomain,
-          score: averageScore.toString()
-        });
-
-        // Add provider scores if available
-        if (providerScores.chatgpt) params.set('chatgpt', providerScores.chatgpt.toString());
-        if (providerScores.perplexity) params.set('perplexity', providerScores.perplexity.toString());
-        if (providerScores.gemini) params.set('gemini', providerScores.gemini.toString());
-
-        return `${baseURL}/api/og/report?${params.toString()}`;
-      })()
-    : `${baseURL}/og-image`;
+  const title = `${formattedDomain} - AEO Performance Report | ${APP_NAME}`;
+  const description = `Comprehensive AI Answer Engine Optimization (AEO) report for ${formattedDomain}. Analyze performance across ChatGPT, Perplexity, Claude, and Gemini. Get actionable insights to improve your visibility in AI-powered search.`;
+  const ogImageUrl = `${baseURL}/og-image`;
 
   return {
     title,
@@ -104,10 +47,10 @@ export async function generateMetadata({
       description,
       images: [
         {
-          url: finalOgImageUrl,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${formattedDomain} AEO Performance Report - Score: ${averageScore}/100`
+          alt: `${formattedDomain} AEO Performance Report`
         }
       ]
     },
@@ -115,7 +58,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [finalOgImageUrl]
+      images: [ogImageUrl]
     },
     alternates: {
       canonical: reportUrl
@@ -130,4 +73,3 @@ export async function generateMetadata({
 export default function ReportLayout({ children }: ReportLayoutProps) {
   return <>{children}</>;
 }
-

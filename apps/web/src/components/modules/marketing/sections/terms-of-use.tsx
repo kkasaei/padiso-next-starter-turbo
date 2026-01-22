@@ -6,14 +6,14 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from '@/components/ui/accordion';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from '@workspace/ui/components/accordion';
+import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
+} from '@workspace/ui/components/card';
 
 import { GridSection } from '@/components/modules/fragments/grid-section';
 import { SiteHeading } from '@/components/modules/fragments/site-heading';

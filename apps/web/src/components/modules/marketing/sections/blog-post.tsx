@@ -7,8 +7,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage
-} from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+} from '@workspace/ui/components/avatar';
+import { Separator } from '@workspace/ui/components/separator';
 
 import { Mdx } from '@/components/modules/marketing/blog/mdx-component';
 import { getInitials } from '@/lib/formatters';

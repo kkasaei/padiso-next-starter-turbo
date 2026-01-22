@@ -87,16 +87,12 @@ export function Footer(): React.JSX.Element {
                   className="w-full"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={status === 'executing'}
                   required
                 />
               </div>
               <div className="mt-3 sm:ml-4 sm:mt-0 sm:shrink-0">
-                <Button
-                  type="submit"
-                  disabled={status === 'executing'}
-                >
-                  {status === 'executing' ? 'Subscribing...' : 'Subscribe'}
+                <Button type="submit">
+                  Subscribe
                 </Button>
               </div>
             </form>

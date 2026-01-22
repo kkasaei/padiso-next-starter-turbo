@@ -7,7 +7,7 @@ import { allDocs } from 'content-collections';
 import { ChevronRightIcon } from 'lucide-react';
 
 import { baseURL } from '@/routes';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { cn } from '@/lib/utils';
 
 import { Mdx } from '@/components/modules/marketing/blog/mdx-component';
