@@ -1,7 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["DATABASE_URL"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "NODE_ENV",
+    "CLERK_SECRET_KEY",
+    "CLERK_WEBHOOK_SECRET",
+    "TURNSTILE_SECRET_KEY",
+    "TURNSILE_SECRET_KEY_CONTACT_FORM",
+    "DISABLE_RATE_LIMIT",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "NEXT_PUBLIC_CLIENT_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
