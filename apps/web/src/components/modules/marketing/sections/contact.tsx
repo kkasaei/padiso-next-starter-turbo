@@ -7,17 +7,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { env } from '@/env';
 import { Turnstile } from '@marsidev/react-turnstile';
-import { useAction } from 'next-safe-action/hooks';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/sonner';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@workspace/ui/components/button';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { Input } from '@workspace/ui/components/input';
+import { Label } from '@workspace/ui/components/label';
+import { toast } from '@workspace/ui/components/sonner';
+import { Textarea } from '@workspace/ui/components/textarea';
 import { GridSection } from '@/components/modules/fragments/grid-section';
 import { SiteHeading } from '@/components/modules/fragments/site-heading';
-import { submitContactForm } from '@/actions/contact/submit-contact-form';
 
 // ============================================================
 // VALIDATION SCHEMA
@@ -53,43 +51,8 @@ export function Contact(): React.JSX.Element {
     },
   });
 
-  // Setup server action
-  const { execute, isPending } = useAction(submitContactForm, {
-    onSuccess: ({ data }) => {
-      toast.success(
-        data?.message ||
-          "Thank you for contacting us! We'll get back to you within 48 hours."
-      );
-      form.reset();
-
-      // Reset Turnstile
-      if (turnstileRef.current) {
-        turnstileRef.current.reset();
-        setTurnstileToken(null);
-      }
-    },
-    onError: ({ error }) => {
-      toast.error(
-        error.serverError || 'Failed to submit form. Please try again.'
-      );
-
-      // Reset Turnstile on error
-      if (turnstileRef.current) {
-        turnstileRef.current.reset();
-        setTurnstileToken(null);
-      }
-    },
-  });
-
   // Form submission handler
   const onSubmit = async (data: ContactFormValues): Promise<void> => {
-
-
-    // Execute server action
-    execute({
-      ...data,
-      turnstileToken: turnstileToken || 'dev-bypass', // Bypass token in dev
-    });
   };
 
   return (
@@ -211,7 +174,7 @@ export function Contact(): React.JSX.Element {
                   <div className="flex items-center justify-center py-2">
                       <Turnstile
                         ref={turnstileRef}
-                        siteKey={env.NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM!}
+                        siteKey={env.TURNSILE_SECRET_KEY_CONTACT_FORM!}
                         onSuccess={(token) => setTurnstileToken(token)}
                         onError={() => {
                           setTurnstileToken(null);
@@ -238,11 +201,10 @@ export function Contact(): React.JSX.Element {
                     type="submit"
                     className="w-full"
                     disabled={
-                      isPending ||
                       Boolean(!turnstileToken)
                     }
                   >
-                    {isPending ? 'Sending...' : 'Send message'}
+                    Send message
                   </Button>
                 </form>
               </CardContent>
