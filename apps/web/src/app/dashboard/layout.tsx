@@ -20,13 +20,13 @@ export default function DashboardLayout({
   return (
     <>
       <SignedIn>
-        <div className="flex min-h-screen bg-muted/30">
+        <div className="flex min-h-screen bg-[#F2F2F4]">
           {/* Fixed Workspace Sidebar - 80px, never collapses */}
           <WorkspaceSidebar />
           
           {/* Main content area */}
           <ProjectSidebarProvider>
-            <main className="flex flex-1 m-2 rounded-xl border border-border bg-background overflow-hidden">
+            <main className="flex flex-1 m-2 rounded-2xl border border-border bg-background overflow-hidden">
               {isProjectDetailPage && <ProjectSidebar />}
               <div className="flex flex-1 flex-col min-w-0">
                 {children}

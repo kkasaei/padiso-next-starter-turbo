@@ -346,12 +346,7 @@ export default function DashboardPage() {
   const hasProjects = false
 
   return (
-    <>
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40">
-        <p className="text-base font-medium text-foreground">Overview</p>
-      </div>
-
+    <div className="mt-10">
       {/* Content */}
       <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6 md:p-8">
         <OnboardingCard hasProjects={hasProjects} />
@@ -361,6 +356,6 @@ export default function DashboardPage() {
           <TrainingCard />
         </div>
       </div>
-    </>
+    </div>
   )
 }

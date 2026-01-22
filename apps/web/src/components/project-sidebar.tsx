@@ -118,7 +118,7 @@ export function ProjectSidebar() {
     >
       <div className="flex flex-col flex-1 min-w-64">
         {/* Project Switcher */}
-        <div className="h-[73px] flex items-center px-3">
+        <div className="h-[81px] flex items-center px-3">
           <Popover open={switcherOpen} onOpenChange={setSwitcherOpen}>
             <PopoverTrigger asChild>
               <button className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-accent/50 transition-colors">
