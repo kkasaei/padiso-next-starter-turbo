@@ -1,6 +1,5 @@
 'use client'
 
-import { SidebarInset, SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { Button } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
@@ -347,24 +346,21 @@ export default function DashboardPage() {
   const hasProjects = false
 
   return (
-    <SidebarInset>
-      <div className="flex flex-1 flex-col min-w-0 m-2 bg-background rounded-xl border border-border">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />
-          {/* <p className="text-base font-medium text-foreground">Overview</p> */}
-        </div>
+    <>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40">
+        <p className="text-base font-medium text-foreground">Overview</p>
+      </div>
 
-        <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6 md:p-8">
+      {/* Content */}
+      <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6 md:p-8">
+        <OnboardingCard hasProjects={hasProjects} />
 
-
-          <OnboardingCard hasProjects={hasProjects} />
-
-          <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-medium">Training Resources</h2>
-            <TrainingCard />
-          </div>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-medium">Training Resources</h2>
+          <TrainingCard />
         </div>
       </div>
-    </SidebarInset>
+    </>
   )
 }

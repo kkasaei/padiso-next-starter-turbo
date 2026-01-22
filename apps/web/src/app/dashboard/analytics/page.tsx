@@ -1,11 +1,9 @@
-import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { ChartBar } from "@phosphor-icons/react/dist/ssr"
 
 export default function AnalyticsPage() {
   return (
-    <div className="flex flex-1 flex-col min-w-0 m-2 bg-background rounded-xl border border-border">
+    <>
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-        <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />
         <p className="text-base font-medium text-foreground">Analytics</p>
       </div>
       
@@ -18,6 +16,6 @@ export default function AnalyticsPage() {
           <p className="mt-2 text-muted-foreground">Coming soon</p>
         </div>
       </div>
-    </div>
+    </>
   )
 }

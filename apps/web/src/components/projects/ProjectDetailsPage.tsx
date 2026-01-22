@@ -20,7 +20,7 @@ import { ProjectTasksTab } from "@/components/projects/ProjectTasksTab"
 import { NotesTab } from "@/components/projects/NotesTab"
 import { AssetsFilesTab } from "@/components/projects/AssetsFilesTab"
 import { ProjectWizard } from "@/components/project-wizard/ProjectWizard"
-import { SidebarTrigger } from "@workspace/ui/components/sidebar"
+import { ProjectSidebarTrigger } from "@/components/project-sidebar"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
@@ -114,7 +114,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
     <div className="flex flex-1 flex-col min-w-0 m-2 rounded-xl bg-background">
       <div className="flex items-center justify-between gap-4 px-4 py-4">
         <div className="flex items-center gap-3">
-          <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />
+          <ProjectSidebarTrigger />
           <div className="hidden sm:block">
             <Breadcrumbs items={breadcrumbs} />
           </div>

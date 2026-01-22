@@ -32,7 +32,6 @@ import {
 } from "@/components/tasks/task-helpers"
 import { TaskRowBase } from "@/components/tasks/TaskRowBase"
 import { Button } from "@workspace/ui/components/button"
-import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { ProgressCircle } from "@/components/progress-circle"
@@ -266,23 +265,22 @@ export function MyTasksPage() {
 
   if (!visibleGroups.length) {
     return (
-      <div className="flex flex-1 flex-col min-h-0 bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+      <>
         <div className="flex items-center justify-between px-4 py-4 border-b border-border/70">
           <div className="space-y-1">
             <h1 className="text-lg font-semibold tracking-tight">Tasks</h1>
             <p className="text-xs text-muted-foreground">No tasks available yet.</p>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="flex flex-1 flex-col min-h-0 bg-background mx-2 my-2 border border-border rounded-lg min-w-0">
+    <>
       <header className="flex flex-col border-b border-border/40">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/70">
           <div className="flex items-center gap-3">
-            <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />
             <p className="text-base font-medium text-foreground">Tasks</p>
           </div>
           <div className="flex items-center gap-2">
@@ -361,6 +359,6 @@ export function MyTasksPage() {
         editingTask={editingTask}
         onTaskUpdated={handleTaskUpdated}
       />
-    </div>
+    </>
   )
 }

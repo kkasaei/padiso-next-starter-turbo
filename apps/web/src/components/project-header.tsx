@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
-import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { FilterChip } from "@/components/filter-chip"
 import { ViewOptionsPopover } from "@/components/view-options-popover"
 import { FilterPopover } from "@/components/filter-popover"
@@ -25,7 +24,6 @@ export function ProjectHeader({ filters, onRemoveFilter, onFiltersChange, counts
     <header className="flex flex-col border-b border-border/40">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-3">
-          <SidebarTrigger className="h-8 w-8 rounded-lg hover:bg-accent text-muted-foreground" />
           <p className="text-base font-medium text-foreground">Projects</p>
         </div>
         <div className="flex items-center gap-2">
