@@ -20,7 +20,7 @@ import {
   EditorContainer,
   editorContainerVariants,
   editorVariants,
-} from '@/components/ui/editor';
+} from './editor';
 
 export interface PlateEditorProps {
   /** Markdown content to initialize the editor with (legacy, fallback) */

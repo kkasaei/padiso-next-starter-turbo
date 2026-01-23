@@ -12,21 +12,21 @@
 
 import * as React from 'react';
 import { MarkdownPlugin } from '@platejs/markdown';
-import { createSlateEditor, normalizeNodeId, type Value, KEYS } from 'platejs';
+import { createSlateEditor, normalizeNodeId, KEYS } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
 import { cn } from '@/lib/utils';
 
 import { PromptEditorKit } from './prompt-editor-kit';
-import { Editor, EditorContainer } from '@/components/ui/editor';
-import { FixedToolbar } from '@/components/ui/fixed-toolbar';
-import { ToolbarGroup } from '@/components/ui/toolbar';
-import { MarkToolbarButton } from '@/components/ui/mark-toolbar-button';
-import { Button } from '@/components/ui/button';
+import { Editor, EditorContainer } from './editor';
+import { FixedToolbar } from './fixed-toolbar';
+import { ToolbarGroup } from './toolbar';
+import { MarkToolbarButton } from './mark-toolbar-button';
+import { Button } from '@workspace/ui/components/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@workspace/ui/components/popover';
 import {
   Command,
   CommandEmpty,
@@ -34,10 +34,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { useAction } from 'next-safe-action/hooks';
-import { listPromptTemplatesAction } from '@/actions/prompt-template';
-import type { PromptTemplateDto } from '@/types/prompt-template';
+} from '@workspace/ui/components/command';
+import type { PromptTemplateDto } from '@/lib/shcmea/types/prompt-template';
 import { Library, Loader2 } from 'lucide-react';
 
 export interface PromptEditorProps {
@@ -118,32 +116,17 @@ export const PromptEditor = React.forwardRef<HTMLDivElement, PromptEditorProps>(
     const [isPromptLibraryOpen, setIsPromptLibraryOpen] = React.useState(false);
     const [prompts, setPrompts] = React.useState<PromptTemplateDto[]>([]);
     const [searchQuery, setSearchQuery] = React.useState('');
+    const [isLoadingPrompts, setIsLoadingPrompts] = React.useState(false);
 
     // Load prompts from library
-    const { execute: fetchPrompts, status: fetchPromptsStatus } = useAction(
-      listPromptTemplatesAction,
-      {
-        onSuccess: ({ data }) => {
-          if (data?.prompts) {
-            setPrompts(data.prompts);
-          }
-        },
-      }
-    );
+    
 
     // Load prompts when popover opens
     React.useEffect(() => {
       if (isPromptLibraryOpen && projectId) {
-        fetchPrompts({
-          projectId,
-          search: searchQuery || undefined,
-          limit: 50,
-          offset: 0,
-          sortBy: 'updatedAt',
-          sortDirection: 'desc',
-        });
+        // TODO: Fetch prompts - loading state
       }
-    }, [isPromptLibraryOpen, projectId, searchQuery, fetchPrompts]);
+    }, [isPromptLibraryOpen, projectId, searchQuery]);
 
     // Insert selected prompt
     const handleSelectPrompt = React.useCallback(
@@ -296,7 +279,7 @@ export const PromptEditor = React.forwardRef<HTMLDivElement, PromptEditorProps>(
                             onValueChange={setSearchQuery}
                           />
                           <CommandList>
-                            {fetchPromptsStatus === 'executing' ? (
+                            {isLoadingPrompts ? (
                               <div className="flex items-center justify-center py-6">
                                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                               </div>

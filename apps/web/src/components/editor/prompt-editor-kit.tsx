@@ -20,7 +20,7 @@ import { MarkdownPlugin } from '@platejs/markdown';
 import { KEYS, TrailingBlockPlugin } from 'platejs';
 import { ParagraphPlugin } from 'platejs/react';
 
-import { ParagraphElement } from '@/components/ui/paragraph-node';
+import { ParagraphElement } from '@/components/editor/paragraph-node';
 
 // ============================================================
 // AUTOFORMAT RULES - Markdown shortcuts

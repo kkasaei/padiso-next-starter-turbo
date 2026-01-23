@@ -29,7 +29,7 @@ export default function RootLayout({
       afterSignOutUrl="/"
     >
       <html lang="en" suppressHydrationWarning>
-        <body className={`font-sans antialiased`}>
+        <body className={`font-sans antialiased`} suppressHydrationWarning>
           <Providers>
             {children}
             <Analytics />

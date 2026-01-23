@@ -35,17 +35,17 @@ import { KEYS, TrailingBlockPlugin } from 'platejs';
 import { ParagraphPlugin } from 'platejs/react';
 import { IndentPlugin } from '@platejs/indent/react';
 
-import { CodeLeaf } from '@/components/ui/code-node';
-import { BlockquoteElement } from '@/components/ui/blockquote-node';
+import { CodeLeaf } from './code-node';
+import { BlockquoteElement } from './blockquote-node';
 import {
   H1Element,
   H2Element,
   H3Element,
-} from '@/components/ui/heading-node';
-import { LinkElement } from '@/components/ui/link-node';
-import { LinkFloatingToolbar } from '@/components/ui/link-toolbar';
-import { ParagraphElement } from '@/components/ui/paragraph-node';
-import { BlockList } from '@/components/ui/block-list';
+} from './heading-node';
+import { LinkElement } from './link-node';
+import { LinkFloatingToolbar } from './link-toolbar';
+import { ParagraphElement } from './paragraph-node';
+import { BlockList } from './block-list';
 
 // ============================================================
 // AUTOFORMAT RULES - Markdown shortcuts

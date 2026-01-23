@@ -14,18 +14,18 @@
 
 import * as React from 'react';
 import { MarkdownPlugin } from '@platejs/markdown';
-import { createSlateEditor, normalizeNodeId, type Value, KEYS } from 'platejs';
+import { createSlateEditor, normalizeNodeId, KEYS } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
 import { cn } from '@/lib/utils';
 
 import { SimpleEditorKit } from './simple-editor-kit';
-import { Editor, EditorContainer } from '@/components/ui/editor';
-import { FixedToolbar } from '@/components/ui/fixed-toolbar';
-import { ToolbarGroup, ToolbarSeparator } from '@/components/ui/toolbar';
-import { MarkToolbarButton } from '@/components/ui/mark-toolbar-button';
-import { TurnIntoToolbarButton } from '@/components/ui/turn-into-toolbar-button';
-import { BulletedListToolbarButton, NumberedListToolbarButton } from '@/components/ui/list-toolbar-button';
-import { LinkToolbarButton } from '@/components/ui/link-toolbar-button';
+import { Editor, EditorContainer } from './editor';
+import { FixedToolbar } from './fixed-toolbar';
+import { ToolbarGroup, ToolbarSeparator } from '@/components/editor/toolbar';
+import { MarkToolbarButton } from './mark-toolbar-button';
+import { TurnIntoToolbarButton } from './turn-into-toolbar-button';
+import { BulletedListToolbarButton, NumberedListToolbarButton } from './list-toolbar-button';
+import { LinkToolbarButton } from './link-toolbar-button';
 
 export interface SimpleEditorProps {
   /** Markdown content to initialize the editor with */

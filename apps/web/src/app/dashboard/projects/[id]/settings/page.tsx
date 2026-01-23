@@ -1,3 +1,5 @@
+import ProjectSettings from "@/components/projects/settings/ProjectSettings"
+
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -13,8 +15,8 @@ export default async function SettingsPage({ params }: PageProps) {
         Manage settings for project {id}
       </p>
     </div>
-    <div className="flex flex-1 items-center justify-center p-8">
-      <p className="text-muted-foreground">Settings content coming soon</p>
+    <div className="p-8">
+    <ProjectSettings />
     </div>
   </div>
   )
