@@ -12,7 +12,7 @@ export default function AnalyticsPage() {
           <ChartBar className="h-8 w-8 text-primary" />
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-semibold">Analytics</h1>
+            <h1 className="text-2xl font-semibold">Analytics</h1>
           <p className="mt-2 text-muted-foreground">Coming soon</p>
         </div>
       </div>
