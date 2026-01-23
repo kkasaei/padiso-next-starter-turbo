@@ -111,11 +111,8 @@ const formatLastRun = (date: Date | null): string => {
   return formatDistanceToNow(new Date(date), { addSuffix: true })
 }
 
-export default function AgentsPage() {
+export default function AgentsPage({ projectId }: { projectId: string }) {
   const router = useRouter()
-  const params = useParams()
-  const projectId = params.projectId as string
-
   // State
   const [agents, setAgents] = useState<AgentDto[]>([])
   const [total, setTotal] = useState(0)
@@ -540,7 +537,7 @@ export default function AgentsPage() {
                           ) : (
                             <Button
                               size="sm"
-                              onClick={() => router.push(`/dashboard/projects/${projectId}/studio/agents/new`)}
+                              onClick={() => router.push(`/dashboard/projects/${projectId}/agents/new`)}
                               className="mt-2"
                             >
                               <Plus className="h-4 w-4 mr-2" />

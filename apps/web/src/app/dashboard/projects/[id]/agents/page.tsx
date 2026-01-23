@@ -13,7 +13,7 @@ export default async function AgentsPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Agents</h1>
     </div>
     <div className="flex flex-1 p-4">
-      <AgentsPageComponent />
+      <AgentsPageComponent projectId={id} />
     </div>
   </div>
   )
