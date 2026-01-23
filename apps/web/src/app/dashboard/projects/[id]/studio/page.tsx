@@ -7,13 +7,10 @@ export default async function StudioPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col">
-    <div className="flex flex-col gap-2 border-b border-border px-4 justify-center h-[82px]">
+    <div className="flex flex-col gap-2 px-4 justify-center h-[82px]">
       <h1 className="text-2xl font-semibold tracking-tight">Studio</h1>
-      <p className="text-muted-foreground">
-        Creative studio workspace for project {id}
-      </p>
     </div>
-    <div className="flex flex-1 items-center justify-center p-8">
+    <div className="flex flex-1 p-4">
       <p className="text-muted-foreground">Tracking content coming soon</p>
     </div>
   </div>
