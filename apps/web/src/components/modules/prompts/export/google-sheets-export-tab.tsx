@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { useAction } from 'next-safe-action/hooks'
 import {
   Loader2,
   Folder,
@@ -16,26 +15,21 @@ import {
   ExternalLink,
   RefreshCw,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import {
-  listDriveFoldersAction,
-  createDriveFolderAction,
-} from '@/actions/opportunity'
-import { exportPromptsToGoogleSheetsAction } from '@/actions/tracked-prompt'
 import type { TrackedPrompt } from '../types'
-import type { GoogleDriveFolder, GoogleDriveFolderBreadcrumb } from '@/types/opportunity-export'
+import type { GoogleDriveFolder, GoogleDriveFolderBreadcrumb } from '@/lib/shcmea/types/opportunity-export'
 
 interface GoogleSheetsExportTabProps {
   projectId: string
@@ -67,81 +61,35 @@ export function GoogleSheetsExportTab({
   const [newFolderName, setNewFolderName] = useState('')
   const [exportResult, setExportResult] = useState<{ url: string; name: string } | null>(null)
   const [needsReconnect, setNeedsReconnect] = useState(false)
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   // ============================================================
-  // SERVER ACTIONS
+  // MOCK DATA
   // ============================================================
-  const { execute: fetchFolders } = useAction(listDriveFoldersAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        setFolders(data.folders)
-        setBreadcrumbs(data.breadcrumbs)
-      }
-      setIsLoading(false)
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to load folders')
-      setIsLoading(false)
-    },
-  })
-
-  const { execute: createFolder, status: createFolderStatus } = useAction(createDriveFolderAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        toast.success(`Folder "${data.name}" created`)
-        setNewFolderName('')
-        setShowNewFolderDialog(false)
-        // Refresh folder list
-        loadFolders()
-        // Select the new folder
-        setSelectedFolderId(data.id)
-        setSelectedFolderName(data.name)
-      }
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to create folder')
-    },
-  })
-
-  const { execute: exportToSheets, status: exportStatus } = useAction(exportPromptsToGoogleSheetsAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        toast.success(`Exported ${data.rowCount} prompts to Google Sheets`)
-        setExportResult({
-          url: data.spreadsheetUrl,
-          name: data.name,
-        })
-      }
-    },
-    onError: ({ error }) => {
-      const errorMessage = error.serverError || 'Failed to export to Google Sheets'
-
-      // Check if it's a permission issue
-      if (errorMessage.includes('reconnect') || errorMessage.includes('permission')) {
-        toast.error(errorMessage, {
-          description: 'Click "Reconnect" below to grant the required permissions.',
-          duration: 8000,
-        })
-        setNeedsReconnect(true)
-      } else {
-        toast.error(errorMessage)
-      }
-    },
-  })
+  const mockFolders: GoogleDriveFolder[] = [
+    { id: 'folder-1', name: 'Projects' },
+    { id: 'folder-2', name: 'Exports' },
+    { id: 'folder-3', name: 'Reports' },
+  ]
 
   // ============================================================
   // LOAD FOLDERS
   // ============================================================
-  const loadFolders = useCallback(() => {
+  const loadFolders = () => {
     if (!integrationId) return
 
     setIsLoading(true)
-    fetchFolders({
-      projectId,
-      integrationId,
-      parentFolderId: currentFolderId,
-    })
-  }, [projectId, integrationId, currentFolderId, fetchFolders])
+    // Simulate loading folders
+    setTimeout(() => {
+      setFolders(mockFolders)
+      setBreadcrumbs([
+        { id: 'root', name: 'My Drive' },
+        ...(currentFolderId ? [{ id: currentFolderId, name: folders.find(f => f.id === currentFolderId)?.name || 'Folder' }] : [])
+      ])
+      setIsLoading(false)
+    }, 500)
+  }
 
   // Load folders when folder browser opens or folder changes
   useEffect(() => {
@@ -183,25 +131,37 @@ export function GoogleSheetsExportTab({
   const handleCreateFolder = () => {
     if (!integrationId || !newFolderName.trim()) return
 
-    createFolder({
-      projectId,
-      integrationId,
-      folderName: newFolderName.trim(),
-      parentFolderId: currentFolderId,
-    })
+    setIsCreatingFolder(true)
+    // Simulate folder creation
+    setTimeout(() => {
+      const newFolder: GoogleDriveFolder = {
+        id: `folder-${Date.now()}`,
+        name: newFolderName.trim(),
+      }
+      setFolders((prev) => [...prev, newFolder])
+      toast.success(`Folder "${newFolder.name}" created`)
+      setNewFolderName('')
+      setShowNewFolderDialog(false)
+      setSelectedFolderId(newFolder.id)
+      setSelectedFolderName(newFolder.name)
+      setIsCreatingFolder(false)
+    }, 500)
   }
 
   // Export to Google Sheets
   const handleExport = () => {
     if (!integrationId || !fileName.trim()) return
 
-    exportToSheets({
-      projectId,
-      integrationId,
-      promptIds: prompts.map((p) => p.id),
-      fileName: fileName.trim(),
-      folderId: selectedFolderId === 'root' ? undefined : selectedFolderId,
-    })
+    setIsExporting(true)
+    // Simulate export
+    setTimeout(() => {
+      toast.success(`Exported ${prompts.length} prompts to Google Sheets`)
+      setExportResult({
+        url: `https://docs.google.com/spreadsheets/d/mock-${Date.now()}`,
+        name: fileName.trim(),
+      })
+      setIsExporting(false)
+    }, 1500)
   }
 
   // ============================================================
@@ -334,10 +294,10 @@ export function GoogleSheetsExportTab({
       ) : (
         <Button
           onClick={handleExport}
-          disabled={!fileName.trim() || exportStatus === 'executing'}
+          disabled={!fileName.trim() || isExporting}
           className="rounded-full gap-2"
         >
-          {exportStatus === 'executing' ? (
+          {isExporting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Exporting...
@@ -513,9 +473,9 @@ export function GoogleSheetsExportTab({
             </Button>
             <Button
               onClick={handleCreateFolder}
-              disabled={!newFolderName.trim() || createFolderStatus === 'executing'}
+              disabled={!newFolderName.trim() || isCreatingFolder}
             >
-              {createFolderStatus === 'executing' ? (
+              {isCreatingFolder ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   Creating...

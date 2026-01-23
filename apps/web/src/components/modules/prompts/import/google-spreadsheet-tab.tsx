@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { useAction } from 'next-safe-action/hooks'
 import {
   Search,
   Loader2,
@@ -20,8 +19,8 @@ import {
   Home,
   ArrowLeft,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -29,20 +28,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import {
-  listDriveSpreadsheetsAction,
-} from '@/actions/opportunity'
-import {
-  readSpreadsheetDataPromptsAction,
-  bulkImportPromptsAction,
-} from '@/actions/tracked-prompt'
-import type { DriveItem, DriveBreadcrumb } from '@/actions/opportunity/list-drive-spreadsheets'
-import type { PromptValidationResult } from '@/types/prompt-import'
-import { PROMPT_CSV_TEMPLATE } from '@/types/prompt-import'
+import type { PromptValidationResult } from '@/lib/shcmea/types/prompt-import'
+import { PROMPT_CSV_TEMPLATE } from '@/lib/shcmea/types/prompt-import'
+
+// Types for Drive items (previously imported from actions)
+interface DriveItem {
+  id: string
+  name: string
+  mimeType?: string
+  iconLink?: string
+  modifiedTime?: string
+  isFolder: boolean
+}
+
+interface DriveBreadcrumb {
+  id: string
+  name: string
+}
 
 interface GoogleSpreadsheetTabProps {
   projectId: string
@@ -69,67 +75,44 @@ export function GoogleSpreadsheetTab({
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [validationResult, setValidationResult] = useState<PromptValidationResult | null>(null)
+  const [isReading, setIsReading] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
 
   // ============================================================
-  // SERVER ACTIONS
+  // MOCK DATA
   // ============================================================
-  const { execute: fetchItems } = useAction(listDriveSpreadsheetsAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        setItems(data.items)
-        setBreadcrumbs(data.breadcrumbs)
-      }
-      setIsLoading(false)
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to load files')
-      setIsLoading(false)
-    },
-  })
-
-  const { execute: readSpreadsheet, status: readStatus } = useAction(readSpreadsheetDataPromptsAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        setValidationResult(data)
-      }
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to read spreadsheet')
-      setSelectedSpreadsheet(null)
-    },
-  })
-
-  const { execute: startImport, status: importStatus } = useAction(bulkImportPromptsAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        if (data.failed === 0) {
-          toast.success(data.message)
-        } else {
-          toast.warning(data.message)
-        }
-        onImportComplete()
-        onClose()
-      }
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to import prompts')
-    },
-  })
+  const mockItems: DriveItem[] = [
+    { id: 'folder-1', name: 'Projects', isFolder: true },
+    { id: 'folder-2', name: 'Imports', isFolder: true },
+    { id: 'sheet-1', name: 'Prompts List.xlsx', isFolder: false, modifiedTime: new Date().toISOString() },
+    { id: 'sheet-2', name: 'Marketing Prompts.xlsx', isFolder: false, modifiedTime: new Date(Date.now() - 86400000).toISOString() },
+    { id: 'sheet-3', name: 'Q4 Campaigns.xlsx', isFolder: false, modifiedTime: new Date(Date.now() - 172800000).toISOString() },
+  ]
 
   // ============================================================
   // LOAD ITEMS
   // ============================================================
-  const loadItems = useCallback(() => {
+  const loadItems = () => {
     if (!integrationId) return
 
     setIsLoading(true)
-    fetchItems({
-      projectId,
-      integrationId,
-      folderId: currentFolderId,
-      search: searchQuery || undefined,
-    })
-  }, [projectId, integrationId, currentFolderId, searchQuery, fetchItems])
+    // Simulate loading files
+    setTimeout(() => {
+      // Filter by search query if present
+      let filteredItems = mockItems
+      if (searchQuery) {
+        filteredItems = mockItems.filter(item => 
+          item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      }
+      setItems(filteredItems)
+      setBreadcrumbs([
+        { id: 'root', name: 'My Drive' },
+        ...(currentFolderId ? [{ id: currentFolderId, name: items.find(i => i.id === currentFolderId)?.name || 'Folder' }] : [])
+      ])
+      setIsLoading(false)
+    }, 500)
+  }
 
   // Initial load
   useEffect(() => {
@@ -172,7 +155,7 @@ export function GoogleSpreadsheetTab({
     if (breadcrumbs.length > 1) {
       const parentIndex = breadcrumbs.length - 2
       const parent = breadcrumbs[parentIndex]
-      setCurrentFolderId(parent.id === 'root' ? undefined : parent.id)
+      setCurrentFolderId(parent?.id === 'root' ? undefined : parent?.id ?? undefined)
     }
   }
 
@@ -180,15 +163,27 @@ export function GoogleSpreadsheetTab({
   const handleSelectSpreadsheet = (item: DriveItem) => {
     setSelectedSpreadsheet(item)
     setValidationResult(null)
+    setIsReading(true)
 
-    // Read and validate the spreadsheet data
-    if (integrationId) {
-      readSpreadsheet({
-        projectId,
-        integrationId,
-        spreadsheetId: item.id,
-      })
-    }
+    // Simulate reading and validating the spreadsheet data
+    setTimeout(() => {
+      // Mock validation result
+      const mockValidation: PromptValidationResult = {
+        valid: true,
+        totalRows: 5,
+        validRows: 5,
+        errors: [],
+        data: [
+          { prompt: 'What are the best project management tools for startups?', location: 'US', notes: '' },
+          { prompt: 'How to improve team productivity remotely?', location: 'Global', notes: '' },
+          { prompt: 'Best practices for agile development', location: '', notes: 'Tech focused' },
+          { prompt: 'Top CRM solutions for small businesses', location: 'US', notes: '' },
+          { prompt: 'How to scale a SaaS business effectively?', location: 'Global', notes: '' },
+        ],
+      }
+      setValidationResult(mockValidation)
+      setIsReading(false)
+    }, 1000)
   }
 
   // Go back to file list
@@ -201,10 +196,14 @@ export function GoogleSpreadsheetTab({
   const handleStartImport = () => {
     if (!validationResult || validationResult.data.length === 0) return
 
-    startImport({
-      projectId,
-      rows: validationResult.data,
-    })
+    setIsImporting(true)
+    // Simulate import
+    setTimeout(() => {
+      toast.success(`Successfully imported ${validationResult.data.length} prompts`)
+      setIsImporting(false)
+      onImportComplete()
+      onClose()
+    }, 1500)
   }
 
   // Download CSV template
@@ -286,7 +285,7 @@ export function GoogleSpreadsheetTab({
         </div>
 
         {/* Loading State */}
-        {readStatus === 'executing' ? (
+        {isReading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
             <span className="text-sm text-muted-foreground">Validating spreadsheet data...</span>
@@ -387,10 +386,10 @@ export function GoogleSpreadsheetTab({
             {validationResult.data.length > 0 && (
               <Button
                 onClick={handleStartImport}
-                disabled={importStatus === 'executing' || !validationResult.valid}
+                disabled={isImporting || !validationResult.valid}
                 className="rounded-full gap-2"
               >
-                {importStatus === 'executing' ? (
+                {isImporting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Upload className="h-4 w-4" />

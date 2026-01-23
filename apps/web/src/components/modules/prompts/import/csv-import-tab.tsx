@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useAction } from 'next-safe-action/hooks'
 import {
   Upload,
   FileSpreadsheet,
@@ -13,7 +12,7 @@ import {
   Loader2,
   Info,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Table,
   TableBody,
@@ -21,20 +20,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import { bulkImportPromptsAction } from '@/actions/tracked-prompt'
 import type {
   PromptImportRow,
   PromptValidationResult,
   PromptValidationError,
-} from '@/types/prompt-import'
+} from '@/lib/shcmea/types/prompt-import'
 import {
   PROMPT_CSV_TEMPLATE,
   REQUIRED_PROMPT_COLUMNS,
-} from '@/types/prompt-import'
+} from '@/lib/shcmea/types/prompt-import'
 
 interface CsvImportTabProps {
   projectId: string
@@ -46,23 +44,6 @@ export function CsvImportTab({ projectId, onImportComplete, onClose }: CsvImport
   const [file, setFile] = useState<File | null>(null)
   const [validationResult, setValidationResult] = useState<PromptValidationResult | null>(null)
   const [isValidating, setIsValidating] = useState(false)
-
-  const { execute: startImport, status: importStatus } = useAction(bulkImportPromptsAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        if (data.failed === 0) {
-          toast.success(data.message)
-        } else {
-          toast.warning(data.message)
-        }
-        onImportComplete()
-        onClose()
-      }
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed to import prompts')
-    },
-  })
 
   // Parse CSV content
   const parseCSV = useCallback((content: string): PromptValidationResult => {
@@ -78,7 +59,7 @@ export function CsvImportTab({ projectId, onImportComplete, onClose }: CsvImport
     }
 
     // Parse header row
-    const headers = lines[0].split(',').map((h) => h.trim().toLowerCase())
+    const headers = lines[0]?.split(',').map((h) => h.trim().toLowerCase()) ?? []
 
     // Check for required columns
     const missingColumns = REQUIRED_PROMPT_COLUMNS.filter((col) => !headers.includes(col))
@@ -107,7 +88,7 @@ export function CsvImportTab({ projectId, onImportComplete, onClose }: CsvImport
     // Parse data rows
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i]
-      const values = parseCSVLine(line)
+      const values = parseCSVLine(line ?? '')
       const rowNumber = i + 1
 
       const prompt = values[promptIndex]?.trim()
@@ -248,11 +229,6 @@ export function CsvImportTab({ projectId, onImportComplete, onClose }: CsvImport
   // Start import
   const handleStartImport = () => {
     if (!validationResult || validationResult.data.length === 0) return
-
-    startImport({
-      projectId,
-      rows: validationResult.data,
-    })
   }
 
   // Download template
@@ -462,14 +438,10 @@ export function CsvImportTab({ projectId, onImportComplete, onClose }: CsvImport
               {validationResult.data.length > 0 && (
                 <Button
                   onClick={handleStartImport}
-                  disabled={importStatus === 'executing' || !validationResult.valid}
+                  disabled={!validationResult.valid}
                   className="rounded-full gap-2"
                 >
-                  {importStatus === 'executing' ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
                     <Upload className="h-4 w-4" />
-                  )}
                   Import {validationResult.data.length} Prompt
                   {validationResult.data.length !== 1 ? 's' : ''}
                 </Button>

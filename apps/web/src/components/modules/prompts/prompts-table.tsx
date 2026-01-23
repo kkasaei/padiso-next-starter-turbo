@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
 import { Loader2, Trash2, Pencil, Eye } from 'lucide-react'
 import type { TrackedPrompt } from './types'
 

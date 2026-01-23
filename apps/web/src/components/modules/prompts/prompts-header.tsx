@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
 import { Plus, Search, Sparkles, Loader2, Play } from 'lucide-react'
 
 interface PromptsHeaderProps {

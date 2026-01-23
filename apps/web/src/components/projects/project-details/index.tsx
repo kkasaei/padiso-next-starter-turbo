@@ -49,9 +49,9 @@ function PageContent() {
 
   return (
     <div className="relative flex min-w-0 flex-2 flex-col items-center">
-      <div className="flex h-full w-full flex-col px-4">
+      <div className="flex h-full w-full flex-col">
         {/* Header */}
-        <div className="flex flex-col gap-y-4 py-8 md:flex-row md:items-start md:justify-between md:gap-x-4 md:py-8">
+        <div className="flex flex-col gap-y-4 pb-8 md:flex-row md:items-start md:justify-between md:gap-x-4 md:pb-8">
           <div className="flex min-w-0 flex-row items-center gap-4">
             <div className="flex min-w-0 flex-row items-center gap-4">
               <div className="hidden aspect-square h-10 w-10 shrink-0 grow-0 overflow-hidden rounded-md border border-gray-200 bg-white text-center dark:border-polar-700 dark:bg-polar-800 md:flex">

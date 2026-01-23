@@ -8,8 +8,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from '@workspace/ui/components/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 
 import { GoogleSpreadsheetTab } from './google-spreadsheet-tab'
 import { CsvImportTab } from './csv-import-tab'

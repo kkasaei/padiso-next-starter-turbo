@@ -8,8 +8,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from '@workspace/ui/components/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { CsvExportTab } from './csv-export-tab'
 import { GoogleSheetsExportTab } from './google-sheets-export-tab'
 import type { TrackedPrompt } from '../types'

@@ -11,20 +11,20 @@ import Image from 'next/image'
 import { Search, ArrowLeft, HelpCircle, MessageSquare } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button } from '@workspace/ui/components/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Input } from '@workspace/ui/components/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+  } from '@workspace/ui/components/select'
 
 import { useAnalyticsDateRange } from '@/hooks/use-analytics-date-range'
-import type { PromptAnalyticsData, MentionSortKey, SortDirection } from '@/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, MentionSortKey, SortDirection } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { COMPETITION_PROVIDERS, MENTION_TABLE_COLUMNS, PAGE_SIZE_OPTIONS } from './constants'
 import { getSentimentColor, getProviderLogo, getPageNumbers } from './helpers'
 

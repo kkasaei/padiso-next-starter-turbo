@@ -1,13 +1,13 @@
 'use client'
 
-import { Label } from '@/components/ui/label'
+import { Label } from '@workspace/ui/components/label'
 import { HelpCircle } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@workspace/ui/components/tooltip'
 
 interface LabelWithHelpProps {
   htmlFor: string

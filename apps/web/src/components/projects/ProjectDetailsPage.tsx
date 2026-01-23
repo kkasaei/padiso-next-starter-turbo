@@ -44,18 +44,8 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
   return (
     <div className="flex flex-1 flex-col min-w-0">
-      {/* Header */}
-      <div className="h-[82px] flex items-center justify-between gap-4 px-4 border-b border-border">
-        <div className="flex items-center gap-3">
-          <ProjectSidebarTrigger />
-          <div className="hidden sm:block">
-            <Breadcrumbs items={breadcrumbs} />
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto p-4">
         <ProjectDetailsMain />
       </div>
     </div>

@@ -1,12 +1,12 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Textarea } from '@workspace/ui/components/textarea'
 import {
   Sheet,
   SheetContent,
-} from '@/components/ui/sheet'
+} from '@workspace/ui/components/sheet'
 import { Loader2 } from 'lucide-react'
 import { LabelWithHelp } from './label-with-help'
 import { FIELD_HELP } from './constants'
