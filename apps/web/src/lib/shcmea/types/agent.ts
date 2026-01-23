@@ -3,7 +3,7 @@
 // ============================================================
 
 // Agent status enum (mirrors database enum)
-export type AgentStatus = 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED'
+export type AgentStatus = 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED' | 'ERROR' | 'IDLE'
 
 // Agent trigger enum (mirrors database enum)
 export type AgentTrigger = 'MANUAL' | 'SCHEDULE' | 'EVENT' | 'WEBHOOK'

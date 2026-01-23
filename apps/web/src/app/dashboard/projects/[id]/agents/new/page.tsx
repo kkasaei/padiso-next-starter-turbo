@@ -1,5 +1,3 @@
-import { default as AgentsPageComponent } from '@/components/projects/agents/AgentsPage'
-
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -13,7 +11,7 @@ export default async function AgentsPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Agents</h1>
     </div>
     <div className="flex flex-1 p-4">
-      <AgentsPageComponent />
+      <p className="text-muted-foreground">Agents content coming soon</p>
     </div>
   </div>
   )
