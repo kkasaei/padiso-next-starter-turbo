@@ -1,3 +1,5 @@
+import { default as AuditPageComponent } from "@/components/projects/audit/AuditPage"
+
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -11,7 +13,7 @@ export default async function AuditPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Audit</h1>
     </div>
     <div className="flex flex-1 p-4">
-      <p className="text-muted-foreground">Audit content coming soon</p>
+      <AuditPageComponent />
     </div>
   </div>
   )

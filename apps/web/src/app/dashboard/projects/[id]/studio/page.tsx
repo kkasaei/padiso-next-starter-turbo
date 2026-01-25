@@ -1,3 +1,5 @@
+import ContentListPage from "@/components/projects/content/ContentListPage"
+
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -11,7 +13,7 @@ export default async function StudioPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Studio</h1>
     </div>
     <div className="flex flex-1 p-4">
-      <p className="text-muted-foreground">Tracking content coming soon</p>
+     <ContentListPage />
     </div>
   </div>
   )

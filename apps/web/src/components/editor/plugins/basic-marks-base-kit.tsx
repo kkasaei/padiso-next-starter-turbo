@@ -10,9 +10,9 @@ import {
   BaseUnderlinePlugin,
 } from '@platejs/basic-nodes';
 
-import { CodeLeafStatic } from '@workspace/ui/components/code-node-static';
-import { HighlightLeafStatic } from '@workspace/ui/components/highlight-node-static';
-import { KbdLeafStatic } from '@workspace/ui/components/kbd-node-static';
+import { CodeLeafStatic } from '@/components/editor/code-node-static';
+import { HighlightLeafStatic } from '@/components/editor/highlight-node-static';
+import { KbdLeafStatic } from '@/components/editor/kbd-node-static';
 
 export const BaseBasicMarksKit = [
   BaseBoldPlugin,

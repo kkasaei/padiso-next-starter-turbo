@@ -11,8 +11,8 @@ import {
 import { getPluginType, KEYS, PathApi } from 'platejs';
 import { usePluginOption } from 'platejs/react';
 
-import { AILoadingBar, AIMenu } from '@workspace/ui/components/ai-menu';
-import { AIAnchorElement, AILeaf } from '@workspace/ui/components/ai-node';
+import { AILoadingBar, AIMenu } from '@/components/ai-menu';
+import { AIAnchorElement, AILeaf } from '@/components/ai-node';
 
 import { useChat } from '../use-chat';
 import { CursorOverlayKit } from './cursor-overlay-kit';
@@ -92,7 +92,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
   },
 });
 
-export const AIKit = [
+export const AIKit: unknown[] = [
   ...CursorOverlayKit,
   ...MarkdownKit,
   AIPlugin.withComponent(AILeaf),

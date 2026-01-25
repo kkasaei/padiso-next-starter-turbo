@@ -9,7 +9,7 @@ import {
   CodeBlockElementStatic,
   CodeLineElementStatic,
   CodeSyntaxLeafStatic,
-} from '@workspace/ui/components/code-block-node-static';
+} from '@/components/editor/code-block-node-static';
 
 const lowlight = createLowlight(all);
 
