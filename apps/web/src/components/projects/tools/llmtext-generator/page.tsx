@@ -1,13 +1,12 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@workspace/ui/components/button'
 import { Type, CheckCircle2, Info, Sparkles, Zap } from 'lucide-react'
 
-export default function Page() {
-  const params = useParams()
+export default function Page(props: { projectId: string }) {
   const router = useRouter()
-  const projectId = params.projectId as string
+  const projectId = props.projectId
 
   const handleStartGenerating = () => {
     router.push(`/dashboard/projects/${projectId}/tools/llmtext-generator/edit`)
