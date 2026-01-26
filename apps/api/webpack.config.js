@@ -3,7 +3,16 @@ const path = require('path');
 module.exports = function (options) {
   return {
     ...options,
-    externals: [], // Bundle everything, don't treat anything as external
+    entry: {
+      main: './src/main.ts',
+      lambda: './src/lambda.ts',
+    },
+    externals: [], // Bundle everything for serverless
+    output: {
+      ...options.output,
+      filename: '[name].js',
+      libraryTarget: 'commonjs2',
+    },
     resolve: {
       ...options.resolve,
       extensions: ['.ts', '.tsx', '.js', '.json'],

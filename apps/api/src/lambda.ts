@@ -1,10 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+let cachedApp: NestExpressApplication;
+
+async function createApp(): Promise<NestExpressApplication> {
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(),
+    { logger: ['error', 'warn', 'log'] },
+  );
 
   // Enable CORS
   app.enableCors();
@@ -37,16 +44,16 @@ async function bootstrap() {
     ],
   });
 
-  const port = process.env.PORT ?? 3001;
-  await app.listen(port);
+  await app.init();
 
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 Swagger docs available at: http://localhost:${port}/docs`);
+  return app;
 }
 
-// Only run bootstrap when not in serverless mode
-if (process.env.VERCEL !== '1') {
-  bootstrap();
+// Serverless handler
+export default async function handler(req: any, res: any) {
+  if (!cachedApp) {
+    cachedApp = await createApp();
+  }
+  const expressApp = cachedApp.getHttpAdapter().getInstance();
+  return expressApp(req, res);
 }
-
-export { AppModule };
