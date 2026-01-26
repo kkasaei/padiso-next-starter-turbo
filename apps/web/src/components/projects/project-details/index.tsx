@@ -48,7 +48,7 @@ function PageContent() {
   const hasProjectData = !isLoadingStats && (dashboardStats?.trackedPrompts ?? 0) > 0
 
   return (
-    <div className="relative flex min-w-0 flex-2 flex-col items-center">
+    <div className="relative flex min-w-0 flex-2 flex-col items-center px-4">
       <div className="flex h-full w-full flex-col">
         {/* Tabs */}
         <Tabs defaultValue="overview" className="w-full">

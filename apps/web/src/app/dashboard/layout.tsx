@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
-import { ProjectSidebar, ProjectSidebarProvider } from "@/components/project-sidebar"
+import { ProjectSidebar, ProjectSidebarProvider, ProjectSidebarToggle } from "@/components/project-sidebar"
 
 export default function DashboardLayout({
   children,
@@ -26,12 +26,16 @@ export default function DashboardLayout({
           
           {/* Main content area */}
           <ProjectSidebarProvider>
-            <main className="flex flex-1 m-2 rounded-2xl border border-border bg-background overflow-hidden">
-              {isProjectDetailPage && <ProjectSidebar />}
-              <div className="flex flex-1 flex-col min-w-0">
-                {children}
-              </div>
-            </main>
+            <div className="relative flex flex-1 m-2">
+              <main className="flex flex-1 rounded-2xl border border-border bg-background overflow-hidden">
+                {isProjectDetailPage && <ProjectSidebar />}
+                <div className="flex flex-1 flex-col min-w-0">
+                  {children}
+                </div>
+              </main>
+              {/* Toggle button on main card edge when sidebar is closed */}
+              {isProjectDetailPage && <ProjectSidebarToggle showWhenOpen={false} className="-left-3" />}
+            </div>
           </ProjectSidebarProvider>
         </div>
       </SignedIn>

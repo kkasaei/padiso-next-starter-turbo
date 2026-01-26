@@ -66,6 +66,41 @@ export function ProjectSidebarTrigger({ className }: { className?: string }) {
   )
 }
 
+interface ProjectSidebarToggleProps {
+  /** When true, only shows when sidebar is open. When false, only shows when sidebar is closed. */
+  showWhenOpen?: boolean
+  className?: string
+}
+
+export function ProjectSidebarToggle({ showWhenOpen = true, className }: ProjectSidebarToggleProps) {
+  const { isOpen, toggle } = useProjectSidebar()
+
+  // Only render based on showWhenOpen prop
+  if (showWhenOpen && !isOpen) return null
+  if (!showWhenOpen && isOpen) return null
+
+  return (
+    <button
+      onClick={toggle}
+      className={cn(
+        "absolute top-[40px] -translate-y-1/2 z-50",
+        "h-6 w-6 flex items-center justify-center",
+        "rounded-full bg-background border border-border/40 shadow-sm",
+        "text-muted-foreground hover:text-foreground hover:bg-accent",
+        "transition-all duration-200",
+        isOpen ? "-right-3" : "-left-3",
+        className
+      )}
+    >
+      {isOpen ? (
+        <CaretLineLeft className="h-3 w-3" />
+      ) : (
+        <CaretLineRight className="h-3 w-3" />
+      )}
+    </button>
+  )
+}
+
 export function ProjectSidebar() {
   const { isOpen } = useProjectSidebar()
   const params = useParams()
@@ -97,12 +132,15 @@ export function ProjectSidebar() {
   }
 
   return (
-    <div
-      className={cn(
-        "flex flex-col border-r border-border/40 bg-background transition-all duration-200 ease-in-out overflow-hidden",
-        isOpen ? "w-64" : "w-0"
-      )}
-    >
+    <div className="relative overflow-visible">
+      <ProjectSidebarToggle />
+      
+      <div
+        className={cn(
+          "flex flex-col border-r border-border/40 bg-background transition-all duration-200 ease-in-out overflow-hidden",
+          isOpen ? "w-64" : "w-0"
+        )}
+      >
       <div className="flex flex-col flex-1 min-w-64">
         {/* Project Switcher */}
         <div className="h-[81px] flex items-center px-3">
@@ -257,6 +295,8 @@ export function ProjectSidebar() {
           </ul>
         </div>
       </div>
+      </div>
+
     </div>
   )
 }
