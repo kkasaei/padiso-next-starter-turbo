@@ -1,0 +1,72 @@
+"use client";
+
+import type { Prompt } from "@/lib/data/prompts";
+import { PromptCard } from "@/components/prompts/prompt-card";
+import { Plus, Lightning } from "@phosphor-icons/react/dist/ssr";
+import { Skeleton } from "@workspace/ui/components/skeleton";
+
+type PromptCardsViewProps = {
+  prompts: Prompt[];
+  loading?: boolean;
+  onCreatePrompt?: () => void;
+  onEditPrompt?: (prompt: Prompt) => void;
+  onDeletePrompt?: (prompt: Prompt) => void;
+  onPromptClick?: (prompt: Prompt) => void;
+};
+
+export function PromptCardsView({
+  prompts,
+  loading = false,
+  onCreatePrompt,
+  onEditPrompt,
+  onDeletePrompt,
+  onPromptClick,
+}: PromptCardsViewProps) {
+  const isEmpty = !loading && prompts.length === 0;
+
+  return (
+    <div className="p-4">
+      {loading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-52 rounded-2xl" />
+          ))}
+        </div>
+      ) : isEmpty ? (
+        <div className="flex h-60 flex-col items-center justify-center text-center">
+          <div className="p-3 bg-primary/10 rounded-md mb-4">
+            <Lightning className="h-6 w-6 text-primary" weight="fill" />
+          </div>
+          <h3 className="mb-2 text-lg font-semibold text-foreground">No prompts yet</h3>
+          <p className="mb-6 text-sm text-muted-foreground">Create your first prompt to get started</p>
+          <button
+            className="rounded-lg border border-border bg-background px-4 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+            onClick={onCreatePrompt}
+          >
+            <Plus className="mr-2 inline h-4 w-4" />
+            Create new prompt
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {prompts.map((p) => (
+            <PromptCard
+              key={p.id}
+              prompt={p}
+              onEdit={onEditPrompt}
+              onDelete={onDeletePrompt}
+              onClick={onPromptClick}
+            />
+          ))}
+          <button
+            className="rounded-2xl border border-dashed border-border/60 bg-background p-6 text-center text-sm text-muted-foreground hover:border-solid hover:border-border/80 hover:text-foreground transition-colors min-h-[200px] flex flex-col items-center justify-center cursor-pointer"
+            onClick={onCreatePrompt}
+          >
+            <Plus className="mb-2 h-5 w-5" />
+            Create new prompt
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,21 +1,10 @@
-import { Lightning } from "@phosphor-icons/react/dist/ssr"
+import { Suspense } from "react";
+import { PromptsContent } from "@/components/prompts/prompts-content";
 
 export default function PromptsPage() {
   return (
-    <>
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-        <p className="text-base font-medium text-foreground">Prompts</p>
-      </div>
-      
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-          <Lightning className="h-8 w-8 text-primary" />
-        </div>
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold">Prompts</h1>
-          <p className="mt-2 text-muted-foreground">Coming soon</p>
-        </div>
-      </div>
-    </>
-  )
+    <Suspense fallback={null}>
+      <PromptsContent />
+    </Suspense>
+  );
 }

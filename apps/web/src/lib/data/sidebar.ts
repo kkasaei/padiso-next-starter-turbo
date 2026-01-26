@@ -30,10 +30,10 @@ export const navItems: NavItem[] = [
 ]
 
 export const favouriteProjects: FavouriteProject[] = [
-    { id: "ai-learning", name: "AI Learning Platform", color: "var(--chart-5)" },
-    { id: "fintech-app", name: "Fintech Mobile App", color: "var(--chart-3)" },
-    { id: "ecommerce-admin", name: "E-commerce Admin", color: "var(--chart-1)" },
-    { id: "healthcare-app", name: "Healthcare Booking App", color: "var(--chart-2)" },
+    { id: "padiso-co", name: "PADISO.co", color: "var(--chart-5)" },
+    { id: "fintech-app", name: "Capitaly.vc", color: "var(--chart-3)" },
+    { id: "ecommerce-admin", name: "Mailable.dev", color: "var(--chart-1)" },
+    { id: "healthcare-app", name: "Brightlume.ai", color: "var(--chart-2)" },
 ]
 
 export const footerItems: SidebarFooterItem[] = [

@@ -146,7 +146,7 @@ export const projects: Project[] = [
   },
   {
     id: "3",
-    name: "AI Learning Platform",
+    name: "PADISO.co",
     taskCount: 3,
     progress: 40,
     startDate: _d(14),
