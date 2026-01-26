@@ -1,0 +1,261 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root element styles - applied directly since Tailwind important only targets children */
+.aeo-embed-root {
+  /* CSS Variables */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --border: 214.3 31.8% 91.4%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+
+  /* Base styles */
+  box-sizing: border-box !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  line-height: 1.5 !important;
+  -webkit-font-smoothing: antialiased !important;
+  color: hsl(var(--foreground)) !important;
+  width: 100% !important;
+}
+
+.aeo-embed-root *,
+.aeo-embed-root *::before,
+.aeo-embed-root *::after {
+  box-sizing: border-box !important;
+}
+
+/* Dark mode */
+.aeo-embed-root.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --border: 217.2 32.6% 17.5%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+}
+
+/* Form container - the main pill shape */
+.aeo-embed-root .aeo-form-container {
+  position: relative !important;
+  display: flex !important;
+  width: 100% !important;
+  align-items: center !important;
+  border-radius: 9999px !important;
+  border: 3px solid hsla(var(--primary), 0.2) !important;
+  background-color: hsl(var(--background)) !important;
+  box-shadow: 0 10px 15px -3px hsla(var(--primary), 0.1), 0 4px 6px -4px hsla(var(--primary), 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.aeo-embed-root .aeo-form-container:hover {
+  border-color: hsla(var(--primary), 0.4) !important;
+}
+
+.aeo-embed-root .aeo-form-container:focus-within {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsla(var(--primary), 0.2) !important;
+}
+
+/* Input field */
+.aeo-embed-root .aeo-input {
+  height: 4rem !important;
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 1rem 0.5rem 1rem 1.5rem !important;
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.aeo-embed-root .aeo-input::placeholder {
+  color: hsla(var(--muted-foreground), 0.7) !important;
+}
+
+.aeo-embed-root .aeo-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Placeholder animation */
+.aeo-embed-root .aeo-placeholder {
+  position: absolute !important;
+  left: 1.5rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+  color: hsla(var(--muted-foreground), 0.7) !important;
+  pointer-events: none !important;
+}
+
+/* Divider */
+.aeo-embed-root .aeo-divider {
+  height: 2.5rem !important;
+  width: 1px !important;
+  background-color: hsla(var(--border), 0.6) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Select trigger */
+.aeo-embed-root .aeo-select-trigger {
+  height: 4rem !important;
+  min-width: 10rem !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 1rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.aeo-embed-root .aeo-select-trigger:focus {
+  outline: none !important;
+}
+
+/* Select dropdown */
+.aeo-embed-root .aeo-select-content {
+  position: absolute !important;
+  right: 0 !important;
+  top: 100% !important;
+  margin-top: 0.25rem !important;
+  min-width: 12rem !important;
+  max-height: 15rem !important;
+  overflow: auto !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid hsl(var(--border)) !important;
+  background-color: hsl(var(--background)) !important;
+  padding: 0.25rem !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  z-index: 9999 !important;
+}
+
+.aeo-embed-root .aeo-select-item {
+  position: relative !important;
+  display: flex !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  align-items: center !important;
+  border-radius: 0.5rem !important;
+  padding: 0.625rem 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.aeo-embed-root .aeo-select-item:hover {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Submit button */
+.aeo-embed-root .aeo-submit-btn {
+  margin-right: 0.5rem !important;
+  height: 3rem !important;
+  width: 3rem !important;
+  flex-shrink: 0 !important;
+  border-radius: 9999px !important;
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  box-shadow: 0 10px 15px -3px hsla(var(--primary), 0.5) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.aeo-embed-root .aeo-submit-btn:hover:not(:disabled) {
+  transform: scale(1.1) !important;
+  box-shadow: 0 20px 25px -5px hsla(var(--primary), 0.6) !important;
+}
+
+.aeo-embed-root .aeo-submit-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+.aeo-embed-root .aeo-submit-btn svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Error message */
+.aeo-embed-root .aeo-error {
+  margin-top: 0.75rem !important;
+  width: 100% !important;
+  padding: 0 1rem !important;
+  text-align: center !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: hsl(var(--destructive)) !important;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .aeo-embed-root .aeo-form-container {
+    border-width: 3px !important;
+  }
+  .aeo-embed-root .aeo-input {
+    height: 4.5rem !important;
+    padding-left: 2rem !important;
+    font-size: 1.25rem !important;
+  }
+  .aeo-embed-root .aeo-placeholder {
+    left: 2rem !important;
+    font-size: 1.25rem !important;
+  }
+  .aeo-embed-root .aeo-select-trigger {
+    height: 4.5rem !important;
+    min-width: 12rem !important;
+  }
+  .aeo-embed-root .aeo-submit-btn {
+    height: 3.5rem !important;
+    width: 3.5rem !important;
+    margin-right: 0.75rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .aeo-embed-root .aeo-input {
+    height: 5rem !important;
+    font-size: 1.375rem !important;
+  }
+  .aeo-embed-root .aeo-placeholder {
+    font-size: 1.375rem !important;
+  }
+  .aeo-embed-root .aeo-select-trigger {
+    height: 5rem !important;
+    min-width: 14rem !important;
+    font-size: 1rem !important;
+  }
+  .aeo-embed-root .aeo-divider {
+    height: 3rem !important;
+  }
+  .aeo-embed-root .aeo-submit-btn {
+    height: 4rem !important;
+    width: 4rem !important;
+  }
+  .aeo-embed-root .aeo-submit-btn svg {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+  }
+}
