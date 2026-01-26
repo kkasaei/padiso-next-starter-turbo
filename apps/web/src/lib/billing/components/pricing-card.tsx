@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { CheckIcon, ChevronRightIcon, XIcon } from 'lucide-react';
+import { CheckIcon, ChevronRightIcon, XIcon, Users } from 'lucide-react';
 
 import { Badge } from '@workspace/ui/components/badge';
 import { Button, buttonVariants } from '@workspace/ui/components/button';
@@ -37,6 +37,10 @@ export function PricingCard({
   const isRecommended = 'recommended' in plan ? plan.recommended : false;
   const isEnterprise = 'isEnterprise' in plan ? plan.isEnterprise : false;
   const trialDays = 'trialDays' in plan ? plan.trialDays : undefined;
+  const tagline = 'tagline' in plan ? plan.tagline : undefined;
+  const limitedSpots = 'limitedSpots' in plan ? plan.limitedSpots : undefined;
+
+  const currentMonth = new Date().toLocaleString('default', { month: 'long' });
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -59,58 +63,111 @@ export function PricingCard({
         </div>
       )}
 
-      <div className="flex flex-col gap-y-5">
-        {/* Product Details */}
-        <div className="space-y-2">
-          <h3 className="text-xl font-semibold">{plan.name}</h3>
-          <p className="text-sm text-muted-foreground">{plan.description}</p>
-          {trialDays && (
-            <p className="text-xs text-muted-foreground">{trialDays}-day free trial</p>
-          )}
-        </div>
+      <div className="flex h-full flex-col gap-y-5">
+        {/* Header Section - Fixed height for alignment */}
+        <div className="flex min-h-[180px] flex-col gap-y-4">
+          {/* Tagline Badge */}
+          <Badge 
+            variant="outline" 
+            className="w-fit border-primary/30 bg-primary/5 text-xs font-semibold uppercase tracking-wider text-primary"
+          >
+            {tagline || '\u00A0'}
+          </Badge>
 
-        {/* Price */}
-        <div className="space-y-1">
-          {isEnterprise ? (
-            <div className="text-3xl font-bold">Custom</div>
-          ) : (
-            <>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold">{formattedPrice}</span>
-                <span className="text-muted-foreground">/{selectedInterval === 'month' ? 'mo' : 'yr'}</span>
-              </div>
-              {selectedInterval === 'year' && (
-                <p className="text-xs text-muted-foreground">
+          {/* Product Details */}
+          <div className="space-y-2">
+            <h3 className={cn(
+              "text-xl font-semibold",
+              isRecommended && "text-2xl text-primary"
+            )}>{plan.name}</h3>
+            <p className="text-sm text-muted-foreground">{plan.description}</p>
+          </div>
+
+          {/* Price */}
+          <div className="space-y-1 mt-auto text-center">
+            {isEnterprise ? (
+              <>
+                <div className="text-4xl font-bold md:text-5xl">Custom</div>
+                {/* Reserve same space as pricing card */}
+                <p className="text-xs h-4 text-transparent">placeholder</p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-baseline justify-center gap-2">
+                  {'originalAmount' in price && price.originalAmount && (
+                    <span className="text-xl text-muted-foreground line-through">
+                      ${price.originalAmount}
+                    </span>
+                  )}
+                  <span className="text-4xl font-bold md:text-5xl">{formattedPrice}</span>
+                  <span className="text-lg text-muted-foreground">/{selectedInterval === 'month' ? 'mo' : 'yr'}</span>
+                </div>
+                {/* Always reserve space for the annual billing text */}
+                <p className={cn(
+                  "text-xs h-4",
+                  selectedInterval === 'year' ? "text-muted-foreground" : "text-transparent"
+                )}>
                   ${Math.round(price.amount / 12)}/mo billed annually
                 </p>
-              )}
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Limited Spots Message */}
+        {limitedSpots && (
+          <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
+            <Users className="mt-0.5 size-4 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-medium text-primary">Only {limitedSpots} spots left in {currentMonth}</p>
+              <p className="text-xs text-muted-foreground">
+                Limited monthly admissions to maintain quality.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* CTA Button */}
         {isEnterprise ? (
           <Link
-            href={'/sales'}
+            href={'/contact'}
             className={cn(
-              buttonVariants({ variant: 'default' }),
-              'group flex items-center justify-center gap-1'
+              buttonVariants({ variant: 'outline', size: 'lg' }),
+              'group relative overflow-hidden border-2 font-semibold',
+              'transition-all duration-300 ease-out',
+              'hover:border-primary hover:bg-primary/5 hover:shadow-md',
+              'active:scale-[0.98]'
             )}
           >
-            Contact Sales
-            <ChevronRightIcon className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+            <span className="relative z-10 flex items-center gap-1">
+              Talk to Us
+              <ChevronRightIcon className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
           </Link>
         ) : isCurrent ? (
-          <Button variant="outline" disabled>
+          <Button variant="outline" size="lg" disabled className="font-semibold">
             Current Plan
           </Button>
         ) : (
           <Button
             variant="default"
+            size="lg"
             disabled={pending}
             onClick={() => onUpgrade?.(plan.id, `plan-${plan.id}-${selectedInterval}`)}
+            className={cn(
+              'group relative overflow-hidden font-semibold',
+              'bg-gradient-to-r from-primary to-primary/80',
+              'shadow-lg shadow-primary/25',
+              'transition-all duration-300 ease-out',
+              'hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]',
+              'active:scale-[0.98]'
+            )}
           >
-            {isOnTrial ? 'Upgrade' : 'Start Free Trial'}
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="relative z-10 flex items-center">
+              {isOnTrial ? 'Upgrade Now' : `Start ${trialDays}-Day Free Trial`}
+              <ChevronRightIcon className="ml-1 size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
           </Button>
         )}
 

@@ -38,7 +38,7 @@ export function PricingTable({
     <div className={cn('flex flex-col overflow-y-auto space-y-8 xl:space-y-12', className)} {...other}>
       <PriceIntervalSelector interval={selectedInterval} onIntervalChange={setSelectedInterval} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
         {plans.map((plan) => (
           <PricingCard
             key={plan.id}

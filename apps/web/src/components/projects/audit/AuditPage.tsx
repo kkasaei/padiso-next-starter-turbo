@@ -3,9 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { RefreshCw, Square, Loader2 } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Button } from '@workspace/ui/components/button';
 
 import {
   AuditIntroSection,
@@ -16,7 +14,7 @@ import {
   type AuditHistoryEntry,
 } from '@/components/modules/audit';
 
-import { useActiveOrganization } from '@/hooks/use-active-organization';
+import { useOrganization } from '@clerk/nextjs';
 
 import type { WebsiteAuditDto, PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
 
@@ -148,7 +146,7 @@ function toHistoryEntry(audit: WebsiteAuditDto): AuditHistoryEntry {
 export default function AuditPage() {
   const params = useParams();
   const projectId = params.projectId as string;
-  const organization = useActiveOrganization();
+  const { organization } = useOrganization();
 
   // ============================================================
   // DATA STATE
@@ -219,7 +217,7 @@ export default function AuditPage() {
   useEffect(() => {
     setIsLoading(true);
     loadAuditData();
-  }, [projectId, organization.id, loadAuditData]);
+  }, [projectId, organization?.id, loadAuditData]);
 
   // Start polling if audit is running
   useEffect(() => {
@@ -271,7 +269,7 @@ export default function AuditPage() {
   // ============================================================
   if (isLoading) {
     return (
-      <div className="relative flex h-full w-full min-w-0 flex-col overflow-y-auto rounded-2xl border-gray-200 dark:border-polar-800 px-4 py-6 md:border md:bg-white dark:md:bg-polar-900 md:px-8 md:shadow-xs">
+      <div className="relative flex h-full w-full min-w-0 flex-col overflow-y-auto">
         <div className="space-y-6">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-24" />
@@ -297,12 +295,11 @@ export default function AuditPage() {
   // RENDER: Main Content (Audit with Pages)
   // ============================================================
   return (
-    <div className="relative flex h-full w-full min-w-0 flex-col overflow-y-auto rounded-2xl border-gray-200 dark:border-polar-800 px-4 py-6 md:border md:bg-white dark:md:bg-polar-900 md:px-8 md:shadow-xs">
-      <div className="container mx-auto flex w-full flex-col gap-y-8 pb-16">
-        {/* Page Header */}
-        <header className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between md:gap-x-4">
-          <h1 className="text-2xl font-semibold">Website Audit</h1>
-          <div className="flex gap-2">
+    <div className="relative flex h-full w-full min-w-0 flex-col overflow-y-auto">
+      <div className="mx-auto flex w-full flex-col gap-y-8">
+
+
+     {/*  <div className="flex gap-2">
             {isAuditRunning ? (
               <Button
                 onClick={handleCancelAudit}
@@ -343,8 +340,7 @@ export default function AuditPage() {
                 )}
               </Button>
             )}
-          </div>
-        </header>
+          </div> */}
 
         {/* Progress Section */}
         <AuditProgressSection

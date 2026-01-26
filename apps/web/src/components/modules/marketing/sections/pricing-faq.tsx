@@ -17,155 +17,127 @@ const DATA = [
     question: `What pricing plans does ${APP_NAME} offer?`,
     answer: (
       <div>
-        We offer four plans designed to scale with your AI search visibility needs:
+        We offer two plans designed for different needs:
         <br />
         <ul className="mt-2 list-disc pl-5">
           <li>
-            <strong>Starter ($49/mo):</strong> Track and learn - For solo marketers starting their AI visibility journey
+            <strong>Growth Engine ($99/mo):</strong> Everything you need for AI visibility tracking, content generation, premium backlinks, and site audits.
           </li>
           <li>
-            <strong>Growth ($199/mo):</strong> Monitor and optimize - For growing brands ready to take action
-          </li>
-          <li>
-            <strong>Pro ($499/mo):</strong> Full platform - For serious teams and small agencies
-          </li>
-          <li>
-            <strong>Enterprise (Custom):</strong> Unlimited scale - For agencies and large brands with custom needs
+            <strong>Scale Partner (Custom):</strong> Tailormade solutions for agencies, enterprises, and teams.
           </li>
         </ul>
-        <p className="mt-2">Starter, Growth, and Pro plans include a 7-day free trial. No credit card required to start.</p>
+        <p className="mt-2">Growth Engine includes a 7-day free trial. No credit card required to start.</p>
       </div>
     )
   },
   {
-    question: "What's included in the Starter plan?",
+    question: "What's included in Growth Engine?",
     answer: (
       <div>
-        The Starter plan ($49/mo) includes everything you need to start tracking AI search visibility:
-        <ul className="mt-2 list-disc pl-5">
-          <li>1 brand with 25 prompts tracked</li>
-          <li>3 competitors and 3 keywords monitoring (coming soon)</li>
-          <li>Weekly Opportunities Report (10 opportunities)</li>
-          <li>Visibility dashboard with weekly refresh</li>
-          <li>Webhook support and weekly email digest</li>
-          <li>Email support (48hr response time)</li>
-        </ul>
-      </div>
-    )
-  },
-  {
-    question: 'What features are in the Growth plan?',
-    answer: (
-      <div>
-        The Growth plan ($199/mo) is our most popular option for scaling brands:
+        Growth Engine ($99/mo) includes everything for sustainable organic growth:
         <ul className="mt-2 list-disc pl-5">
           <li>5 brands with 150 prompts tracked</li>
-          <li>10 competitors and 10 keywords monitoring (coming soon)</li>
-          <li>Weekly Opportunities Report (30 opportunities)</li>
-          <li>Site audit (25 pages/mo per brand)</li>
+          <li>10 competitors & 50 keywords monitoring (coming soon)</li>
+          <li>30 SEO & AI-optimized articles published monthly</li>
+          <li>Premium backlinks from 2,500+ vetted partner sites - worth $800+/mo (coming soon)</li>
+          <li>Real-time AI-driven research & expert-backed content</li>
+          <li>Articles with citations, internal links & branded infographics</li>
+          <li>Reddit agent that builds your brand visibility & authority (coming soon)</li>
+          <li>JSON-LD schema markup for featured snippets</li>
+          <li>Technical SEO audit (Google & AI crawlability)</li>
           <li>Visibility dashboard with weekly refresh</li>
-          <li>Email support (24hr response time)</li>
+          <li>Integrates with WordPress, Webflow, Shopify, Wix & API</li>
+          <li>Webhook support & weekly email digest</li>
+          <li>Email support (24hr response)</li>
+          <li>Articles available in 20+ languages (add-on)</li>
         </ul>
       </div>
     )
   },
   {
-    question: 'What does the Pro plan offer?',
+    question: 'What is Scale Partner?',
     answer: (
       <div>
-        The Pro plan ($499/mo) is our full-featured option for serious teams and agencies:
+        Scale Partner is designed for agencies, enterprises, and teams with custom needs:
         <ul className="mt-2 list-disc pl-5">
-          <li>10 brands with 300 prompts tracked</li>
-          <li>100 competitors and 100 keywords monitoring (coming soon)</li>
-          <li>Weekly Opportunities Report (100 opportunities)</li>
-          <li>Site audit (100 pages/mo per brand)</li>
-          <li>Content generation (50 pieces/mo per brand)</li>
-          <li>Ask AI Assistant for insights</li>
-          <li>Priority live chat support (4hr) and email support (12hr)</li>
-        </ul>
-      </div>
-    )
-  },
-  {
-    question: 'What about the Enterprise plan?',
-    answer: (
-      <div>
-        The Enterprise plan is fully customizable for large organizations:
-        <ul className="mt-2 list-disc pl-5">
-          <li>Unlimited brands, prompts, competitors, and keywords</li>
-          <li>Daily visibility refresh with real-time alerts</li>
-          <li>Unlimited site audit and content generation</li>
-          <li>Ask AI Assistant for insights</li>
-          <li>Custom integrations and webhooks</li>
+          <li>Tailormade solution for your needs</li>
           <li>Dedicated Customer Success Manager</li>
-          <li>SLA guarantee (99.9% uptime)</li>
-          <li>Slack Connect support channel</li>
-          <li>Custom training and onboarding</li>
+          <li>Priority support</li>
         </ul>
-        <p className="mt-2">Contact us to discuss your organization&apos;s specific needs.</p>
+        <p className="mt-2">Contact us to discuss your specific requirements and get a custom quote.</p>
       </div>
     )
   },
   {
-    question: 'Do all plans include the free AEO Grader?',
+    question: `Does ${APP_NAME} work with my platform?`,
     answer: (
-      <p>
-        Yes! The free AEO Grader is available to everyone—no sign-up required. It gives you an instant visibility score in under 90 seconds. Paid plans unlock continuous monitoring, competitor tracking, historical data, and actionable recommendations to improve your AI search presence.
-      </p>
+      <div>
+        Yes! {APP_NAME} integrates with all major platforms:
+        <ul className="mt-2 list-disc pl-5">
+          <li><strong>WordPress:</strong> Direct integration for seamless publishing</li>
+          <li><strong>Webflow:</strong> Automatic publishing to your Webflow CMS</li>
+          <li><strong>Shopify:</strong> Optimize your store for search visibility</li>
+          <li><strong>Wix:</strong> Easy integration via our API</li>
+          <li><strong>Custom sites:</strong> API integration for any platform</li>
+        </ul>
+      </div>
     )
   },
   {
-    question: 'Does SearchFit work with Shopify, WooCommerce, and other platforms?',
+    question: 'How do the backlinks work?',
     answer: (
       <div>
-        Yes! {APP_NAME} works with any website or ecommerce platform:
+        Our backlink network is one of the most valuable parts of Growth Engine (coming soon):
         <ul className="mt-2 list-disc pl-5">
-          <li><strong>Shopify:</strong> Track how AI engines recommend your products vs competitors</li>
-          <li><strong>WooCommerce:</strong> Monitor your WordPress store&apos;s AI visibility</li>
-          <li><strong>BigCommerce:</strong> Optimize your catalog for AI search recommendations</li>
-          <li><strong>Magento:</strong> Enterprise ecommerce AI visibility tracking</li>
-          <li><strong>Custom stores:</strong> Any website with a public URL works</li>
+          <li>Access to 2,500+ vetted partner sites</li>
+          <li>Premium backlinks valued at $800+ per month</li>
+          <li>Natural link building that grows your domain authority</li>
         </ul>
         <p className="mt-2">
-          Ecommerce brands are seeing huge shifts as shoppers ask AI assistants &quot;What&apos;s the best [product] for [use case]?&quot; instead of searching Google. {APP_NAME} helps you win these AI-powered buying decisions.
+          This is why we position our service as an investment in long-term growth - the SEO benefits compound over time.
         </p>
       </div>
     )
   },
   {
-    question: 'Can I change plans later?',
-    answer: (
-      <p>
-        Absolutely! You can upgrade or downgrade anytime from your account settings. If you upgrade, you&apos;ll get immediate access to new features and be charged a prorated amount. If you downgrade, changes take effect at the end of your current billing cycle so you keep access to premium features until then.
-      </p>
-    )
-  },
-  {
-    question: 'Do you offer annual billing discounts?',
+    question: 'What is AI visibility tracking?',
     answer: (
       <div>
-        Yes! Save up to 20% with annual billing:
+        {APP_NAME} tracks how your brand appears in AI search results (ChatGPT, Perplexity, etc.):
         <ul className="mt-2 list-disc pl-5">
-          <li><strong>Starter:</strong> $39/mo billed annually (save $120/year)</li>
-          <li><strong>Growth:</strong> $159/mo billed annually (save $480/year)</li>
-          <li><strong>Pro:</strong> $399/mo billed annually (save $1,200/year)</li>
+          <li>Monitor 150 prompts to see when AI recommends your brand</li>
+          <li>Track competitors to understand your market position</li>
+          <li>Visibility dashboard gives you a clear picture of your AI presence</li>
         </ul>
       </div>
     )
   },
   {
-    question: 'Is there a setup fee or long-term commitment?',
+    question: 'Can I cancel anytime?',
     answer: (
       <p>
-        No setup fees, ever. All plans are month-to-month with no long-term contracts. Start with a 7-day free trial, and cancel anytime if {APP_NAME} isn&apos;t the right fit. Most brands see visibility improvements within 30 days.
+        Yes! No long-term contracts. Cancel anytime from your account settings. You&apos;ll keep access until the end of your current billing cycle.
       </p>
+    )
+  },
+  {
+    question: 'Do you offer annual billing?',
+    answer: (
+      <div>
+        Yes! Save 20% with annual billing:
+        <ul className="mt-2 list-disc pl-5">
+          <li><strong>Growth Engine:</strong> $79/mo billed annually (save $240/year)</li>
+        </ul>
+        <p className="mt-2">Contact us for annual pricing on Scale Partner.</p>
+      </div>
     )
   },
   {
     question: 'What payment methods do you accept?',
     answer: (
       <p>
-        We use <strong>Stripe</strong> for secure payment processing. We accept all major credit cards (Visa, Mastercard, American Express, Discover) and offer annual billing with a discount. Enterprise customers can request invoice-based billing. Your payment details are never stored on our servers—Stripe handles everything securely with bank-level encryption.
+        We use <strong>Stripe</strong> for secure payment processing. We accept all major credit cards (Visa, Mastercard, American Express, Discover). Scale Partner customers can request invoice-based billing.
       </p>
     )
   }

@@ -7,54 +7,26 @@ export type PlanFeature = string | { text: string; badge: string };
 // -1 = unlimited, 0 = feature not included
 
 export const PLAN_LIMITS = {
-  starter: {
-    // Count-based limits
-    maxBrands: 1,
-    maxPrompts: 25,
-    maxCompetitors: 3, // Coming soon
-    maxKeywords: 3, // Coming soon
-    maxIntegrations: 1,
-    // Usage-based limits (monthly)
-    maxInsightsQueries: 10, // 10 opportunities
-    maxSiteAuditPages: 0,
-    maxContentGen: 0,
-    maxImageGen: 0,
-    maxAudioMinutes: 0,
-    maxApiCalls: 0,
-  },
   growth: {
     maxBrands: 5,
     maxPrompts: 150,
-    maxCompetitors: 10, // Coming soon
-    maxKeywords: 10, // Coming soon
+    maxCompetitors: 10,
+    maxKeywords: 10,
     maxIntegrations: 5,
-    maxInsightsQueries: 30, // 30 opportunities
-    maxSiteAuditPages: 25, // 25 pages/mo per brand
-    maxContentGen: 0,
+    maxInsightsQueries: 30,
+    maxSiteAuditPages: 25,
+    maxContentGen: 30,
     maxImageGen: 0,
     maxAudioMinutes: 0,
-    maxApiCalls: 0,
+    maxApiCalls: -1,
   },
-  pro: {
-    maxBrands: 10,
-    maxPrompts: 300,
-    maxCompetitors: 100, // Coming soon
-    maxKeywords: 100, // Coming soon
-    maxIntegrations: -1,
-    maxInsightsQueries: 100, // 100 opportunities
-    maxSiteAuditPages: 100, // 100 pages/mo per brand
-    maxContentGen: 50, // 50 pieces/mo per brand
-    maxImageGen: 0,
-    maxAudioMinutes: 0,
-    maxApiCalls: 0,
-  },
-  enterprise: {
+  scale: {
     maxBrands: -1,
     maxPrompts: -1,
     maxCompetitors: -1,
     maxKeywords: -1,
     maxIntegrations: -1,
-    maxInsightsQueries: -1, // Unlimited opportunities
+    maxInsightsQueries: -1,
     maxSiteAuditPages: -1,
     maxContentGen: -1,
     maxImageGen: -1,
@@ -67,175 +39,84 @@ export type PlanId = keyof typeof PLAN_LIMITS;
 
 // Plan pricing configuration
 export const PLANS = {
-  starter: {
-    id: 'starter',
-    name: 'Starter',
-    description: 'Track and learn - For solo marketers starting their AI visibility journey.',
-    trialDays: 7,
-    prices: {
-      month: {
-        id: 'price_starter_month', //env.NEXT_PUBLIC_BILLING_PRICE_STARTER_MONTH_ID || 'price_starter_month',
-        amount: 49,
-        currency: 'USD',
-      },
-      year: {
-        id: 'price_starter_year', //env.NEXT_PUBLIC_BILLING_PRICE_STARTER_YEAR_ID || 'price_starter_year',
-        amount: 468, // $39/mo
-        currency: 'USD',
-      },
-    },
-    features: [
-      '1 brand',
-      '25 prompts tracked',
-      { text: '3 competitors', badge: 'Coming soon' },
-      { text: '3 keywords', badge: 'Coming soon' },
-      'Weekly Opportunities Report (10 opportunities)',
-      'Weekly visibility refresh',
-      'Visibility dashboard',
-      'Webhook support',
-      'Weekly email digest',
-      'Email support (48hr)',
-    ],
-    notIncluded: [
-      'Site audit',
-      'Content generation',
-      'Ask AI Assistant',
-      'Live chat support',
-      'Dedicated Customer Success Manager',
-      'SLA guarantee',
-    ],
-  },
   growth: {
     id: 'growth',
-    name: 'Growth',
-    description: 'Monitor and optimize - For growing brands ready to take action.',
+    name: 'Growth Engine',
+    tagline: 'For Smart Entrepreneurs',
+    description: 'Everything you need to build lasting organic visibility and drive sustainable growth.',
     trialDays: 7,
     recommended: true,
     prices: {
       month: {
-        id: 'price_growth_month', //env.NEXT_PUBLIC_BILLING_PRICE_GROWTH_MONTH_ID || 'price_growth_month',
-        amount: 199,
+        id: 'price_growth_month',
+        amount: 99,
         currency: 'USD',
+        originalAmount: 299,
       },
       year: {
-        id: 'price_growth_year', //env.NEXT_PUBLIC_BILLING_PRICE_GROWTH_YEAR_ID || 'price_growth_year',
-        amount: 1908, // $159/mo
+        id: 'price_growth_year',
+        amount: 948,
         currency: 'USD',
+        originalAmount: 3588,
       },
     },
     features: [
-      '5 brands',
-      '150 prompts tracked',
-      { text: '10 competitors', badge: 'Coming soon' },
-      { text: '10 keywords', badge: 'Coming soon' },
-      'Weekly Opportunities Report (30 opportunities)',
-      'Weekly visibility refresh',
-      'Visibility dashboard',
-      'Site audit (25 pages/mo per brand)',
-      'Webhook support',
-      'Weekly email digest',
-      'Email support (24hr)',
-    ],
-    notIncluded: [
-      'Content generation',
-      'Ask AI Assistant',
-      'Live chat support',
-      'Daily visibility refresh',
-      'Dedicated Customer Success Manager',
-      'SLA guarantee',
+      '5 brands with 150 prompts tracked',
+      { text: '10 competitors & 50 keywords monitoring', badge: 'Coming soon' },
+      '30 SEO & AI-optimized articles published monthly',
+      { text: 'Premium backlinks from 2,500+ vetted partner sites (worth $800+/mo)', badge: 'Coming soon' },
+      'Real-time AI-driven research & expert-backed content',
+      'Articles with citations, internal links & branded infographics',
+      { text: 'Reddit agent that builds your brand visibility & authority', badge: 'Coming soon' },
+      'JSON-LD schema markup for featured snippets',
+      'Technical SEO audit (Google & AI crawlability)',
+      'Visibility dashboard with weekly refresh',
+      'Integrates with WordPress, Webflow, Shopify, Wix & API',
+      'Webhook support & weekly email digest',
+      'Email support (24hr response)',
+      { text: 'Articles available in 20+ languages', badge: 'Add-on' },
     ],
   },
-  pro: {
-    id: 'pro',
-    name: 'Pro',
-    description: 'Full platform - For serious teams and small agencies.',
-    trialDays: 7,
-    prices: {
-      month: {
-        id: 'price_pro_month', //env.NEXT_PUBLIC_BILLING_PRICE_PRO_MONTH_ID || 'price_pro_month',
-        amount: 499,
-        currency: 'USD',
-      },
-      year: {
-        id: 'price_pro_year', //env.NEXT_PUBLIC_BILLING_PRICE_PRO_YEAR_ID || 'price_pro_year',
-        amount: 4788, // $399/mo
-        currency: 'USD',
-      },
-    },
-    features: [
-      '10 brands',
-      '300 prompts tracked',
-      { text: '100 competitors', badge: 'Coming soon' },
-      { text: '100 keywords', badge: 'Coming soon' },
-      'Weekly Opportunities Report (100 opportunities)',
-      'Weekly visibility refresh',
-      'Visibility dashboard',
-      'Site audit (100 pages/mo per brand)',
-      'Content generation (50 pieces/mo per brand)',
-      'Ask AI Assistant',
-      'Webhook support',
-      'Weekly email digest',
-      'Priority live chat support (4hr)',
-      'Email support (12hr)',
-    ],
-    notIncluded: [
-      'Daily visibility refresh',
-      'Dedicated Customer Success Manager',
-      'SLA guarantee',
-      'Slack Connect support channel',
-      'Custom training & onboarding',
-    ],
-  },
-  enterprise: {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'Unlimited scale - For agencies and large brands with custom needs.',
+  scale: {
+    id: 'scale',
+    name: 'Scale Partner',
+    tagline: 'For Agencies, Enterprises & Teams',
+    description: 'Custom solutions for agencies, enterprises, and businesses serving multiple clients.',
     isEnterprise: true,
     prices: {
       month: {
-        id: 'price_enterprise_month', //env.NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_MONTH_ID || 'price_enterprise_month',
-        amount: 1500,
+        id: 'price_scale_month',
+        amount: 0,
         currency: 'USD',
       },
       year: {
-        id: 'price_enterprise_year', //env.NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_YEAR_ID || 'price_enterprise_year',
-        amount: 18000,
+        id: 'price_scale_year',
+        amount: 0,
         currency: 'USD',
       },
     },
     features: [
-      'Unlimited brands',
-      'Unlimited prompts',
-      'Unlimited competitors',
-      'Unlimited keywords',
-      'Unlimited Opportunities Report',
-      'Daily visibility refresh',
-      'Visibility dashboard',
-      'Unlimited site audit',
-      'Unlimited content generation',
-      'Ask AI Assistant',
-      'Custom integrations',
-      'Webhook support',
-      'Real-time email alerts',
-      'Priority live chat support (1hr)',
-      'Email support (4hr)',
-      'Dedicated Customer Success Manager',
-      'SLA guarantee (99.9% uptime)',
-      'Slack Connect support channel',
-      'Custom training & onboarding',
+      'Tailormade solution for your needs',
+      'Customer Success Manager',
+      'Priority support',
     ],
   },
 } as const;
 
 export function getPlanById(planId: string): typeof PLANS[PlanId] | undefined {
-  // Extract base plan id (e.g., "starter" from "starter_monthly" or "price_starter_month")
+  if (planId in PLANS) {
+    return PLANS[planId as PlanId];
+  }
   const basePlanId = planId.split('_')[0] as PlanId;
   return PLANS[basePlanId];
 }
 
 export function getPlanLimits(planId: string) {
+  if (planId in PLAN_LIMITS) {
+    return PLAN_LIMITS[planId as PlanId];
+  }
   const basePlanId = planId.split('_')[0] as PlanId;
-  return PLAN_LIMITS[basePlanId] || PLAN_LIMITS.starter;
+  return PLAN_LIMITS[basePlanId] || PLAN_LIMITS.growth;
 }
 
 export function getPlanIdFromPriceId(priceId: string): PlanId {
@@ -244,7 +125,7 @@ export function getPlanIdFromPriceId(priceId: string): PlanId {
       return planId as PlanId;
     }
   }
-  return 'starter'; // Default fallback
+  return 'growth';
 }
 
 export function getIntervalFromPriceId(priceId: string): 'month' | 'year' {
@@ -253,6 +134,3 @@ export function getIntervalFromPriceId(priceId: string): 'month' | 'year' {
   }
   return 'month';
 }
-
-
-
