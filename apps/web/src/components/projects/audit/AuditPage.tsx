@@ -20,6 +20,8 @@ import {
   X,
   Sparkles,
   ArrowLeft,
+  Link2,
+  Image,
 } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Button } from '@workspace/ui/components/button';
@@ -33,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select';
+
 import { cn } from '@/lib/utils';
 import { useOrganization } from '@clerk/nextjs';
 
@@ -41,7 +44,7 @@ import type { WebsiteAuditDto, PageAuditDto } from '@/lib/shcmea/types/dtos/audi
 // ============================================================
 // TYPES
 // ============================================================
-type AuditTab = 'overview' | 'pages';
+type AuditTab = 'overview' | 'pages' | 'links' | 'assets';
 
 interface PageReportData {
   id: string;
@@ -628,7 +631,7 @@ export default function AuditPage() {
 
   // Get tab from URL query param
   const tabFromUrl = searchParams.get('tab') as AuditTab | null;
-  const initialTab: AuditTab = tabFromUrl && ['overview', 'pages'].includes(tabFromUrl) ? tabFromUrl : 'overview';
+  const initialTab: AuditTab = tabFromUrl && ['overview', 'pages', 'links', 'assets'].includes(tabFromUrl) ? tabFromUrl : 'overview';
 
   const [activeTab, setActiveTab] = useState<AuditTab>(initialTab);
   const [audit, setAudit] = useState<WebsiteAuditDto | null>(null);
@@ -749,6 +752,20 @@ export default function AuditPage() {
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
                 Pages ({pages.length})
+              </TabsTrigger>
+              <TabsTrigger
+                value="links"
+                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
+              >
+                Links
+                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
+              </TabsTrigger>
+              <TabsTrigger
+                value="assets"
+                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
+              >
+                Assets
+                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1106,6 +1123,46 @@ export default function AuditPage() {
                   <PageReportPanel page={selectedPage} onClose={() => setSelectedPage(null)} />
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Links Tab */}
+          <TabsContent value="links" className="mt-0">
+            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+              <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                <div className="flex flex-col items-center justify-center gap-y-6 py-24 md:py-32">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10">
+                    <Link2 className="h-8 w-8 text-blue-500" />
+                  </div>
+                  <div className="flex flex-col items-center gap-y-2 px-4">
+                    <h3 className="text-lg font-semibold">Link Analysis</h3>
+                    <p className="dark:text-polar-500 text-gray-500 text-center max-w-md text-sm">
+                      View and analyze all internal and external links across your website. Identify broken links, redirects, and optimization opportunities.
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="rounded-lg">Coming Soon</Badge>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Assets Tab */}
+          <TabsContent value="assets" className="mt-0">
+            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+              <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                <div className="flex flex-col items-center justify-center gap-y-6 py-24 md:py-32">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/10">
+                    <Image className="h-8 w-8 text-purple-500" />
+                  </div>
+                  <div className="flex flex-col items-center gap-y-2 px-4">
+                    <h3 className="text-lg font-semibold">Asset Management</h3>
+                    <p className="dark:text-polar-500 text-gray-500 text-center max-w-md text-sm">
+                      Monitor images, scripts, and other assets. Track file sizes, loading performance, and identify optimization opportunities.
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="rounded-lg">Coming Soon</Badge>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

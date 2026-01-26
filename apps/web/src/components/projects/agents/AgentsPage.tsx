@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   Search,
@@ -24,6 +24,7 @@ import {
   Eye,
   X,
   Loader2,
+  MessageSquare,
 } from 'lucide-react'
 import { Button } from '@workspace/ui/components/button'
 import { Checkbox } from '@workspace/ui/components/checkbox'
@@ -52,10 +53,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { toast } from 'sonner'
 
 import type { AgentDto, AgentStatus, AgentTrigger } from '@/lib/shcmea/types/agent'
 import { formatDistanceToNow } from 'date-fns'
+
+// Tab type
+type AgentsTab = 'agents' | 'prompts'
 
 // Page size options
 const PAGE_SIZE_OPTIONS = [10, 20, 50] as const
@@ -113,6 +118,13 @@ const formatLastRun = (date: Date | null): string => {
 
 export default function AgentsPage({ projectId }: { projectId: string }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  // Get tab from URL query param
+  const tabFromUrl = searchParams.get('tab') as AgentsTab | null
+  const initialTab: AgentsTab = tabFromUrl && ['agents', 'prompts'].includes(tabFromUrl) ? tabFromUrl : 'agents'
+  const [activeTab, setActiveTab] = useState<AgentsTab>(initialTab)
+
   // State
   const [agents, setAgents] = useState<AgentDto[]>([])
   const [total, setTotal] = useState(0)
@@ -330,11 +342,41 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
   return (
     <div className="relative flex min-w-0 flex-2 flex-col md:overflow-y-auto h-full w-full">
       <div className="mx-auto flex w-full flex-col">
-       
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AgentsTab)} className="w-full">
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+            <TabsList className="bg-transparent ring-0 dark:bg-transparent dark:ring-0 p-1 gap-2 w-max md:w-auto">
+              <TabsTrigger
+                value="agents"
+                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
+              >
+                Agents
+              </TabsTrigger>
+              <TabsTrigger
+                value="prompts"
+                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
+              >
+                Prompts
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-        {/* Table Card */}
-        <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-          <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between" />
+          {/* Agents Tab */}
+          <TabsContent value="agents" className="mt-0">
+            {/* Table Card */}
+            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+              <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
+                <div className="flex w-full flex-col gap-y-2">
+                  <span className="text-lg font-semibold">AI Agents</span>
+                  <p className="text-sm text-muted-foreground">Manage and monitor your automated AI agents.</p>
+                </div>
+                <div className="flex shrink-0 flex-row items-center gap-2">
+                  <Button size="sm" onClick={() => router.push(`/dashboard/projects/${projectId}/agents/new`)} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    New Agent
+                  </Button>
+                </div>
+              </div>
           <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
             {/* Search Bar and Filters */}
             <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800">
@@ -761,6 +803,31 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
             </div>
           </div>
         </div>
+          </TabsContent>
+
+          {/* Prompts Tab */}
+          <TabsContent value="prompts" className="mt-0">
+            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+              <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                <div className="flex flex-col items-center justify-center gap-y-6 py-24 md:py-32">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                    <MessageSquare className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="flex flex-col items-center gap-y-2 px-4">
+                    <h3 className="text-lg font-semibold">No prompts yet</h3>
+                    <p className="dark:text-polar-500 text-gray-500 text-center max-w-md text-sm">
+                      Create and manage prompts for your AI agents. Define custom instructions, templates, and reusable content.
+                    </p>
+                  </div>
+                  <Button onClick={() => toast.info('Add Prompt modal coming soon')} className="gap-2 mt-2">
+                    <Plus className="h-4 w-4" />
+                    Add Prompt
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Delete Agent Confirmation Modal */}

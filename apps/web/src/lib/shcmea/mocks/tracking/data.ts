@@ -75,3 +75,37 @@ export const INTENT_LABELS: Record<KeywordIntent, string> = {
   commercial: 'Commercial',
 }
 
+// Mock prompts data
+export interface MockTrackedPrompt {
+  id: string
+  projectId: string
+  prompt: string
+  notes: string | null
+  lastVisibilityScore: number | null
+  lastMentionPosition: number | null
+  lastScanDate: Date | null
+  isActive: boolean
+  scanStatus: 'IDLE' | 'SCANNING' | 'COMPLETED' | 'FAILED' | null
+  targetLocation: string | null
+  targetLanguage: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export const MOCK_PROMPTS: MockTrackedPrompt[] = [
+  {
+    id: 'prompt-001',
+    projectId: 'project-001',
+    prompt: 'Best project management software for remote teams',
+    notes: 'Tracking visibility for our main product keyword',
+    lastVisibilityScore: 78,
+    lastMentionPosition: 3,
+    lastScanDate: new Date('2026-01-25'),
+    isActive: true,
+    scanStatus: 'COMPLETED',
+    targetLocation: 'United States',
+    targetLanguage: 'en',
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-25'),
+  },
+]

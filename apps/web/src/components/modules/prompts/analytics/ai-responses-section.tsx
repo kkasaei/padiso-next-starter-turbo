@@ -23,7 +23,7 @@ import {
   SelectValue,
   } from '@workspace/ui/components/select'
 
-import { useAnalyticsDateRange } from '@/hooks/use-analytics-date-range'
+import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
 import type { PromptAnalyticsData, MentionSortKey, SortDirection } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { COMPETITION_PROVIDERS, MENTION_TABLE_COLUMNS, PAGE_SIZE_OPTIONS } from './constants'
 import { getSentimentColor, getProviderLogo, getPageNumbers } from './helpers'

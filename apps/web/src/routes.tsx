@@ -5,7 +5,7 @@ import {
   Wrench,
   SparkleIcon,
 } from "@phosphor-icons/react/dist/ssr"
-import { BotIcon, ChartColumnBigIcon } from "lucide-react"
+import { BlocksIcon, BotIcon, ChartColumnBigIcon, } from "lucide-react"
 
 export const baseURL = process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000';
 
@@ -36,6 +36,7 @@ export const projectNavItems = [
   { id: "agents", label: "Agents", icon: BotIcon, path: "/agents" },
   { id: "studio", label: "Studio", icon: SparkleIcon, path: "/studio" },
   { id: "tools", label: "Tools", icon: Wrench, path: "/tools" },
+  { id: 'integrations', label: "Integrations", icon: BlocksIcon, path: "/integrations" },
   { id: "settings", label: "Settings", icon: GearSix, path: "/settings" },
 ] as const;
 

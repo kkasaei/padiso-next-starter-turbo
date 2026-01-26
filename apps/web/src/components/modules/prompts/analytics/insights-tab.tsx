@@ -101,7 +101,8 @@ export function InsightsTab({ analyticsData, projectId }: InsightsTabProps) {
   const [showBulkAddModal, setShowBulkAddModal] = useState(false)
   const [bulkAddProgress, setBulkAddProgress] = useState(0)
 
-  // Bulk create opportunities
+  // Create opportunities state
+  const [isCreating, setIsCreating] = useState(false)
   const [isBulkCreating, setIsBulkCreating] = useState(false)
 
   const handleAddToOpportunities = () => {

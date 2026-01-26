@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 
-import { useAnalyticsDateRange } from '@/hooks/use-analytics-date-range'
+import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
 import type { PromptAnalyticsData, CompetitorItem, MarketSegment } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 import { CompetitorMentionsChart } from './competitor-mentions-chart'

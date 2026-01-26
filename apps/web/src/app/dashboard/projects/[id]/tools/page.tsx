@@ -1,3 +1,5 @@
+import ToolsPageContent from '@/components/projects/tools/llmtext-generator/page'
+
 type PageProps = {
   params: Promise<{ id: string }>
 }
@@ -11,7 +13,7 @@ export default async function ToolsPage({ params }: PageProps) {
         <h1 className="text-2xl font-semibold tracking-tight">Tools</h1>
       </div>
       <div className="flex flex-1 p-4">
-        <p className="text-muted-foreground">Tools content coming soon</p>
+        <ToolsPageContent projectId={id} />
       </div>
   </div>
   )

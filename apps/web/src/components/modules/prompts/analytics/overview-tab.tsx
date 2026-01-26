@@ -9,7 +9,7 @@
 import { BarChart3, Target, Clock, Tag, AlertCircle } from 'lucide-react'
 import { TabsContent } from '@workspace/ui/components/tabs'
 
-import { useAnalyticsDateRange } from '@/hooks/use-analytics-date-range'
+import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
 import type { PromptAnalyticsData, VisibilityDataPoint } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
 import type { TrackedPrompt } from '@/components/modules/prompts/types'
 
