@@ -1,0 +1,88 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
+import { ProjectsService } from './projects.service';
+import { CreateProjectDto, UpdateProjectDto } from './dto';
+
+@ApiTags('projects')
+@Controller('projects')
+export class ProjectsController {
+  constructor(private readonly projectsService: ProjectsService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new project' })
+  @ApiBody({ type: CreateProjectDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The project has been successfully created.',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid input data.' })
+  create(@Body() createProjectDto: CreateProjectDto) {
+    return this.projectsService.create(createProjectDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all projects' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all projects.',
+  })
+  findAll() {
+    return this.projectsService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a project by ID' })
+  @ApiParam({ name: 'id', description: 'Project UUID', type: 'string' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the project.',
+  })
+  @ApiResponse({ status: 404, description: 'Project not found.' })
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a project' })
+  @ApiParam({ name: 'id', description: 'Project UUID', type: 'string' })
+  @ApiBody({ type: UpdateProjectDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The project has been successfully updated.',
+  })
+  @ApiResponse({ status: 404, description: 'Project not found.' })
+  @ApiResponse({ status: 400, description: 'Invalid input data.' })
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    return this.projectsService.update(id, updateProjectDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a project' })
+  @ApiParam({ name: 'id', description: 'Project UUID', type: 'string' })
+  @ApiResponse({
+    status: 200,
+    description: 'The project has been successfully deleted.',
+  })
+  @ApiResponse({ status: 404, description: 'Project not found.' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.remove(id);
+  }
+}
