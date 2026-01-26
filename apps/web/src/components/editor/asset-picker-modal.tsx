@@ -97,15 +97,18 @@ export function AssetPickerModal({
     filterType || 'ALL'
   );
   const [assets, setAssets] = React.useState<ProjectAssetDto[]>([]);
-
-  // Fetch assets action
-  
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // Fetch assets when modal opens or filters change
   React.useEffect(() => {
     if (open && projectId) {
-      const typeFilter = activeTab === 'ALL' ? 'all' : activeTab;
-      
+      setIsLoading(true);
+      // Simulate loading - in a real app this would fetch from API
+      const timer = setTimeout(() => {
+        setAssets([]); // No assets in mock mode
+        setIsLoading(false);
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [open, projectId, activeTab, searchQuery]);
 
@@ -123,8 +126,6 @@ export function AssetPickerModal({
       onOpenChange(false);
     }
   };
-
-  const isLoading = fetchStatus === 'executing';
 
   // Filter types to show based on filterType prop
   const availableTypes: (ProjectAssetMediaType | 'ALL')[] = filterType

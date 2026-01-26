@@ -178,17 +178,117 @@ export default function ContentListPage() {
     if (projectId) {
       // Load tasks
       const taskTimer = setTimeout(() => {
-        setTasks([])
+        setTasks([
+          {
+            id: 'task-1',
+            title: 'Optimize meta descriptions for AI search',
+            description: 'Review and update meta descriptions across key landing pages to improve AI visibility scores.',
+            source: 'AI Insights',
+            status: 'in_progress',
+            priority: 'high',
+            createdAt: new Date('2026-01-20'),
+            updatedAt: new Date('2026-01-24'),
+          },
+          {
+            id: 'task-2',
+            title: 'Create FAQ schema markup',
+            description: 'Add structured FAQ data to product pages to enhance visibility in AI-powered search results.',
+            source: 'SEO Audit',
+            status: 'new',
+            priority: 'medium',
+            createdAt: new Date('2026-01-22'),
+            updatedAt: new Date('2026-01-22'),
+          },
+          {
+            id: 'task-3',
+            title: 'Update brand messaging guide',
+            description: 'Refresh brand voice and key messaging points based on sentiment analysis feedback.',
+            source: 'Brand Analysis',
+            status: 'completed',
+            priority: 'low',
+            createdAt: new Date('2026-01-15'),
+            updatedAt: new Date('2026-01-23'),
+          },
+        ])
         setTasksLoading(false)
       }, 300)
       // Load content
       const contentTimer = setTimeout(() => {
-        setContentItems([])
+        setContentItems([
+          {
+            id: 'content-1',
+            title: 'The Complete Guide to AI Visibility: How to Get Your Brand Mentioned by ChatGPT, Perplexity, and Gemini',
+            type: 'blog',
+            status: 'published',
+            author: 'Marketing Team',
+            publishedAt: new Date('2026-01-15'),
+            createdAt: new Date('2026-01-10'),
+            updatedAt: new Date('2026-01-15'),
+          },
+          {
+            id: 'content-2',
+            title: '10 Ways to Improve Your Brand Recognition in AI Search',
+            type: 'article',
+            status: 'draft',
+            author: 'Content Writer',
+            publishedAt: null,
+            createdAt: new Date('2026-01-20'),
+            updatedAt: new Date('2026-01-24'),
+          },
+          {
+            id: 'content-3',
+            title: 'Product Launch Landing Page',
+            type: 'landing_page',
+            status: 'scheduled',
+            author: 'Design Team',
+            publishedAt: new Date('2026-02-01'),
+            createdAt: new Date('2026-01-18'),
+            updatedAt: new Date('2026-01-22'),
+          },
+          {
+            id: 'content-4',
+            title: 'AI Visibility Score Announcement',
+            type: 'social',
+            status: 'published',
+            author: 'Social Media Manager',
+            publishedAt: new Date('2026-01-12'),
+            createdAt: new Date('2026-01-12'),
+            updatedAt: new Date('2026-01-12'),
+          },
+        ])
         setContentLoading(false)
       }, 300)
       // Load assets
       const assetTimer = setTimeout(() => {
-        setAssets([])
+        setAssets([
+          {
+            id: 'asset-1',
+            name: 'hero-banner.png',
+            type: 'image',
+            size: 2456000,
+            url: '/placeholder.jpg',
+            createdAt: new Date('2026-01-10'),
+            updatedAt: new Date('2026-01-10'),
+          },
+          {
+            id: 'asset-2',
+            name: 'brand-guidelines.pdf',
+            type: 'document',
+            size: 5890000,
+            url: '/placeholder.jpg',
+            createdAt: new Date('2026-01-08'),
+            updatedAt: new Date('2026-01-08'),
+          },
+          {
+            id: 'asset-3',
+            name: 'product-demo.mp4',
+            type: 'video',
+            size: 45000000,
+            url: '/placeholder.jpg',
+            createdAt: new Date('2026-01-05'),
+            updatedAt: new Date('2026-01-05'),
+          },
+        ])
         setAssetsLoading(false)
       }, 300)
       return () => {
