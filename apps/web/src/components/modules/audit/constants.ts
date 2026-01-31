@@ -1,7 +1,7 @@
 /**
  * Audit Module Constants
  *
- * Configuration and constants for the website audit feature
+ * Configuration and constants for the technical audit feature
  */
 
 import {

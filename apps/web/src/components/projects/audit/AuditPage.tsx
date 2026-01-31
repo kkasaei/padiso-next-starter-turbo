@@ -714,7 +714,7 @@ export default function AuditPage() {
           <Globe className="h-12 w-12 mx-auto text-muted-foreground" />
           <h2 className="text-xl font-semibold">No audits yet</h2>
           <p className="text-muted-foreground max-w-md">
-            Run your first website audit to analyze SEO, performance, security, and more.
+            Run your first technical audit to analyze SEO, performance, security, and more.
           </p>
           <Button onClick={handleRunAudit} disabled={isStarting}>
             {isStarting ? (
@@ -777,7 +777,7 @@ export default function AuditPage() {
               <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
                 <div className="flex w-full flex-col gap-y-2">
                   <span className="text-lg font-semibold">Latest Audit</span>
-                  <p className="text-sm text-muted-foreground">Track the progress of your most recent website audit.</p>
+                  <p className="text-sm text-muted-foreground">Track the progress of your most recent technical audit.</p>
                 </div>
                 <div className="flex shrink-0 flex-row items-center gap-2">
                   <Button size="sm" onClick={handleRunAudit} disabled={isStarting} className="gap-2">

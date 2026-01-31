@@ -42,7 +42,7 @@ export const MENU_LINKS = [
         external: false
       },
       {
-        title: 'Website Audit',
+        title: 'Technical Audit',
         description: 'Comprehensive SEO analysis and optimization recommendations',
         icon: <FileBarChartIcon className="size-5 shrink-0" />,
         href: '#',
@@ -127,7 +127,7 @@ export const FOOTER_LINKS = [
     links: [
       { name: 'AEO Tracking', href: '#', external: false },
       { name: 'AI Content', href: '#', external: false },
-      { name: 'Website Audit', href: '#', external: false },
+      { name: 'Technical Audit', href: '#', external: false },
       { name: 'Insight Engine', href: '#', external: false },
       { name: 'Visual Workflow', href: '#', external: false },
       { name: 'Integrations', href: '#', external: false },

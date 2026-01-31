@@ -27,7 +27,7 @@ export function StoryVision(): React.JSX.Element {
             <p>
               Three tools working together: real-time AI tracking to see where
               you rank, intelligent content creation to stay ahead, and deep
-              website audits to fix what&apos;s holding you back. This is SEO
+              technical audits to fix what&apos;s holding you back. This is SEO
               for the AI era.
             </p>
           </div>

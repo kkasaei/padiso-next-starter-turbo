@@ -247,7 +247,7 @@ export function HeroIllustration(): React.JSX.Element {
               className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
             >
               <FileBarChartIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
-              <span className="whitespace-nowrap">Website Audit</span>
+              <span className="whitespace-nowrap">Technical Audit</span>
             </UnderlinedTabsTrigger>
             <UnderlinedTabsTrigger
               value="insight-engine"
@@ -316,7 +316,7 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen3-light.png"
                 width="1328"
                 height="727"
-                alt="Website Audit screenshot"
+                alt="Technical Audit screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -324,7 +324,7 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen3-dark.png"
                 width="1328"
                 height="727"
-                alt="Website Audit screenshot"
+                alt="Technical Audit screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>

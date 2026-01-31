@@ -220,7 +220,7 @@ export function AuditMetricsGrid({ audit, pages, projectId }: AuditMetricsGridPr
       {
         id: 'pages',
         title: 'Pages Scanned',
-        tooltip: 'Total number of pages discovered and analyzed during the website audit.',
+        tooltip: 'Total number of pages discovered and analyzed during the technical audit.',
         value: calculated.pagesScanned,
         suffix: '',
         change: `+${Math.max(1, Math.round(calculated.pagesScanned * 0.05))}`,

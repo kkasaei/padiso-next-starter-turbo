@@ -1,7 +1,7 @@
 /**
  * Audit Module Components
  *
- * Page audit and website audit functionality.
+ * Page audit and technical audit functionality.
  */
 
 // ============================================================
@@ -48,7 +48,7 @@ export {
 export { ScoreCircle, ScoreCardsGrid, IssuesSummaryCards } from './score-cards';
 
 // ============================================================
-// COMPONENTS - Website Audit Page
+// COMPONENTS - Technical Audit Page
 // ============================================================
 export { AuditIntroSection } from './audit-intro-section';
 export { AuditHeader } from './audit-header';

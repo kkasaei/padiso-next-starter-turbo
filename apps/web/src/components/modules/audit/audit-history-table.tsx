@@ -162,7 +162,7 @@ export function AuditHistoryTable({ history }: AuditHistoryTableProps) {
         <div className="flex w-full flex-col gap-y-2">
           <span className="text-lg font-semibold">Audit History</span>
           <p className="text-sm text-muted-foreground">
-            Log of all previous website audits
+            Log of all previous technical audits
           </p>
         </div>
       </div>

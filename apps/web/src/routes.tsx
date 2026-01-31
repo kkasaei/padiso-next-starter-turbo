@@ -5,7 +5,7 @@ import {
   Wrench,
   SparkleIcon,
 } from "@phosphor-icons/react/dist/ssr"
-import { BlocksIcon, BotIcon, ChartColumnBigIcon, } from "lucide-react"
+import { ChartNoAxesCombinedIcon, TowerControlIcon, GlobeIcon, } from "lucide-react"
 
 export const baseURL = process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000';
 
@@ -31,12 +31,12 @@ export const routes = {
 // Navigation items for project detail pages
 export const projectNavItems = [
   { id: "overview", label: "Overview", icon: House, path: "" },
-  { id: "tracking", label: "Tracking", icon: ChartColumnBigIcon, path: "/tracking" },
-  { id: "website-audit", label: "Website Audit", icon: MagnifyingGlassPlus, path: "/audit" },
-  { id: "agents", label: "Agents", icon: BotIcon, path: "/agents" },
-  { id: "studio", label: "Studio", icon: SparkleIcon, path: "/studio" },
-  { id: "tools", label: "Tools", icon: Wrench, path: "/tools" },
-  { id: 'integrations', label: "Integrations", icon: BlocksIcon, path: "/integrations" },
+  { id: "content", label: "Content", icon: SparkleIcon, path: "/content" },
+  { id: "analytics", label: "Analytics", icon: ChartNoAxesCombinedIcon, path: "/analytics" },
+  { id: "ai-tracking", label: "AI Tracking", icon: TowerControlIcon, path: "/ai-tracking" },
+  { id: "backlinks", label: "Backlinks", icon: Wrench, path: "/backlinks" },
+  { id: "technical-audit", label: "Technical Audit", icon: MagnifyingGlassPlus, path: "/technical-audit" },
+  { id: "reddit", label: "Reddit", icon: GlobeIcon, path: "/reddit" },
   { id: "settings", label: "Settings", icon: GearSix, path: "/settings" },
 ] as const;
 

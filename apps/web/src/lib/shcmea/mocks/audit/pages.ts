@@ -9,7 +9,7 @@ import type { AuditHistoryEntry } from '@/components/modules/audit';
 import { MOCK_COMPANY, MOCK_PAGES, buildUrl, getRecentTimestamp, type AuditIssue } from './common';
 
 // ============================================================
-// WEBSITE AUDIT GENERATOR
+// TECHNICAL AUDIT GENERATOR
 // ============================================================
 export function generateMockAudit(
   status: WebsiteAuditDto['status'],

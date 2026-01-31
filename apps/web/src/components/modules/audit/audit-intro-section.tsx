@@ -63,7 +63,7 @@ export function AuditIntroSection({ onRunAudit, isStarting }: AuditIntroSectionP
             <div className="flex flex-col gap-y-2">
               <div className="mb-2 flex items-center gap-2">
                 <Globe className="h-6 w-6 text-blue-500" />
-                <h2 className="text-2xl dark:text-white">Website Audit</h2>
+                <h2 className="text-2xl dark:text-white">Technical Audit</h2>
               </div>
             </div>
             <div className="flex grow flex-col justify-between gap-6">

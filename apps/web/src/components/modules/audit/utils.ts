@@ -1,7 +1,7 @@
 /**
  * Audit Module Utilities
  *
- * Helper functions for the website audit feature
+ * Helper functions for the technical audit feature
  */
 
 import type { PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';

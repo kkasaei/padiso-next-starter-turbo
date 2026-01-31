@@ -1,7 +1,7 @@
 /**
- * Website Audit DTOs
+ * Technical Audit DTOs
  *
- * Data Transfer Objects for website audit functionality
+ * Data Transfer Objects for technical audit functionality
  */
 
 // Audit status enum (mirrors database enum)
@@ -164,7 +164,7 @@ export interface AuditIssue {
 export type PageIssue = AuditIssue;
 
 // ============================================================
-// Website Audit DTOs
+// Technical Audit DTOs
 // ============================================================
 
 export interface WebsiteAuditDto {
