@@ -225,12 +225,9 @@ export function ProjectTasksPage({ projectId }: ProjectTasksPageProps) {
   return (
     <>
       <header className="flex flex-col border-b border-border/40">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border/70">
-          <div className="flex items-center gap-3">
-            <p className="text-base font-medium text-foreground">Tasks</p>
-            <span className="text-sm text-muted-foreground">
-              {visibleTasks.length} {visibleTasks.length === 1 ? "task" : "tasks"}
-            </span>
+        <div className="flex items-center justify-between px-4 border-b border-border/70">
+        <div className="flex items-center gap-2 px-4 justify-center h-[82px]">
+            <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button
