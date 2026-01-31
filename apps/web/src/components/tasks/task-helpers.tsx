@@ -331,9 +331,33 @@ export type ProjectTaskListViewProps = {
   groups: ProjectTaskGroup[]
   onToggleTask: (taskId: string) => void
   onAddTask: (context: CreateTaskContext) => void
+  hideProjectHeader?: boolean
 }
 
-export function ProjectTaskListView({ groups, onToggleTask, onAddTask }: ProjectTaskListViewProps) {
+export function ProjectTaskListView({ groups, onToggleTask, onAddTask, hideProjectHeader }: ProjectTaskListViewProps) {
+  if (hideProjectHeader) {
+    // Render tasks directly without project header
+    return (
+      <>
+        {groups.map((group) => (
+          <section key={group.project.id} className="max-w-6xl mx-auto rounded-3xl border border-border bg-muted shadow-[var(--shadow-workstream)] p-3 space-y-2">
+            <div className="space-y-1 px-2 py-3 bg-background rounded-2xl border border-border">
+              <SortableContext items={group.tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
+                {group.tasks.map((task) => (
+                  <TaskRowDnD
+                    key={task.id}
+                    task={task}
+                    onToggle={() => onToggleTask(task.id)}
+                  />
+                ))}
+              </SortableContext>
+            </div>
+          </section>
+        ))}
+      </>
+    )
+  }
+
   return (
     <>
       {groups.map((group) => (
