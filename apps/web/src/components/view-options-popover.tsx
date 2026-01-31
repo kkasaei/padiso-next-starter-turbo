@@ -18,11 +18,12 @@ import {
   Tag,
   TextT,
   Calendar,
+  CalendarBlank,
 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@workspace/ui/lib/utils"
 
 type Options = {
-  viewType: "list" | "board" | "timeline"
+  viewType: "list" | "board" | "timeline" | "calendar"
   tasks: "indented" | "collapsed" | "flat"
   ordering: "manual" | "alphabetical" | "date"
   showAbsentParent: boolean
@@ -43,6 +44,7 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
   const [groupByOpen, setGroupByOpen] = useState(false)
 
   const viewTypes = [
+    { id: "calendar", label: "Calendar", icon: CalendarBlank },
     { id: "list", label: "List", icon: ListBullets },
     { id: "board", label: "Board", icon: Kanban },
     { id: "timeline", label: "Timeline", icon: ChartBar },

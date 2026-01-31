@@ -1,4 +1,4 @@
-export type ViewType = "list" | "board" | "timeline"
+export type ViewType = "list" | "board" | "timeline" | "calendar"
 
 export type TaskViewMode = "indented" | "collapsed" | "flat"
 

@@ -1,89 +1,39 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useState, useMemo } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
-import { Checkbox } from '@workspace/ui/components/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@workspace/ui/components/alert-dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
+import { Badge } from '@workspace/ui/components/badge'
 import {
   Plus,
   Search,
   Loader2,
-  Pencil,
-  Trash2,
-  Eye,
-  ArrowLeft,
-  X,
-  Download,
-  Upload,
-  Lightbulb,
+  ChevronLeft,
+  ChevronRight,
   FileText,
-  Image,
-  ExternalLink,
 } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
+import { Sparkle } from '@phosphor-icons/react/dist/ssr'
+import { ViewOptionsPopover } from '@/components/view-options-popover'
+import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@/lib/view-options'
 import { cn } from '@/lib/utils'
 
 // ============================================================
 // TYPES
 // ============================================================
-type TaskStatus = 'new' | 'in_progress' | 'completed' | 'dismissed'
-type ContentStatus = 'draft' | 'published' | 'scheduled' | 'archived'
-type AssetType = 'image' | 'video' | 'document' | 'other'
-
-interface Task {
-  id: string
-  title: string
-  description: string
-  source: string
-  status: TaskStatus
-  priority: 'high' | 'medium' | 'low'
-  createdAt: Date
-  updatedAt: Date
-}
+type ContentStatus = 'scheduled' | 'published' | 'draft'
+type ContentType = 'Listicle' | 'How To' | 'Explainer' | 'Product Listicle' | 'Guide' | 'Tutorial'
 
 interface ContentItem {
   id: string
   title: string
-  type: 'blog' | 'article' | 'landing_page' | 'social'
+  type: ContentType
   status: ContentStatus
-  author: string
-  publishedAt: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-interface Asset {
-  id: string
-  name: string
-  type: AssetType
-  size: number
-  url: string
+  scheduledDate: Date
+  keywordDifficulty?: number
+  searchVolume?: number
   createdAt: Date
   updatedAt: Date
 }
@@ -91,1140 +41,608 @@ interface Asset {
 // ============================================================
 // HELPER FUNCTIONS
 // ============================================================
-function formatFileSize(bytes: number): string {
-  if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
-  if (bytes >= 1024) return (bytes / 1024).toFixed(1) + ' KB'
-  return bytes + ' B'
-}
-
-function formatDate(date: Date | null): string {
-  if (!date) return '—'
+function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-// ============================================================
-// SHARED CONSTANTS
-// ============================================================
-const PAGE_SIZE_OPTIONS = [10, 20, 50] as const
-type TaskSortKey = 'title' | 'status' | 'priority' | 'createdAt'
-type ContentSortKey = 'title' | 'type' | 'status' | 'publishedAt' | 'createdAt'
-type AssetSortKey = 'name' | 'type' | 'size' | 'createdAt'
-type SortDirection = 'asc' | 'desc'
+// Calendar helpers
+function getMonthDays(year: number, month: number): Date[] {
+  const days: Date[] = []
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  
+  // Get the day of week for the first day (0 = Sunday, 1 = Monday, etc.)
+  let startDayOfWeek = firstDay.getDay()
+  // Convert to Monday-first (0 = Monday, 6 = Sunday)
+  startDayOfWeek = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1
+  
+  // Add days from previous month
+  for (let i = startDayOfWeek - 1; i >= 0; i--) {
+    const d = new Date(year, month, -i)
+    days.push(d)
+  }
+  
+  // Add days of current month
+  for (let i = 1; i <= lastDay.getDate(); i++) {
+    days.push(new Date(year, month, i))
+  }
+  
+  // Add days from next month to complete the grid (6 rows)
+  const remainingDays = 42 - days.length
+  for (let i = 1; i <= remainingDays; i++) {
+    days.push(new Date(year, month + 1, i))
+  }
+  
+  return days
+}
+
+function isSameDay(d1: Date, d2: Date): boolean {
+  return d1.getDate() === d2.getDate() && 
+         d1.getMonth() === d2.getMonth() && 
+         d1.getFullYear() === d2.getFullYear()
+}
+
+function isSameMonth(d1: Date, d2: Date): boolean {
+  return d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear()
+}
 
 // ============================================================
-// TAB TYPE
+// SAMPLE DATA
 // ============================================================
-type ContentTab = 'opportunities' | 'content' | 'assets'
+const SAMPLE_CONTENT: ContentItem[] = [
+  {
+    id: 'content-1',
+    title: '7 Best Productivity Tools for Entrepreneurs to Build Faster',
+    type: 'Listicle',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-26'),
+    keywordDifficulty: 21,
+    searchVolume: 190,
+    createdAt: new Date('2026-01-15'),
+    updatedAt: new Date('2026-01-20'),
+  },
+  {
+    id: 'content-2',
+    title: 'How to Build a No-Code App for Small Businesses Easily',
+    type: 'How To',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-27'),
+    keywordDifficulty: 24,
+    searchVolume: 220,
+    createdAt: new Date('2026-01-16'),
+    updatedAt: new Date('2026-01-21'),
+  },
+  {
+    id: 'content-3',
+    title: 'types of no-code apps',
+    type: 'Listicle',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-28'),
+    keywordDifficulty: 21,
+    searchVolume: 190,
+    createdAt: new Date('2026-01-17'),
+    updatedAt: new Date('2026-01-22'),
+  },
+  {
+    id: 'content-4',
+    title: 'why use ai in business',
+    type: 'Explainer',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-29'),
+    keywordDifficulty: 19,
+    searchVolume: 340,
+    createdAt: new Date('2026-01-18'),
+    updatedAt: new Date('2026-01-23'),
+  },
+  {
+    id: 'content-5',
+    title: 'firebase.google.com alternatives',
+    type: 'Product Listicle',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-30'),
+    keywordDifficulty: 24,
+    searchVolume: 160,
+    createdAt: new Date('2026-01-19'),
+    updatedAt: new Date('2026-01-24'),
+  },
+  {
+    id: 'content-6',
+    title: 'future of no-code platforms',
+    type: 'Explainer',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-01-31'),
+    keywordDifficulty: 15,
+    searchVolume: 130,
+    createdAt: new Date('2026-01-20'),
+    updatedAt: new Date('2026-01-25'),
+  },
+  {
+    id: 'content-7',
+    title: 'industry use cases for no-code',
+    type: 'Explainer',
+    status: 'scheduled',
+    scheduledDate: new Date('2026-02-01'),
+    keywordDifficulty: 20,
+    searchVolume: 170,
+    createdAt: new Date('2026-01-21'),
+    updatedAt: new Date('2026-01-26'),
+  },
+  {
+    id: 'content-8',
+    title: 'Complete Guide to AI Content Optimization',
+    type: 'Guide',
+    status: 'published',
+    scheduledDate: new Date('2026-01-15'),
+    keywordDifficulty: 35,
+    searchVolume: 580,
+    createdAt: new Date('2026-01-05'),
+    updatedAt: new Date('2026-01-15'),
+  },
+  {
+    id: 'content-9',
+    title: 'SEO Best Practices for 2026',
+    type: 'Tutorial',
+    status: 'published',
+    scheduledDate: new Date('2026-01-10'),
+    keywordDifficulty: 42,
+    searchVolume: 890,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-10'),
+  },
+]
 
 // ============================================================
 // MAIN PAGE COMPONENT
 // ============================================================
 export default function ContentListPage() {
   const params = useParams()
-  const searchParams = useSearchParams()
   const projectId = params.id as string
 
-  // Get tab from URL query param, default to 'opportunities'
-  const tabFromUrl = searchParams.get('tab') as ContentTab | null
-  const initialTab: ContentTab = tabFromUrl && ['opportunities', 'content', 'assets'].includes(tabFromUrl)
-    ? tabFromUrl
-    : 'opportunities'
+  const [searchQuery, setSearchQuery] = useState('')
+  const [content] = useState<ContentItem[]>(SAMPLE_CONTENT)
+  const [isLoading] = useState(false)
+  
+  // View options - default to calendar view for content
+  const [viewOptions, setViewOptions] = useState<ViewOptions>({
+    ...DEFAULT_VIEW_OPTIONS,
+    viewType: 'calendar',
+  })
 
-  // Tab state
-  const [activeTab, setActiveTab] = useState<ContentTab>(initialTab)
+  // Calendar state
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1)) // January 2026
 
-  // ============================================================
-  // OPPORTUNITIES STATE
-  // ============================================================
-  const [opportunities, setOpportunities] = useState<Task[]>([])
-  const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('')
-  const [opportunityToDelete, setOpportunityToDelete] = useState<string | null>(null)
-  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
-  const [opportunitySortKey, setOpportunitySortKey] = useState<TaskSortKey>('createdAt')
-  const [opportunitySortDirection, setOpportunitySortDirection] = useState<SortDirection>('desc')
-  const [opportunityCurrentPage, setOpportunityCurrentPage] = useState(1)
-  const [opportunityPageSize, setOpportunityPageSize] = useState<number>(10)
-  const [selectedOpportunityIds, setSelectedOpportunityIds] = useState<Set<string>>(new Set())
-  const [opportunitiesLoading, setOpportunitiesLoading] = useState(true)
-
-  // ============================================================
-  // CONTENT STATE
-  // ============================================================
-  const [contentItems, setContentItems] = useState<ContentItem[]>([])
-  const [contentSearchQuery, setContentSearchQuery] = useState('')
-  const [contentSortKey, setContentSortKey] = useState<ContentSortKey>('createdAt')
-  const [contentSortDirection, setContentSortDirection] = useState<SortDirection>('desc')
-  const [contentCurrentPage, setContentCurrentPage] = useState(1)
-  const [contentPageSize, setContentPageSize] = useState<number>(10)
-  const [selectedContentIds, setSelectedContentIds] = useState<Set<string>>(new Set())
-  const [contentLoading, setContentLoading] = useState(true)
-
-  // ============================================================
-  // ASSETS STATE
-  // ============================================================
-  const [assets, setAssets] = useState<Asset[]>([])
-  const [assetSearchQuery, setAssetSearchQuery] = useState('')
-  const [assetSortKey, setAssetSortKey] = useState<AssetSortKey>('createdAt')
-  const [assetSortDirection, setAssetSortDirection] = useState<SortDirection>('desc')
-  const [assetCurrentPage, setAssetCurrentPage] = useState(1)
-  const [assetPageSize, setAssetPageSize] = useState<number>(10)
-  const [selectedAssetIds, setSelectedAssetIds] = useState<Set<string>>(new Set())
-  const [assetsLoading, setAssetsLoading] = useState(true)
-
-  // ============================================================
-  // LOAD DATA
-  // ============================================================
-  useEffect(() => {
-    if (projectId) {
-      // Load opportunities
-      const opportunityTimer = setTimeout(() => {
-        setOpportunities([
-          {
-            id: 'opportunity-1',
-            title: 'Optimize meta descriptions for AI search',
-            description: 'Review and update meta descriptions across key landing pages to improve AI visibility scores.',
-            source: 'AI Insights',
-            status: 'in_progress',
-            priority: 'high',
-            createdAt: new Date('2026-01-20'),
-            updatedAt: new Date('2026-01-24'),
-          },
-          {
-            id: 'opportunity-2',
-            title: 'Create FAQ schema markup',
-            description: 'Add structured FAQ data to product pages to enhance visibility in AI-powered search results.',
-            source: 'SEO Audit',
-            status: 'new',
-            priority: 'medium',
-            createdAt: new Date('2026-01-22'),
-            updatedAt: new Date('2026-01-22'),
-          },
-          {
-            id: 'opportunity-3',
-            title: 'Update brand messaging guide',
-            description: 'Refresh brand voice and key messaging points based on sentiment analysis feedback.',
-            source: 'Brand Analysis',
-            status: 'completed',
-            priority: 'low',
-            createdAt: new Date('2026-01-15'),
-            updatedAt: new Date('2026-01-23'),
-          },
-        ])
-        setOpportunitiesLoading(false)
-      }, 300)
-      // Load content
-      const contentTimer = setTimeout(() => {
-        setContentItems([
-          {
-            id: 'content-1',
-            title: 'The Complete Guide to AI Visibility: How to Get Your Brand Mentioned by ChatGPT, Perplexity, and Gemini',
-            type: 'blog',
-            status: 'published',
-            author: 'Marketing Team',
-            publishedAt: new Date('2026-01-15'),
-            createdAt: new Date('2026-01-10'),
-            updatedAt: new Date('2026-01-15'),
-          },
-          {
-            id: 'content-2',
-            title: '10 Ways to Improve Your Brand Recognition in AI Search',
-            type: 'article',
-            status: 'draft',
-            author: 'Content Writer',
-            publishedAt: null,
-            createdAt: new Date('2026-01-20'),
-            updatedAt: new Date('2026-01-24'),
-          },
-          {
-            id: 'content-3',
-            title: 'Product Launch Landing Page',
-            type: 'landing_page',
-            status: 'scheduled',
-            author: 'Design Team',
-            publishedAt: new Date('2026-02-01'),
-            createdAt: new Date('2026-01-18'),
-            updatedAt: new Date('2026-01-22'),
-          },
-          {
-            id: 'content-4',
-            title: 'AI Visibility Score Announcement',
-            type: 'social',
-            status: 'published',
-            author: 'Social Media Manager',
-            publishedAt: new Date('2026-01-12'),
-            createdAt: new Date('2026-01-12'),
-            updatedAt: new Date('2026-01-12'),
-          },
-        ])
-        setContentLoading(false)
-      }, 300)
-      // Load assets
-      const assetTimer = setTimeout(() => {
-        setAssets([
-          {
-            id: 'asset-1',
-            name: 'hero-banner.png',
-            type: 'image',
-            size: 2456000,
-            url: '/placeholder.jpg',
-            createdAt: new Date('2026-01-10'),
-            updatedAt: new Date('2026-01-10'),
-          },
-          {
-            id: 'asset-2',
-            name: 'brand-guidelines.pdf',
-            type: 'document',
-            size: 5890000,
-            url: '/placeholder.jpg',
-            createdAt: new Date('2026-01-08'),
-            updatedAt: new Date('2026-01-08'),
-          },
-          {
-            id: 'asset-3',
-            name: 'product-demo.mp4',
-            type: 'video',
-            size: 45000000,
-            url: '/placeholder.jpg',
-            createdAt: new Date('2026-01-05'),
-            updatedAt: new Date('2026-01-05'),
-          },
-        ])
-        setAssetsLoading(false)
-      }, 300)
-      return () => {
-        clearTimeout(opportunityTimer)
-        clearTimeout(contentTimer)
-        clearTimeout(assetTimer)
-      }
-    }
-  }, [projectId])
-
-  // ============================================================
-  // OPPORTUNITIES HANDLERS
-  // ============================================================
-  const handleOpportunityDelete = (id: string) => {
-    setOpportunityToDelete(id)
-  }
-
-  const confirmOpportunityDelete = () => {
-    if (opportunityToDelete) {
-      setOpportunities((prev) => prev.filter((o) => o.id !== opportunityToDelete))
-      toast.success('Opportunity deleted!')
-      setOpportunityToDelete(null)
-    }
-  }
-
-  const handleOpportunityStatusChange = (id: string, status: TaskStatus) => {
-    setOpportunities((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, status, updatedAt: new Date() } : o))
+  // Filter content based on search
+  const filteredContent = useMemo(() => {
+    if (!searchQuery.trim()) return content
+    const query = searchQuery.toLowerCase()
+    return content.filter(c => 
+      c.title.toLowerCase().includes(query) || 
+      c.type.toLowerCase().includes(query)
     )
-    toast.success('Status updated!')
+  }, [content, searchQuery])
+
+  // Calendar navigation
+  const goToPreviousMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
   }
 
-  const handleSelectOpportunity = (id: string, selected: boolean) => {
-    setSelectedOpportunityIds((prev) => {
-      const newSet = new Set(prev)
-      if (selected) {
-        newSet.add(id)
-      } else {
-        newSet.delete(id)
-      }
-      return newSet
-    })
+  const goToNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
   }
 
-  const handleSelectAllOpportunities = (selected: boolean) => {
-    if (selected) {
-      setSelectedOpportunityIds(new Set(paginatedOpportunities.map((o) => o.id)))
-    } else {
-      setSelectedOpportunityIds(new Set())
-    }
-  }
+  const monthDays = useMemo(() => {
+    return getMonthDays(currentDate.getFullYear(), currentDate.getMonth())
+  }, [currentDate])
 
-  const handleBulkDeleteOpportunities = () => {
-    setBulkDeleteOpen(true)
-  }
-
-  const confirmBulkDelete = () => {
-    const ids = Array.from(selectedOpportunityIds)
-    if (ids.length === 0) return
-    setOpportunities((prev) => prev.filter((o) => !ids.includes(o.id)))
-    setSelectedOpportunityIds(new Set())
-    toast.success(`${ids.length} opportunity(ies) deleted!`)
-    setBulkDeleteOpen(false)
-  }
-
-  const handleOpportunitySort = (key: TaskSortKey) => {
-    if (opportunitySortKey === key) {
-      setOpportunitySortDirection(opportunitySortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setOpportunitySortKey(key)
-      setOpportunitySortDirection('desc')
-    }
-    setOpportunityCurrentPage(1)
-  }
-
-  // ============================================================
-  // CONTENT HANDLERS
-  // ============================================================
-  const handleContentDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this content?')) {
-      setContentItems((prev) => prev.filter((c) => c.id !== id))
-      toast.success('Content deleted!')
-    }
-  }
-
-  const handleSelectContent = (id: string, selected: boolean) => {
-    setSelectedContentIds((prev) => {
-      const newSet = new Set(prev)
-      if (selected) {
-        newSet.add(id)
-      } else {
-        newSet.delete(id)
-      }
-      return newSet
-    })
-  }
-
-  const handleSelectAllContent = (selected: boolean) => {
-    if (selected) {
-      setSelectedContentIds(new Set(paginatedContent.map((c) => c.id)))
-    } else {
-      setSelectedContentIds(new Set())
-    }
-  }
-
-  const handleContentSort = (key: ContentSortKey) => {
-    if (contentSortKey === key) {
-      setContentSortDirection(contentSortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setContentSortKey(key)
-      setContentSortDirection('desc')
-    }
-    setContentCurrentPage(1)
-  }
-
-  // ============================================================
-  // ASSETS HANDLERS
-  // ============================================================
-  const handleAssetDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this asset?')) {
-      setAssets((prev) => prev.filter((a) => a.id !== id))
-      toast.success('Asset deleted!')
-    }
-  }
-
-  const handleSelectAsset = (id: string, selected: boolean) => {
-    setSelectedAssetIds((prev) => {
-      const newSet = new Set(prev)
-      if (selected) {
-        newSet.add(id)
-      } else {
-        newSet.delete(id)
-      }
-      return newSet
-    })
-  }
-
-  const handleSelectAllAssets = (selected: boolean) => {
-    if (selected) {
-      setSelectedAssetIds(new Set(paginatedAssets.map((a) => a.id)))
-    } else {
-      setSelectedAssetIds(new Set())
-    }
-  }
-
-  const handleAssetSort = (key: AssetSortKey) => {
-    if (assetSortKey === key) {
-      setAssetSortDirection(assetSortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setAssetSortKey(key)
-      setAssetSortDirection('desc')
-    }
-    setAssetCurrentPage(1)
-  }
-
-  // ============================================================
-  // OPPORTUNITIES DATA PROCESSING
-  // ============================================================
-  const filteredOpportunities = opportunities.filter((opportunity) => {
-    if (!opportunitySearchQuery.trim()) return true
-    const query = opportunitySearchQuery.toLowerCase()
-    return opportunity.title.toLowerCase().includes(query) || opportunity.description.toLowerCase().includes(query)
-  })
-
-  const sortedOpportunities = [...filteredOpportunities].sort((a, b) => {
-    let comparison = 0
-    switch (opportunitySortKey) {
-      case 'title': comparison = a.title.localeCompare(b.title); break
-      case 'status': comparison = a.status.localeCompare(b.status); break
-      case 'priority': {
-        const priorityOrder = { high: 3, medium: 2, low: 1 }
-        comparison = priorityOrder[a.priority] - priorityOrder[b.priority]
-        break
-      }
-      case 'createdAt':
-        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        break
-    }
-    return opportunitySortDirection === 'asc' ? comparison : -comparison
-  })
-
-  const opportunityTotalItems = sortedOpportunities.length
-  const opportunityTotalPages = Math.ceil(opportunityTotalItems / opportunityPageSize)
-  const opportunityValidCurrentPage = Math.max(1, Math.min(opportunityCurrentPage, opportunityTotalPages || 1))
-  const opportunityStartIndex = (opportunityValidCurrentPage - 1) * opportunityPageSize
-  const opportunityEndIndex = Math.min(opportunityStartIndex + opportunityPageSize, opportunityTotalItems)
-  const paginatedOpportunities = sortedOpportunities.slice(opportunityStartIndex, opportunityEndIndex)
-
-  // ============================================================
-  // CONTENT DATA PROCESSING
-  // ============================================================
-  const filteredContent = contentItems.filter((content) => {
-    if (!contentSearchQuery.trim()) return true
-    const query = contentSearchQuery.toLowerCase()
-    return content.title.toLowerCase().includes(query) || content.type.toLowerCase().includes(query)
-  })
-
-  const sortedContent = [...filteredContent].sort((a, b) => {
-    let comparison = 0
-    switch (contentSortKey) {
-      case 'title': comparison = a.title.localeCompare(b.title); break
-      case 'type': comparison = a.type.localeCompare(b.type); break
-      case 'status': comparison = a.status.localeCompare(b.status); break
-      case 'publishedAt': {
-        const pubA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0
-        const pubB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0
-        comparison = pubA - pubB
-        break
-      }
-      case 'createdAt':
-        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        break
-    }
-    return contentSortDirection === 'asc' ? comparison : -comparison
-  })
-
-  const contentTotalItems = sortedContent.length
-  const contentTotalPages = Math.ceil(contentTotalItems / contentPageSize)
-  const contentValidCurrentPage = Math.max(1, Math.min(contentCurrentPage, contentTotalPages || 1))
-  const contentStartIndex = (contentValidCurrentPage - 1) * contentPageSize
-  const contentEndIndex = Math.min(contentStartIndex + contentPageSize, contentTotalItems)
-  const paginatedContent = sortedContent.slice(contentStartIndex, contentEndIndex)
-
-  // ============================================================
-  // ASSETS DATA PROCESSING
-  // ============================================================
-  const filteredAssets = assets.filter((asset) => {
-    if (!assetSearchQuery.trim()) return true
-    const query = assetSearchQuery.toLowerCase()
-    return asset.name.toLowerCase().includes(query) || asset.type.toLowerCase().includes(query)
-  })
-
-  const sortedAssets = [...filteredAssets].sort((a, b) => {
-    let comparison = 0
-    switch (assetSortKey) {
-      case 'name': comparison = a.name.localeCompare(b.name); break
-      case 'type': comparison = a.type.localeCompare(b.type); break
-      case 'size': comparison = a.size - b.size; break
-      case 'createdAt':
-        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        break
-    }
-    return assetSortDirection === 'asc' ? comparison : -comparison
-  })
-
-  const assetTotalItems = sortedAssets.length
-  const assetTotalPages = Math.ceil(assetTotalItems / assetPageSize)
-  const assetValidCurrentPage = Math.max(1, Math.min(assetCurrentPage, assetTotalPages || 1))
-  const assetStartIndex = (assetValidCurrentPage - 1) * assetPageSize
-  const assetEndIndex = Math.min(assetStartIndex + assetPageSize, assetTotalItems)
-  const paginatedAssets = sortedAssets.slice(assetStartIndex, assetEndIndex)
-
-  // ============================================================
-  // RENDER
-  // ============================================================
-  return (
-    <div className="relative flex min-w-0 flex-2 flex-col items-center">
-      <div className="mx-auto flex w-full flex-col">
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ContentTab)} className="w-full">
-          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
-            <TabsList className="bg-transparent ring-0 dark:bg-transparent dark:ring-0 p-1 gap-2 w-max md:w-auto">
-              <TabsTrigger
-                value="opportunities"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                <Lightbulb className="h-4 w-4 mr-2" />
-                Opportunities
-              </TabsTrigger>
-              <TabsTrigger
-                value="content"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                Content
-              </TabsTrigger>
-              <TabsTrigger
-                value="assets"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                <Image className="h-4 w-4 mr-2" />
-                Assets
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* Opportunities Tab */}
-          <TabsContent value="opportunities" className="mt-0">
-            <OpportunitiesTabContent
-              projectId={projectId}
-              opportunities={paginatedOpportunities}
-              isLoading={opportunitiesLoading}
-              searchQuery={opportunitySearchQuery}
-              onSearchChange={(v) => { setOpportunitySearchQuery(v); setOpportunityCurrentPage(1) }}
-              sortKey={opportunitySortKey}
-              sortDirection={opportunitySortDirection}
-              onSort={handleOpportunitySort}
-              currentPage={opportunityCurrentPage}
-              pageSize={opportunityPageSize}
-              totalItems={opportunityTotalItems}
-              totalPages={opportunityTotalPages}
-              startIndex={opportunityStartIndex}
-              endIndex={opportunityEndIndex}
-              onPageChange={setOpportunityCurrentPage}
-              onPageSizeChange={(v) => { setOpportunityPageSize(v); setOpportunityCurrentPage(1) }}
-              onDelete={handleOpportunityDelete}
-              onStatusChange={handleOpportunityStatusChange}
-              selectedIds={selectedOpportunityIds}
-              onSelectOne={handleSelectOpportunity}
-              onSelectAll={handleSelectAllOpportunities}
-              onBulkDelete={handleBulkDeleteOpportunities}
-            />
-          </TabsContent>
-
-          {/* Content Tab */}
-          <TabsContent value="content" className="mt-0">
-            <ContentTabContent
-              projectId={projectId}
-              content={paginatedContent}
-              isLoading={contentLoading}
-              searchQuery={contentSearchQuery}
-              onSearchChange={(v) => { setContentSearchQuery(v); setContentCurrentPage(1) }}
-              sortKey={contentSortKey}
-              sortDirection={contentSortDirection}
-              onSort={handleContentSort}
-              currentPage={contentCurrentPage}
-              pageSize={contentPageSize}
-              totalItems={contentTotalItems}
-              totalPages={contentTotalPages}
-              startIndex={contentStartIndex}
-              endIndex={contentEndIndex}
-              onPageChange={setContentCurrentPage}
-              onPageSizeChange={(v) => { setContentPageSize(v); setContentCurrentPage(1) }}
-              onDelete={handleContentDelete}
-              selectedIds={selectedContentIds}
-              onSelectOne={handleSelectContent}
-              onSelectAll={handleSelectAllContent}
-            />
-          </TabsContent>
-
-          {/* Assets Tab */}
-          <TabsContent value="assets" className="mt-0">
-            <AssetsTabContent
-              projectId={projectId}
-              assets={paginatedAssets}
-              isLoading={assetsLoading}
-              searchQuery={assetSearchQuery}
-              onSearchChange={(v) => { setAssetSearchQuery(v); setAssetCurrentPage(1) }}
-              sortKey={assetSortKey}
-              sortDirection={assetSortDirection}
-              onSort={handleAssetSort}
-              currentPage={assetCurrentPage}
-              pageSize={assetPageSize}
-              totalItems={assetTotalItems}
-              totalPages={assetTotalPages}
-              startIndex={assetStartIndex}
-              endIndex={assetEndIndex}
-              onPageChange={setAssetCurrentPage}
-              onPageSizeChange={(v) => { setAssetPageSize(v); setAssetCurrentPage(1) }}
-              onDelete={handleAssetDelete}
-              selectedIds={selectedAssetIds}
-              onSelectOne={handleSelectAsset}
-              onSelectAll={handleSelectAllAssets}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Delete Opportunity Confirmation Modal */}
-      <AlertDialog open={opportunityToDelete !== null} onOpenChange={(open) => !open && setOpportunityToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Opportunity</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this opportunity? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmOpportunityDelete}
-              className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Bulk Delete Confirmation Modal */}
-      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete {selectedOpportunityIds.size} Item(s)</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete {selectedOpportunityIds.size} selected item(s)? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmBulkDelete}
-              className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
-            >
-              Delete {selectedOpportunityIds.size} Item(s)
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  )
-}
-
-// ============================================================
-// OPPORTUNITIES TAB CONTENT
-// ============================================================
-interface OpportunitiesTabContentProps {
-  projectId: string
-  opportunities: Task[]
-  isLoading: boolean
-  searchQuery: string
-  onSearchChange: (value: string) => void
-  sortKey: TaskSortKey
-  sortDirection: SortDirection
-  onSort: (key: TaskSortKey) => void
-  currentPage: number
-  pageSize: number
-  totalItems: number
-  totalPages: number
-  startIndex: number
-  endIndex: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
-  onDelete: (id: string) => void
-  onStatusChange: (id: string, status: TaskStatus) => void
-  selectedIds: Set<string>
-  onSelectOne: (id: string, selected: boolean) => void
-  onSelectAll: (selected: boolean) => void
-  onBulkDelete: () => void
-}
-
-function OpportunitiesTabContent(props: OpportunitiesTabContentProps) {
-  const { projectId, opportunities, isLoading, searchQuery, onSearchChange, sortKey, sortDirection, onSort, totalItems, totalPages, startIndex, endIndex, currentPage, pageSize, onPageChange, onPageSizeChange, onDelete, onStatusChange, selectedIds, onSelectOne, onSelectAll, onBulkDelete } = props
-
-  const allSelected = opportunities.length > 0 && opportunities.every((o) => selectedIds.has(o.id))
-  const someSelected = selectedIds.size > 0
-  const checkboxState = allSelected ? true : someSelected ? 'indeterminate' : false
-
-  const getStatusBadge = (status: TaskStatus) => {
-    switch (status) {
-      case 'new': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'in_progress': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-      case 'completed': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-      case 'dismissed': return 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-    }
-  }
-
-  const getPriorityBadge = (priority: 'high' | 'medium' | 'low') => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-      case 'medium': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-      case 'low': return 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-    }
+  const getContentForDate = (date: Date): ContentItem[] => {
+    return filteredContent.filter(c => isSameDay(c.scheduledDate, date))
   }
 
   return (
-    <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-      <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-        <div className="flex w-full flex-col gap-y-2">
-          <span className="text-lg font-semibold">Opportunities</span>
-          <p className="text-sm text-muted-foreground">Manage and track opportunities to improve your visibility.</p>
-        </div>
-        <div className="flex shrink-0 flex-row items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-        </div>
-      </div>
-      <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800">
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="text" placeholder="Search opportunities..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-9 h-9" />
+    <div className="flex flex-1 flex-col min-w-0">
+      {/* Header */}
+      <header className="flex flex-col border-b border-border/40">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border/70 h-[82px]">
+          <div className="flex items-center gap-2 px-4">
+            <h1 className="text-2xl font-semibold tracking-tight">Content</h1>
           </div>
-        </div>
-
-        <div className="relative">
-          {someSelected && (
-            <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-border bg-muted/95 px-6 py-3 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium">{selectedIds.size} selected</span>
-                <Button variant="ghost" size="sm" onClick={() => onSelectAll(false)} className="h-7 gap-1 px-2 text-xs">
-                  <X className="h-3 w-3" />
-                  Clear
-                </Button>
+          <div className="flex items-center gap-4">
+            {/* Legend */}
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-muted-foreground">Scheduled</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={onBulkDelete} className="h-8 gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive">
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete ({selectedIds.size})
-                </Button>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-muted-foreground">Published</span>
               </div>
             </div>
-          )}
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-polar-800">
-                  <th className="w-12 px-4 py-4">
-                    <Checkbox checked={checkboxState} onCheckedChange={(checked) => onSelectAll(checked === true)} aria-label="Select all" />
-                  </th>
-                  {[{ key: 'title', label: 'Opportunity' }, { key: 'status', label: 'Status' }, { key: 'priority', label: 'Priority' }, { key: 'createdAt', label: 'Created' }].map(({ key, label }) => (
-                    <th key={key} className="cursor-pointer px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground" onClick={() => onSort(key as TaskSortKey)}>
-                      <div className="flex items-center gap-1.5">
-                        {label}
-                        {sortKey === key && <span className="text-foreground">{sortDirection === 'asc' ? '↑' : '↓'}</span>}
-                      </div>
-                    </th>
-                  ))}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
-                {isLoading ? (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
-                ) : opportunities.length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <Lightbulb className="h-8 w-8 text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">{searchQuery ? 'No opportunities match your search' : 'No opportunities yet'}</p>
-                      {searchQuery && <Button variant="ghost" size="sm" onClick={() => onSearchChange('')}>Clear search</Button>}
-                    </div>
-                  </td></tr>
-                ) : (
-                  opportunities.map((opportunity) => (
-                    <tr key={opportunity.id} className={`transition-colors ${selectedIds.has(opportunity.id) ? 'bg-muted/50' : 'hover:bg-gray-50 dark:hover:bg-polar-800/50'}`}>
-                      <td className="w-12 px-4 py-4">
-                        <Checkbox checked={selectedIds.has(opportunity.id)} onCheckedChange={(checked) => onSelectOne(opportunity.id, checked === true)} />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          <Link href={`/dashboard/projects/${projectId}/studio/opportunities/${opportunity.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors">{opportunity.title}</Link>
-                          <span className="text-xs text-muted-foreground line-clamp-1">{opportunity.description}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium cursor-pointer transition-colors', getStatusBadge(opportunity.status))}>
-                              {opportunity.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start">
-                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'new')}>New</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'in_progress')}>In Progress</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'completed')}>Completed</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'dismissed')}>Dismissed</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium', getPriorityBadge(opportunity.priority))}>
-                          {opportunity.priority.charAt(0).toUpperCase() + opportunity.priority.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(opportunity.createdAt)}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                            <Link href={`/dashboard/projects/${projectId}/studio/opportunities/${opportunity.id}`}><Eye className="h-4 w-4" /></Link>
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDelete(opportunity.id)}><Trash2 className="h-4 w-4" /></Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        {totalItems > 0 && <PaginationFooter label="opportunities" startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />}
-      </div>
-    </div>
-  )
-}
-
-// ============================================================
-// CONTENT TAB CONTENT
-// ============================================================
-interface ContentTabContentProps {
-  projectId: string
-  content: ContentItem[]
-  isLoading: boolean
-  searchQuery: string
-  onSearchChange: (value: string) => void
-  sortKey: ContentSortKey
-  sortDirection: SortDirection
-  onSort: (key: ContentSortKey) => void
-  currentPage: number
-  pageSize: number
-  totalItems: number
-  totalPages: number
-  startIndex: number
-  endIndex: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
-  onDelete: (id: string) => void
-  selectedIds: Set<string>
-  onSelectOne: (id: string, selected: boolean) => void
-  onSelectAll: (selected: boolean) => void
-}
-
-function ContentTabContent(props: ContentTabContentProps) {
-  const { projectId, content, isLoading, searchQuery, onSearchChange, sortKey, sortDirection, onSort, totalItems, totalPages, startIndex, endIndex, currentPage, pageSize, onPageChange, onPageSizeChange, onDelete, selectedIds, onSelectOne, onSelectAll } = props
-
-  const allSelected = content.length > 0 && content.every((c) => selectedIds.has(c.id))
-  const someSelected = selectedIds.size > 0
-  const checkboxState = allSelected ? true : someSelected ? 'indeterminate' : false
-
-  const getStatusBadge = (status: ContentStatus) => {
-    switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-      case 'published': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-      case 'scheduled': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'archived': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-    }
-  }
-
-  const getTypeBadge = (type: ContentItem['type']) => {
-    switch (type) {
-      case 'blog': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-      case 'article': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'landing_page': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-      case 'social': return 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300'
-    }
-  }
-
-  return (
-    <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-      <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-        <div className="flex w-full flex-col gap-y-2">
-          <span className="text-lg font-semibold">Content Library</span>
-          <p className="text-sm text-muted-foreground">Manage and organize all your content pieces.</p>
-        </div>
-        <div className="flex shrink-0 flex-row items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button size="sm" className="gap-2" onClick={() => toast.info('Create content coming soon')}>
-            <Plus className="h-4 w-4" />
-            New Content
-          </Button>
-        </div>
-      </div>
-      <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800">
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="text" placeholder="Search content..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-9 h-9" />
           </div>
         </div>
 
-        <div className="relative">
-          {someSelected && (
-            <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-border bg-muted/95 px-6 py-3 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium">{selectedIds.size} selected</span>
-                <Button variant="ghost" size="sm" onClick={() => onSelectAll(false)} className="h-7 gap-1 px-2 text-xs">
-                  <X className="h-3 w-3" />
-                  Clear
-                </Button>
+        <div className="flex items-center justify-between px-4 pb-3 pt-3">
+          <div className="flex items-center gap-2">
+            {viewOptions.viewType === 'calendar' && (
+              <>
+                <span className="text-lg font-medium">
+                  {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </span>
+                <div className="flex items-center gap-1 ml-2">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-full"
+                    onClick={goToPreviousMonth}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-full"
+                    onClick={goToNextMonth}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </>
+            )}
+            {viewOptions.viewType !== 'calendar' && (
+              <div className="relative max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  type="text" 
+                  placeholder="Search content..." 
+                  value={searchQuery} 
+                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  className="pl-9 h-9 w-64" 
+                />
               </div>
-            </div>
-          )}
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-polar-800">
-                  <th className="w-12 px-4 py-4">
-                    <Checkbox checked={checkboxState} onCheckedChange={(checked) => onSelectAll(checked === true)} aria-label="Select all" />
-                  </th>
-                  {[{ key: 'title', label: 'Title' }, { key: 'type', label: 'Type' }, { key: 'status', label: 'Status' }, { key: 'publishedAt', label: 'Published' }, { key: 'createdAt', label: 'Created' }].map(({ key, label }) => (
-                    <th key={key} className="cursor-pointer px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground" onClick={() => onSort(key as ContentSortKey)}>
-                      <div className="flex items-center gap-1.5">
-                        {label}
-                        {sortKey === key && <span className="text-foreground">{sortDirection === 'asc' ? '↑' : '↓'}</span>}
-                      </div>
-                    </th>
-                  ))}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
-                {isLoading ? (
-                  <tr><td colSpan={7} className="px-6 py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
-                ) : content.length === 0 ? (
-                  <tr><td colSpan={7} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <FileText className="h-8 w-8 text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">{searchQuery ? 'No content matches your search' : 'No content yet'}</p>
-                      {searchQuery && <Button variant="ghost" size="sm" onClick={() => onSearchChange('')}>Clear search</Button>}
-                    </div>
-                  </td></tr>
-                ) : (
-                  content.map((item) => (
-                    <tr key={item.id} className={`transition-colors ${selectedIds.has(item.id) ? 'bg-muted/50' : 'hover:bg-gray-50 dark:hover:bg-polar-800/50'}`}>
-                      <td className="w-12 px-4 py-4">
-                        <Checkbox checked={selectedIds.has(item.id)} onCheckedChange={(checked) => onSelectOne(item.id, checked === true)} />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Link href={`/dashboard/projects/${projectId}/content/${item.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors">{item.title}</Link>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium', getTypeBadge(item.type))}>
-                          {item.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium', getStatusBadge(item.status))}>
-                          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(item.publishedAt)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(item.createdAt)}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                            <Link href={`/dashboard/projects/${projectId}/content/${item.id}`}><Eye className="h-4 w-4" /></Link>
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                            <Link href={`/dashboard/projects/${projectId}/content/${item.id}/edit`}><Pencil className="h-4 w-4" /></Link>
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDelete(item.id)}><Trash2 className="h-4 w-4" /></Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {/* View Options Popover - same as projects page */}
+            <ViewOptionsPopover 
+              options={viewOptions} 
+              onChange={setViewOptions}
+              allowedViewTypes={["calendar", "list", "board"]}
+            />
           </div>
         </div>
-        {totalItems > 0 && <PaginationFooter label="content items" startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />}
-      </div>
-    </div>
-  )
-}
+      </header>
 
-// ============================================================
-// ASSETS TAB CONTENT
-// ============================================================
-interface AssetsTabContentProps {
-  projectId: string
-  assets: Asset[]
-  isLoading: boolean
-  searchQuery: string
-  onSearchChange: (value: string) => void
-  sortKey: AssetSortKey
-  sortDirection: SortDirection
-  onSort: (key: AssetSortKey) => void
-  currentPage: number
-  pageSize: number
-  totalItems: number
-  totalPages: number
-  startIndex: number
-  endIndex: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
-  onDelete: (id: string) => void
-  selectedIds: Set<string>
-  onSelectOne: (id: string, selected: boolean) => void
-  onSelectAll: (selected: boolean) => void
-}
-
-function AssetsTabContent(props: AssetsTabContentProps) {
-  const { assets, isLoading, searchQuery, onSearchChange, sortKey, sortDirection, onSort, totalItems, totalPages, startIndex, endIndex, currentPage, pageSize, onPageChange, onPageSizeChange, onDelete, selectedIds, onSelectOne, onSelectAll } = props
-
-  const allSelected = assets.length > 0 && assets.every((a) => selectedIds.has(a.id))
-  const someSelected = selectedIds.size > 0
-  const checkboxState = allSelected ? true : someSelected ? 'indeterminate' : false
-
-  const getTypeIcon = (type: AssetType) => {
-    switch (type) {
-      case 'image': return <Image className="h-4 w-4 text-purple-500" />
-      case 'video': return <FileText className="h-4 w-4 text-blue-500" />
-      case 'document': return <FileText className="h-4 w-4 text-amber-500" />
-      default: return <FileText className="h-4 w-4 text-gray-500" />
-    }
-  }
-
-  return (
-    <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-      <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-        <div className="flex w-full flex-col gap-y-2">
-          <span className="text-lg font-semibold">Media Assets</span>
-          <p className="text-sm text-muted-foreground">Upload and manage images, videos, and documents.</p>
-        </div>
-        <div className="flex shrink-0 flex-row items-center gap-2">
-          <Button size="sm" className="gap-2" onClick={() => toast.info('Upload coming soon')}>
-            <Upload className="h-4 w-4" />
-            Upload
-          </Button>
-        </div>
-      </div>
-      <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800">
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="text" placeholder="Search assets..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-9 h-9" />
+      {/* Content Area */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
-        </div>
-
-        <div className="relative">
-          {someSelected && (
-            <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-border bg-muted/95 px-6 py-3 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium">{selectedIds.size} selected</span>
-                <Button variant="ghost" size="sm" onClick={() => onSelectAll(false)} className="h-7 gap-1 px-2 text-xs">
-                  <X className="h-3 w-3" />
-                  Clear
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-8 gap-2">
-                  <Download className="h-3.5 w-3.5" />
-                  Download
-                </Button>
-              </div>
-            </div>
-          )}
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-polar-800">
-                  <th className="w-12 px-4 py-4">
-                    <Checkbox checked={checkboxState} onCheckedChange={(checked) => onSelectAll(checked === true)} aria-label="Select all" />
-                  </th>
-                  {[{ key: 'name', label: 'Name' }, { key: 'type', label: 'Type' }, { key: 'size', label: 'Size' }, { key: 'createdAt', label: 'Uploaded' }].map(({ key, label }) => (
-                    <th key={key} className="cursor-pointer px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground" onClick={() => onSort(key as AssetSortKey)}>
-                      <div className="flex items-center gap-1.5">
-                        {label}
-                        {sortKey === key && <span className="text-foreground">{sortDirection === 'asc' ? '↑' : '↓'}</span>}
-                      </div>
-                    </th>
-                  ))}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
-                {isLoading ? (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
-                ) : assets.length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <Image className="h-8 w-8 text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">{searchQuery ? 'No assets match your search' : 'No assets yet'}</p>
-                      {searchQuery && <Button variant="ghost" size="sm" onClick={() => onSearchChange('')}>Clear search</Button>}
-                    </div>
-                  </td></tr>
-                ) : (
-                  assets.map((asset) => (
-                    <tr key={asset.id} className={`transition-colors ${selectedIds.has(asset.id) ? 'bg-muted/50' : 'hover:bg-gray-50 dark:hover:bg-polar-800/50'}`}>
-                      <td className="w-12 px-4 py-4">
-                        <Checkbox checked={selectedIds.has(asset.id)} onCheckedChange={(checked) => onSelectOne(asset.id, checked === true)} />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          {getTypeIcon(asset.type)}
-                          <span className="text-sm font-medium">{asset.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-muted-foreground capitalize">{asset.type}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatFileSize(asset.size)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(asset.createdAt)}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                            <a href={asset.url} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /></a>
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDelete(asset.id)}><Trash2 className="h-4 w-4" /></Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        {totalItems > 0 && <PaginationFooter label="assets" startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />}
-      </div>
-    </div>
-  )
-}
-
-// ============================================================
-// PAGINATION FOOTER
-// ============================================================
-interface PaginationFooterProps {
-  label: string
-  startIndex: number
-  endIndex: number
-  totalItems: number
-  totalPages: number
-  currentPage: number
-  pageSize: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
-}
-
-function PaginationFooter({ label, startIndex, endIndex, totalItems, totalPages, currentPage, pageSize, onPageChange, onPageSizeChange }: PaginationFooterProps) {
-  return (
-    <div className="flex flex-col gap-4 px-6 py-4 border-t border-border bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
-      <div className="text-sm text-muted-foreground">Showing {startIndex + 1}–{endIndex} of {totalItems} {label}</div>
-      <div className="flex items-center gap-4">
-        <Select value={pageSize.toString()} onValueChange={(value) => onPageSizeChange(Number(value))}>
-          <SelectTrigger className="w-[70px] h-8"><SelectValue /></SelectTrigger>
-          <SelectContent>{PAGE_SIZE_OPTIONS.map((size) => <SelectItem key={size} value={size.toString()}>{size}</SelectItem>)}</SelectContent>
-        </Select>
-        {totalPages > 1 && (
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="sm" onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="h-8 px-2"><ArrowLeft className="h-4 w-4" /></Button>
-            <span className="px-2 text-sm text-muted-foreground">{currentPage} / {totalPages}</span>
-            <Button variant="outline" size="sm" onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="h-8 px-2"><ArrowLeft className="h-4 w-4 rotate-180" /></Button>
-          </div>
+        ) : (
+          <>
+            {viewOptions.viewType === 'calendar' && (
+              <CalendarView 
+                days={monthDays}
+                currentDate={currentDate}
+                getContentForDate={getContentForDate}
+                projectId={projectId}
+              />
+            )}
+            {viewOptions.viewType === 'list' && (
+              <CardView 
+                content={filteredContent}
+                projectId={projectId}
+              />
+            )}
+            {viewOptions.viewType === 'board' && (
+              <KanbanView 
+                content={filteredContent}
+                projectId={projectId}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
+  )
+}
+
+// ============================================================
+// CALENDAR VIEW
+// ============================================================
+interface CalendarViewProps {
+  days: Date[]
+  currentDate: Date
+  getContentForDate: (date: Date) => ContentItem[]
+  projectId: string
+}
+
+function CalendarView({ days, currentDate, getContentForDate, projectId }: CalendarViewProps) {
+  const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+  const today = new Date()
+
+  return (
+    <div className="p-4">
+      {/* Week header */}
+      <div className="grid grid-cols-7 mb-2">
+        {weekDays.map(day => (
+          <div key={day} className="text-center text-xs font-medium text-muted-foreground py-2">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 border-t border-l border-border/40">
+        {days.map((day, idx) => {
+          const dayContent = getContentForDate(day)
+          const isCurrentMonth = isSameMonth(day, currentDate)
+          const isToday = isSameDay(day, today)
+
+          return (
+            <div
+              key={idx}
+              className={cn(
+                "min-h-[140px] border-r border-b border-border/40 p-2",
+                !isCurrentMonth && "bg-muted/30"
+              )}
+            >
+              {/* Day number */}
+              <div className={cn(
+                "text-sm font-medium mb-2",
+                !isCurrentMonth && "text-muted-foreground/50",
+                isToday && "text-primary"
+              )}>
+                {day.getDate().toString().padStart(2, '0')}
+              </div>
+
+              {/* Content items */}
+              <div className="space-y-1.5">
+                {dayContent.slice(0, 2).map(item => (
+                  <ContentCalendarCard key={item.id} content={item} projectId={projectId} />
+                ))}
+                {dayContent.length > 2 && (
+                  <div className="text-xs text-muted-foreground px-2">
+                    +{dayContent.length - 2} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// Calendar content card
+function ContentCalendarCard({ content, projectId }: { content: ContentItem; projectId: string }) {
+  const getTypeBadgeColor = (type: ContentType) => {
+    switch (type) {
+      case 'Listicle': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+      case 'How To': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'Explainer': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+      case 'Product Listicle': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'Guide': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+      case 'Tutorial': return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+    }
+  }
+
+  return (
+    <Link 
+      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      className="block p-2 rounded-lg border border-border/60 bg-background hover:border-border transition-colors"
+    >
+      <div className="flex items-center justify-between mb-1">
+        <span className={cn(
+          "inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium",
+          getTypeBadgeColor(content.type)
+        )}>
+          {content.type}
+        </span>
+      </div>
+      <p className="text-xs font-medium line-clamp-2 mb-1.5">{content.title}</p>
+      {(content.keywordDifficulty || content.searchVolume) && (
+        <div className="flex gap-2 text-[10px] text-muted-foreground">
+          {content.keywordDifficulty && <span>KD: {content.keywordDifficulty}</span>}
+          {content.searchVolume && <span>Vol: {content.searchVolume}</span>}
+        </div>
+      )}
+    </Link>
+  )
+}
+
+// ============================================================
+// CARD VIEW
+// ============================================================
+interface CardViewProps {
+  content: ContentItem[]
+  projectId: string
+}
+
+function CardView({ content, projectId }: CardViewProps) {
+  if (content.length === 0) {
+    return (
+      <div className="flex h-60 flex-col items-center justify-center text-center p-4">
+        <div className="p-3 bg-muted rounded-md mb-4">
+          <FileText className="h-6 w-6 text-foreground" />
+        </div>
+        <h3 className="mb-2 text-lg font-semibold text-foreground">No content yet</h3>
+        <p className="mb-6 text-sm text-muted-foreground">Create your first content to get started</p>
+        <Button onClick={() => toast.info('Create content coming soon')}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create new content
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {content.map(item => (
+          <ContentCard key={item.id} content={item} projectId={projectId} />
+        ))}
+        <button
+          className="rounded-2xl border border-dashed border-border/60 bg-background p-6 text-center text-sm text-muted-foreground hover:border-solid hover:border-border/80 hover:text-foreground transition-colors min-h-[200px] flex flex-col items-center justify-center cursor-pointer"
+          onClick={() => toast.info('Create content coming soon')}
+        >
+          <Plus className="mb-2 h-5 w-5" />
+          Create new content
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function ContentCard({ content, projectId }: { content: ContentItem; projectId: string }) {
+  const getStatusColor = (status: ContentStatus) => {
+    switch (status) {
+      case 'published': return 'bg-emerald-500'
+      case 'scheduled': return 'bg-amber-500'
+      case 'draft': return 'bg-gray-400'
+    }
+  }
+
+  const getTypeBadgeColor = (type: ContentType) => {
+    switch (type) {
+      case 'Listicle': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+      case 'How To': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'Explainer': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+      case 'Product Listicle': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'Guide': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+      case 'Tutorial': return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+    }
+  }
+
+  return (
+    <Link 
+      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      className="block rounded-2xl border border-border/60 bg-background p-5 hover:border-border hover:shadow-sm transition-all"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <span className={cn(
+          "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+          getTypeBadgeColor(content.type)
+        )}>
+          {content.type}
+        </span>
+        <span className={cn("w-2.5 h-2.5 rounded-full", getStatusColor(content.status))} />
+      </div>
+      
+      <h3 className="font-medium text-sm mb-3 line-clamp-2">{content.title}</h3>
+      
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>{formatDate(content.scheduledDate)}</span>
+        <div className="flex gap-3">
+          {content.keywordDifficulty && <span>KD: {content.keywordDifficulty}</span>}
+          {content.searchVolume && <span>Vol: {content.searchVolume}</span>}
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ============================================================
+// KANBAN VIEW
+// ============================================================
+interface KanbanViewProps {
+  content: ContentItem[]
+  projectId: string
+}
+
+function KanbanView({ content, projectId }: KanbanViewProps) {
+  const columns: { id: ContentStatus; title: string; color: string }[] = [
+    { id: 'draft', title: 'Draft', color: 'border-t-gray-400' },
+    { id: 'scheduled', title: 'Scheduled', color: 'border-t-amber-500' },
+    { id: 'published', title: 'Published', color: 'border-t-emerald-500' },
+  ]
+
+  const getContentByStatus = (status: ContentStatus): ContentItem[] => {
+    return content.filter(c => c.status === status)
+  }
+
+  return (
+    <div className="p-4">
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {columns.map(column => {
+          const columnContent = getContentByStatus(column.id)
+          return (
+            <div 
+              key={column.id} 
+              className={cn(
+                "flex-shrink-0 w-80 bg-muted/30 rounded-2xl border-t-4",
+                column.color
+              )}
+            >
+              {/* Column header */}
+              <div className="flex items-center justify-between p-4 pb-2">
+                <h3 className="font-medium text-sm">{column.title}</h3>
+                <Badge variant="secondary" className="text-xs">
+                  {columnContent.length}
+                </Badge>
+              </div>
+
+              {/* Column content */}
+              <div className="p-2 space-y-2 min-h-[200px]">
+                {columnContent.map(item => (
+                  <KanbanCard key={item.id} content={item} projectId={projectId} />
+                ))}
+                
+                {/* Add button */}
+                <button 
+                  className="w-full p-3 rounded-xl border border-dashed border-border/60 text-sm text-muted-foreground hover:border-border hover:text-foreground transition-colors flex items-center justify-center gap-2"
+                  onClick={() => toast.info('Create content coming soon')}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add content
+                </button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function KanbanCard({ content, projectId }: { content: ContentItem; projectId: string }) {
+  const getTypeBadgeColor = (type: ContentType) => {
+    switch (type) {
+      case 'Listicle': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+      case 'How To': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'Explainer': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+      case 'Product Listicle': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'Guide': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+      case 'Tutorial': return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+    }
+  }
+
+  return (
+    <Link 
+      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      className="block p-3 rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className={cn(
+          "inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium",
+          getTypeBadgeColor(content.type)
+        )}>
+          {content.type}
+        </span>
+      </div>
+      
+      <h4 className="font-medium text-sm mb-2 line-clamp-2">{content.title}</h4>
+      
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>{formatDate(content.scheduledDate)}</span>
+        <div className="flex gap-2">
+          {content.keywordDifficulty && <span>KD: {content.keywordDifficulty}</span>}
+        </div>
+      </div>
+    </Link>
   )
 }

@@ -1,4 +1,4 @@
-import ContentListPage from "@/components/projects/content/ContentListPage"
+import AnalyticsPageComponent from "@/components/projects/analytics/AnalyticaPage"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -13,7 +13,7 @@ export default async function AnalyticsPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
     </div>
     <div className="flex flex-1">
-     <ContentListPage />
+     <AnalyticsPageComponent />
     </div>
   </div>
   )
