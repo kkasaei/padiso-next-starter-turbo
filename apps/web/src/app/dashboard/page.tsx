@@ -17,8 +17,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
+import { ProjectWizard } from "@/components/project-wizard/ProjectWizard"
 
-function OnboardingCard({ hasProjects }: { hasProjects: boolean }) {
+function OnboardingCard({ hasProjects, onCreateProject }: { hasProjects: boolean; onCreateProject: () => void }) {
   return (
     <div className="grid grid-cols-1 divide-y divide-border rounded-3xl border border-border bg-card lg:grid-cols-3 lg:divide-x lg:divide-y-0">
       {/* Create a project */}
@@ -52,8 +53,8 @@ function OnboardingCard({ hasProjects }: { hasProjects: boolean }) {
               Completed
             </Button>
           ) : (
-            <Button asChild className="w-full">
-              <Link href="/dashboard/projects/new">Create Project</Link>
+            <Button className="w-full" onClick={onCreateProject}>
+              Create Project
             </Button>
           )}
         </div>
@@ -344,18 +345,33 @@ function TrainingCard() {
 export default function DashboardPage() {
   // In a real app, you'd fetch this from an API or context
   const hasProjects = false
+  const [showWizard, setShowWizard] = useState(false)
 
   return (
     <div className="mt-10">
       {/* Content */}
       <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6 md:p-8">
-        <OnboardingCard hasProjects={hasProjects} />
+        <OnboardingCard 
+          hasProjects={hasProjects} 
+          onCreateProject={() => setShowWizard(true)}
+        />
 
         <div className="flex flex-col gap-4">
           <h2 className="text-lg font-medium">Training Resources</h2>
           <TrainingCard />
         </div>
       </div>
+
+      {/* Project Wizard Modal */}
+      {showWizard && (
+        <ProjectWizard 
+          onClose={() => setShowWizard(false)}
+          onCreate={(data) => {
+            console.log("Business created:", data)
+            // Here you would typically save the data to your backend
+          }}
+        />
+      )}
     </div>
   )
 }
