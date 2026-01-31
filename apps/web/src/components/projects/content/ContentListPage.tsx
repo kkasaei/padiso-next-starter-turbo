@@ -114,7 +114,7 @@ type SortDirection = 'asc' | 'desc'
 // ============================================================
 // TAB TYPE
 // ============================================================
-type ContentTab = 'tasks' | 'content' | 'assets'
+type ContentTab = 'opportunities' | 'content' | 'assets'
 
 // ============================================================
 // MAIN PAGE COMPONENT
@@ -124,28 +124,28 @@ export default function ContentListPage() {
   const searchParams = useSearchParams()
   const projectId = params.id as string
 
-  // Get tab from URL query param, default to 'tasks'
+  // Get tab from URL query param, default to 'opportunities'
   const tabFromUrl = searchParams.get('tab') as ContentTab | null
-  const initialTab: ContentTab = tabFromUrl && ['tasks', 'content', 'assets'].includes(tabFromUrl)
+  const initialTab: ContentTab = tabFromUrl && ['opportunities', 'content', 'assets'].includes(tabFromUrl)
     ? tabFromUrl
-    : 'tasks'
+    : 'opportunities'
 
   // Tab state
   const [activeTab, setActiveTab] = useState<ContentTab>(initialTab)
 
   // ============================================================
-  // TASKS STATE
+  // OPPORTUNITIES STATE
   // ============================================================
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [taskSearchQuery, setTaskSearchQuery] = useState('')
-  const [taskToDelete, setTaskToDelete] = useState<string | null>(null)
+  const [opportunities, setOpportunities] = useState<Task[]>([])
+  const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('')
+  const [opportunityToDelete, setOpportunityToDelete] = useState<string | null>(null)
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
-  const [taskSortKey, setTaskSortKey] = useState<TaskSortKey>('createdAt')
-  const [taskSortDirection, setTaskSortDirection] = useState<SortDirection>('desc')
-  const [taskCurrentPage, setTaskCurrentPage] = useState(1)
-  const [taskPageSize, setTaskPageSize] = useState<number>(10)
-  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set())
-  const [tasksLoading, setTasksLoading] = useState(true)
+  const [opportunitySortKey, setOpportunitySortKey] = useState<TaskSortKey>('createdAt')
+  const [opportunitySortDirection, setOpportunitySortDirection] = useState<SortDirection>('desc')
+  const [opportunityCurrentPage, setOpportunityCurrentPage] = useState(1)
+  const [opportunityPageSize, setOpportunityPageSize] = useState<number>(10)
+  const [selectedOpportunityIds, setSelectedOpportunityIds] = useState<Set<string>>(new Set())
+  const [opportunitiesLoading, setOpportunitiesLoading] = useState(true)
 
   // ============================================================
   // CONTENT STATE
@@ -176,11 +176,11 @@ export default function ContentListPage() {
   // ============================================================
   useEffect(() => {
     if (projectId) {
-      // Load tasks
-      const taskTimer = setTimeout(() => {
-        setTasks([
+      // Load opportunities
+      const opportunityTimer = setTimeout(() => {
+        setOpportunities([
           {
-            id: 'task-1',
+            id: 'opportunity-1',
             title: 'Optimize meta descriptions for AI search',
             description: 'Review and update meta descriptions across key landing pages to improve AI visibility scores.',
             source: 'AI Insights',
@@ -190,7 +190,7 @@ export default function ContentListPage() {
             updatedAt: new Date('2026-01-24'),
           },
           {
-            id: 'task-2',
+            id: 'opportunity-2',
             title: 'Create FAQ schema markup',
             description: 'Add structured FAQ data to product pages to enhance visibility in AI-powered search results.',
             source: 'SEO Audit',
@@ -200,7 +200,7 @@ export default function ContentListPage() {
             updatedAt: new Date('2026-01-22'),
           },
           {
-            id: 'task-3',
+            id: 'opportunity-3',
             title: 'Update brand messaging guide',
             description: 'Refresh brand voice and key messaging points based on sentiment analysis feedback.',
             source: 'Brand Analysis',
@@ -210,7 +210,7 @@ export default function ContentListPage() {
             updatedAt: new Date('2026-01-23'),
           },
         ])
-        setTasksLoading(false)
+        setOpportunitiesLoading(false)
       }, 300)
       // Load content
       const contentTimer = setTimeout(() => {
@@ -292,7 +292,7 @@ export default function ContentListPage() {
         setAssetsLoading(false)
       }, 300)
       return () => {
-        clearTimeout(taskTimer)
+        clearTimeout(opportunityTimer)
         clearTimeout(contentTimer)
         clearTimeout(assetTimer)
       }
@@ -300,29 +300,29 @@ export default function ContentListPage() {
   }, [projectId])
 
   // ============================================================
-  // TASKS HANDLERS
+  // OPPORTUNITIES HANDLERS
   // ============================================================
-  const handleTaskDelete = (id: string) => {
-    setTaskToDelete(id)
+  const handleOpportunityDelete = (id: string) => {
+    setOpportunityToDelete(id)
   }
 
-  const confirmTaskDelete = () => {
-    if (taskToDelete) {
-      setTasks((prev) => prev.filter((o) => o.id !== taskToDelete))
-      toast.success('Task deleted!')
-      setTaskToDelete(null)
+  const confirmOpportunityDelete = () => {
+    if (opportunityToDelete) {
+      setOpportunities((prev) => prev.filter((o) => o.id !== opportunityToDelete))
+      toast.success('Opportunity deleted!')
+      setOpportunityToDelete(null)
     }
   }
 
-  const handleTaskStatusChange = (id: string, status: TaskStatus) => {
-    setTasks((prev) =>
+  const handleOpportunityStatusChange = (id: string, status: TaskStatus) => {
+    setOpportunities((prev) =>
       prev.map((o) => (o.id === id ? { ...o, status, updatedAt: new Date() } : o))
     )
     toast.success('Status updated!')
   }
 
-  const handleSelectTask = (id: string, selected: boolean) => {
-    setSelectedTaskIds((prev) => {
+  const handleSelectOpportunity = (id: string, selected: boolean) => {
+    setSelectedOpportunityIds((prev) => {
       const newSet = new Set(prev)
       if (selected) {
         newSet.add(id)
@@ -333,35 +333,35 @@ export default function ContentListPage() {
     })
   }
 
-  const handleSelectAllTasks = (selected: boolean) => {
+  const handleSelectAllOpportunities = (selected: boolean) => {
     if (selected) {
-      setSelectedTaskIds(new Set(paginatedTasks.map((o) => o.id)))
+      setSelectedOpportunityIds(new Set(paginatedOpportunities.map((o) => o.id)))
     } else {
-      setSelectedTaskIds(new Set())
+      setSelectedOpportunityIds(new Set())
     }
   }
 
-  const handleBulkDeleteTasks = () => {
+  const handleBulkDeleteOpportunities = () => {
     setBulkDeleteOpen(true)
   }
 
   const confirmBulkDelete = () => {
-    const ids = Array.from(selectedTaskIds)
+    const ids = Array.from(selectedOpportunityIds)
     if (ids.length === 0) return
-    setTasks((prev) => prev.filter((o) => !ids.includes(o.id)))
-    setSelectedTaskIds(new Set())
-    toast.success(`${ids.length} task(s) deleted!`)
+    setOpportunities((prev) => prev.filter((o) => !ids.includes(o.id)))
+    setSelectedOpportunityIds(new Set())
+    toast.success(`${ids.length} opportunity(ies) deleted!`)
     setBulkDeleteOpen(false)
   }
 
-  const handleTaskSort = (key: TaskSortKey) => {
-    if (taskSortKey === key) {
-      setTaskSortDirection(taskSortDirection === 'asc' ? 'desc' : 'asc')
+  const handleOpportunitySort = (key: TaskSortKey) => {
+    if (opportunitySortKey === key) {
+      setOpportunitySortDirection(opportunitySortDirection === 'asc' ? 'desc' : 'asc')
     } else {
-      setTaskSortKey(key)
-      setTaskSortDirection('desc')
+      setOpportunitySortKey(key)
+      setOpportunitySortDirection('desc')
     }
-    setTaskCurrentPage(1)
+    setOpportunityCurrentPage(1)
   }
 
   // ============================================================
@@ -445,17 +445,17 @@ export default function ContentListPage() {
   }
 
   // ============================================================
-  // TASKS DATA PROCESSING
+  // OPPORTUNITIES DATA PROCESSING
   // ============================================================
-  const filteredTasks = tasks.filter((task) => {
-    if (!taskSearchQuery.trim()) return true
-    const query = taskSearchQuery.toLowerCase()
-    return task.title.toLowerCase().includes(query) || task.description.toLowerCase().includes(query)
+  const filteredOpportunities = opportunities.filter((opportunity) => {
+    if (!opportunitySearchQuery.trim()) return true
+    const query = opportunitySearchQuery.toLowerCase()
+    return opportunity.title.toLowerCase().includes(query) || opportunity.description.toLowerCase().includes(query)
   })
 
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
+  const sortedOpportunities = [...filteredOpportunities].sort((a, b) => {
     let comparison = 0
-    switch (taskSortKey) {
+    switch (opportunitySortKey) {
       case 'title': comparison = a.title.localeCompare(b.title); break
       case 'status': comparison = a.status.localeCompare(b.status); break
       case 'priority': {
@@ -467,15 +467,15 @@ export default function ContentListPage() {
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         break
     }
-    return taskSortDirection === 'asc' ? comparison : -comparison
+    return opportunitySortDirection === 'asc' ? comparison : -comparison
   })
 
-  const taskTotalItems = sortedTasks.length
-  const taskTotalPages = Math.ceil(taskTotalItems / taskPageSize)
-  const taskValidCurrentPage = Math.max(1, Math.min(taskCurrentPage, taskTotalPages || 1))
-  const taskStartIndex = (taskValidCurrentPage - 1) * taskPageSize
-  const taskEndIndex = Math.min(taskStartIndex + taskPageSize, taskTotalItems)
-  const paginatedTasks = sortedTasks.slice(taskStartIndex, taskEndIndex)
+  const opportunityTotalItems = sortedOpportunities.length
+  const opportunityTotalPages = Math.ceil(opportunityTotalItems / opportunityPageSize)
+  const opportunityValidCurrentPage = Math.max(1, Math.min(opportunityCurrentPage, opportunityTotalPages || 1))
+  const opportunityStartIndex = (opportunityValidCurrentPage - 1) * opportunityPageSize
+  const opportunityEndIndex = Math.min(opportunityStartIndex + opportunityPageSize, opportunityTotalItems)
+  const paginatedOpportunities = sortedOpportunities.slice(opportunityStartIndex, opportunityEndIndex)
 
   // ============================================================
   // CONTENT DATA PROCESSING
@@ -492,11 +492,12 @@ export default function ContentListPage() {
       case 'title': comparison = a.title.localeCompare(b.title); break
       case 'type': comparison = a.type.localeCompare(b.type); break
       case 'status': comparison = a.status.localeCompare(b.status); break
-      case 'publishedAt':
+      case 'publishedAt': {
         const pubA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0
         const pubB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0
         comparison = pubA - pubB
         break
+      }
       case 'createdAt':
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         break
@@ -552,11 +553,11 @@ export default function ContentListPage() {
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
             <TabsList className="bg-transparent ring-0 dark:bg-transparent dark:ring-0 p-1 gap-2 w-max md:w-auto">
               <TabsTrigger
-                value="tasks"
+                value="opportunities"
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
                 <Lightbulb className="h-4 w-4 mr-2" />
-                Tasks
+                Opportunities
               </TabsTrigger>
               <TabsTrigger
                 value="content"
@@ -575,31 +576,31 @@ export default function ContentListPage() {
             </TabsList>
           </div>
 
-          {/* Tasks Tab */}
-          <TabsContent value="tasks" className="mt-0">
-            <TasksTabContent
+          {/* Opportunities Tab */}
+          <TabsContent value="opportunities" className="mt-0">
+            <OpportunitiesTabContent
               projectId={projectId}
-              tasks={paginatedTasks}
-              isLoading={tasksLoading}
-              searchQuery={taskSearchQuery}
-              onSearchChange={(v) => { setTaskSearchQuery(v); setTaskCurrentPage(1) }}
-              sortKey={taskSortKey}
-              sortDirection={taskSortDirection}
-              onSort={handleTaskSort}
-              currentPage={taskCurrentPage}
-              pageSize={taskPageSize}
-              totalItems={taskTotalItems}
-              totalPages={taskTotalPages}
-              startIndex={taskStartIndex}
-              endIndex={taskEndIndex}
-              onPageChange={setTaskCurrentPage}
-              onPageSizeChange={(v) => { setTaskPageSize(v); setTaskCurrentPage(1) }}
-              onDelete={handleTaskDelete}
-              onStatusChange={handleTaskStatusChange}
-              selectedIds={selectedTaskIds}
-              onSelectOne={handleSelectTask}
-              onSelectAll={handleSelectAllTasks}
-              onBulkDelete={handleBulkDeleteTasks}
+              opportunities={paginatedOpportunities}
+              isLoading={opportunitiesLoading}
+              searchQuery={opportunitySearchQuery}
+              onSearchChange={(v) => { setOpportunitySearchQuery(v); setOpportunityCurrentPage(1) }}
+              sortKey={opportunitySortKey}
+              sortDirection={opportunitySortDirection}
+              onSort={handleOpportunitySort}
+              currentPage={opportunityCurrentPage}
+              pageSize={opportunityPageSize}
+              totalItems={opportunityTotalItems}
+              totalPages={opportunityTotalPages}
+              startIndex={opportunityStartIndex}
+              endIndex={opportunityEndIndex}
+              onPageChange={setOpportunityCurrentPage}
+              onPageSizeChange={(v) => { setOpportunityPageSize(v); setOpportunityCurrentPage(1) }}
+              onDelete={handleOpportunityDelete}
+              onStatusChange={handleOpportunityStatusChange}
+              selectedIds={selectedOpportunityIds}
+              onSelectOne={handleSelectOpportunity}
+              onSelectAll={handleSelectAllOpportunities}
+              onBulkDelete={handleBulkDeleteOpportunities}
             />
           </TabsContent>
 
@@ -657,19 +658,19 @@ export default function ContentListPage() {
         </Tabs>
       </div>
 
-      {/* Delete Task Confirmation Modal */}
-      <AlertDialog open={taskToDelete !== null} onOpenChange={(open) => !open && setTaskToDelete(null)}>
+      {/* Delete Opportunity Confirmation Modal */}
+      <AlertDialog open={opportunityToDelete !== null} onOpenChange={(open) => !open && setOpportunityToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Task</AlertDialogTitle>
+            <AlertDialogTitle>Delete Opportunity</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this task? This action cannot be undone.
+              Are you sure you want to delete this opportunity? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmTaskDelete}
+              onClick={confirmOpportunityDelete}
               className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
             >
               Delete
@@ -682,9 +683,9 @@ export default function ContentListPage() {
       <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {selectedTaskIds.size} Item(s)</AlertDialogTitle>
+            <AlertDialogTitle>Delete {selectedOpportunityIds.size} Item(s)</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {selectedTaskIds.size} selected item(s)? This action cannot be undone.
+              Are you sure you want to delete {selectedOpportunityIds.size} selected item(s)? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -693,7 +694,7 @@ export default function ContentListPage() {
               onClick={confirmBulkDelete}
               className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
             >
-              Delete {selectedTaskIds.size} Item(s)
+              Delete {selectedOpportunityIds.size} Item(s)
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -703,11 +704,11 @@ export default function ContentListPage() {
 }
 
 // ============================================================
-// TASKS TAB CONTENT
+// OPPORTUNITIES TAB CONTENT
 // ============================================================
-interface TasksTabContentProps {
+interface OpportunitiesTabContentProps {
   projectId: string
-  tasks: Task[]
+  opportunities: Task[]
   isLoading: boolean
   searchQuery: string
   onSearchChange: (value: string) => void
@@ -730,10 +731,10 @@ interface TasksTabContentProps {
   onBulkDelete: () => void
 }
 
-function TasksTabContent(props: TasksTabContentProps) {
-  const { projectId, tasks, isLoading, searchQuery, onSearchChange, sortKey, sortDirection, onSort, totalItems, totalPages, startIndex, endIndex, currentPage, pageSize, onPageChange, onPageSizeChange, onDelete, onStatusChange, selectedIds, onSelectOne, onSelectAll, onBulkDelete } = props
+function OpportunitiesTabContent(props: OpportunitiesTabContentProps) {
+  const { projectId, opportunities, isLoading, searchQuery, onSearchChange, sortKey, sortDirection, onSort, totalItems, totalPages, startIndex, endIndex, currentPage, pageSize, onPageChange, onPageSizeChange, onDelete, onStatusChange, selectedIds, onSelectOne, onSelectAll, onBulkDelete } = props
 
-  const allSelected = tasks.length > 0 && tasks.every((o) => selectedIds.has(o.id))
+  const allSelected = opportunities.length > 0 && opportunities.every((o) => selectedIds.has(o.id))
   const someSelected = selectedIds.size > 0
   const checkboxState = allSelected ? true : someSelected ? 'indeterminate' : false
 
@@ -758,8 +759,8 @@ function TasksTabContent(props: TasksTabContentProps) {
     <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
       <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
         <div className="flex w-full flex-col gap-y-2">
-          <span className="text-lg font-semibold">Tasks</span>
-          <p className="text-sm text-muted-foreground">Manage and track tasks to improve your visibility.</p>
+          <span className="text-lg font-semibold">Opportunities</span>
+          <p className="text-sm text-muted-foreground">Manage and track opportunities to improve your visibility.</p>
         </div>
         <div className="flex shrink-0 flex-row items-center gap-2">
           <Button variant="outline" size="sm" className="gap-2">
@@ -772,7 +773,7 @@ function TasksTabContent(props: TasksTabContentProps) {
         <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="text" placeholder="Search tasks..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-9 h-9" />
+            <Input type="text" placeholder="Search opportunities..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-9 h-9" />
           </div>
         </div>
 
@@ -802,7 +803,7 @@ function TasksTabContent(props: TasksTabContentProps) {
                   <th className="w-12 px-4 py-4">
                     <Checkbox checked={checkboxState} onCheckedChange={(checked) => onSelectAll(checked === true)} aria-label="Select all" />
                   </th>
-                  {[{ key: 'title', label: 'Task' }, { key: 'status', label: 'Status' }, { key: 'priority', label: 'Priority' }, { key: 'createdAt', label: 'Created' }].map(({ key, label }) => (
+                  {[{ key: 'title', label: 'Opportunity' }, { key: 'status', label: 'Status' }, { key: 'priority', label: 'Priority' }, { key: 'createdAt', label: 'Created' }].map(({ key, label }) => (
                     <th key={key} className="cursor-pointer px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground" onClick={() => onSort(key as TaskSortKey)}>
                       <div className="flex items-center gap-1.5">
                         {label}
@@ -816,53 +817,53 @@ function TasksTabContent(props: TasksTabContentProps) {
               <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
                 {isLoading ? (
                   <tr><td colSpan={6} className="px-6 py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
-                ) : tasks.length === 0 ? (
+                ) : opportunities.length === 0 ? (
                   <tr><td colSpan={6} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <Lightbulb className="h-8 w-8 text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">{searchQuery ? 'No tasks match your search' : 'No tasks yet'}</p>
+                      <p className="text-sm text-muted-foreground">{searchQuery ? 'No opportunities match your search' : 'No opportunities yet'}</p>
                       {searchQuery && <Button variant="ghost" size="sm" onClick={() => onSearchChange('')}>Clear search</Button>}
                     </div>
                   </td></tr>
                 ) : (
-                  tasks.map((task) => (
-                    <tr key={task.id} className={`transition-colors ${selectedIds.has(task.id) ? 'bg-muted/50' : 'hover:bg-gray-50 dark:hover:bg-polar-800/50'}`}>
+                  opportunities.map((opportunity) => (
+                    <tr key={opportunity.id} className={`transition-colors ${selectedIds.has(opportunity.id) ? 'bg-muted/50' : 'hover:bg-gray-50 dark:hover:bg-polar-800/50'}`}>
                       <td className="w-12 px-4 py-4">
-                        <Checkbox checked={selectedIds.has(task.id)} onCheckedChange={(checked) => onSelectOne(task.id, checked === true)} />
+                        <Checkbox checked={selectedIds.has(opportunity.id)} onCheckedChange={(checked) => onSelectOne(opportunity.id, checked === true)} />
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
-                          <Link href={`/dashboard/projects/${projectId}/studio/tasks/${task.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors">{task.title}</Link>
-                          <span className="text-xs text-muted-foreground line-clamp-1">{task.description}</span>
+                          <Link href={`/dashboard/projects/${projectId}/studio/opportunities/${opportunity.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors">{opportunity.title}</Link>
+                          <span className="text-xs text-muted-foreground line-clamp-1">{opportunity.description}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium cursor-pointer transition-colors', getStatusBadge(task.status))}>
-                              {task.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            <button className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium cursor-pointer transition-colors', getStatusBadge(opportunity.status))}>
+                              {opportunity.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="start">
-                            <DropdownMenuItem onClick={() => onStatusChange(task.id, 'new')}>New</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(task.id, 'in_progress')}>In Progress</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(task.id, 'completed')}>Completed</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onStatusChange(task.id, 'dismissed')}>Dismissed</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'new')}>New</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'in_progress')}>In Progress</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'completed')}>Completed</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onStatusChange(opportunity.id, 'dismissed')}>Dismissed</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium', getPriorityBadge(task.priority))}>
-                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                        <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium', getPriorityBadge(opportunity.priority))}>
+                          {opportunity.priority.charAt(0).toUpperCase() + opportunity.priority.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(task.createdAt)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{formatDate(opportunity.createdAt)}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                            <Link href={`/dashboard/projects/${projectId}/studio/tasks/${task.id}`}><Eye className="h-4 w-4" /></Link>
+                            <Link href={`/dashboard/projects/${projectId}/studio/opportunities/${opportunity.id}`}><Eye className="h-4 w-4" /></Link>
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDelete(task.id)}><Trash2 className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDelete(opportunity.id)}><Trash2 className="h-4 w-4" /></Button>
                         </div>
                       </td>
                     </tr>
@@ -872,7 +873,7 @@ function TasksTabContent(props: TasksTabContentProps) {
             </table>
           </div>
         </div>
-        {totalItems > 0 && <PaginationFooter label="tasks" startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />}
+        {totalItems > 0 && <PaginationFooter label="opportunities" startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} totalPages={totalPages} currentPage={currentPage} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />}
       </div>
     </div>
   )
