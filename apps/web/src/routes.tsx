@@ -5,7 +5,7 @@ import {
   Wrench,
   SparkleIcon,
 } from "@phosphor-icons/react/dist/ssr"
-import { ChartNoAxesCombinedIcon, TowerControlIcon, GlobeIcon, } from "lucide-react"
+import { ChartNoAxesCombinedIcon, TowerControlIcon, GlobeIcon, SquareCheckBigIcon } from "lucide-react"
 
 export const baseURL = process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000';
 
@@ -37,6 +37,8 @@ export const projectNavItems = [
   { id: "backlinks", label: "Backlinks", icon: Wrench, path: "/backlinks" },
   { id: "technical-audit", label: "Technical Audit", icon: MagnifyingGlassPlus, path: "/technical-audit" },
   { id: "reddit", label: "Reddit", icon: GlobeIcon, path: "/reddit" },
+  { id: "separator", label: "", icon: null, path: "", isSeparator: true },
+  { id: "tasks", label: "Tasks", icon: SquareCheckBigIcon, path: "/tasks" },
   { id: "settings", label: "Settings", icon: GearSix, path: "/settings" },
 ] as const;
 

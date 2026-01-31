@@ -246,6 +246,11 @@ export function ProjectSidebar() {
         <nav className="p-2">
           <ul className="flex flex-col gap-1">
             {projectNavItems.map((item) => {
+              // Handle separator
+              if ('isSeparator' in item && item.isSeparator) {
+                return <Separator key={item.id} className="my-2" />
+              }
+
               const Icon = item.icon
               const isActive = isNavItemActive(item.path)
               const href = `/dashboard/projects/${currentProjectId}${item.path}`
@@ -261,7 +266,7 @@ export function ProjectSidebar() {
                         : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground"
                     )}
                   >
-                    <Icon className="h-[18px] w-[18px]" />
+                    {Icon && <Icon className="h-[18px] w-[18px]" />}
                     <span>{item.label}</span>
                   </Link>
                 </li>
