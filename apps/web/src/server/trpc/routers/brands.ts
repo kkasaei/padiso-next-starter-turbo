@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { eq, and, desc } from "drizzle-orm";
-import { brands, brandMembers } from "@workspace/db/schema";
+import { eq, desc } from "drizzle-orm";
+import { brands } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
 export const brandsRouter = router({

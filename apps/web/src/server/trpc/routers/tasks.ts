@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { tasks } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
