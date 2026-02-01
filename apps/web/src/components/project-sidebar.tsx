@@ -120,11 +120,11 @@ export function ProjectSidebar() {
 
   const handleProjectSwitch = (projectId: string) => {
     setSwitcherOpen(false)
-    router.push(`/dashboard/projects/${projectId}`)
+    router.push(`/dashboard/brands/${projectId}`)
   }
 
   const isNavItemActive = (navPath: string) => {
-    const basePath = `/dashboard/projects/${currentProjectId}`
+    const basePath = `/dashboard/brands/${currentProjectId}`
     if (navPath === "") {
       return pathname === basePath
     }
@@ -228,7 +228,7 @@ export function ProjectSidebar() {
               {/* Actions */}
               <div className="p-1">
                 <Link
-                  href="/dashboard/projects/new"
+                  href="/dashboard/brands/new"
                   onClick={() => setSwitcherOpen(false)}
                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
                 >
@@ -253,7 +253,7 @@ export function ProjectSidebar() {
 
               const Icon = item.icon
               const isActive = isNavItemActive(item.path)
-              const href = `/dashboard/projects/${currentProjectId}${item.path}`
+              const href = `/dashboard/brands/${currentProjectId}${item.path}`
 
               return (
                 <li key={item.id}>

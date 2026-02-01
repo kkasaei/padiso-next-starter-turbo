@@ -71,7 +71,7 @@ export function PromptsTable({
                 <TableRow key={prompt.id}>
                   <TableCell className="font-medium max-w-[350px]" title={prompt.prompt}>
                     <Link 
-                      href={`/dashboard/projects/${projectId}/prompts/${prompt.id}`}
+                      href={`/dashboard/brands/${projectId}/prompts/${prompt.id}`}
                       className="truncate block hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
                       {prompt.prompt}
@@ -109,7 +109,7 @@ export function PromptsTable({
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/dashboard/projects/${projectId}/prompts/${prompt.id}`}>
+                        <Link href={`/dashboard/brands/${projectId}/prompts/${prompt.id}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>

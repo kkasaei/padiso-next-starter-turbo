@@ -214,7 +214,7 @@ function MetricCard({ metric }: { metric: MetricCardData }) {
 export function AuditMetricsGrid({ audit, pages, projectId }: AuditMetricsGridProps) {
   const metrics = useMemo(() => {
     const calculated = calculateMetrics(audit, pages);
-    const basePath = `/dashboard/projects/${projectId}/audit`;
+    const basePath = `/dashboard/brands/${projectId}/audit`;
     
     const metricsData: MetricCardData[] = [
       {

@@ -9,7 +9,7 @@ export default function Page(props: { projectId: string }) {
   const projectId = props.projectId
 
   const handleStartGenerating = () => {
-    router.push(`/dashboard/projects/${projectId}/tools/llmtext-generator/edit`)
+    router.push(`/dashboard/brands/${projectId}/tools/llmtext-generator/edit`)
   }
 
   return (

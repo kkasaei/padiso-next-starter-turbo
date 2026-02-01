@@ -80,7 +80,7 @@ async function seed() {
         .insert(users)
         .values({
           name,
-          avatarUrl: name === "jason duong" ? "/avatar-profile.jpg" : undefined,
+          avatarUrl: name === "jason duong" ? "/placeholder-user.jpg" : undefined,
           role: name === "jason duong" ? "PIC" : name.toUpperCase(),
         })
         .returning();

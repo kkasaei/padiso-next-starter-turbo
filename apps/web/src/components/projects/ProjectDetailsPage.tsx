@@ -17,7 +17,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
   const breadcrumbs = useMemo(
     () => [
-      { label: "Projects", href: "/dashboard/projects" },
+      { label: "Projects", href: "/dashboard/brands" },
       { label: projectData?.name ?? "Project Details" },
     ],
     [projectData?.name]

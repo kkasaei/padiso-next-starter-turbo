@@ -1161,7 +1161,7 @@ function PromptsTabContent(props: PromptsTabContentProps) {
                         aria-label={`Select ${prompt.prompt}`}
                       />
                     </td>
-                    <td className="px-6 py-4"><Link href={`/dashboard/projects/${projectId}/tracking/prompts/${prompt.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors line-clamp-2">{prompt.prompt}</Link></td>
+                    <td className="px-6 py-4"><Link href={`/dashboard/brands/${projectId}/tracking/prompts/${prompt.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors line-clamp-2">{prompt.prompt}</Link></td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {/* Show scan status only when actively scanning */}
                       {prompt.scanStatus === 'SCANNING' ? (
@@ -1194,7 +1194,7 @@ function PromptsTabContent(props: PromptsTabContentProps) {
                           className="h-8 w-8"
                           asChild
                         >
-                          <Link href={`/dashboard/projects/${projectId}/tracking/prompts/${prompt.id}`} title="View details">
+                          <Link href={`/dashboard/brands/${projectId}/tracking/prompts/${prompt.id}`} title="View details">
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -1326,7 +1326,7 @@ function KeywordsTabContent(props: KeywordsTabContentProps) {
                 keywords.map((keyword) => (
                   <tr key={keyword.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
-                      <Link href={`/dashboard/projects/${projectId}/tracking/keywords/${keyword.id}`} className="flex flex-col gap-1 hover:opacity-80 transition-opacity">
+                      <Link href={`/dashboard/brands/${projectId}/tracking/keywords/${keyword.id}`} className="flex flex-col gap-1 hover:opacity-80 transition-opacity">
                         <span className="text-sm font-medium">{keyword.keyword}</span>
                         {keyword.notes && <span className="text-xs text-muted-foreground line-clamp-1">{keyword.notes}</span>}
                       </Link>
@@ -1362,7 +1362,7 @@ function KeywordsTabContent(props: KeywordsTabContentProps) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild><Link href={`/dashboard/projects/${projectId}/tracking/keywords/${keyword.id}`}><Eye className="h-4 w-4" /></Link></Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild><Link href={`/dashboard/brands/${projectId}/tracking/keywords/${keyword.id}`}><Eye className="h-4 w-4" /></Link></Button>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onEdit(keyword)}><Pencil className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onDelete(keyword.id)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
@@ -1454,7 +1454,7 @@ function CompetitorsTabContent(props: CompetitorsTabContentProps) {
                 competitors.map((competitor) => (
                   <tr key={competitor.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
-                      <Link href={`/dashboard/projects/${projectId}/tracking/competitors/${competitor.id}`} className="flex flex-col gap-1 hover:opacity-80 transition-opacity">
+                      <Link href={`/dashboard/brands/${projectId}/tracking/competitors/${competitor.id}`} className="flex flex-col gap-1 hover:opacity-80 transition-opacity">
                         <span className="text-sm font-medium">{competitor.name}</span>
                         <span className="text-xs text-muted-foreground">{competitor.domain}</span>
                       </Link>
@@ -1469,7 +1469,7 @@ function CompetitorsTabContent(props: CompetitorsTabContentProps) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild><Link href={`/dashboard/projects/${projectId}/tracking/competitors/${competitor.id}`}><Eye className="h-4 w-4" /></Link></Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild><Link href={`/dashboard/brands/${projectId}/tracking/competitors/${competitor.id}`}><Eye className="h-4 w-4" /></Link></Button>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onDelete(competitor.id)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </td>

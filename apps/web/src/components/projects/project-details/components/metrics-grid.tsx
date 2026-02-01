@@ -75,7 +75,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trendValue: analyticsData?.visibilityTrend === 'up' ? '+5%' : analyticsData?.visibilityTrend === 'down' ? '-5%' : undefined,
         data: visibilityChartData,
         color: '#3b82f6',
-        href: `/dashboard/projects/${projectId}/analytics`,
+        href: `/dashboard/brands/${projectId}/analytics`,
         hasData: hasAnalyticsData,
       },
       {
@@ -86,7 +86,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trendValue: `${sentimentScore}%`,
         data: generateDataForDateRange(startDate, endDate, sentimentScore, 10, sentimentTrend),
         color: sentimentColor,
-        href: `/dashboard/projects/${projectId}/analytics`,
+        href: `/dashboard/brands/${projectId}/analytics`,
         hasData: hasAnalyticsData,
       },
       {
@@ -96,7 +96,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trend: 'stable',
         data: generateDataForDateRange(startDate, endDate, analyticsData?.competitorCount || 0, 2, 'stable'),
         color: '#ec4899',
-        href: `/dashboard/projects/${projectId}/analytics`,
+        href: `/dashboard/brands/${projectId}/analytics`,
         hasData: hasAnalyticsData,
       },
       {
@@ -107,7 +107,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trendValue: analyticsData?.brandMentions ? `${analyticsData.brandMentions} total` : undefined,
         data: generateDataForDateRange(startDate, endDate, analyticsData?.brandMentions || 0, 5, analyticsData?.visibilityTrend || 'stable'),
         color: '#8b5cf6',
-        href: `/dashboard/projects/${projectId}/analytics`,
+        href: `/dashboard/brands/${projectId}/analytics`,
         hasData: hasAnalyticsData,
       },
       {
@@ -118,7 +118,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trend: 'stable',
         data: generateDataForDateRange(startDate, endDate, dashboardStats?.websiteHealth ?? 50, 5, 'stable'),
         color: '#06b6d4',
-        href: `/dashboard/projects/${projectId}/audit`,
+        href: `/dashboard/brands/${projectId}/audit`,
         hasData: hasData && dashboardStats?.websiteHealth !== null,
       },
       {
@@ -128,7 +128,7 @@ export function MetricsGrid({ projectId, hasData = true, dashboardStats }: Metri
         trend: 'stable',
         data: generateDataForDateRange(startDate, endDate, dashboardStats?.openOpportunities ?? 5, 3, 'stable'),
         color: '#f59e0b',
-        href: `/dashboard/projects/${projectId}/opportunities`,
+        href: `/dashboard/brands/${projectId}/opportunities`,
         hasData: hasData,
       },
     ]

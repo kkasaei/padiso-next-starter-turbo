@@ -147,7 +147,7 @@ export default function NewAgentPage() {
   }, [])
 
   const handleBack = () => {
-    router.push(`/dashboard/projects/${projectId}/studio/agents`)
+    router.push(`/dashboard/brands/${projectId}/studio/agents`)
   }
 
   // Measure workflow name width for dynamic input sizing

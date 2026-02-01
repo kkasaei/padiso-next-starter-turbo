@@ -371,7 +371,7 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
                   <p className="text-sm text-muted-foreground">Manage and monitor your automated AI agents.</p>
                 </div>
                 <div className="flex shrink-0 flex-row items-center gap-2">
-                  <Button size="sm" onClick={() => router.push(`/dashboard/projects/${projectId}/agents/new`)} className="gap-2">
+                  <Button size="sm" onClick={() => router.push(`/dashboard/brands/${projectId}/agents/new`)} className="gap-2">
                     <Plus className="h-4 w-4" />
                     New Agent
                   </Button>
@@ -579,7 +579,7 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
                           ) : (
                             <Button
                               size="sm"
-                              onClick={() => router.push(`/dashboard/projects/${projectId}/agents/new`)}
+                              onClick={() => router.push(`/dashboard/brands/${projectId}/agents/new`)}
                               className="mt-2"
                             >
                               <Plus className="h-4 w-4 mr-2" />
@@ -612,7 +612,7 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
                               </div>
                               <div className="flex flex-col min-w-0">
                                 <Link
-                                  href={`/dashboard/projects/${projectId}/studio/agents/${agent.id}`}
+                                  href={`/dashboard/brands/${projectId}/studio/agents/${agent.id}`}
                                   className="font-medium text-sm truncate hover:text-primary hover:underline transition-colors"
                                 >
                                   {agent.name}
@@ -675,7 +675,7 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/dashboard/projects/${projectId}/studio/agents/${agent.id}`)}
+                                    onClick={() => router.push(`/dashboard/brands/${projectId}/studio/agents/${agent.id}`)}
                                     className="cursor-pointer"
                                   >
                                     <Eye className="h-4 w-4 mr-2" />
@@ -689,7 +689,7 @@ export default function AgentsPage({ projectId }: { projectId: string }) {
                                     Run Now
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/dashboard/projects/${projectId}/studio/agents/${agent.id}/configure`)}
+                                    onClick={() => router.push(`/dashboard/brands/${projectId}/studio/agents/${agent.id}/configure`)}
                                     className="cursor-pointer"
                                   >
                                     <Settings className="h-4 w-4 mr-2" />

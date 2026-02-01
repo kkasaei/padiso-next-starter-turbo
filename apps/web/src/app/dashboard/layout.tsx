@@ -12,10 +12,10 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   
-  // Show project sidebar only on project detail pages: /dashboard/projects/[id]
-  const isProjectDetailPage = pathname.startsWith("/dashboard/projects/") && 
-    pathname !== "/dashboard/projects" &&
-    pathname !== "/dashboard/projects/new"
+  // Show project sidebar only on project detail pages: /dashboard/brands/[id]
+  const isProjectDetailPage = pathname.startsWith("/dashboard/brands/") && 
+    pathname !== "/dashboard/brands" &&
+    pathname !== "/dashboard/brands/new"
 
   return (
     <>

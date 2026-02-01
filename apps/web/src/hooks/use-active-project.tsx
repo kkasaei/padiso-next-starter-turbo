@@ -6,7 +6,7 @@ import type { ProjectDto } from '@/lib/shcmea/types/dtos/project-dto';
 // ============================================================
 // ACTIVE PROJECT CONTEXT
 // Provides the current project to all child components under
-// /dashboard/projects/[projectId]/* routes
+// /dashboard/brands/[projectId]/* routes
 // ============================================================
 
 const ProjectContext = React.createContext<ProjectDto | undefined>(undefined);

@@ -66,7 +66,7 @@ export function ProjectCard({ project, actions, variant = "list" }: ProjectCardP
     return format(dueDate, "MMM d")
   })()
 
-  const goToDetails = () => router.push(`/dashboard/projects/${project.id}`)
+  const goToDetails = () => router.push(`/dashboard/brands/${project.id}`)
 
   const onKeyNavigate: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.key === "Enter" || e.key === " ") {

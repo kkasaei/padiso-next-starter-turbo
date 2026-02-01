@@ -487,7 +487,7 @@ export default function PromptTrackingPage({ projectId, promptId }: { projectId:
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href={`/dashboard/projects/${projectId}/tracking?tab=prompts`}>
+            <Link href={`/dashboard/brands/${projectId}/tracking?tab=prompts`}>
               Back to Prompts
             </Link>
           </Button>

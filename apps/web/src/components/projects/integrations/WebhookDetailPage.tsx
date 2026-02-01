@@ -160,7 +160,7 @@ export default function WebhookDetailPage({ projectId, webhookId }: WebhookDetai
         {/* Header */}
         <div className="flex flex-col gap-y-4 py-8 md:flex-row md:items-center md:justify-between md:gap-x-4 md:py-8">
           <div className="flex items-center gap-4">
-            <Link href={`/dashboard/projects/${projectId}/integrations?tab=webhooks`}>
+            <Link href={`/dashboard/brands/${projectId}/integrations?tab=webhooks`}>
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -205,7 +205,7 @@ export default function WebhookDetailPage({ projectId, webhookId }: WebhookDetai
               )}
             </Button>
             <Button asChild>
-              <Link href={`/dashboard/projects/${projectId}/integrations/webhook/${webhookId}/edit`}>
+              <Link href={`/dashboard/brands/${projectId}/integrations/webhook/${webhookId}/edit`}>
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit
               </Link>

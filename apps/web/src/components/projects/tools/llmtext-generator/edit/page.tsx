@@ -278,7 +278,7 @@ export default function EditLLMTextPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => router.push(`/dashboard/projects/${projectId}/tools/llmtext-generator`)}
+                  onClick={() => router.push(`/dashboard/brands/${projectId}/tools/llmtext-generator`)}
                   className="h-9 w-9 shrink-0 rounded-full"
                 >
                   <ArrowLeft className="h-4 w-4" />

@@ -140,7 +140,7 @@ export default function NewWebhookPage({ projectId }: NewWebhookPageProps) {
     setTimeout(() => {
       toast.success(`Webhook "${webhookForm.name}" created successfully!`)
       setIsCreating(false)
-      router.push(`/dashboard/projects/${projectId}/integrations?tab=webhooks`)
+      router.push(`/dashboard/brands/${projectId}/integrations?tab=webhooks`)
     }, 1000)
   }
 
@@ -572,7 +572,7 @@ export default function NewWebhookPage({ projectId }: NewWebhookPageProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push(`/dashboard/projects/${projectId}/integrations?tab=webhooks`)}
+              onClick={() => router.push(`/dashboard/brands/${projectId}/integrations?tab=webhooks`)}
               className="h-10 rounded-lg"
             >
               Cancel

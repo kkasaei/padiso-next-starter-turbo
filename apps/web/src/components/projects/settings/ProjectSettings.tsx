@@ -770,7 +770,7 @@ export default function Page() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/dashboard/projects/${projectId}`)}
+                onClick={() => router.push(`/dashboard/brands/${projectId}`)}
                 className="h-10 rounded-lg"
               >
                 Cancel
@@ -811,7 +811,7 @@ export default function Page() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/dashboard/projects/${projectId}`)}
+                onClick={() => router.push(`/dashboard/brands/${projectId}`)}
                 className="h-10 rounded-lg"
               >
                 Cancel
@@ -858,7 +858,7 @@ export default function Page() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/dashboard/projects/${projectId}`)}
+                onClick={() => router.push(`/dashboard/brands/${projectId}`)}
                 className="h-10 rounded-lg"
               >
                 Cancel
@@ -889,7 +889,7 @@ export default function Page() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/dashboard/projects/${projectId}`)}
+                onClick={() => router.push(`/dashboard/brands/${projectId}`)}
                 className="h-10 rounded-lg"
               >
                 Cancel

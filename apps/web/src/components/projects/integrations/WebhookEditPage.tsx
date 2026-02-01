@@ -237,7 +237,7 @@ export default function WebhookEditPage({ projectId, webhookId }: WebhookEditPag
       setHasChanges(false)
       toast.success('Webhook updated successfully!')
       setIsSaving(false)
-      router.push(`/dashboard/projects/${projectId}/integrations/webhook/${webhookId}`)
+      router.push(`/dashboard/brands/${projectId}/integrations/webhook/${webhookId}`)
     }, 1000)
   }
 
@@ -262,7 +262,7 @@ export default function WebhookEditPage({ projectId, webhookId }: WebhookEditPag
         {/* Header */}
         <div className="flex flex-col gap-y-4 py-8 md:flex-row md:items-center md:justify-between md:gap-x-4 md:py-8">
           <div className="flex items-center gap-4">
-            <Link href={`/dashboard/projects/${projectId}/integrations/webhook/${webhookId}`}>
+            <Link href={`/dashboard/brands/${projectId}/integrations/webhook/${webhookId}`}>
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -712,7 +712,7 @@ export default function WebhookEditPage({ projectId, webhookId }: WebhookEditPag
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push(`/dashboard/projects/${projectId}/integrations/webhook/${webhookId}`)}
+              onClick={() => router.push(`/dashboard/brands/${projectId}/integrations/webhook/${webhookId}`)}
               className="h-10 rounded-lg"
             >
               Cancel

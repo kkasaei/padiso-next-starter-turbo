@@ -333,7 +333,7 @@ export default function ContentDetailPage() {
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/dashboard/projects/${projectId}/content/${contentId}/edit`}>
+          <Link href={`/dashboard/brands/${projectId}/content/${contentId}/edit`}>
             <Pencil className="h-4 w-4 mr-2" />
             Edit
           </Link>

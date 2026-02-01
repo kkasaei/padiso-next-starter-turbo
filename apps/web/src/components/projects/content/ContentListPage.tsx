@@ -431,7 +431,7 @@ function ContentCalendarCard({ content, projectId }: { content: ContentItem; pro
 
   return (
     <Link 
-      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      href={`/dashboard/brands/${projectId}/content/${content.id}`}
       className="block p-2 rounded-lg border border-border/60 bg-background hover:border-border transition-colors"
     >
       <div className="flex items-center justify-between mb-1">
@@ -519,7 +519,7 @@ function ContentCard({ content, projectId }: { content: ContentItem; projectId: 
 
   return (
     <Link 
-      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      href={`/dashboard/brands/${projectId}/content/${content.id}`}
       className="block rounded-2xl border border-border/60 bg-background p-5 hover:border-border hover:shadow-sm transition-all"
     >
       <div className="flex items-center justify-between mb-3">
@@ -623,7 +623,7 @@ function KanbanCard({ content, projectId }: { content: ContentItem; projectId: s
 
   return (
     <Link 
-      href={`/dashboard/projects/${projectId}/content/${content.id}`}
+      href={`/dashboard/brands/${projectId}/content/${content.id}`}
       className="block p-3 rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all"
     >
       <div className="flex items-center justify-between mb-2">

@@ -85,7 +85,7 @@ export function AuditPagesTable({
         </div>
 
         {!isRunning && (
-          <Link href={`/dashboard/projects/${projectId}/audit/pages`}>
+          <Link href={`/dashboard/brands/${projectId}/audit/pages`}>
             <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
               View All
               <ChevronRight className="h-4 w-4" />
@@ -223,7 +223,7 @@ export function AuditPagesTable({
 
                       {/* Action */}
                       <td className="px-6 py-4">
-                        <Link href={`/dashboard/projects/${projectId}/audit/pages/${page.id}`}>
+                        <Link href={`/dashboard/brands/${projectId}/audit/pages/${page.id}`}>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <ChevronRight className="h-4 w-4" />
                           </Button>

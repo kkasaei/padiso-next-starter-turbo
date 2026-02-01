@@ -107,7 +107,7 @@ interface StatsCardsProps {
 function StatsCards({ stats, hasProjectData }: StatsCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <Link href="/dashboard/projects/123/prompts">
+      <Link href="/dashboard/brands/123/prompts">
         <Card className="rounded-2xl border border-transparent bg-gray-100 text-gray-950 shadow-none transition-all hover:shadow-md dark:border-transparent dark:bg-polar-800 dark:text-white">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <span className="text-gray-500 dark:text-polar-500">Tracked Prompts</span>
@@ -147,7 +147,7 @@ function StatsCards({ stats, hasProjectData }: StatsCardsProps) {
         </CardContent>
       </Card>
 
-      <Link href="/dashboard/projects/123/opportunities">
+      <Link href="/dashboard/brands/123/opportunities">
         <Card className="rounded-2xl border border-transparent bg-gray-100 text-gray-950 shadow-none transition-all hover:shadow-md dark:border-transparent dark:bg-polar-800 dark:text-white">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <span className="text-gray-500 dark:text-polar-500">Open Opportunities</span>

@@ -282,7 +282,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
     if (integration && status === 'connected') {
       toast.success(`${integration.charAt(0).toUpperCase() + integration.slice(1)} connected successfully!`)
       // Clear URL params
-      router.replace(`/dashboard/projects/${projectId}/integrations`)
+      router.replace(`/dashboard/brands/${projectId}/integrations`)
     } else if (error) {
       const errorMessages: Record<string, string> = {
         oauth_failed: 'Failed to connect integration. Please try again.',
@@ -293,7 +293,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
       }
       toast.error(errorMessages[error] || `Connection failed: ${error}`)
       // Clear URL params
-      router.replace(`/dashboard/projects/${projectId}/integrations`)
+      router.replace(`/dashboard/brands/${projectId}/integrations`)
     }
   }, [searchParams, projectId, router])
 
@@ -301,7 +301,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
   const handleConnect = (provider: IntegrationProvider) => {
     // For webhooks, navigate to the new webhook page
     if (provider === 'WEBHOOK') {
-      router.push(`/dashboard/projects/${projectId}/integrations/webhook/new`)
+      router.push(`/dashboard/brands/${projectId}/integrations/webhook/new`)
       return
     }
 
@@ -660,7 +660,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
                     Send real-time notifications to external services when events occur.
                   </p>
                 </div>
-                <Link href={`/dashboard/projects/${projectId}/integrations/webhook/new`}>
+                <Link href={`/dashboard/brands/${projectId}/integrations/webhook/new`}>
                   <Button className="shrink-0">
                     <Plug2 className="h-4 w-4 mr-2" />
                     Add Webhook
@@ -705,7 +705,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
                         <p className="text-sm text-muted-foreground mb-4">
                           Add a webhook to receive notifications when events occur.
                         </p>
-                        <Link href={`/dashboard/projects/${projectId}/integrations/webhook/new`}>
+                        <Link href={`/dashboard/brands/${projectId}/integrations/webhook/new`}>
                           <Button variant="outline" size="sm">
                             <Plug2 className="h-4 w-4 mr-2" />
                             Add Your First Webhook
@@ -797,7 +797,7 @@ export default function IntegrationsPage({ projectId }: IntegrationsPageProps) {
                                     size="sm"
                                     asChild
                                   >
-                                    <Link href={`/dashboard/projects/${projectId}/integrations/webhook/${webhook.id}`}>
+                                    <Link href={`/dashboard/brands/${projectId}/integrations/webhook/${webhook.id}`}>
                                       <Settings2 className="h-4 w-4 mr-1" />
                                       Settings
                                     </Link>
