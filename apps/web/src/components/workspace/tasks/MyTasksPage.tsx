@@ -1,363 +1,320 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-import { format } from "date-fns"
-import { BarChart3, GripVertical, Folder, Plus, Sparkles } from "lucide-react"
-import {
-  DndContext,
-  type DragEndEvent,
-  closestCenter,
-} from "@dnd-kit/core"
-import {
-  SortableContext,
-  arrayMove,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@workspace/ui/components/button";
+import { useOrganization } from "@clerk/nextjs";
+import { toast } from "sonner";
 
-import { type Project, type FilterCounts } from "@/lib/mocks/legacy-projects"
-import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-details"
-import { useBrands } from "@/hooks/use-brands"
-import { useBrand } from "@/hooks/use-brands"
-import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
-import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
-import { TaskWeekBoardView } from "@/components/workspace/tasks/TaskWeekBoardView"
-import {
-  ProjectTaskGroup,
-  ProjectTaskListView,
-  filterTasksByChips,
-  computeTaskFilterCounts,
-  ProjectTasksSection,
-} from "@/components/workspace/tasks/task-helpers"
-import { TaskRowBase } from "@/components/workspace/tasks/TaskRowBase"
-import { TaskTableView } from "@/components/workspace/tasks/TaskTableView"
-import { TaskKanbanView } from "@/components/workspace/tasks/TaskKanbanView"
-import { Button } from "@workspace/ui/components/button"
-import { Badge } from "@workspace/ui/components/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { ProgressCircle } from "@/components/shared/progress-circle"
-import { FilterPopover } from "@/components/shared/filter-popover"
-import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
-import { cn } from "@workspace/ui/lib/utils"
-import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
+// Hooks
+import { useBrands } from "@/hooks/use-brands";
+import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace";
+import { useTasksByWorkspace, useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
 
+// Types
+import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@/lib/types/tasks";
+import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options";
+
+// Local Task Components
+import { TaskTableView } from "./TaskTableView";
+import { TaskKanbanView } from "./TaskKanbanView";
+import { FilterPopover } from "./FilterPopover";
+import { ChipOverflow } from "./ChipOverflow";
+import { TaskViewOptionsPopover } from "./TaskViewOptionsPopover";
+import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal";
+
+
+/**
+ * MyTasksPage Component
+ * 
+ * Displays all tasks across all brands/projects for the current workspace.
+ * Supports multiple view types: Table and Kanban.
+ * Fully integrated with database via tRPC.
+ * 
+ * @component
+ */
 export function MyTasksPage() {
-  const { data: projectsData = [], isLoading } = useBrands()
+  // ============================================================
+  // DATA FETCHING
+  // ============================================================
+  const { organization } = useOrganization();
+  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "");
+  const { data: brands = [] } = useBrands(workspace?.id);
+  const { data: dbTasks = [], isLoading } = useTasksByWorkspace(workspace?.id || "");
+  // Mutations
+  const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
+
+  // ============================================================
+  // STATE MANAGEMENT
+  // ============================================================
+  const [filters, setFilters] = useState<FilterChipType[]>([]);
+  const [viewOptions, setViewOptions] = useState<ViewOptions>({
+    ...DEFAULT_VIEW_OPTIONS,
+    viewType: "table" // Override default to table for this page
+  });
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [createContext, setCreateContext] = useState<CreateTaskContext | undefined>();
+  const [editingTask, setEditingTask] = useState<UITask | undefined>();
+
+  // ============================================================
+  // COMPUTED VALUES
+  // ============================================================
   
-  const [groups, setGroups] = useState<ProjectTaskGroup[]>([])
+  // Convert DB tasks to UI format with brand names
+  const tasks = useMemo(() => {
+    return dbTasks.map((dbTask) => {
+      const brand = brands.find(b => b.id === dbTask.brandId);
+      return dbTaskToUI(dbTask, brand?.brandName || undefined);
+    });
+  }, [dbTasks, brands]);
 
-  // Load brand tasks when brands data is available
-  useEffect(() => {
-    if (projectsData.length > 0) {
-      const projectGroups = projectsData
-        .map((brandData: any) => {
-          // Transform Brand to ProjectListItem format for legacy code compatibility
-          const projectListItem = {
-            id: brandData.id,
-            name: brandData.brandName || "Untitled Brand",
-            taskCount: 0,
-            progress: 0,
-            startDate: null,
-            endDate: null,
-            status: brandData.status,
-            priority: "medium", // Default priority since Brand doesn't have this
-            tags: [],
-            members: [],
-            client: null,
-            typeLabel: null,
-            durationLabel: null,
-            tasks: [],
-          }
-          
-          const details = baseDetailsFromListItem(projectListItem)
-          const tasks = getProjectTasks(details)
-          return { project: projectListItem as Project, tasks }
-        })
-        .filter((group) => group.tasks.length > 0)
-      
-      setGroups(projectGroups)
-    }
-  }, [projectsData])
 
-  const [filters, setFilters] = useState<FilterChipType[]>([{ key: "members", value: "andrew" }])
-  const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
+  // Apply filters
+  const filteredTasks = useMemo(() => {
+    if (filters.length === 0) return tasks;
 
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
-  const [createContext, setCreateContext] = useState<CreateTaskContext | undefined>(undefined)
-  const [editingTask, setEditingTask] = useState<ProjectTask | undefined>(undefined)
+    return tasks.filter((task) => {
+      return filters.every((chip) => {
+        const key = chip.key.toLowerCase();
+        const value = chip.value.toLowerCase();
 
-  const counts = useMemo<FilterCounts>(() => {
-    const allTasks = groups.flatMap((g) => g.tasks)
-    return computeTaskFilterCounts(allTasks)
-  }, [groups])
-
-  const visibleGroups = useMemo<ProjectTaskGroup[]>(() => {
-    if (!filters.length) return groups
-
-    return groups
-      .map((group) => ({
-        project: group.project,
-        tasks: filterTasksByChips(group.tasks, filters),
-      }))
-      .filter((group) => group.tasks.length > 0)
-  }, [groups, filters])
-
-  const allVisibleTasks = useMemo<ProjectTask[]>(() => {
-    return visibleGroups.flatMap((group) => group.tasks)
-  }, [visibleGroups])
-
-  const openCreateTask = (context?: CreateTaskContext) => {
-    setEditingTask(undefined)
-    setCreateContext(context)
-    setIsCreateTaskOpen(true)
-  }
-
-  const openEditTask = (task: ProjectTask) => {
-    setEditingTask(task)
-    setCreateContext(undefined)
-    setIsCreateTaskOpen(true)
-  }
-
-  const handleTaskCreated = (task: ProjectTask) => {
-    setGroups((prev) => {
-      const projectExists = prev.some((g) => g.project.id === task.projectId)
-      const project = projectsData.find((p) => p.id === task.projectId)
-
-      const ensureGroup = (current: ProjectTaskGroup[]): ProjectTaskGroup[] => {
-        if (projectExists || !project) return current
-        
-        // Transform tRPC project to ProjectListItem format
-        const projectListItem = {
-          id: project.id,
-          name: project.name,
-          taskCount: project.taskCount,
-          progress: project.progress,
-          startDate: project.startDate,
-          endDate: project.endDate,
-          status: project.status,
-          priority: project.priority,
-          tags: project.tags || [],
-          members: project.members || [],
-          client: project.client,
-          typeLabel: project.typeLabel,
-          durationLabel: project.durationLabel,
-          tasks: [],
+        if (key === "status") {
+          return task.status === value;
         }
-        
-        const details = baseDetailsFromListItem(projectListItem)
-        const existingTasks = getProjectTasks(details)
-        return [
-          { project: project as Project, tasks: [...existingTasks, task] },
-          ...current,
-        ]
+
+        // Add more filter logic as needed
+        return true;
+      });
+    });
+  }, [tasks, filters]);
+
+  // Filter counts for popover
+  const filterCounts = useMemo(() => {
+    const counts: { status?: Record<string, number> } = { status: {} };
+
+    tasks.forEach((task) => {
+      if (task.status) {
+        counts.status![task.status] = (counts.status![task.status] || 0) + 1;
       }
+    });
 
-      const next = prev.map((group) => {
-        if (group.project.id !== task.projectId) return group
-        return {
-          ...group,
-          tasks: [...group.tasks, task],
-        }
-      })
+    return counts;
+  }, [tasks]);
 
-      return ensureGroup(next)
-    })
+  // ============================================================
+  // EVENT HANDLERS - Modal Management
+  // ============================================================
+  const openCreateTask = (context?: CreateTaskContext) => {
+    setEditingTask(undefined);
+    setCreateContext(context);
+    setIsCreateTaskOpen(true);
+  };
+
+  const openEditTask = (task: UITask) => {
+    setEditingTask(task);
+    setCreateContext(undefined);
+    setIsCreateTaskOpen(true);
+  };
+
+  const closeTaskModal = () => {
+    setIsCreateTaskOpen(false);
+    setEditingTask(undefined);
+    setCreateContext(undefined);
+  };
+
+  // ============================================================
+  // EVENT HANDLERS - Task CRUD Operations
+  // ============================================================
+  const handleTaskCreated = async (taskData: Partial<UITask>) => {
+    if (!taskData.brandId || !taskData.name || !taskData.status) {
+      toast.error("Missing required fields");
+      return;
+    }
+
+    try {
+      const dbData = uiTaskToCreateDB({
+        ...taskData,
+        brandId: taskData.brandId,
+        name: taskData.name,
+        status: taskData.status,
+      });
+
+      await createTaskMutation.mutateAsync(dbData);
+      toast.success("Task created");
+      closeTaskModal();
+    } catch (error) {
+      console.error("Error creating task:", error);
+      toast.error("Failed to create task");
+    }
+  };
+
+  const handleTaskUpdated = async (taskData: UITask) => {
+    try {
+      const dbData = uiTaskToUpdateDB(taskData);
+      await updateTaskMutation.mutateAsync({
+        id: taskData.id,
+        ...dbData,
+      });
+      toast.success("Task updated");
+      closeTaskModal();
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast.error("Failed to update task");
+    }
+  };
+
+  const toggleTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    try {
+      const newStatus = task.status === "done" ? "todo" : "done";
+      await updateTaskMutation.mutateAsync({
+        id: taskId,
+        status: newStatus,
+      });
+    } catch (error) {
+      console.error("Error toggling task:", error);
+      toast.error("Failed to update task");
+    }
+  };
+
+
+  // ============================================================
+  // RENDER - Loading & Empty States
+  // ============================================================
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Loading tasks...</p>
+      </div>
+    );
   }
 
-  const toggleTask = (taskId: string) => {
-    setGroups((prev) =>
-      prev.map((group) => ({
-        ...group,
-        tasks: group.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                status: task.status === "done" ? "todo" : "done",
-              }
-            : task,
-        ),
-      })),
-    )
+  if (!workspace) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <p className="text-muted-foreground">No workspace found</p>
+      </div>
+    );
   }
 
-  const changeTaskTag = (taskId: string, tagLabel?: string) => {
-    setGroups((prev) =>
-      prev.map((group) => ({
-        ...group,
-        tasks: group.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                tag: tagLabel,
-              }
-            : task,
-        ),
-      })),
-    )
-  }
-
-  const moveTaskDate = (taskId: string, newDate: Date) => {
-    setGroups((prev) =>
-      prev.map((group) => ({
-        ...group,
-        tasks: group.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                startDate: newDate,
-              }
-            : task,
-        ),
-      })),
-    )
-  }
-
-  const handleTaskUpdated = (updated: ProjectTask) => {
-    setGroups((prev) =>
-      prev.map((group) =>
-        group.project.id === updated.projectId
-          ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === updated.id ? updated : task)),
-            }
-          : group,
-      ),
-    )
-  }
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-
-    if (!over || active.id === over.id) return
-
-    // Find the group containing the active task
-    const activeGroupIndex = groups.findIndex((group) =>
-      group.tasks.some((task) => task.id === active.id)
-    )
-
-    if (activeGroupIndex === -1) return
-
-    const activeGroup = groups[activeGroupIndex]
-
-    // Find the group containing the over task
-    const overGroupIndex = groups.findIndex((group) =>
-      group.tasks.some((task) => task.id === over.id)
-    )
-
-    if (overGroupIndex === -1) return
-
-    // For now, only allow reordering within the same group
-    if (activeGroupIndex !== overGroupIndex) return
-
-    const activeIndex = activeGroup.tasks.findIndex((task) => task.id === active.id)
-    const overIndex = activeGroup.tasks.findIndex((task) => task.id === over.id)
-
-    if (activeIndex === -1 || overIndex === -1) return
-
-    const reorderedTasks = arrayMove(activeGroup.tasks, activeIndex, overIndex)
-
-    setGroups((prev) =>
-      prev.map((group, index) =>
-        index === activeGroupIndex ? { ...group, tasks: reorderedTasks } : group
-      )
-    )
-  }
-
-  if (!visibleGroups.length) {
+  if (filteredTasks.length === 0) {
     return (
       <>
-        <div className="flex items-center justify-between px-4 py-4 border-b border-border/70">
-          <div className="space-y-1">
-            <h1 className="text-lg font-semibold tracking-tight">Tasks</h1>
-            <p className="text-xs text-muted-foreground">No tasks available yet.</p>
+        <header className="flex flex-col border-b border-border/40">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/70">
+            <div className="flex items-center gap-3">
+              <h1 className="text-base font-medium text-foreground">Tasks</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" onClick={() => openCreateTask()}>
+                <Plus className="mr-1.5 h-4 w-4" />
+                New Task
+              </Button>
+            </div>
+          </div>
+        </header>
+        
+        <div className="flex items-center justify-center h-64">
+          <div className="space-y-2 text-center">
+            <p className="text-muted-foreground">
+              {tasks.length === 0 ? "No tasks yet" : "No tasks match your filters"}
+            </p>
+            {tasks.length === 0 && (
+              <Button size="sm" onClick={() => openCreateTask()}>
+                <Plus className="mr-1.5 h-4 w-4" />
+                Create Your First Task
+              </Button>
+            )}
           </div>
         </div>
       </>
-    )
+    );
   }
 
+  // ============================================================
+  // RENDER - Main UI
+  // ============================================================
   return (
     <>
+      {/* Header Section */}
       <header className="flex flex-col border-b border-border/40">
+        {/* Title Row */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/70">
           <div className="flex items-center gap-3">
-            <p className="text-base font-medium text-foreground">Tasks</p>
+            <h1 className="text-base font-medium text-foreground">Tasks</h1>
+            <span className="text-sm text-muted-foreground">
+              {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => openCreateTask()}
-            >
+            <Button size="sm" variant="ghost" onClick={() => openCreateTask()}>
               <Plus className="mr-1.5 h-4 w-4" />
               New Task
             </Button>
           </div>
         </div>
 
+        {/* Filter & View Options Row */}
         <div className="flex items-center justify-between px-4 pb-3 pt-3">
           <div className="flex items-center gap-2">
             <FilterPopover
               initialChips={filters}
               onApply={setFilters}
               onClear={() => setFilters([])}
-              counts={counts}
+              counts={filterCounts}
             />
             <ChipOverflow
               chips={filters}
               onRemove={(key, value) =>
-                setFilters((prev) => prev.filter((chip) => !(chip.key === key && chip.value === value)))
+                setFilters((prev) => 
+                  prev.filter((chip) => !(chip.key === chip.key && chip.value === value))
+                )
               }
               maxVisible={6}
             />
           </div>
           <div className="flex items-center gap-2">
-            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "table", "kanban"]} />
+            <TaskViewOptionsPopover 
+              options={viewOptions} 
+              onChange={setViewOptions} 
+              allowedViewTypes={["table", "kanban"]} 
+            />
           </div>
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 space-y-4 overflow-y-auto px-4 py-4">
-        {viewOptions.viewType === "list" && (
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <ProjectTaskListView
-              groups={visibleGroups}
-              onToggleTask={toggleTask}
-              onAddTask={(context) => openCreateTask(context)}
-            />
-          </DndContext>
-        )}
+      {/* Content Section - View-dependent Rendering */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-4">
         {viewOptions.viewType === "table" && (
           <TaskTableView
-            tasks={allVisibleTasks}
+            tasks={filteredTasks}
             onToggleTask={toggleTask}
-            onOpenTask={openEditTask}
+            onOpenTask={(task) => openEditTask(task)}
           />
         )}
+        
         {viewOptions.viewType === "kanban" && (
           <TaskKanbanView
-            tasks={allVisibleTasks}
+            tasks={filteredTasks}
             onToggleTask={toggleTask}
-            onOpenTask={openEditTask}
-            onAddTask={(context) => openCreateTask(context)}
+            onOpenTask={(task) => openEditTask(task)}
+            onAddTask={openCreateTask}
           />
         )}
       </div>
 
+      {/* Task Creation/Edit Modal */}
       <TaskQuickCreateModal
         open={isCreateTaskOpen}
-        onClose={() => {
-          setIsCreateTaskOpen(false)
-          setEditingTask(undefined)
-          setCreateContext(undefined)
-        }}
+        onClose={closeTaskModal}
         context={editingTask ? undefined : createContext}
-        onTaskCreated={handleTaskCreated}
+        onTaskCreated={(task) => handleTaskCreated(task)}
         editingTask={editingTask}
-        onTaskUpdated={handleTaskUpdated}
+        onTaskUpdated={(task) => handleTaskUpdated(task)}
       />
     </>
-  )
+  );
 }

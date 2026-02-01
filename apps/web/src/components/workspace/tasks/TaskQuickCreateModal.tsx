@@ -5,13 +5,17 @@ import { format } from 'date-fns'
 import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
-import type { ProjectTask, User } from '@/lib/mocks/legacy-project-details'
+import type { UITask } from "@/lib/types/tasks";
+import type { User } from '@/lib/mocks/legacy-project-details';
+
+// Backward compatibility
+type ProjectTask = UITask;
 import { useBrands } from '@/hooks/use-brands'
 import { Button } from '@workspace/ui/components/button'
 import { Switch } from '@workspace/ui/components/switch'
-import { GenericPicker, DatePicker } from '@/components/brands/brand-wizard/steps/StepQuickCreate'
-import { ProjectDescriptionEditor } from '@/components/brands/brand-wizard/BrandDescriptionEditor'
-import { QuickCreateModalLayout } from '@/components/shared/QuickCreateModalLayout'
+import { GenericPicker, DatePicker } from './TaskPickers'
+import { ProjectDescriptionEditor } from './TaskDescriptionEditor'
+import { QuickCreateModalLayout } from './QuickCreateModalLayout'
 import { toast } from 'sonner'
 
 export type CreateTaskContext = {
@@ -22,7 +26,7 @@ interface TaskQuickCreateModalProps {
   open: boolean
   onClose: () => void
   context?: CreateTaskContext
-  onTaskCreated?: (task: ProjectTask) => void
+  onTaskCreated?: (task: Partial<ProjectTask>) => void
   editingTask?: ProjectTask
   onTaskUpdated?: (task: ProjectTask) => void
 }
@@ -217,8 +221,9 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     const brand = brands.find((b: any) => b.id === effectiveBrandId)
     if (!brand) return
 
-    const newTask: ProjectTask = {
-      id: `${effectiveBrandId}-task-${Date.now()}`,
+    const newTask: Partial<ProjectTask> = {
+      brandId: effectiveBrandId,
+      projectId: effectiveBrandId,
       name: title.trim() || 'Untitled task',
       status: status.id,
       dueLabel: targetDate ? format(targetDate, 'dd/MM/yyyy') : undefined,
@@ -227,10 +232,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       priority: priority?.id,
       tag: selectedTag?.label,
       description,
-      projectId: effectiveBrandId,
       projectName: brand.brandName || 'Untitled Brand',
-      workstreamId: undefined,
-      workstreamName: undefined,
     }
 
     onTaskCreated?.(newTask)

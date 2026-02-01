@@ -5,8 +5,23 @@ import {
   timestamp,
   integer,
   json,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { brands } from "../brands/brands";
+import { promptTags } from "./prompt-tags";
+
+/**
+ * AI Provider Enum
+ */
+export const aiProviderEnum = pgEnum("ai_provider", [
+  "claude",
+  "openai",
+  "perplexity",
+  "gemini",
+  "grok",
+  "mistral",
+  "llama",
+]);
 
 /**
  * Prompt Templates
@@ -28,9 +43,14 @@ export const prompts = pgTable("prompts", {
   description: text("description"),
   prompt: text("prompt").notNull(), // The actual prompt content with {{variables}}
   
+  // AI Provider (enum for type safety)
+  aiProvider: aiProviderEnum("ai_provider"),
+  
+  // Tag relationship (one-to-many: one tag, many prompts)
+  tagId: uuid("tag_id").references(() => promptTags.id, { onDelete: "set null" }),
+  
   // Metadata
-  tags: json("tags").$type<string[]>().default([]).notNull(),
-  config: json("config").$type<Record<string, unknown>>(), // AI provider config, model settings, etc.
+  config: json("config").$type<Record<string, unknown>>(), // Model settings, temperature, etc.
   
   // Usage tracking
   usageCount: integer("usage_count").default(0).notNull(),

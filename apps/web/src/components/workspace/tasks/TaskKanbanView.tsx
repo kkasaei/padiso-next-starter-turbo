@@ -2,7 +2,10 @@
 
 import { useMemo, useState } from "react"
 import { format } from "date-fns"
-import type { ProjectTask } from "@/lib/mocks/legacy-project-details"
+import type { UITask } from "@/lib/types/tasks";
+
+// Backward compatibility
+type ProjectTask = UITask;
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"

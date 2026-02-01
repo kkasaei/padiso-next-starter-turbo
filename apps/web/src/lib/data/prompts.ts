@@ -18,14 +18,14 @@ export type Prompt = {
 };
 
 // AI Provider configurations
-export const AI_PROVIDERS: { value: AIProvider; label: string; color: string }[] = [
-  { value: "claude", label: "Claude", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  { value: "openai", label: "OpenAI", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  { value: "perplexity", label: "Perplexity", color: "bg-blue-50 text-blue-700 border-blue-200" },
-  { value: "gemini", label: "Gemini", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-  { value: "grok", label: "Grok", color: "bg-zinc-100 text-zinc-700 border-zinc-200" },
-  { value: "mistral", label: "Mistral", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  { value: "llama", label: "Llama", color: "bg-violet-50 text-violet-700 border-violet-200" },
+export const AI_PROVIDERS: { value: AIProvider; label: string; color: string; icon: string }[] = [
+  { value: "claude", label: "Claude", color: "bg-orange-50 text-orange-700 border-orange-200", icon: "/icons/claude.svg" },
+  { value: "openai", label: "OpenAI", color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: "/icons/openai.svg" },
+  { value: "perplexity", label: "Perplexity", color: "bg-blue-50 text-blue-700 border-blue-200", icon: "/icons/perplexity.svg" },
+  { value: "gemini", label: "Gemini", color: "bg-indigo-50 text-indigo-700 border-indigo-200", icon: "/icons/gemini.svg" },
+  { value: "grok", label: "Grok", color: "bg-zinc-100 text-zinc-700 border-zinc-200", icon: "/icons/grok.svg" },
+  { value: "mistral", label: "Mistral", color: "bg-amber-50 text-amber-700 border-amber-200", icon: "/icons/mistral.svg" },
+  { value: "llama", label: "Llama", color: "bg-violet-50 text-violet-700 border-violet-200", icon: "/icons/meta-brand.svg" },
 ];
 
 // Mock projects for filtering
@@ -600,5 +600,10 @@ export function getCategoryConfig(category: PromptCategory) {
 // Get AI provider config for styling
 export function getAIProviderConfig(provider: AIProvider) {
   const config = AI_PROVIDERS.find((p) => p.value === provider);
-  return config || { value: provider, label: provider, color: "bg-zinc-100 text-zinc-700 border-zinc-200" };
+  return config || { 
+    value: provider, 
+    label: provider, 
+    color: "bg-zinc-100 text-zinc-700 border-zinc-200",
+    icon: "/icons/default.svg" // Fallback icon
+  };
 }

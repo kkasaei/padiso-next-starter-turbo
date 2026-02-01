@@ -8,9 +8,12 @@ import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import { cn } from "@workspace/ui/lib/utils"
-import type { ProjectTask } from "@/lib/mocks/legacy-project-details"
+import type { UITask } from "@/lib/types/tasks";
+
+// Backward compatibility  
+type ProjectTask = UITask;
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/dropdown-menu"
-import { TAG_OPTIONS } from "@/components/workspace/tasks/TaskQuickCreateModal"
+import { TAG_OPTIONS } from "./TaskQuickCreateModal"
 
 type TaskBoardCardVariant = "default" | "completed" | "empty"
 

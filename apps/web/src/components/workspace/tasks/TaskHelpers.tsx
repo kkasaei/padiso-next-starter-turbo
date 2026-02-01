@@ -11,15 +11,18 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 
 import type { Project, FilterCounts } from "@/lib/mocks/legacy-projects"
-import type { ProjectTask } from "@/lib/mocks/legacy-project-details"
-import { TaskRowBase } from "@/components/workspace/tasks/TaskRowBase"
+import type { UITask } from "@/lib/types/tasks";
+
+// Backward compatibility
+type ProjectTask = UITask;
+import { TaskRowBase } from "./TaskRowBase"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { ProgressCircle } from "@/components/shared/progress-circle"
+import { ProgressCircle } from "./ProgressCircle"
 import { cn } from "@workspace/ui/lib/utils"
 import type { FilterChip as FilterChipType } from "@/lib/view-options"
-import type { CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
+import type { CreateTaskContext } from "./TaskQuickCreateModal"
 
 export type ProjectTaskGroup = {
   project: Project

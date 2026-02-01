@@ -21,14 +21,14 @@ import {
   ProjectTaskListView,
   filterTasksByChips,
   computeTaskFilterCounts,
-} from "@/components/workspace/tasks/task-helpers"
-import { TaskTableView } from "@/components/workspace/tasks/TaskTableView"
-import { TaskKanbanView } from "@/components/workspace/tasks/TaskKanbanView"
+} from "./TaskHelpers"
+import { TaskTableView } from "./TaskTableView"
+import { TaskKanbanView } from "./TaskKanbanView"
 import { Button } from "@workspace/ui/components/button"
-import { FilterPopover } from "@/components/shared/filter-popover"
-import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
-import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
+import { FilterPopover } from "./FilterPopover"
+import { ChipOverflow } from "./ChipOverflow"
+import { ViewOptionsPopover } from "./ViewOptionsPopover"
+import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal"
 
 interface WorkspaceTasksPageProps {
   brandId: string

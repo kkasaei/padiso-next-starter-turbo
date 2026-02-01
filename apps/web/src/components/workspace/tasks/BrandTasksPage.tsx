@@ -1,175 +1,242 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-import { Plus, Sparkles } from "lucide-react"
-import {
-  DndContext,
-  type DragEndEvent,
-  closestCenter,
-} from "@dnd-kit/core"
-import {
-  arrayMove,
-} from "@dnd-kit/sortable"
+import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { DndContext, type DragEndEvent, closestCenter } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { Button } from "@workspace/ui/components/button";
+import { toast } from "sonner";
 
-import { type Project, type FilterCounts } from "@/lib/mocks/legacy-projects"
-import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-details"
-import { useBrand } from "@/hooks/use-brands"
-import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
-import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
-import { TaskWeekBoardView } from "@/components/workspace/tasks/TaskWeekBoardView"
+// Hooks
+import { useBrand } from "@/hooks/use-brands";
+import { useTasksByBrand, useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
+
+// Types
+import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@/lib/types/tasks";
+import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options";
+
+// Local Task Components
 import {
-  ProjectTaskGroup,
+  type ProjectTaskGroup,
   ProjectTaskListView,
   filterTasksByChips,
   computeTaskFilterCounts,
-} from "@/components/workspace/tasks/task-helpers"
-import { Button } from "@workspace/ui/components/button"
-import { FilterPopover } from "@/components/shared/filter-popover"
-import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
-import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
+} from "./TaskHelpers";
+import { TaskWeekBoardView } from "./TaskWeekBoardView";
+import { FilterPopover } from "./FilterPopover";
+import { ChipOverflow } from "./ChipOverflow";
+import { ViewOptionsPopover } from "./ViewOptionsPopover";
+import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal";
 
 interface BrandTasksPageProps {
-  projectId: string
+  projectId: string;
 }
 
+/**
+ * BrandTasksPage Component
+ * 
+ * Displays all tasks for a specific brand/project.
+ * Supports multiple view types: List (with drag-drop) and Board (weekly timeline).
+ * Fully integrated with database via tRPC.
+ * 
+ * @component
+ */
 export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
-  const { data: projectData, isLoading } = useBrand(projectId)
+  // ============================================================
+  // DATA FETCHING
+  // ============================================================
+  const { data: brandData, isLoading: isBrandLoading } = useBrand(projectId);
+  const { data: dbTasks = [], isLoading: isTasksLoading } = useTasksByBrand(projectId);
   
-  const [tasks, setTasks] = useState<ProjectTask[]>([])
+  // Mutations
+  const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
 
-  // Load project tasks when project data is available
-  useEffect(() => {
-    if (projectData) {
-      // Transform tRPC project to ProjectListItem format
-      const projectListItem = {
-        id: projectData.id,
-        name: projectData.name,
-        taskCount: projectData.taskCount,
-        progress: projectData.progress,
-        startDate: projectData.startDate,
-        endDate: projectData.endDate,
-        status: projectData.status,
-        priority: projectData.priority,
-        tags: projectData.tags || [],
-        members: projectData.members || [],
-        client: projectData.client,
-        typeLabel: projectData.typeLabel,
-        durationLabel: projectData.durationLabel,
-        tasks: [],
-      }
-      
-      const details = baseDetailsFromListItem(projectListItem)
-      const projectTasks = getProjectTasks(details)
-      setTasks(projectTasks)
-    }
-  }, [projectData])
+  const isLoading = isBrandLoading || isTasksLoading;
 
-  const [filters, setFilters] = useState<FilterChipType[]>([])
-  const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
+  // ============================================================
+  // STATE MANAGEMENT
+  // ============================================================
+  const [filters, setFilters] = useState<FilterChipType[]>([]);
+  const [viewOptions, setViewOptions] = useState<ViewOptions>({
+    ...DEFAULT_VIEW_OPTIONS,
+    viewType: "list" // Brand page defaults to list view
+  });
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [createContext, setCreateContext] = useState<CreateTaskContext | undefined>();
+  const [editingTask, setEditingTask] = useState<UITask | undefined>();
 
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
-  const [createContext, setCreateContext] = useState<CreateTaskContext | undefined>(undefined)
-  const [editingTask, setEditingTask] = useState<ProjectTask | undefined>(undefined)
+  // ============================================================
+  // COMPUTED VALUES
+  // ============================================================
+  
+  // Convert DB tasks to UI format
+  const tasks = useMemo(() => {
+    return dbTasks.map((dbTask) => dbTaskToUI(dbTask, brandData?.brandName || undefined));
+  }, [dbTasks, brandData?.brandName]);
 
-  const counts = useMemo<FilterCounts>(() => {
-    return computeTaskFilterCounts(tasks)
-  }, [tasks])
+  // Apply filters
+  const visibleTasks = useMemo(() => {
+    if (filters.length === 0) return tasks;
+    return filterTasksByChips(tasks, filters);
+  }, [tasks, filters]);
 
-  const visibleTasks = useMemo<ProjectTask[]>(() => {
-    if (!filters.length) return tasks
-    return filterTasksByChips(tasks, filters)
-  }, [tasks, filters])
-
-  // Create a single group for the project
+  // Create task groups for list view
   const visibleGroups = useMemo<ProjectTaskGroup[]>(() => {
-    if (!projectData || visibleTasks.length === 0) return []
-    return [{ project: projectData as Project, tasks: visibleTasks }]
-  }, [projectData, visibleTasks])
+    if (!brandData || visibleTasks.length === 0) return [];
+    
+    return [{
+      project: {
+        id: brandData.id,
+        name: brandData.brandName || "Untitled Brand",
+        status: brandData.status,
+      },
+      tasks: visibleTasks,
+    }];
+  }, [brandData, visibleTasks]);
 
+  // Filter counts for popover
+  const counts = useMemo(() => {
+    return computeTaskFilterCounts(tasks);
+  }, [tasks]);
+
+  // ============================================================
+  // EVENT HANDLERS - Modal Management
+  // ============================================================
   const openCreateTask = (context?: CreateTaskContext) => {
-    setEditingTask(undefined)
-    setCreateContext(context ?? { projectId })
-    setIsCreateTaskOpen(true)
-  }
+    setEditingTask(undefined);
+    setCreateContext(context ?? { brandId: projectId });
+    setIsCreateTaskOpen(true);
+  };
 
-  const openEditTask = (task: ProjectTask) => {
-    setEditingTask(task)
-    setCreateContext(undefined)
-    setIsCreateTaskOpen(true)
-  }
+  const openEditTask = (task: UITask) => {
+    setEditingTask(task);
+    setCreateContext(undefined);
+    setIsCreateTaskOpen(true);
+  };
 
-  const handleTaskCreated = (task: ProjectTask) => {
-    setTasks((prev) => [...prev, task])
-  }
+  const closeTaskModal = () => {
+    setIsCreateTaskOpen(false);
+    setEditingTask(undefined);
+    setCreateContext(undefined);
+  };
 
-  const toggleTask = (taskId: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              status: task.status === "done" ? "todo" : "done",
-            }
-          : task
-      )
-    )
-  }
+  // ============================================================
+  // EVENT HANDLERS - Task CRUD Operations
+  // ============================================================
+  const handleTaskCreated = async (taskData: Partial<UITask>) => {
+    if (!taskData.brandId || !taskData.name || !taskData.status) {
+      toast.error("Missing required fields");
+      return;
+    }
 
-  const changeTaskTag = (taskId: string, tagLabel?: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              tag: tagLabel,
-            }
-          : task
-      )
-    )
-  }
+    try {
+      const dbData = uiTaskToCreateDB({
+        ...taskData,
+        brandId: taskData.brandId,
+        name: taskData.name,
+        status: taskData.status,
+      });
 
-  const moveTaskDate = (taskId: string, newDate: Date) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              startDate: newDate,
-            }
-          : task
-      )
-    )
-  }
+      await createTaskMutation.mutateAsync(dbData);
+      toast.success("Task created");
+      closeTaskModal();
+    } catch (error) {
+      console.error("Error creating task:", error);
+      toast.error("Failed to create task");
+    }
+  };
 
-  const handleTaskUpdated = (updated: ProjectTask) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === updated.id ? updated : task))
-    )
-  }
+  const handleTaskUpdated = async (taskData: UITask) => {
+    try {
+      const dbData = uiTaskToUpdateDB(taskData);
+      await updateTaskMutation.mutateAsync({
+        id: taskData.id,
+        ...dbData,
+      });
+      toast.success("Task updated");
+      closeTaskModal();
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast.error("Failed to update task");
+    }
+  };
+
+  const toggleTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    try {
+      const newStatus = task.status === "done" ? "todo" : "done";
+      await updateTaskMutation.mutateAsync({
+        id: taskId,
+        status: newStatus,
+      });
+    } catch (error) {
+      console.error("Error toggling task:", error);
+      toast.error("Failed to update task");
+    }
+  };
+
+  const changeTaskTag = async (taskId: string, tagLabel?: string) => {
+    try {
+      await updateTaskMutation.mutateAsync({
+        id: taskId,
+        tag: tagLabel,
+      });
+    } catch (error) {
+      console.error("Error updating tag:", error);
+      toast.error("Failed to update tag");
+    }
+  };
+
+  const moveTaskDate = async (taskId: string, newDate: Date) => {
+    try {
+      await updateTaskMutation.mutateAsync({
+        id: taskId,
+        startDate: newDate.toISOString(),
+      });
+    } catch (error) {
+      console.error("Error updating date:", error);
+      toast.error("Failed to update date");
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    if (!over || active.id === over.id) return
+    const activeIndex = tasks.findIndex((task) => task.id === active.id);
+    const overIndex = tasks.findIndex((task) => task.id === over.id);
 
-    const activeIndex = tasks.findIndex((task) => task.id === active.id)
-    const overIndex = tasks.findIndex((task) => task.id === over.id)
+    if (activeIndex === -1 || overIndex === -1) return;
 
-    if (activeIndex === -1 || overIndex === -1) return
+    // Note: Drag-drop reordering would need a 'sortOrder' field in DB
+    // For now, this is visual-only. To persist, add sortOrder to schema
+    const reordered = arrayMove(tasks, activeIndex, overIndex);
+    console.log("Tasks reordered (visual only, not persisted):", reordered);
+  };
 
-    setTasks((prev) => arrayMove(prev, activeIndex, overIndex))
-  }
-
+  // ============================================================
+  // RENDER - Loading & Empty States
+  // ============================================================
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-muted-foreground">Loading tasks...</p>
       </div>
-    )
+    );
   }
 
-  if (!visibleTasks.length) {
+  if (!brandData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Brand not found</p>
+      </div>
+    );
+  }
+
+  if (visibleTasks.length === 0) {
     return (
       <>
         <header className="flex flex-col border-b border-border/40">
@@ -177,13 +244,10 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             <div className="space-y-1">
               <p className="text-base font-medium text-foreground">Tasks</p>
               <p className="text-xs text-muted-foreground">
-                {projectData?.name ? `Manage tasks for ${projectData.name}` : "No tasks available yet."}
+                {brandData?.brandName ? `Manage tasks for ${brandData.brandName}` : "No tasks available yet"}
               </p>
             </div>
-            <Button
-              size="sm"
-              onClick={() => openCreateTask()}
-            >
+            <Button size="sm" onClick={() => openCreateTask()}>
               <Plus className="mr-1.5 h-4 w-4" />
               New Task
             </Button>
@@ -197,7 +261,7 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
           <div className="text-center">
             <h3 className="text-lg font-medium">No tasks yet</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Create your first task to get started
+              {tasks.length === 0 ? "Create your first task to get started" : "No tasks match your filters"}
             </p>
           </div>
           <Button onClick={() => openCreateTask()}>
@@ -205,42 +269,33 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             Create Task
           </Button>
         </div>
-
-        <TaskQuickCreateModal
-          open={isCreateTaskOpen}
-          onClose={() => {
-            setIsCreateTaskOpen(false)
-            setEditingTask(undefined)
-            setCreateContext(undefined)
-          }}
-          context={editingTask ? undefined : createContext}
-          onTaskCreated={handleTaskCreated}
-          editingTask={editingTask}
-          onTaskUpdated={handleTaskUpdated}
-        />
       </>
-    )
+    );
   }
 
+  // ============================================================
+  // RENDER - Main UI
+  // ============================================================
   return (
     <>
       <header className="flex flex-col border-b border-border/40">
-        <div className="flex items-center justify-between px-4 border-b border-border/70">
-        <div className="flex items-center gap-2 px-4 justify-center h-[82px]">
-            <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
+        {/* Title Row */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/70">
+          <div className="flex items-center gap-3">
+            <h1 className="text-base font-medium text-foreground">Tasks</h1>
+            <span className="text-sm text-muted-foreground">
+              {visibleTasks.length} {visibleTasks.length === 1 ? 'task' : 'tasks'}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => openCreateTask()}
-            >
+            <Button size="sm" variant="ghost" onClick={() => openCreateTask()}>
               <Plus className="mr-1.5 h-4 w-4" />
               New Task
             </Button>
           </div>
         </div>
 
+        {/* Filter & View Options Row */}
         <div className="flex items-center justify-between px-4 pb-3 pt-3">
           <div className="flex items-center gap-2">
             <FilterPopover
@@ -252,18 +307,25 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             <ChipOverflow
               chips={filters}
               onRemove={(key, value) =>
-                setFilters((prev) => prev.filter((chip) => !(chip.key === key && chip.value === value)))
+                setFilters((prev) => 
+                  prev.filter((chip) => !(chip.key === key && chip.value === value))
+                )
               }
               maxVisible={6}
             />
           </div>
           <div className="flex items-center gap-2">
-            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "board"]} />
+            <ViewOptionsPopover 
+              options={viewOptions} 
+              onChange={setViewOptions} 
+              allowedViewTypes={["list", "board"]} 
+            />
           </div>
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 space-y-4 overflow-y-auto px-4 py-4">
+      {/* Content Section - View-dependent Rendering */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
         {viewOptions.viewType === "list" && (
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <ProjectTaskListView
@@ -274,6 +336,7 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             />
           </DndContext>
         )}
+        
         {viewOptions.viewType === "board" && (
           <TaskWeekBoardView
             tasks={visibleTasks}
@@ -286,18 +349,15 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
         )}
       </div>
 
+      {/* Task Creation/Edit Modal */}
       <TaskQuickCreateModal
         open={isCreateTaskOpen}
-        onClose={() => {
-          setIsCreateTaskOpen(false)
-          setEditingTask(undefined)
-          setCreateContext(undefined)
-        }}
+        onClose={closeTaskModal}
         context={editingTask ? undefined : createContext}
-        onTaskCreated={handleTaskCreated}
+        onTaskCreated={(task) => handleTaskCreated(task)}
         editingTask={editingTask}
-        onTaskUpdated={handleTaskUpdated}
+        onTaskUpdated={(task) => handleTaskUpdated(task)}
       />
     </>
-  )
+  );
 }

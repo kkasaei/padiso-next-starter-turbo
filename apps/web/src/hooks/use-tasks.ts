@@ -6,7 +6,14 @@ import { trpc } from "@/lib/trpc/client";
  * Hooks for managing tasks with tRPC
  */
 
-export function useTasks(brandId: string) {
+export function useTasksByWorkspace(workspaceId: string) {
+  return trpc.tasks.getByWorkspace.useQuery(
+    { workspaceId },
+    { enabled: !!workspaceId }
+  );
+}
+
+export function useTasksByBrand(brandId: string) {
   return trpc.tasks.getByBrand.useQuery(
     { brandId },
     { enabled: !!brandId }
@@ -21,8 +28,9 @@ export function useCreateTask() {
   const utils = trpc.useUtils();
 
   return trpc.tasks.create.useMutation({
-    onSuccess: (data) => {
-      utils.tasks.getByBrand.invalidate({ brandId: data.brandId });
+    onSuccess: () => {
+      // Invalidate all task queries to refetch
+      utils.tasks.invalidate();
     },
   });
 }
@@ -31,9 +39,8 @@ export function useUpdateTask() {
   const utils = trpc.useUtils();
 
   return trpc.tasks.update.useMutation({
-    onSuccess: (data) => {
-      utils.tasks.getByBrand.invalidate({ brandId: data.brandId });
-      utils.tasks.getById.invalidate({ id: data.id });
+    onSuccess: () => {
+      utils.tasks.invalidate();
     },
   });
 }
@@ -43,7 +50,17 @@ export function useDeleteTask() {
 
   return trpc.tasks.delete.useMutation({
     onSuccess: () => {
-      utils.tasks.getByBrand.invalidate();
+      utils.tasks.invalidate();
+    },
+  });
+}
+
+export function useToggleTaskStatus() {
+  const utils = trpc.useUtils();
+
+  return trpc.tasks.update.useMutation({
+    onSuccess: () => {
+      utils.tasks.invalidate();
     },
   });
 }

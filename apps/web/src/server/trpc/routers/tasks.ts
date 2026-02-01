@@ -1,9 +1,39 @@
 import { z } from "zod";
-import { eq, desc } from "drizzle-orm";
-import { tasks } from "@workspace/db/schema";
+import { eq, desc, inArray } from "drizzle-orm";
+import { tasks, brands } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
 export const tasksRouter = router({
+  /**
+   * Get all tasks for a workspace (across all brands)
+   */
+  getByWorkspace: publicProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // First get all brands in this workspace
+      const workspaceBrands = await ctx.db
+        .select({ id: brands.id })
+        .from(brands)
+        .where(eq(brands.workspaceId, input.workspaceId));
+
+      if (workspaceBrands.length === 0) {
+        return [];
+      }
+
+      const brandIds = workspaceBrands.map((b) => b.id);
+
+      // Then get all tasks for those brands
+      return await ctx.db
+        .select()
+        .from(tasks)
+        .where(inArray(tasks.brandId, brandIds))
+        .orderBy(desc(tasks.createdAt));
+    }),
+
   /**
    * Get all tasks for a brand
    */

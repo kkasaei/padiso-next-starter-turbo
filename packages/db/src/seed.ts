@@ -7,6 +7,7 @@ import {
   tasks,
   files,
   prompts,
+  promptTags,
 } from "./schema/index";
 
 async function seed() {
@@ -18,6 +19,7 @@ async function seed() {
     await db.delete(tasks);
     await db.delete(files);
     await db.delete(prompts);
+    await db.delete(promptTags);
     await db.delete(brandMembers);
     await db.delete(brands);
     await db.delete(workspaces);
@@ -158,6 +160,44 @@ async function seed() {
       }
     }
 
+    // Seed prompt tags
+    console.log("🏷️  Seeding prompt tags...");
+    const promptTagsData: Array<typeof promptTags.$inferInsert> = [
+      {
+        brandId: createdBrands[0]!.id, // CAPITALY
+        name: "Investment",
+        color: "#3B82F6",
+        description: "Investment analysis and research prompts",
+      },
+      {
+        brandId: createdBrands[1]!.id, // PADISO
+        name: "Documentation",
+        color: "#10B981",
+        description: "Technical and user documentation prompts",
+      },
+      {
+        brandId: createdBrands[2]!.id, // SearchFIT
+        name: "SEO",
+        color: "#8B5CF6",
+        description: "Search engine optimization prompts",
+      },
+      {
+        brandId: createdBrands[2]!.id, // SearchFIT
+        name: "Content",
+        color: "#F59E0B",
+        description: "Content creation and copywriting prompts",
+      },
+    ];
+
+    const createdTags = [];
+    for (const tagData of promptTagsData) {
+      const [tag] = await db.insert(promptTags).values(tagData).returning();
+      if (tag) {
+        createdTags.push(tag);
+        console.log(`  ✅ Created tag: ${tag.name}`);
+      }
+    }
+
     // Seed prompts
     console.log("💬 Seeding prompts...");
     const promptsData: Array<typeof prompts.$inferInsert> = [
@@ -166,28 +206,40 @@ async function seed() {
         name: "VC Investment Analysis",
         description: "Generate investment thesis and analysis",
         prompt: "Generate a comprehensive investment analysis for {{company_name}} in the {{industry}} sector, focusing on {{key_metrics}}",
-        tags: ["vc", "analysis"],
+        aiProvider: "claude",
+        tagId: createdTags[0]!.id, // Investment tag
       },
       {
         brandId: createdBrands[1]!.id, // PADISO
         name: "Technical Documentation",
         description: "Create technical documentation",
         prompt: "Create clear and concise technical documentation for {{feature_name}} including setup, usage, and best practices",
-        tags: ["documentation", "technical"],
+        aiProvider: "openai",
+        tagId: createdTags[1]!.id, // Documentation tag
       },
       {
         brandId: createdBrands[2]!.id, // SearchFIT
         name: "SEO Content Generator",
         description: "Generate SEO-optimized content",
         prompt: "Generate SEO-optimized content for {{topic}} targeting {{keyword}} with a focus on answer engine optimization",
-        tags: ["seo", "content", "aeo"],
+        aiProvider: "perplexity",
+        tagId: createdTags[2]!.id, // SEO tag
       },
       {
         brandId: createdBrands[2]!.id, // SearchFIT
         name: "Meta Description Creator",
         description: "Create compelling meta descriptions",
         prompt: "Create a compelling meta description (max 160 characters) for a page about {{topic}} that encourages clicks",
-        tags: ["seo", "meta"],
+        aiProvider: "gemini",
+        tagId: createdTags[2]!.id, // SEO tag
+      },
+      {
+        brandId: createdBrands[2]!.id, // SearchFIT
+        name: "Blog Post Writer",
+        description: "Generate engaging blog posts",
+        prompt: "Write an engaging blog post about {{topic}} that targets {{audience}} and includes {{keywords}}",
+        aiProvider: "claude",
+        tagId: createdTags[3]!.id, // Content tag
       },
     ];
 

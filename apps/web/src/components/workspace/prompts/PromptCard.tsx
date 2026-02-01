@@ -1,8 +1,9 @@
 "use client";
 
 import { format } from "date-fns";
+import Image from "next/image";
 import type { Prompt } from "@/lib/data/prompts";
-import { getCategoryConfig, getAIProviderConfig } from "@/lib/data/prompts";
+import { getCategoryConfig } from "@/lib/data/prompts";
 import { Zap, Copy, MoreHorizontal, Folder, Globe, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 import { toast } from "sonner";
@@ -24,7 +25,30 @@ type PromptCardProps = {
 
 export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProps) {
   const categoryConfig = getCategoryConfig(prompt.category);
-  const providerConfig = getAIProviderConfig(prompt.aiProvider);
+  
+  console.log('prompt', prompt);
+
+
+  // Get provider icon path directly from provider type
+  const getProviderIcon = (provider?: string) => {
+    if (!provider) return '/icons/default.svg';
+
+
+    
+    // Map provider to icon filename
+    const iconMap: Record<string, string> = {
+      'claude': 'claude',
+      'openai': 'openai',
+      'perplexity': 'perplexity',
+      'gemini': 'gemini',
+      'grok': 'grok',
+      'mistral': 'mistral',
+      'llama': 'meta-brand', // Llama uses Meta icon
+    };
+    
+    const iconName = iconMap[provider.toLowerCase()] || provider.toLowerCase();
+    return `/icons/${iconName}.svg`;
+  };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -52,9 +76,18 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
             <Zap className="h-5 w-5 fill-current" />
           </div>
           <div className="flex items-center gap-2">
-            <div className={cn("flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium", providerConfig.color)}>
-              {providerConfig.label}
-            </div>
+            {/* Provider Icon Only */}
+            {prompt.aiProvider && (
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted/50 border border-border/60">
+                <Image
+                  src={getProviderIcon(prompt.aiProvider)}
+                  alt={prompt.aiProvider}
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+              </div>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

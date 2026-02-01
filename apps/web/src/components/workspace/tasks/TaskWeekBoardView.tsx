@@ -23,9 +23,12 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 
 import { Button } from "@workspace/ui/components/button"
-import type { ProjectTask } from "@/lib/mocks/legacy-project-details"
-import { TaskBoardCard } from "@/components/workspace/tasks/TaskBoardCard"
-import type { CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
+import type { UITask } from "@/lib/types/tasks";
+
+// Backward compatibility
+type ProjectTask = UITask;
+import { TaskBoardCard } from "./TaskBoardCard"
+import type { CreateTaskContext } from "./TaskQuickCreateModal"
 import { cn } from "@workspace/ui/lib/utils"
 
 type DayColumn = {

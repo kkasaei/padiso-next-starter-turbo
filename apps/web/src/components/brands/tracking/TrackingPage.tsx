@@ -86,24 +86,9 @@ const DEFAULT_PROMPT_FORM_DATA: PromptFormData = {
   notes: '',
 }
 
-// Mock prompt for testing
-const MOCK_PROMPTS: TrackedPrompt[] = [
-  {
-    id: 'prompt-001',
-    projectId: 'project-001',
-    prompt: 'Best project management software for remote teams',
-    notes: 'Tracking visibility for our main product keyword',
-    lastVisibilityScore: 78,
-    lastMentionPosition: 3,
-    lastScanDate: new Date('2026-01-25'),
-    isActive: true,
-    scanStatus: 'COMPLETED',
-    targetLocation: 'United States',
-    targetLanguage: 'en',
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-25'),
-  },
-]
+// Note: Tracking prompts feature not yet fully implemented
+// This is separate from regular prompts - it's for AI visibility tracking
+// Will need a separate database schema and tRPC endpoint
 
 // ============================================================
 // KEYWORDS TYPES & CONSTANTS
@@ -178,7 +163,10 @@ export default function TrackingPage() {
   // ============================================================
   // PROMPTS STATE
   // ============================================================
-  const [prompts, setPrompts] = useState<TrackedPrompt[]>(MOCK_PROMPTS)
+  // TODO: TrackedPrompt is different from regular prompts - it's for AI visibility tracking
+  // For now, we'll keep the mock data until the tracking feature is fully implemented
+  // When ready, create a separate tRPC endpoint for tracked prompts
+  const [prompts, setPrompts] = useState<TrackedPrompt[]>([])
   const [promptSearchQuery, setPromptSearchQuery] = useState('')
   const [isPromptFormSheetOpen, setIsPromptFormSheetOpen] = useState(false)
   const [isPromptSuggestionsSheetOpen, setIsPromptSuggestionsSheetOpen] = useState(false)
@@ -191,7 +179,7 @@ export default function TrackingPage() {
   const [promptCurrentPage, setPromptCurrentPage] = useState(1)
   const [promptPageSize, setPromptPageSize] = useState<number>(10)
   const [selectedPromptIds, setSelectedPromptIds] = useState<Set<string>>(new Set())
-  const [promptsLoading, setPromptsLoading] = useState(false) // Set to false for mock data
+  const [promptsLoading, setPromptsLoading] = useState(true)
   const [promptSaving, setPromptSaving] = useState(false)
 
   // ============================================================
