@@ -204,7 +204,6 @@ async function seed() {
       {
         brandId: createdBrands[0]!.id, // CAPITALY
         name: "VC Investment Analysis",
-        description: "Generate investment thesis and analysis",
         prompt: "Generate a comprehensive investment analysis for {{company_name}} in the {{industry}} sector, focusing on {{key_metrics}}",
         aiProvider: "claude",
         tagId: createdTags[0]!.id, // Investment tag
@@ -212,7 +211,6 @@ async function seed() {
       {
         brandId: createdBrands[1]!.id, // PADISO
         name: "Technical Documentation",
-        description: "Create technical documentation",
         prompt: "Create clear and concise technical documentation for {{feature_name}} including setup, usage, and best practices",
         aiProvider: "openai",
         tagId: createdTags[1]!.id, // Documentation tag
@@ -220,7 +218,6 @@ async function seed() {
       {
         brandId: createdBrands[2]!.id, // SearchFIT
         name: "SEO Content Generator",
-        description: "Generate SEO-optimized content",
         prompt: "Generate SEO-optimized content for {{topic}} targeting {{keyword}} with a focus on answer engine optimization",
         aiProvider: "perplexity",
         tagId: createdTags[2]!.id, // SEO tag
@@ -228,7 +225,6 @@ async function seed() {
       {
         brandId: createdBrands[2]!.id, // SearchFIT
         name: "Meta Description Creator",
-        description: "Create compelling meta descriptions",
         prompt: "Create a compelling meta description (max 160 characters) for a page about {{topic}} that encourages clicks",
         aiProvider: "gemini",
         tagId: createdTags[2]!.id, // SEO tag
@@ -236,7 +232,6 @@ async function seed() {
       {
         brandId: createdBrands[2]!.id, // SearchFIT
         name: "Blog Post Writer",
-        description: "Generate engaging blog posts",
         prompt: "Write an engaging blog post about {{topic}} that targets {{audience}} and includes {{keywords}}",
         aiProvider: "claude",
         tagId: createdTags[3]!.id, // Content tag

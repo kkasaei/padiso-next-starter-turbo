@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq, desc, sql, inArray } from "drizzle-orm";
-import { prompts, brands } from "@workspace/db/schema";
+import { prompts, brands, promptTags } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
 export const promptsRouter = router({
@@ -78,7 +78,6 @@ export const promptsRouter = router({
       z.object({
         brandId: z.string().uuid(),
         name: z.string().min(1),
-        description: z.string().optional(),
         prompt: z.string().min(1),
         aiProvider: z.enum(["claude", "openai", "perplexity", "gemini", "grok", "mistral", "llama"]).optional(),
         tagId: z.string().uuid().optional(),
@@ -92,7 +91,6 @@ export const promptsRouter = router({
         .values({
           brandId: input.brandId,
           name: input.name,
-          description: input.description,
           prompt: input.prompt,
           aiProvider: input.aiProvider,
           tagId: input.tagId,
@@ -116,7 +114,6 @@ export const promptsRouter = router({
       z.object({
         id: z.string().uuid(),
         name: z.string().min(1).optional(),
-        description: z.string().optional(),
         prompt: z.string().min(1).optional(),
         aiProvider: z.enum(["claude", "openai", "perplexity", "gemini", "grok", "mistral", "llama"]).optional(),
         tagId: z.string().uuid().nullable().optional(),

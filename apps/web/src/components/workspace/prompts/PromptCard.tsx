@@ -107,9 +107,6 @@ export function PromptCard({ prompt, brandName, onEdit, onDelete, onClick }: Pro
           <p className="text-[15px] font-semibold text-foreground leading-6 line-clamp-1">
             {prompt.name}
           </p>
-          {prompt.description && (
-            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{prompt.description}</p>
-          )}
         </div>
 
         <div className="mt-3 p-2 bg-muted/50 rounded-lg">

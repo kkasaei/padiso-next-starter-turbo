@@ -49,10 +49,9 @@ export function PromptTableView({
     <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="hover:bg-transparent bg-muted/30">
             <TableHead className="w-12"></TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
             <TableHead>Brand</TableHead>
             <TableHead>Provider</TableHead>
             <TableHead>Usage</TableHead>
@@ -91,17 +90,6 @@ export function PromptTableView({
                 {/* Name */}
                 <TableCell>
                   <span className="font-medium">{prompt.name}</span>
-                </TableCell>
-
-                {/* Description */}
-                <TableCell>
-                  {prompt.description ? (
-                    <span className="text-sm text-muted-foreground line-clamp-1">
-                      {prompt.description}
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
                 </TableCell>
 
                 {/* Brand */}

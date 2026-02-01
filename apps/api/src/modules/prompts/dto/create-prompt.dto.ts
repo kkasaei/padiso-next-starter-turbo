@@ -22,14 +22,6 @@ export class CreatePromptDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({
-    description: 'Prompt description',
-    example: 'Generate engaging blog posts based on keywords',
-  })
-  @IsString()
-  @IsOptional()
-  description?: string;
-
   @ApiProperty({
     description:
       'The actual prompt content with variable placeholders like {{keyword}}',

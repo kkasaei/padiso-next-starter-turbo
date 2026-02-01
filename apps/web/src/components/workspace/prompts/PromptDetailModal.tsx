@@ -36,9 +36,6 @@ export function PromptDetailModal({ prompt, brandName, onClose, onEdit }: Prompt
             </div>
             <div>
               <h2 className="text-lg font-semibold">{prompt.name}</h2>
-              {prompt.description && (
-                <p className="text-sm text-muted-foreground mt-1">{prompt.description}</p>
-              )}
             </div>
           </div>
           <Button

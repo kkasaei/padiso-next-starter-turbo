@@ -75,7 +75,6 @@ export interface CategoryConfig {
 export interface CreatePromptData {
   brandId: string;
   name: string;
-  description?: string;
   prompt: string;
   aiProvider?: AIProvider;
   tagId?: string;
@@ -85,7 +84,6 @@ export interface CreatePromptData {
 export interface UpdatePromptData {
   id: string;
   name?: string;
-  description?: string;
   prompt?: string;
   aiProvider?: AIProvider;
   tagId?: string | null;

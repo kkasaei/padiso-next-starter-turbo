@@ -28,6 +28,14 @@ export { FilterPopover } from "./FilterPopover";
 export { FilterChip } from "./FilterChip";
 
 // ============================================================
+// UTILITY COMPONENTS
+// ============================================================
+export { GenericPicker, DatePicker } from "./PromptPickers";
+export { PromptDescriptionEditor } from "./PromptDescriptionEditor";
+export { QuickCreateModalLayout } from "./QuickCreateModalLayout";
+
+// ============================================================
 // TYPES
 // ============================================================
 export type { FilterChip as FilterChipType } from "./FilterPopover";
+export type * from "./PromptTypes";

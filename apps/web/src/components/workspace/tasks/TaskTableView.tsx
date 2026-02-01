@@ -40,7 +40,7 @@ export function TaskTableView({ tasks, onToggleTask, onOpenTask }: TaskTableView
     <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="hover:bg-transparent bg-muted/30">
             <TableHead className="w-12"></TableHead>
             <TableHead>Task</TableHead>
             <TableHead>Brand</TableHead>

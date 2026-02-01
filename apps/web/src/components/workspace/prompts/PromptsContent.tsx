@@ -171,7 +171,6 @@ export function PromptsContent() {
         await updatePromptMutation.mutateAsync({
           id: editingPrompt.id,
           name: promptData.name,
-          description: promptData.description || undefined,
           prompt: promptData.prompt,
           aiProvider: promptData.aiProvider || undefined,
           tagId: promptData.tagId || undefined,
@@ -184,7 +183,6 @@ export function PromptsContent() {
         await createPromptMutation.mutateAsync({
           brandId: promptData.brandId,
           name: promptData.name,
-          description: promptData.description || undefined,
           prompt: promptData.prompt,
           aiProvider: promptData.aiProvider || undefined,
           tagId: promptData.tagId || undefined,

@@ -1,22 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
-import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
-import { Textarea } from "@workspace/ui/components/textarea";
 import { Label } from "@workspace/ui/components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select";
 import type { Prompt } from "@workspace/db/schema";
-import type { AIProvider, PromptCategory } from "./PromptTypes";
-import { PROMPT_CATEGORIES, AI_PROVIDERS } from "./PromptConstants";
+import type { AIProvider } from "./PromptTypes";
+import { AI_PROVIDERS, getProviderIcon } from "./PromptConstants";
+import { QuickCreateModalLayout } from "./QuickCreateModalLayout";
+import { GenericPicker } from "./PromptPickers";
+import { PromptDescriptionEditor } from "./PromptDescriptionEditor";
 import { toast } from "sonner";
 
 interface CreatePromptModalProps {
@@ -27,17 +22,30 @@ interface CreatePromptModalProps {
 }
 
 export function CreatePromptModal({ onClose, onCreate, editPrompt, brands = [] }: CreatePromptModalProps) {
-  const [name, setName] = useState(editPrompt?.name ?? "");
-  const [description, setDescription] = useState(editPrompt?.description ?? "");
-  const [promptText, setPromptText] = useState(editPrompt?.prompt ?? "");
-  const [aiProvider, setAiProvider] = useState<AIProvider | null>(editPrompt?.aiProvider ?? null);
-  const [brandId, setBrandId] = useState<string>(editPrompt?.brandId ?? brands[0]?.id ?? "");
+  const [name, setName] = useState(editPrompt?.name || "");
+  const [promptText, setPromptText] = useState(editPrompt?.prompt || "");
+  const [aiProvider, setAiProvider] = useState<AIProvider | null>(editPrompt?.aiProvider || null);
+  const [brandId, setBrandId] = useState<string>(editPrompt?.brandId || brands[0]?.id || "");
+  const [isPromptExpanded, setIsPromptExpanded] = useState(false);
 
   const isEditing = !!editPrompt;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (editPrompt) {
+      setName(editPrompt.name);
+      setPromptText(editPrompt.prompt);
+      setAiProvider(editPrompt.aiProvider || null);
+      setBrandId(editPrompt.brandId);
+    } else {
+      setName("");
+      setPromptText("");
+      setAiProvider(null);
+      setBrandId(brands[0]?.id || "");
+    }
+  }, [editPrompt, brands]);
+
+  const handleSubmit = () => {
     if (!name.trim()) {
       toast.error("Please enter a prompt name");
       return;
@@ -48,127 +56,148 @@ export function CreatePromptModal({ onClose, onCreate, editPrompt, brands = [] }
       return;
     }
 
+    if (!brandId) {
+      toast.error("Please select a brand");
+      return;
+    }
+
     onCreate({
       brandId,
       name: name.trim(),
-      description: description.trim() || undefined,
       prompt: promptText.trim(),
       aiProvider: aiProvider || undefined,
     });
 
-    toast.success(isEditing ? "Prompt updated successfully" : "Prompt created successfully");
     onClose();
   };
 
+  const brandOptions = brands.map(b => ({ 
+    id: b.id, 
+    label: b.brandName || 'Untitled Brand' 
+  }));
+
+  const selectedBrand = brandOptions.find(b => b.id === brandId);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.2 }}
-        className="w-full max-w-lg rounded-2xl bg-background shadow-2xl"
+    <QuickCreateModalLayout
+      open={true}
+      onClose={onClose}
+      isDescriptionExpanded={isPromptExpanded}
+      onSubmitShortcut={handleSubmit}
+    >
+      {/* Close Button */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={onClose}
+        className="absolute right-4 top-3 opacity-70 hover:opacity-100 rounded-xl z-10"
       >
-        <form onSubmit={handleSubmit}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-            <h2 className="text-lg font-semibold">
-              {isEditing ? "Edit Prompt" : "Create New Prompt"}
-            </h2>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+        <X className="size-4 text-muted-foreground" />
+      </Button>
 
-          {/* Content */}
-          <div className="px-6 py-4 space-y-4 max-h-[60vh] overflow-y-auto">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="e.g., SEO Meta Description Generator"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+      {/* Title Input */}
+      <div className="flex flex-col gap-2 w-full shrink-0 mt-2">
+        <div className="flex gap-1 h-10 items-center w-full">
+          <input
+            id="prompt-title"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={isEditing ? "Edit prompt name" : "Prompt name (e.g., SEO Meta Generator)"}
+            className="w-full font-normal leading-7 text-foreground placeholder:text-muted-foreground text-xl outline-none bg-transparent border-none p-0"
+            autoComplete="off"
+            autoFocus
+          />
+        </div>
+      </div>
+
+      {/* Main Prompt Content Editor */}
+      <PromptDescriptionEditor
+        value={promptText}
+        onChange={setPromptText}
+        onExpandChange={setIsPromptExpanded}
+        placeholder="Enter your prompt here. Use {{variable}} for dynamic content..."
+        showTemplates={false}
+      />
+
+      {/* Property Pickers */}
+      <div className="flex flex-wrap gap-2.5 items-start w-full shrink-0">
+        {/* Brand Picker */}
+        <GenericPicker
+          items={brandOptions}
+          onSelect={(brand) => setBrandId(brand.id)}
+          selectedId={brandId}
+          placeholder="Select brand..."
+          renderItem={(item, isSelected) => (
+            <div className="flex items-center gap-2 w-full">
+              <span className="flex-1">{item.label}</span>
+              {isSelected && <span>✓</span>}
+            </div>
+          )}
+          trigger={
+            <button className="bg-muted flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
+              <Sparkles className="size-4 text-muted-foreground" />
+              <span className="font-medium text-foreground text-sm leading-5">
+                {selectedBrand?.label || "Select Brand"}
+              </span>
+            </button>
+          }
+        />
+
+        {/* AI Provider Picker */}
+        <GenericPicker
+          items={AI_PROVIDERS.map(p => ({ id: p.value, label: p.label, icon: p.icon }))}
+          onSelect={(provider) => setAiProvider(provider.id as AIProvider)}
+          selectedId={aiProvider || undefined}
+          placeholder="Select AI provider..."
+          renderItem={(item: any, isSelected) => (
+            <div className="flex items-center gap-2 w-full">
+              <Image
+                src={item.icon}
+                alt={item.label}
+                width={16}
+                height={16}
+                className="flex-shrink-0"
               />
+              <span className="flex-1">{item.label}</span>
+              {isSelected && <span>✓</span>}
             </div>
+          )}
+          trigger={
+            <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
+              {aiProvider ? (
+                <>
+                  <Image
+                    src={getProviderIcon(aiProvider)}
+                    alt={aiProvider}
+                    width={16}
+                    height={16}
+                    className="flex-shrink-0"
+                  />
+                  <span className="font-medium text-foreground text-sm leading-5">
+                    {AI_PROVIDERS.find(p => p.value === aiProvider)?.label}
+                  </span>
+                </>
+              ) : (
+                <span className="font-medium text-muted-foreground text-sm leading-5">
+                  No Provider
+                </span>
+              )}
+            </button>
+          }
+        />
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description (optional)</Label>
-              <Input
-                id="description"
-                placeholder="Brief description of what this prompt does"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="brand">Brand</Label>
-                <Select value={brandId} onValueChange={(v) => setBrandId(v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select brand" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {brands.map((brand) => (
-                      <SelectItem key={brand.id} value={brand.id}>
-                        {brand.brandName || "Unnamed Brand"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="aiProvider">AI Provider (optional)</Label>
-                <Select value={aiProvider || "none"} onValueChange={(v) => setAiProvider(v === "none" ? null : v as AIProvider)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select provider" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No provider</SelectItem>
-                    {AI_PROVIDERS.map((provider) => (
-                      <SelectItem key={provider.value} value={provider.value}>
-                        {provider.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="promptText">Prompt Content</Label>
-              <Textarea
-                id="promptText"
-                placeholder="Enter your prompt here. Use {{variable}} for dynamic content."
-                value={promptText}
-                onChange={(e) => setPromptText(e.target.value)}
-                rows={8}
-                className="font-mono text-sm"
-              />
-              <p className="text-xs text-muted-foreground">
-                Tip: Use {"{{variable}}"} syntax for dynamic placeholders
-              </p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">
-              {isEditing ? "Save Changes" : "Create Prompt"}
-            </Button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
+      {/* Footer */}
+      <div className="flex items-center justify-end gap-3 w-full pt-4 shrink-0 border-t border-border/40">
+        <Button type="button" variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit}>
+          {isEditing ? "Save Changes" : "Create Prompt"}
+        </Button>
+      </div>
+    </QuickCreateModalLayout>
   );
 }

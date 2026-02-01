@@ -40,7 +40,6 @@ export const prompts = pgTable("prompts", {
   
   // Basic information
   name: text("name").notNull(),
-  description: text("description"),
   prompt: text("prompt").notNull(), // The actual prompt content with {{variables}}
   
   // AI Provider (enum for type safety)

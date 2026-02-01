@@ -107,9 +107,6 @@ export function PromptHeader({
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-3">
           <p className="text-base font-medium text-foreground">Prompts</p>
-          <span className="text-sm text-muted-foreground">
-            {hasActiveFilters ? `${filteredCount} of ${totalCount}` : totalCount}
-          </span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={onAddPrompt}>
