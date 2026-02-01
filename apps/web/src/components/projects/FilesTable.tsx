@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DotsThree, MagnifyingGlass, Plus } from "@phosphor-icons/react/dist/ssr"
+import { MoreHorizontal as DotsThree, Search as MagnifyingGlass, Plus } from "lucide-react"
 import { format } from "date-fns"
 import Image from "next/image"
 
@@ -126,7 +126,7 @@ export function FilesTable({ files, onAddFile }: FilesTableProps) {
                                             size="icon-sm"
                                             className="h-8 w-8 text-muted-foreground hover:text-foreground"
                                         >
-                                            <DotsThree className="h-4 w-4" weight="bold" />
+                                            <DotsThree className="h-4 w-4 stroke-[3]" />
                                         </Button>
                                     </TableCell>
                                 </TableRow>

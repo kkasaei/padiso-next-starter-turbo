@@ -1,4 +1,4 @@
-import { CalendarBlank, Clock } from "@phosphor-icons/react/dist/ssr"
+import { CalendarDays as CalendarBlank, Clock } from "lucide-react"
 
 import type { TimeSummary } from "@/lib/data/project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"

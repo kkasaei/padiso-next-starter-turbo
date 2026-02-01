@@ -8,12 +8,12 @@ import { Checkbox } from "@workspace/ui/components/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { cn } from "@workspace/ui/lib/utils"
 import {
-  Funnel,
-  Spinner,
+  Filter as Funnel,
+  Loader2 as Spinner,
   Tag,
   User,
-  ChartBar,
-} from "@phosphor-icons/react/dist/ssr"
+  BarChart3 as ChartBar,
+} from "lucide-react"
 
 export type FilterChip = { key: string; value: string }
 

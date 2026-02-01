@@ -1,4 +1,4 @@
-import { Rocket, Flask, Briefcase, Check } from "@phosphor-icons/react/dist/ssr";
+import { Rocket, Beaker, Briefcase, Check } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 import { ProjectIntent } from "../types";
 
@@ -19,7 +19,7 @@ export function StepIntent({ selected, onSelect }: StepIntentProps) {
       id: 'experiment',
       title: 'Experiment',
       desc: 'Testing a hypothesis, research, or prototyping.',
-      icon: <Flask className="h-6 w-6" />,
+      icon: <Beaker className="h-6 w-6" />,
     },
     {
       id: 'internal',

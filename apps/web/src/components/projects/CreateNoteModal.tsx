@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Paperclip, Microphone, UploadSimple, Tag, X } from "@phosphor-icons/react/dist/ssr"
+import { Paperclip, Mic as Microphone, Upload as UploadSimple, Tag, X } from "lucide-react"
 
 import type { User } from "@/lib/data/project-details"
 import { Button } from "@workspace/ui/components/button"

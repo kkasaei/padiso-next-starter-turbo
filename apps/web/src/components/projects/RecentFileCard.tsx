@@ -1,4 +1,4 @@
-import { DotsThree } from "@phosphor-icons/react/dist/ssr"
+import { MoreHorizontal as DotsThree } from "lucide-react"
 
 import type { ProjectFile } from "@/lib/data/project-details"
 import { Button } from "@workspace/ui/components/button"
@@ -31,7 +31,7 @@ export function RecentFileCard({ file, onEdit, onDelete }: RecentFileCardProps) 
                         className="h-7 w-7 text-muted-foreground hover:text-foreground"
                         aria-label={`Open actions for ${file.name}`}
                     >
-                        <DotsThree className="h-4 w-4" weight="bold" />
+                        <DotsThree className="h-4 w-4 stroke-[3]" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

@@ -1,4 +1,4 @@
-import { File, DotsThree, Waveform } from "@phosphor-icons/react/dist/ssr"
+import { File, MoreHorizontal as DotsThree, AudioLines as Waveform } from "lucide-react"
 import { format } from "date-fns"
 
 import type { ProjectNote } from "@/lib/data/project-details"
@@ -39,7 +39,7 @@ export function NoteCard({ note, onEdit, onDelete, onClick }: NoteCardProps) {
                             size="icon-sm"
                             className="h-6 w-6 text-muted-foreground hover:text-foreground"
                         >
-                            <DotsThree className="h-4 w-4" weight="bold" />
+                            <DotsThree className="h-4 w-4 stroke-[3]" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">

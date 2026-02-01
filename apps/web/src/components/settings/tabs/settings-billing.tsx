@@ -7,7 +7,7 @@ import { Progress } from "@workspace/ui/components/progress";
 import { Switch } from "@workspace/ui/components/switch";
 import { Badge } from "@workspace/ui/components/badge";
 import { Separator } from "@workspace/ui/components/separator";
-import { CreditCard, Receipt, Lightning, ChartBar, FileText, Code, Coins } from "@phosphor-icons/react/dist/ssr";
+import { CreditCard, Receipt, Zap, BarChart3, FileText, Code, Coins } from "lucide-react";
 
 // Mock billing data
 const billingData = {

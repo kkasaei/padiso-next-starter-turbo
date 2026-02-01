@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CaretRight } from "@phosphor-icons/react/dist/ssr"
+import { ChevronRight as CaretRight } from "lucide-react"
 
 export type BreadcrumbItem = {
   label: string

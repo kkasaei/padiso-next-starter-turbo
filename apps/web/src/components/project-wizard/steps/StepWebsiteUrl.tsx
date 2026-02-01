@@ -1,4 +1,4 @@
-import { Globe, CaretRight, X } from "@phosphor-icons/react/dist/ssr";
+import { Globe, ChevronRight, X } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
@@ -58,7 +58,7 @@ export function StepWebsiteUrl({ value, onChange, onContinue, onClose }: StepWeb
               className="h-10 px-6 rounded-xl gap-2 w-full"
             >
               <span className="text-sm font-medium">Continue</span>
-              <CaretRight className="size-4" />
+              <ChevronRight className="size-4" />
             </Button>
           </div>
 

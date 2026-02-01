@@ -2,7 +2,7 @@
 
 import type { Project } from "@/lib/data/projects"
 import { ProjectCard } from "@/components/project-card"
-import { Plus, FolderOpen } from "@phosphor-icons/react/dist/ssr"
+import { Plus, FolderOpen } from "lucide-react"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
 type ProjectCardsViewProps = {

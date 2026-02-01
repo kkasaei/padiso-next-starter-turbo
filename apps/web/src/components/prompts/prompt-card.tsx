@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import type { Prompt } from "@/lib/data/prompts";
 import { getCategoryConfig, getAIProviderConfig } from "@/lib/data/prompts";
-import { Lightning, Copy, DotsThree, Folder, Globe, PencilSimple, Trash } from "@phosphor-icons/react/dist/ssr";
+import { Zap, Copy, MoreHorizontal, Folder, Globe, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 import { toast } from "sonner";
 import {
@@ -49,7 +49,7 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="text-primary/80">
-            <Lightning className="h-5 w-5" weight="fill" />
+            <Zap className="h-5 w-5 fill-current" />
           </div>
           <div className="flex items-center gap-2">
             <div className={cn("flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium", providerConfig.color)}>
@@ -63,7 +63,7 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
                   className="h-7 w-7 rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <DotsThree className="h-4 w-4" weight="bold" />
+                  <MoreHorizontal className="h-4 w-4" strokeWidth={3} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
@@ -73,7 +73,7 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
                 </DropdownMenuItem>
                 {onEdit && (
                   <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(prompt); }}>
-                    <PencilSimple className="h-4 w-4 mr-2" />
+                    <Pencil className="h-4 w-4 mr-2" />
                     Edit
                   </DropdownMenuItem>
                 )}
@@ -84,7 +84,7 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
                       className="text-destructive focus:text-destructive"
                       onClick={(e) => { e.stopPropagation(); onDelete(prompt); }}
                     >
-                      <Trash className="h-4 w-4 mr-2" />
+                      <Trash2 className="h-4 w-4 mr-2" />
                       Delete
                     </DropdownMenuItem>
                   </>

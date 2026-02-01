@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/button";
-import { Link as LinkIcon, Plus, Sparkle, X } from "@phosphor-icons/react/dist/ssr";
+import { Link as LinkIcon, Plus, Sparkles, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -52,7 +52,7 @@ export function PromptHeader({
             <LinkIcon className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={onAddPrompt}>
-            <Plus className="h-4 w-4" weight="bold" />
+            <Plus className="h-4 w-4" strokeWidth={3} />
             Add Prompt
           </Button>
         </div>
@@ -116,7 +116,7 @@ export function PromptHeader({
           <div className="relative">
             <div className="relative rounded-xl border border-border bg-card/80 shadow-sm overflow-hidden">
               <Button className="h-8 gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 relative z-10 px-3">
-                <Sparkle className="h-4 w-4" weight="fill" />
+                <Sparkles className="h-4 w-4 fill-current" />
                 Ask AI
               </Button>
             </div>

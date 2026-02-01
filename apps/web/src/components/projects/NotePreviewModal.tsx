@@ -3,16 +3,16 @@
 import { useState } from "react"
 import {
     ArrowLeft,
-    DotsThree,
-    PencilSimple,
-    Export,
-    CaretDown,
+    MoreHorizontal as DotsThree,
+    Pencil as PencilSimple,
+    Download as Export,
+    ChevronDown as CaretDown,
     Play,
     Pause,
     SkipBack,
     SkipForward,
-    CircleNotch,
-} from "@phosphor-icons/react/dist/ssr"
+    Loader2 as CircleNotch,
+} from "lucide-react"
 import { format } from "date-fns"
 
 import type { ProjectNote, TranscriptSegment } from "@/lib/data/project-details"
@@ -90,7 +90,7 @@ export function NotePreviewModal({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button variant="ghost" size="icon-sm">
-                                    <DotsThree className="h-4 w-4" weight="bold" />
+                                    <DotsThree className="h-4 w-4 stroke-[3]" />
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Export className="h-4 w-4" />
@@ -173,9 +173,9 @@ export function NotePreviewModal({
                                         onClick={() => setIsPlaying(!isPlaying)}
                                     >
                                         {isPlaying ? (
-                                            <Pause className="h-4 w-4" weight="fill" />
+                                            <Pause className="h-4 w-4 fill-current" />
                                         ) : (
-                                            <Play className="h-4 w-4" weight="fill" />
+                                            <Play className="h-4 w-4 fill-current" />
                                         )}
                                     </Button>
                                     <Button variant="ghost" size="icon-sm">

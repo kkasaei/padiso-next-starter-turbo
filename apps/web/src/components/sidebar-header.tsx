@@ -6,13 +6,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/component
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import { 
-  CaretUpDown, 
-  MagnifyingGlass, 
+  ChevronsUpDown, 
+  Search, 
   Check, 
-  DotsThree, 
-  Gear, 
+  MoreHorizontal, 
+  Settings, 
   Plus 
-} from "@phosphor-icons/react/dist/ssr"
+} from "lucide-react"
 import { useOrganization, useOrganizationList } from "@clerk/nextjs"
 import { cn } from "@/lib/utils"
 
@@ -58,7 +58,7 @@ export function SidebarHeaderContent() {
                 <span className="text-xs text-muted-foreground">Pro plan</span>
               </div>
             </div>
-            <CaretUpDown className="h-4 w-4 text-muted-foreground" />
+            <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
           </button>
         </PopoverTrigger>
 
@@ -70,7 +70,7 @@ export function SidebarHeaderContent() {
           {/* Search */}
           <div className="p-2">
             <div className="relative">
-              <MagnifyingGlass className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search workspaces..."
                 value={search}
@@ -119,7 +119,7 @@ export function SidebarHeaderContent() {
                     </div>
                     <span className="flex-1 text-left truncate">{org.name}</span>
                     {isActive && (
-                      <Check className="h-4 w-4 text-blue-600" weight="bold" />
+                      <Check className="h-4 w-4 text-blue-600" strokeWidth={3} />
                     )}
                   </button>
                 )
@@ -131,7 +131,7 @@ export function SidebarHeaderContent() {
               onClick={() => setOpen(false)}
               className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
             >
-              <DotsThree className="h-6 w-6 text-muted-foreground" weight="bold" />
+              <MoreHorizontal className="h-6 w-6 text-muted-foreground" strokeWidth={3} />
               <span>All workspaces</span>
             </button>
           </div>
@@ -147,7 +147,7 @@ export function SidebarHeaderContent() {
               }}
               className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
             >
-              <Gear className="h-5 w-5 text-muted-foreground" />
+              <Settings className="h-5 w-5 text-muted-foreground" />
               <span>Workspace settings</span>
             </button>
             

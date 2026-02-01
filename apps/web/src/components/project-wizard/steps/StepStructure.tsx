@@ -2,7 +2,7 @@ import { ProjectData, WorkStructure } from "../types";
 import { cn } from "@workspace/ui/lib/utils";
 
 import { Label } from "@workspace/ui/components/label";
-import { ArrowRight, Flag, GitMerge } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Flag, GitMerge } from "lucide-react";
 
 // I'll create a simple Switch-like toggle here since I didn't scaffold Switch yet.
 function SimpleToggle({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (c: boolean) => void }) {

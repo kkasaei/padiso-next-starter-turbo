@@ -1,4 +1,4 @@
-import { Check } from "@phosphor-icons/react/dist/ssr";
+import { Check } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 import { ReferralSource, REFERRAL_SOURCES } from "../types";
 

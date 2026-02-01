@@ -1,7 +1,7 @@
 "use client"
 
 import { format } from "date-fns"
-import { ChartBar, DotsSixVertical, FolderSimple, Plus } from "@phosphor-icons/react/dist/ssr"
+import { BarChart3, GripVertical, Folder, Plus } from "lucide-react"
 import {
   SortableContext,
   arrayMove,
@@ -95,13 +95,13 @@ export function ProjectTasksSection({ group, onToggleTask, onAddTask }: ProjectT
     <section className="max-w-6xl mx-auto rounded-3xl border border-border bg-muted shadow-[var(--shadow-workstream)] p-3 space-y-2">
       <header className="flex items-center justify-between gap-4 px-0 py-1">
         <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground">
-          <FolderSimple className="h-5 w-5" weight="regular" />
+          <Folder className="h-5 w-5" />
         </div>
         <div className="flex-1 space-y-1">
           <span className="text-sm font-semibold leading-tight">{project.name}</span>
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
-              <ChartBar className="h-3 w-3" weight="regular" />
+              <BarChart3 className="h-3 w-3" />
               <span className="font-medium">{capitalize(project.priority)}</span>
             </span>
             <div className="h-4 w-px bg-border/70 hidden sm:inline" />
@@ -317,7 +317,7 @@ export function TaskRowDnD({ task, onToggle }: TaskRowDnDProps) {
               {...attributes}
               {...listeners}
             >
-              <DotsSixVertical className="h-4 w-4" weight="regular" />
+              <GripVertical className="h-4 w-4" />
             </Button>
           </>
         }

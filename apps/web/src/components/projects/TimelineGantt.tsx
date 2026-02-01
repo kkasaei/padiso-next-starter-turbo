@@ -4,7 +4,7 @@ import { addDays, differenceInDays, format, isWithinInterval, startOfWeek } from
 import type { TimelineTask } from "@/lib/data/project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
-import { CaretLeft, CaretRight, CalendarBlank, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr"
+import { ChevronLeft as CaretLeft, ChevronRight as CaretRight, CalendarDays as CalendarBlank, Search as MagnifyingGlass } from "lucide-react"
 
 type TimelineGanttProps = {
   tasks: TimelineTask[]

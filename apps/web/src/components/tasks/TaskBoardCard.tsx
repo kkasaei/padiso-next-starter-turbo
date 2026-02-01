@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 import { format } from "date-fns"
-import { CaretDown, FolderSimple, CalendarBlank, Tag as TagIcon } from "@phosphor-icons/react/dist/ssr"
+import { ChevronDown as CaretDown, Folder as FolderSimple, CalendarDays as CalendarBlank, Tag as TagIcon } from "lucide-react"
 
 import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"

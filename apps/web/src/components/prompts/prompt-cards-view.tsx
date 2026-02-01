@@ -2,7 +2,7 @@
 
 import type { Prompt } from "@/lib/data/prompts";
 import { PromptCard } from "@/components/prompts/prompt-card";
-import { Plus, Lightning } from "@phosphor-icons/react/dist/ssr";
+import { Plus, Zap } from "lucide-react";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 
 type PromptCardsViewProps = {
@@ -35,7 +35,7 @@ export function PromptCardsView({
       ) : isEmpty ? (
         <div className="flex h-60 flex-col items-center justify-center text-center">
           <div className="p-3 bg-primary/10 rounded-md mb-4">
-            <Lightning className="h-6 w-6 text-primary" weight="fill" />
+            <Zap className="h-6 w-6 text-primary fill-current" />
           </div>
           <h3 className="mb-2 text-lg font-semibold text-foreground">No prompts yet</h3>
           <p className="mb-6 text-sm text-muted-foreground">Create your first prompt to get started</p>

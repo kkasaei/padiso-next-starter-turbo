@@ -5,21 +5,21 @@ import { Button } from "@workspace/ui/components/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Switch } from "@workspace/ui/components/switch"
 import {
-  Sliders,
-  ListBullets,
-  Kanban,
-  ChartBar,
-  TextIndent,
-  CaretUpDown,
-  ListDashes,
+  SlidersHorizontal,
+  List,
+  Columns3,
+  BarChart3,
+  Indent,
+  ChevronsUpDown,
+  ListMinus,
   Globe,
-  Spinner,
+  Loader2,
   User,
   Tag,
-  TextT,
+  Type,
   Calendar,
-  CalendarBlank,
-} from "@phosphor-icons/react/dist/ssr"
+  CalendarDays,
+} from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 
 type Options = {
@@ -44,16 +44,16 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
   const [groupByOpen, setGroupByOpen] = useState(false)
 
   const viewTypes = [
-    { id: "calendar", label: "Calendar", icon: CalendarBlank },
-    { id: "list", label: "List", icon: ListBullets },
-    { id: "board", label: "Board", icon: Kanban },
-    { id: "timeline", label: "Timeline", icon: ChartBar },
+    { id: "calendar", label: "Calendar", icon: CalendarDays },
+    { id: "list", label: "List", icon: List },
+    { id: "board", label: "Board", icon: Columns3 },
+    { id: "timeline", label: "Timeline", icon: BarChart3 },
   ].filter((type) => !allowedViewTypes || allowedViewTypes.includes(type.id))
 
   const taskOptions = [
-    { id: "indented", label: "Indented", icon: TextIndent },
-    { id: "collapsed", label: "Collapsed", icon: CaretUpDown },
-    { id: "flat", label: "Flat", icon: ListDashes },
+    { id: "indented", label: "Indented", icon: Indent },
+    { id: "collapsed", label: "Collapsed", icon: ChevronsUpDown },
+    { id: "flat", label: "Flat", icon: ListMinus },
   ]
 
   const orderingOptions = [
@@ -64,14 +64,14 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
 
   const groupByOptions = [
     { id: "none", label: "None", icon: Globe },
-    { id: "status", label: "Status", icon: Spinner, count: "4 status" },
+    { id: "status", label: "Status", icon: Loader2, count: "4 status" },
     { id: "assignee", label: "Assignee", icon: User, count: "1 active" },
     { id: "tags", label: "Tags", icon: Tag, count: "4 tags" },
   ]
 
   const propertyOptions = [
-    { id: "title", label: "Title", icon: TextT },
-    { id: "status", label: "Status", icon: Spinner },
+    { id: "title", label: "Title", icon: Type },
+    { id: "status", label: "Status", icon: Loader2 },
     { id: "assignee", label: "Assignee", icon: User },
     { id: "dueDate", label: "Due date", icon: Calendar },
   ]
@@ -80,7 +80,7 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 gap-2 rounded-lg border-border/60 px-3 bg-transparent">
-          <Sliders className="h-4 w-4" />
+          <SlidersHorizontal className="h-4 w-4" />
           View
         </Button>
       </PopoverTrigger>
@@ -116,9 +116,9 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
                     size="sm"
                     className="h-8 gap-2 rounded-lg border-border/60 px-3 bg-transparent"
                   >
-                    {taskOptions.find((o) => o.id === options.tasks)?.icon && <TextIndent className="h-4 w-4" />}
+                    {taskOptions.find((o) => o.id === options.tasks)?.icon && <Indent className="h-4 w-4" />}
                     {taskOptions.find((o) => o.id === options.tasks)?.label}
-                    <CaretUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                    <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-40 rounded-xl p-1" align="end">
@@ -152,9 +152,9 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
                     size="sm"
                     className="h-8 gap-2 rounded-lg border-border/60 px-3 bg-transparent"
                   >
-                    <Sliders className="h-4 w-4" />
+                    <SlidersHorizontal className="h-4 w-4" />
                     {orderingOptions.find((o) => o.id === options.ordering)?.label}
-                    <CaretUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                    <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-36 rounded-xl p-1" align="end">

@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select";
 import { Button } from "@workspace/ui/components/button";
-import { ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
+import { ExternalLink } from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -138,7 +138,7 @@ function MetricCard({
             size="icon"
             className="hidden rounded-full opacity-0 transition-opacity group-hover:opacity-100 md:block h-8 w-8"
           >
-            <ArrowSquareOut className="h-4 w-4" />
+            <ExternalLink className="h-4 w-4" />
           </Button>
         </div>
       </div>

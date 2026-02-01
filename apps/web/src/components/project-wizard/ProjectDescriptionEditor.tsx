@@ -6,7 +6,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import "@/styles/tiptap.css";
-import { Plus, StarFour, ArrowsOutSimple } from "@phosphor-icons/react/dist/ssr";
+import { Plus, Sparkle, Maximize2 } from "lucide-react";
 
  type TemplateType = "goal" | "scope" | "inScope" | "outScope" | "outcomes" | "feature";
 
@@ -315,7 +315,7 @@ import { Plus, StarFour, ArrowsOutSimple } from "@phosphor-icons/react/dist/ssr"
               className="absolute top-0 right-0 p-2 opacity-50 hover:opacity-100 transition-opacity z-30"
               title={isExpanded ? "Collapse" : "Expand"}
             >
-              <ArrowsOutSimple className="size-4 text-muted-foreground" />
+              <Maximize2 className="size-4 text-muted-foreground" />
             </button>
           )}
         </div>
@@ -414,10 +414,9 @@ import { Plus, StarFour, ArrowsOutSimple } from "@phosphor-icons/react/dist/ssr"
                   className="bg-muted-foreground/8 flex gap-1.5 h-7 items-center px-3 py-0.5 rounded-full hover:bg-muted-foreground/20 transition-colors cursor-pointer"
                 >
                   <div className="size-3.5">
-                    <StarFour
-                      weight="fill"
-                      className="size-3.5 text-primary"
-                    />
+<Sparkle
+                                      className="size-3.5 text-primary fill-current"
+                                    />
                   </div>
                   <span className="font-medium text-foreground text-xs tracking-wide">
                     Write with AI

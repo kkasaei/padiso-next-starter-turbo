@@ -1,6 +1,6 @@
 "use client"
 
-import { WarningOctagon } from "@phosphor-icons/react/dist/ssr"
+import { OctagonAlert } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type PriorityLevel = "urgent" | "high" | "medium" | "low"
@@ -42,7 +42,7 @@ export function PriorityGlyphIcon({
   const baseIcon = size === "md" ? "h-4 w-4" : "h-3.5 w-3.5"
 
   if (isUrgent) {
-    return <WarningOctagon className={cn(baseIcon, "text-muted-foreground", className)} weight="fill" />
+    return <OctagonAlert className={cn(baseIcon, "text-muted-foreground fill-current", className)} />
   }
 
   const safeLevel: Exclude<PriorityLevel, "urgent"> = level === "high" || level === "medium" ? level : "low"
@@ -68,7 +68,7 @@ export function PriorityBadge({ level, appearance = "badge", size = "md", classN
     return (
       <span className={cn("inline-flex items-center gap-1.5 text-foreground", baseText, className)}>
         {withIcon && (isUrgent ? (
-          <WarningOctagon className={cn(baseIcon, "text-muted-foreground")} weight="fill" />
+          <OctagonAlert className={cn(baseIcon, "text-muted-foreground fill-current")} />
         ) : (
           <BarsGlyph level={level} className={cn(baseIcon, "text-muted-foreground")} />
         ))}
@@ -92,7 +92,7 @@ export function PriorityBadge({ level, appearance = "badge", size = "md", classN
       )}
     >
       {withIcon && (isUrgent ? (
-        <WarningOctagon className={cn(baseIcon, "text-muted-foreground")} weight="fill" />
+        <OctagonAlert className={cn(baseIcon, "text-muted-foreground fill-current")} />
       ) : (
         <BarsGlyph level={level} className={cn(baseIcon, "text-muted-foreground")} />
       ))}

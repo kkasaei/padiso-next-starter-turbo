@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { UploadSimple } from "@phosphor-icons/react/dist/ssr"
+import { Upload as UploadSimple } from "lucide-react"
 
 import {
     Dialog,

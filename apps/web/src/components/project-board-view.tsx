@@ -6,7 +6,7 @@ import { ProjectCard } from "@/components/project-card"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Button } from "@workspace/ui/components/button"
-import { DotsThreeVertical, Plus, StackSimple, Spinner, CircleNotch, CheckCircle } from "@phosphor-icons/react/dist/ssr"
+import { MoreVertical as DotsThreeVertical, Plus, Layers as StackSimple, Loader as Spinner, Loader2 as CircleNotch, CheckCircle } from "lucide-react"
 
 function columnStatusIcon(status: Project["status"]): React.JSX.Element {
   switch (status) {

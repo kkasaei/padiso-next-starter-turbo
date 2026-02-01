@@ -15,7 +15,7 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react'
-import { Sparkle } from '@phosphor-icons/react/dist/ssr'
+import { Sparkles } from 'lucide-react'
 import { ViewOptionsPopover } from '@/components/view-options-popover'
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@/lib/view-options'
 import { cn } from '@/lib/utils'

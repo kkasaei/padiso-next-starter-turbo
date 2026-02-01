@@ -4,7 +4,7 @@ import { useState } from "react";
 import { OrganizationProfile } from "@clerk/nextjs";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent } from "@workspace/ui/components/card";
-import { Download } from "@phosphor-icons/react/dist/ssr";
+import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 export function SettingsOverview() {

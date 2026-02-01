@@ -1,10 +1,10 @@
 import {
-  House,
-  MagnifyingGlassPlus,
-  GearSix,
+  Home,
+  SearchCheck,
+  Settings,
   Wrench,
-  SparkleIcon,
-} from "@phosphor-icons/react/dist/ssr"
+  Sparkles,
+} from "lucide-react"
 import { ChartNoAxesCombinedIcon, TowerControlIcon, GlobeIcon, SquareCheckBigIcon } from "lucide-react"
 
 export const baseURL = process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000';
@@ -30,16 +30,16 @@ export const routes = {
 
 // Navigation items for project detail pages
 export const projectNavItems = [
-  { id: "overview", label: "Overview", icon: House, path: "" },
-  { id: "content", label: "Content", icon: SparkleIcon, path: "/content" },
+  { id: "overview", label: "Overview", icon: Home, path: "" },
+  { id: "content", label: "Content", icon: Sparkles, path: "/content" },
   { id: "analytics", label: "Analytics", icon: ChartNoAxesCombinedIcon, path: "/analytics" },
   { id: "ai-tracking", label: "AI Tracking", icon: TowerControlIcon, path: "/ai-tracking" },
   { id: "backlinks", label: "Backlinks", icon: Wrench, path: "/backlinks" },
-  { id: "technical-audit", label: "Technical Audit", icon: MagnifyingGlassPlus, path: "/technical-audit" },
+  { id: "technical-audit", label: "Technical Audit", icon: SearchCheck, path: "/technical-audit" },
   { id: "reddit", label: "Reddit", icon: GlobeIcon, path: "/reddit" },
   { id: "separator", label: "", icon: null, path: "", isSeparator: true },
   { id: "tasks", label: "Tasks", icon: SquareCheckBigIcon, path: "/tasks" },
-  { id: "settings", label: "Settings", icon: GearSix, path: "/settings" },
+  { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
 ] as const;
 
 export function getPathname(route: string, base: string = baseURL): string {

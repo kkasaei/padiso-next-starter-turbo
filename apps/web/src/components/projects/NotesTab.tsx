@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus } from "@phosphor-icons/react/dist/ssr"
+import { Plus } from "lucide-react"
 import { toast } from "sonner"
 
 import type { ProjectNote, User } from "@/lib/data/project-details"

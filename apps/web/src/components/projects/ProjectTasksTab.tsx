@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { DotsThreeVertical, Plus } from "@phosphor-icons/react/dist/ssr"
+import { MoreVertical as DotsThreeVertical, Plus } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,
@@ -271,7 +271,7 @@ function TaskRowDnD({ task, onToggle }: TaskRowDnDProps) {
               {...attributes}
               {...listeners}
             >
-              <DotsThreeVertical className="h-4 w-4" weight="regular" />
+              <DotsThreeVertical className="h-4 w-4" />
             </Button>
           </>
         }

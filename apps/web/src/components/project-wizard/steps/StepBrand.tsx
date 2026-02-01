@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, Info, Check } from "@phosphor-icons/react/dist/ssr";
+import { Globe, Info, Check } from "lucide-react";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { cn } from "@workspace/ui/lib/utils";
@@ -113,7 +113,7 @@ export function StepBrand({ data, updateData }: StepBrandProps) {
                   title={color.label}
                 >
                   {isSelected && (
-                    <Check className="size-4 text-white drop-shadow-md" weight="bold" />
+                    <Check className="size-4 text-white drop-shadow-md" strokeWidth={3} />
                   )}
                 </button>
               );
@@ -133,7 +133,7 @@ export function StepBrand({ data, updateData }: StepBrandProps) {
                 title="Custom color"
               >
                 {isCustomColor ? (
-                  <Check className="size-4 text-white drop-shadow-md" weight="bold" />
+                  <Check className="size-4 text-white drop-shadow-md" strokeWidth={3} />
                 ) : (
                   <span className="text-xs font-medium">#</span>
                 )}

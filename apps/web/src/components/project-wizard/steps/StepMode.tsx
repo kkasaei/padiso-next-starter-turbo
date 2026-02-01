@@ -1,5 +1,5 @@
 import React from "react";
-import { Lightning, Compass, Check, CaretRight, X } from '@phosphor-icons/react';
+import { Zap as Lightning, Compass, Check, ChevronRight as CaretRight, X } from 'lucide-react';
 import { Button } from "@workspace/ui/components/button";
 import { ProjectMode } from "../types";
 

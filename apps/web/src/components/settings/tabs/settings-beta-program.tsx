@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Switch } from "@workspace/ui/components/switch";
 import { Badge } from "@workspace/ui/components/badge";
-import { Flask, Sparkle, Eye, Target, ChartLineUp, FileText } from "@phosphor-icons/react/dist/ssr";
+import { FlaskConical, Sparkles, Eye, Target, TrendingUp, FileText } from "lucide-react";
 
 type FeatureToggle = {
   id: string;
@@ -60,7 +60,7 @@ export function SettingsBetaProgram() {
       <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
-            <Flask className="h-5 w-5 text-muted-foreground" />
+            <FlaskConical className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-lg">Features & Beta Program</CardTitle>
           </div>
           <CardDescription>Join our beta program to trial new features and help shape the future of SearchFit</CardDescription>
@@ -117,7 +117,7 @@ export function SettingsBetaProgram() {
       <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
-            <Sparkle className="h-5 w-5 text-muted-foreground" />
+            <Sparkles className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-lg">Coming Soon</CardTitle>
           </div>
           <CardDescription>Features currently in development</CardDescription>
@@ -136,7 +136,7 @@ export function SettingsBetaProgram() {
                 description: "AI-powered content recommendations based on search intent",
               },
               {
-                icon: ChartLineUp,
+                icon: TrendingUp,
                 title: "Predictive Rankings",
                 description: "ML models to predict future ranking changes",
               },

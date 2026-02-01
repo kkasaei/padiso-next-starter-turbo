@@ -1,4 +1,4 @@
-export type NavItemId = "overview" | "my-tasks" | "projects" | "analytics" | "prompts" | "settings"
+export type NavItemId = "overview" | "my-tasks" | "brands" | "analytics" | "prompts" | "settings"
 
 export type SidebarFooterItemId = "roadmap" | "changelog" | "support" | "feedbacks"
 
@@ -23,7 +23,7 @@ export type SidebarFooterItem = {
 export const navItems: NavItem[] = [
     { id: "overview", label: "Overview" },
     { id: "my-tasks", label: "My task" },
-    { id: "projects", label: "Projects", isActive: true },
+    { id: "brands", label: "Brands", isActive: true },
     { id: "analytics", label: "Analytics" },
     { id: "prompts", label: "Prompts" },
     { id: "settings", label: "Settings" },

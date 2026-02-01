@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { startOfWeek, addWeeks, addDays, isSameDay, format } from "date-fns"
-import { CaretLeft, CaretRight, CalendarBlank, Plus } from "@phosphor-icons/react/dist/ssr"
+import { ChevronLeft as CaretLeft, ChevronRight as CaretRight, CalendarDays as CalendarBlank, Plus } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,

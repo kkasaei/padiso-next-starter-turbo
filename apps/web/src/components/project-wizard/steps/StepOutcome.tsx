@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@workspace/ui/components/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
 import { cn } from "@workspace/ui/lib/utils";
-import { Target, Check, Question, CalendarBlank, Plus, Info, Trash } from "@phosphor-icons/react/dist/ssr";
+import { Target, Check, HelpCircle, CalendarDays, Plus, Info, Trash } from "lucide-react";
 
 interface StepOutcomeProps {
   data: ProjectData;
@@ -36,7 +36,7 @@ function DeliverableDatePicker({ value, onChange }: DeliverableDatePickerProps) 
           size="sm"
           className="h-7 px-2 text-xs font-medium flex items-center gap-1 text-muted-foreground"
         >
-          {!date && <CalendarBlank className="h-3 w-3 text-muted-foreground/50 " />}
+          {!date && <CalendarDays className="h-3 w-3 text-muted-foreground/50 " />}
           {date && (
             <span>{format(date, "dd/MM/yyyy")}</span>
           )}
@@ -173,7 +173,7 @@ export function StepOutcome({ data, updateData }: StepOutcomeProps) {
                     isActive && "border-teal-600 bg-teal-600 text-primary-foreground",
                   )}
                 >
-                  {isActive && <Check className="h-3 w-3" weight="regular" />}
+                  {isActive && <Check className="h-3 w-3" />}
                 </span>
               </Label>
             );
@@ -363,7 +363,7 @@ export function StepOutcome({ data, updateData }: StepOutcomeProps) {
                   size="default"
                   className="text-sm font-normal flex justify-start min-w-[200px] gap-1 h-full"
                 >
-                  <CalendarBlank className="h-3 w-3 text-muted-foreground" />
+                  <CalendarDays className="h-3 w-3 text-muted-foreground" />
                   <span>
                     {data.deadlineDate
                       ? new Date(data.deadlineDate).toLocaleDateString()

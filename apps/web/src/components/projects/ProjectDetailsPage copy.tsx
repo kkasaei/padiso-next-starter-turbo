@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
-import { LinkSimple, SquareHalf } from "@phosphor-icons/react/dist/ssr"
+import { Link, Square } from "lucide-react"
 import { toast } from "sonner"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -122,7 +122,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
 
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon-sm" aria-label="Copy link" onClick={copyLink}>
-            <LinkSimple className="h-4 w-4" />
+            <Link className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
@@ -132,7 +132,7 @@ export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
             className={showMeta ? "bg-muted" : ""}
             onClick={() => setShowMeta((v) => !v)}
           >
-            <SquareHalf className="h-4 w-4" weight="duotone" />
+            <Square className="h-4 w-4" />
           </Button>
         </div>
       </div>

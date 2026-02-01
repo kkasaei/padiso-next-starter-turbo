@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react/dist/ssr";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PromptPaginationProps {
   currentPage: number;
@@ -109,7 +109,7 @@ export function PromptPagination({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <CaretLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
 
           {getPageNumbers().map((page, index) =>
@@ -137,7 +137,7 @@ export function PromptPagination({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <CaretRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>

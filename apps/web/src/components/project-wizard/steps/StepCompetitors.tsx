@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, X, Globe, Info } from "@phosphor-icons/react/dist/ssr";
+import { Plus, X, Globe, Info } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";

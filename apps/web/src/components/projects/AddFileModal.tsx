@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Paperclip, UploadSimple, X } from "@phosphor-icons/react/dist/ssr"
+import { Paperclip, Upload as UploadSimple, X } from "lucide-react"
 
 import type { ProjectFile, QuickLink, User } from "@/lib/data/project-details"
 import { Button } from "@workspace/ui/components/button"

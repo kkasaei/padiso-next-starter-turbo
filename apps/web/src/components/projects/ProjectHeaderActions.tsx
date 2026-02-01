@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import { LinkSimple, ShareNetwork, DotsThreeVertical } from "@phosphor-icons/react/dist/ssr"
+import { Link as LinkSimple, Share2 as ShareNetwork, MoreVertical as DotsThreeVertical } from "lucide-react"
 
 type ProjectHeaderActionsProps = {
   projectId: string

@@ -5,7 +5,7 @@ import { FilterChip } from "@/components/filter-chip"
 import { ViewOptionsPopover } from "@/components/view-options-popover"
 import { FilterPopover } from "@/components/filter-popover"
 import { ChipOverflow } from "@/components/chip-overflow"
-import { Link as LinkIcon, Plus, Sparkle } from "@phosphor-icons/react/dist/ssr"
+import { Link as LinkIcon, Plus, Sparkles } from "lucide-react"
 import type { FilterCounts } from "@/lib/data/projects"
 import type { FilterChip as FilterChipType, ViewOptions } from "@/lib/view-options"
 
@@ -31,7 +31,7 @@ export function ProjectHeader({ filters, onRemoveFilter, onFiltersChange, counts
             <LinkIcon className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={onAddProject}>
-            <Plus className="h-4 w-4" weight="bold" />
+            <Plus className="h-4 w-4 stroke-[3]" />
             Add Project
           </Button>
         </div>
@@ -52,7 +52,7 @@ export function ProjectHeader({ filters, onRemoveFilter, onFiltersChange, counts
           <div className="relative">
             <div className="relative rounded-xl border border-border bg-card/80 shadow-sm overflow-hidden">
               <Button className="h-8 gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 relative z-10 px-3">
-                <Sparkle className="h-4 w-4" weight="fill" />
+                <Sparkles className="h-4 w-4 fill-current" />
                 Ask AI
               </Button>
             </div>

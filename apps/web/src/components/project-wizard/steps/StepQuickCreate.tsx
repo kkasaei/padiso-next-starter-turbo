@@ -17,7 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from "@workspace/ui/components/command";
-import { Check, X, CornersOut, Star, CalendarBlank, UserCircle, Spinner, List, Paperclip, Microphone, Rows, ChartBar, Tag } from "@phosphor-icons/react/dist/ssr";
+import { Check, X, Maximize2, Star, CalendarDays, CircleUser, Loader2, List, Paperclip, Mic, Rows3, BarChart3, Tag } from "lucide-react";
 import { ProjectDescriptionEditor } from "../ProjectDescriptionEditor";
 
 // --- Mock Data ---
@@ -317,7 +317,7 @@ export function StepQuickCreate({
             onSelect={setStartDate}
             trigger={
               <button className="bg-muted flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
-                <CalendarBlank className="size-4 text-muted-foreground" />
+                <CalendarDays className="size-4 text-muted-foreground" />
                 <span className="font-medium text-foreground text-sm leading-5">
                   {startDate
                     ? `Start: ${format(startDate, "dd/MM/yyyy")}`
@@ -351,7 +351,7 @@ export function StepQuickCreate({
                     : "bg-background hover:bg-black/5",
                 )}
               >
-                <UserCircle className="size-4 text-muted-foreground" />
+                <CircleUser className="size-4 text-muted-foreground" />
                 <span className="font-medium text-foreground text-sm leading-5">
                   {lead ? lead.name : "Lead"}
                 </span>
@@ -384,7 +384,7 @@ export function StepQuickCreate({
                     clipPath="url(#clip0_13_2475)"
                     id="Icon / Loader"
                   >
-                  <Spinner className="size-4 text-muted-foreground" />
+                  <Loader2 className="size-4 text-muted-foreground" />
                   </g>
                   <defs>
                     <clipPath id="clip0_13_2475">
@@ -436,7 +436,7 @@ export function StepQuickCreate({
             onSelect={setTargetDate}
             trigger={
               <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-                <CalendarBlank className="size-4 text-muted-foreground" />
+                <CalendarDays className="size-4 text-muted-foreground" />
                 <span className="font-medium text-foreground text-sm leading-5">
                   {targetDate
                     ? format(targetDate, "dd/MM/yyyy")
@@ -460,7 +460,7 @@ export function StepQuickCreate({
             )}
             trigger={
               <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-                <Rows className="size-4 text-muted-foreground" />
+                <Rows3 className="size-4 text-muted-foreground" />
                 <span className="font-medium text-foreground text-sm leading-5">
                   {workstream
                     ? workstream.label
@@ -484,7 +484,7 @@ export function StepQuickCreate({
             )}
             trigger={
               <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-                <ChartBar className="size-4 text-muted-foreground" />
+                <BarChart3 className="size-4 text-muted-foreground" />
                 <span className="font-medium text-foreground text-sm leading-5">
                   {priority ? priority.label : "Priority"}
                 </span>
@@ -542,7 +542,7 @@ export function StepQuickCreate({
               <Paperclip className="size-4 text-muted-foreground" />
             </button>
             <button className="flex items-center justify-center size-10 rounded-lg hover:bg-black/5 transition-colors cursor-pointer">
-              <Microphone className="size-4 text-muted-foreground" />
+              <Mic className="size-4 text-muted-foreground" />
             </button>
           </div>
 

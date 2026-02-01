@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Plus, Sparkle } from "@phosphor-icons/react/dist/ssr"
+import { Plus, Sparkles } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,
@@ -262,7 +262,7 @@ export function ProjectTasksPage({ projectId }: ProjectTasksPageProps) {
             <div className="relative">
               <div className="relative rounded-xl border border-border bg-card/80 shadow-sm overflow-hidden">
                 <Button className="h-8 gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 relative z-10 px-3">
-                  <Sparkle className="h-4 w-4" weight="fill" />
+                  <Sparkles className="h-4 w-4 fill-current" />
                   Ask AI
                 </Button>
               </div>

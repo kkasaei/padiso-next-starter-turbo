@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CaretDown, Check, X } from "@phosphor-icons/react/dist/ssr";
+import { ChevronDown, Check, X } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Badge } from "@workspace/ui/components/badge";
 import { cn } from "@workspace/ui/lib/utils";
@@ -72,7 +72,7 @@ export function StepLanguage({ value = [], onChange, onContinue, onBack }: StepL
                   : `${selectedLanguages.length} language${selectedLanguages.length > 1 ? 's' : ''} selected`
                 }
               </span>
-              <CaretDown className="size-4 text-muted-foreground" />
+              <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">

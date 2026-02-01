@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { X, Copy, Lightning, Folder, Globe, PencilSimple } from "@phosphor-icons/react/dist/ssr";
+import { X, Copy, Zap, Folder, Globe, Pencil } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { format } from "date-fns";
 import { getCategoryConfig, getAIProviderConfig, type Prompt } from "@/lib/data/prompts";
@@ -35,7 +35,7 @@ export function PromptDetailModal({ prompt, onClose, onEdit }: PromptDetailModal
         <div className="flex items-start justify-between px-6 py-4 border-b border-border">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
-              <Lightning className="h-5 w-5 text-primary" weight="fill" />
+              <Zap className="h-5 w-5 text-primary fill-current" />
             </div>
             <div>
               <h2 className="text-lg font-semibold">{prompt.name}</h2>
@@ -121,7 +121,7 @@ export function PromptDetailModal({ prompt, onClose, onEdit }: PromptDetailModal
           <div className="flex items-center gap-2">
             {onEdit && (
               <Button variant="outline" onClick={() => onEdit(prompt)}>
-                <PencilSimple className="h-4 w-4 mr-2" />
+                <Pencil className="h-4 w-4 mr-2" />
                 Edit
               </Button>
             )}

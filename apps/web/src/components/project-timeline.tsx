@@ -13,12 +13,12 @@ import {
   isSameDay,
 } from "date-fns"
 import {
-  CaretLeft,
-  CaretRight,
-  MagnifyingGlassPlus,
-  MagnifyingGlassMinus,
-  CaretDown,
-} from "@phosphor-icons/react/dist/ssr"
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  ChevronDown,
+} from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
@@ -350,7 +350,7 @@ export function ProjectTimeline() {
             className="h-7 w-7 rounded-lg"
             onClick={() => setIsSidebarOpen((s) => !s)}
           >
-            <CaretDown className={cn("h-4 w-4 transition-transform", isSidebarOpen ? "rotate-90" : "-rotate-90")} />
+            <ChevronDown className={cn("h-4 w-4 transition-transform", isSidebarOpen ? "rotate-90" : "-rotate-90")} />
           </Button>
         </div>
         <div className="flex items-center gap-2">
@@ -362,7 +362,7 @@ export function ProjectTimeline() {
           </span>
           <div className="hidden md:flex items-center gap-1 ml-4 justify-between">
             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => navigateTime("prev")}>
-              <CaretLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
@@ -373,7 +373,7 @@ export function ProjectTimeline() {
               Today
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => navigateTime("next")}>
-              <CaretRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
           <div className="ml-2 hidden md:flex items-center gap-1">
@@ -385,7 +385,7 @@ export function ProjectTimeline() {
                   className="h-7 rounded-lg px-3 text-xs justify-between min-w-[80px]"
                 >
                   {viewMode}
-                  <CaretDown className="h-3 w-3 ml-1" />
+                  <ChevronDown className="h-3 w-3 ml-1" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[120px] p-1" align="start">
@@ -410,7 +410,7 @@ export function ProjectTimeline() {
               className="h-7 w-7 rounded-lg"
               onClick={() => setZoom((z) => Math.max(0.5, Math.min(2.5, z * 1.2)))}
             >
-              <MagnifyingGlassPlus className="h-4 w-4" />
+              <ZoomIn className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
@@ -418,7 +418,7 @@ export function ProjectTimeline() {
               className="h-7 w-7 rounded-lg"
               onClick={() => setZoom((z) => Math.max(0.5, Math.min(2.5, z / 1.2)))}
             >
-              <MagnifyingGlassMinus className="h-4 w-4" />
+              <ZoomOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -508,7 +508,7 @@ export function ProjectTimeline() {
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <div className={cn("transition-transform", expandedProjects.includes(project.id) ? "rotate-0" : "-rotate-90")}>
-                            <CaretDown className="h-4 w-4 text-muted-foreground" />
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
                           </div>
                           <span className="font-semibold text-md truncate">{project.name}</span>
                           <span className="ml-1 text-xs text-muted-foreground bg-muted rounded px-1.5 py-0.5 shrink-0">
@@ -655,9 +655,9 @@ export function ProjectTimeline() {
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {expandedProjects.includes(project.id) ? (
-                  <CaretDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
                 ) : (
-                  <CaretRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                 )}
                 <div className="flex flex-col flex-1 min-w-0">
                   <div className="flex items-center gap-2">

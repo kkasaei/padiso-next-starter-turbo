@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
-import { CalendarBlank, ChartBar, Paperclip, Tag as TagIcon, Microphone, UserCircle, X, Folder, Rows } from '@phosphor-icons/react/dist/ssr'
+import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder, Rows3 } from 'lucide-react'
 
 import { type Project } from '@/lib/data/projects'
 import type { ProjectTask, ProjectDetails, User } from '@/lib/data/project-details'
@@ -381,7 +381,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
                   <button
                     className="bg-background flex gap-2 h-7 items-center px-2 py-1 rounded-lg border border-background hover:border-primary/50 transition-colors text-xs disabled:opacity-60"
                   >
-                    <Rows className="size-4 text-muted-foreground" />
+                    <Rows3 className="size-4 text-muted-foreground" />
                     <span className="truncate max-w-[160px] font-medium text-foreground">
                       {workstreamName ?? 'Choose workstream'}
                     </span>
@@ -461,7 +461,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
           onSelect={setStartDate}
           trigger={
             <button className="bg-muted flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
-              <CalendarBlank className="size-4 text-muted-foreground" />
+              <CalendarDays className="size-4 text-muted-foreground" />
               <span className="font-medium text-foreground text-sm leading-5">
                 {startDate ? `Start: ${format(startDate, 'dd/MM/yyyy')}` : 'Start date'}
               </span>
@@ -482,7 +482,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
           )}
           trigger={
             <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-              <UserCircle className="size-4 text-muted-foreground" />
+              <CircleUser className="size-4 text-muted-foreground" />
               <span className="font-medium text-foreground text-sm leading-5">
                 {status.label}
               </span>
@@ -496,7 +496,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
           onSelect={setTargetDate}
           trigger={
             <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-              <CalendarBlank className="size-4 text-muted-foreground" />
+              <CalendarDays className="size-4 text-muted-foreground" />
               <span className="font-medium text-foreground text-sm leading-5">
                 {targetDate ? format(targetDate, 'dd/MM/yyyy') : 'Target'}
               </span>
@@ -517,7 +517,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
           )}
           trigger={
             <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
-              <ChartBar className="size-4 text-muted-foreground" />
+              <BarChart3 className="size-4 text-muted-foreground" />
               <span className="font-medium text-foreground text-sm leading-5">
                 {priority?.label ?? 'Priority'}
               </span>
@@ -554,7 +554,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
             <Paperclip className="size-4 text-muted-foreground" />
           </button>
           <button className="flex items-center justify-center size-10 rounded-lg hover:bg-muted transition-colors">
-            <Microphone className="size-4 text-muted-foreground" />
+            <Mic className="size-4 text-muted-foreground" />
           </button>
         </div>
 

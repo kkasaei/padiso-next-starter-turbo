@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, X, Sparkle, Question } from "@phosphor-icons/react/dist/ssr";
+import { Plus, X, Sparkles, HelpCircle } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
@@ -110,7 +110,7 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
                       type="button" 
                       className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
                     >
-                      <Question className="size-3.5" />
+                      <HelpCircle className="size-3.5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="max-w-[280px] text-xs">
@@ -126,7 +126,7 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
               onClick={handleGenerateWithAI}
               disabled={isGenerating}
             >
-              <Sparkle className={cn("size-3", isGenerating && "animate-spin")} />
+              <Sparkles className={cn("size-3", isGenerating && "animate-spin")} />
               {isGenerating ? "Generating..." : "Generate with AI"}
             </Button>
           </div>
@@ -149,7 +149,7 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
                     type="button" 
                     className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
                   >
-                    <Question className="size-3.5" />
+                    <HelpCircle className="size-3.5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="max-w-[280px] text-xs">

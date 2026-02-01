@@ -4,7 +4,7 @@ import { Separator } from "@workspace/ui/components/separator";
 import { Button } from "@workspace/ui/components/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { getAvatarUrl } from "@/lib/assets/avatars";
-import { Rocket, Flask, Briefcase, User, Users, Layout, Target, CheckCircle, Question, PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
+import { Rocket, FlaskConical, Briefcase, User, Users, LayoutDashboard, Target, CheckCircle, HelpCircle, Pencil } from "lucide-react";
 
 interface StepReviewProps {
   data: ProjectData;
@@ -15,7 +15,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
     const getIntentIcon = () => {
         switch (data.intent) {
             case 'delivery': return <Rocket className="h-5 w-5" />;
-            case 'experiment': return <Flask className="h-5 w-5" />;
+            case 'experiment': return <FlaskConical className="h-5 w-5" />;
             case 'internal': return <Briefcase className="h-5 w-5" />;
             default: return null;
         }
@@ -39,7 +39,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
         switch (data.successType) {
             case 'deliverable': return <CheckCircle className="h-5 w-5" />;
             case 'metric': return <Target className="h-5 w-5" />;
-            default: return <Question className="h-5 w-5" />;
+            default: return <HelpCircle className="h-5 w-5" />;
         }
     };
 
@@ -104,7 +104,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
               type="button"
               onClick={() => onEditStep?.(1)}
             >
-              <PencilSimpleLine className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
 
@@ -142,7 +142,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
               type="button"
               onClick={() => onEditStep?.(2)}
             >
-              <PencilSimpleLine className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
 
@@ -176,7 +176,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
               type="button"
               onClick={() => onEditStep?.(3)}
             >
-              <PencilSimpleLine className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
 
@@ -185,7 +185,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
           {/* Structure */}
           <div className="flex items-center gap-4 rounded-3xl bg-background p-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border text-muted-foreground">
-              <Layout className="h-5 w-5" />
+              <LayoutDashboard className="h-5 w-5" />
             </div>
             <div className="flex-1">
               <p className="text-xs text-muted-foreground pb-1">Work structure</p>
@@ -198,7 +198,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
               type="button"
               onClick={() => onEditStep?.(4)}
             >
-              <PencilSimpleLine className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
         </div>

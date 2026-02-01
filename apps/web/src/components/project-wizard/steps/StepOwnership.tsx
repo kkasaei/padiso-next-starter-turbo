@@ -3,7 +3,7 @@ import { ProjectData, OwnershipEntry } from "../types";
 import { Label } from "@workspace/ui/components/label";
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
-import { Plus, X } from "@phosphor-icons/react/dist/ssr";
+import { Plus, X } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";

@@ -1,6 +1,6 @@
 "use client"
 
-import { Paperclip, UploadSimple } from "@phosphor-icons/react/dist/ssr"
+import { Paperclip, Upload as UploadSimple } from "lucide-react"
 import { toast } from "sonner"
 
 import type { QuickLink } from "@/lib/data/project-details"

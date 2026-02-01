@@ -1,5 +1,5 @@
-import { Star, User, PencilSimpleLine } from "@phosphor-icons/react/dist/ssr"
-import { ArrowsClockwise, Globe, Timer } from "@phosphor-icons/react/dist/ssr"
+import { Star, User, Pencil as PencilSimpleLine } from "lucide-react"
+import { RefreshCw as ArrowsClockwise, Globe, Timer } from "lucide-react"
 
 import type { ProjectDetails } from "@/lib/data/project-details"
 import { Separator } from "@workspace/ui/components/separator"

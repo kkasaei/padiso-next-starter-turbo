@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { CaretDown, DotsSixVertical, Plus } from "@phosphor-icons/react/dist/ssr"
+import { ChevronDown as CaretDown, GripVertical as DotsSixVertical, Plus } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,
@@ -400,7 +400,7 @@ function TaskRow({ task, onToggle, activeTaskId, overTaskId }: TaskRowProps) {
               {...attributes}
               {...listeners}
             >
-              <DotsSixVertical className="h-4 w-4" weight="regular" />
+              <DotsSixVertical className="h-4 w-4" />
             </Button>
           </>
         }

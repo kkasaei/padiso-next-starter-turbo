@@ -9,39 +9,41 @@ import { Separator } from "@workspace/ui/components/separator"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@workspace/ui/components/tooltip"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import {
-  CaretUpDown,
-  MagnifyingGlass,
+  Search,
   Check,
-  DotsThree,
-  Gear,
+  MoreHorizontal,
+  Settings,
   Plus,
-  SquaresFour,
-  CheckSquare,
-  Folder,
-  ChartBar,
-  Lightning,
-  MapTrifold,
-  ClockCounterClockwise,
-  Headset,
-  PaperPlaneTilt,
-} from "@phosphor-icons/react/dist/ssr"
+  Map,
+  History,
+  Headphones,
+  Send,
+} from "lucide-react"
+import { 
+  BriefcaseBusiness,
+  LayoutDashboardIcon,
+  SquareCheckBigIcon,
+  ChartLineIcon,
+  ZapIcon,
+  SettingsIcon
+} from "lucide-react"
 import { useOrganization, useOrganizationList, useUser } from "@clerk/nextjs"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { id: "overview", label: "Overview", icon: SquaresFour, href: "/dashboard" },
-  { id: "my-tasks", label: "My Tasks", icon: CheckSquare, href: "/dashboard/tasks" },
-  { id: "projects", label: "Projects", icon: Folder, href: "/dashboard/projects" },
-  { id: "analytics", label: "Analytics", icon: ChartBar, href: "/dashboard/analytics" },
-  { id: "prompts", label: "Prompts", icon: Lightning, href: "/dashboard/prompts" },
-  { id: "settings", label: "Settings", icon: Gear, href: "/dashboard/settings" },
+  { id: "overview", label: "Overview", icon: LayoutDashboardIcon, href: "/dashboard" },
+  { id: "my-tasks", label: "My Tasks", icon: SquareCheckBigIcon, href: "/dashboard/tasks" },
+  { id: "brands", label: "Brands", icon: BriefcaseBusiness, href: "/dashboard/brands" },
+  { id: "analytics", label: "Analytics", icon: ChartLineIcon, href: "/dashboard/analytics" },
+  { id: "prompts", label: "Prompts", icon: ZapIcon, href: "/dashboard/prompts" },
+  { id: "settings", label: "Settings", icon: SettingsIcon, href: "/dashboard/settings" },
 ] as const
 
 const footerItems = [
-  { id: "roadmap", label: "Roadmap", icon: MapTrifold, href: "#" },
-  { id: "changelog", label: "Change Log", icon: ClockCounterClockwise, href: "#" },
-  { id: "support", label: "Support", icon: Headset, href: "#" },
-  { id: "feedbacks", label: "Feedbacks", icon: PaperPlaneTilt, href: "#" },
+  { id: "roadmap", label: "Roadmap", icon: Map, href: "#" },
+  { id: "changelog", label: "Change Log", icon: History, href: "#" },
+  { id: "support", label: "Support", icon: Headphones, href: "#" },
+  { id: "feedbacks", label: "Feedbacks", icon: Send, href: "#" },
 ] as const
 
 export function WorkspaceSidebar() {
@@ -66,7 +68,7 @@ export function WorkspaceSidebar() {
 
   const isItemActive = (id: string): boolean => {
     if (id === "overview") return pathname === "/dashboard"
-    if (id === "projects") return pathname.startsWith("/dashboard/projects")
+    if (id === "brands") return pathname.startsWith("/dashboard/brands")
     if (id === "my-tasks") return pathname.startsWith("/dashboard/tasks")
     if (id === "analytics") return pathname.startsWith("/dashboard/analytics")
     if (id === "prompts") return pathname.startsWith("/dashboard/prompts")
@@ -103,7 +105,7 @@ export function WorkspaceSidebar() {
               {/* Search */}
               <div className="p-2">
                 <div className="relative">
-                  <MagnifyingGlass className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search workspaces..."
                     value={search}
@@ -152,7 +154,7 @@ export function WorkspaceSidebar() {
                         </div>
                         <span className="flex-1 text-left truncate">{org.name}</span>
                         {isActive && (
-                          <Check className="h-4 w-4 text-primary" weight="bold" />
+                          <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                         )}
                       </button>
                     )
@@ -164,7 +166,7 @@ export function WorkspaceSidebar() {
                   onClick={() => setOrgSwitcherOpen(false)}
                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
                 >
-                  <DotsThree className="h-6 w-6 text-muted-foreground" weight="bold" />
+                  <MoreHorizontal className="h-6 w-6 text-muted-foreground" strokeWidth={3} />
                   <span>All workspaces</span>
                 </button>
               </div>
@@ -180,7 +182,7 @@ export function WorkspaceSidebar() {
                   }}
                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
                 >
-                  <Gear className="h-5 w-5 text-muted-foreground" />
+                  <Settings className="h-5 w-5 text-muted-foreground" />
                   <span>Workspace settings</span>
                 </button>
 

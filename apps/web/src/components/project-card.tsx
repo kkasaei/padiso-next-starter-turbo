@@ -6,7 +6,7 @@ import { format } from "date-fns"
 import type { Project } from "@/lib/data/projects"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { getAvatarUrl } from "@/lib/assets/avatars"
-import { Folder, CalendarBlank, Flag, User } from "@phosphor-icons/react/dist/ssr"
+import { Folder, CalendarDays, Flag, User } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 import { PriorityBadge } from "@/components/priority-badge"
 import { ProjectProgress } from "@/components/project-progress"
@@ -162,7 +162,7 @@ export function ProjectCard({ project, actions, variant = "list" }: ProjectCardP
         {!isBoard && (
           <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <CalendarBlank className="h-4 w-4" />
+              <CalendarDays className="h-4 w-4" />
               <span>{dueDate ? format(dueDate, "MMM d, yyyy") : "—"}</span>
             </div>
             <PriorityBadge level={project.priority} appearance="inline" />

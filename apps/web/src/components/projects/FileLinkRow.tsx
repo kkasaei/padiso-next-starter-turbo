@@ -1,4 +1,4 @@
-import { DownloadSimple } from "@phosphor-icons/react/dist/ssr"
+import { Download as DownloadSimple } from "lucide-react"
 import Image from "next/image"
 
 import type { QuickLink } from "@/lib/data/project-details"

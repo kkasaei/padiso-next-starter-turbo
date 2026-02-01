@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Switch } from "@workspace/ui/components/switch";
-import { Bell } from "@phosphor-icons/react/dist/ssr";
+import { Bell } from "lucide-react";
 
 type NotificationSetting = {
   id: string;

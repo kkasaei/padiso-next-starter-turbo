@@ -1,6 +1,6 @@
 "use client"
 
-import { ListChecks } from "@phosphor-icons/react/dist/ssr"
+import { ListChecks } from "lucide-react"
 import type { Project } from "@/lib/data/projects"
 import { ProgressCircle } from "@/components/progress-circle"
 import { cn } from "@workspace/ui/lib/utils"

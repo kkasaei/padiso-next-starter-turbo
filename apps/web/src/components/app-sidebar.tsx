@@ -16,36 +16,36 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import {
-  SquaresFour,
+  Grid2x2,
   CheckSquare,
   Folder,
-  ChartBar,
-  Lightning,
-  Gear,
-  MapTrifold,
-  ClockCounterClockwise,
-  Headset,
-  PaperPlaneTilt,
-  CaretRight,
-} from "@phosphor-icons/react/dist/ssr"
+  BarChart3,
+  Zap,
+  Settings,
+  Map,
+  History,
+  Headphones,
+  Send,
+  ChevronRight,
+} from "lucide-react"
 import { favouriteProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
 import { useUser } from "@clerk/nextjs"
 import { SidebarHeaderContent } from "@/components/sidebar-header"
 
 const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }>> = {
-  overview: SquaresFour,
+  overview: Grid2x2,
   "my-tasks": CheckSquare,
-  projects: Folder,
-  analytics: ChartBar,
-  prompts: Lightning,
-  settings: Gear,
+  brands: Folder,
+  analytics: BarChart3,
+  prompts: Zap,
+  settings: Settings,
 }
 
 const footerItemIcons: Record<SidebarFooterItemId, React.ComponentType<{ className?: string }>> = {
-  roadmap: MapTrifold,
-  changelog: ClockCounterClockwise,
-  support: Headset,
-  feedbacks: PaperPlaneTilt,
+  roadmap: Map,
+  changelog: History,
+  support: Headphones,
+  feedbacks: Send,
 }
 
 export function AppSidebar() {
@@ -57,7 +57,7 @@ export function AppSidebar() {
     const routes: Record<NavItemId, string> = {
       overview: "/dashboard",
       "my-tasks": "/dashboard/tasks",
-      projects: "/dashboard/projects",
+      brands: "/dashboard/brands",
       analytics: "/dashboard/analytics",
       prompts: "/dashboard/prompts",
       settings: "/dashboard/settings",
@@ -67,7 +67,7 @@ export function AppSidebar() {
 
   const isItemActive = (id: NavItemId): boolean => {
     if (id === "overview") return pathname === "/dashboard"
-    if (id === "projects") return pathname.startsWith("/dashboard/projects")
+    if (id === "brands") return pathname.startsWith("/dashboard/brands")
     if (id === "my-tasks") return pathname.startsWith("/dashboard/tasks")
     if (id === "analytics") return pathname.startsWith("/dashboard/analytics")
     if (id === "prompts") return pathname.startsWith("/dashboard/prompts")
@@ -165,7 +165,7 @@ export function AppSidebar() {
             <span className="text-sm font-medium">{user?.fullName}</span>
             <span className="text-xs text-muted-foreground">{user?.emailAddresses[0]?.emailAddress ?? "No email"}</span>
           </div>
-          <CaretRight className="h-4 w-4 text-muted-foreground" />
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </div>
       </SidebarFooter>
     </Sidebar>

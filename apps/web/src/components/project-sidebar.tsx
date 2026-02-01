@@ -7,13 +7,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/component
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import {
-  CaretLineLeft,
-  CaretLineRight,
-  CaretUpDown,
-  MagnifyingGlass,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronsUpDown,
+  Search,
   Check,
   Plus,
-} from "@phosphor-icons/react/dist/ssr"
+} from "lucide-react"
 import { useProjects } from "@/hooks/use-projects"
 import { favouriteProjects } from "@/lib/data/sidebar"
 import { cn } from "@/lib/utils"
@@ -58,9 +58,9 @@ export function ProjectSidebarTrigger({ className }: { className?: string }) {
       )}
     >
       {isOpen ? (
-        <CaretLineLeft className="h-4 w-4" />
+        <PanelLeftClose className="h-4 w-4" />
       ) : (
-        <CaretLineRight className="h-4 w-4" />
+        <PanelLeftOpen className="h-4 w-4" />
       )}
     </button>
   )
@@ -93,9 +93,9 @@ export function ProjectSidebarToggle({ showWhenOpen = true, className }: Project
       )}
     >
       {isOpen ? (
-        <CaretLineLeft className="h-3 w-3" />
+        <PanelLeftClose className="h-3 w-3" />
       ) : (
-        <CaretLineRight className="h-3 w-3" />
+        <PanelLeftOpen className="h-3 w-3" />
       )}
     </button>
   )
@@ -163,7 +163,7 @@ export function ProjectSidebar() {
                     </span>
                   </div>
                 </div>
-                <CaretUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                <ChevronsUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
               </button>
             </PopoverTrigger>
 
@@ -176,7 +176,7 @@ export function ProjectSidebar() {
               {/* Search */}
               <div className="p-2">
                 <div className="relative">
-                  <MagnifyingGlass className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search projects..."
                     value={search}
@@ -215,7 +215,7 @@ export function ProjectSidebar() {
                         </div>
                         <span className="flex-1 text-left truncate">{project.name}</span>
                         {isActive && (
-                          <Check className="h-4 w-4 text-primary" weight="bold" />
+                          <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                         )}
                       </button>
                     )

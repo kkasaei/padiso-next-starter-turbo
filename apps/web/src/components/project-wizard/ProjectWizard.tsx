@@ -12,7 +12,7 @@ import { StepBusinessDescription } from "./steps/StepBusinessDescription";
 import { StepCompetitors } from "./steps/StepCompetitors";
 import { StepBrand } from "./steps/StepBrand";
 import { StepSurvey } from "./steps/StepSurvey";
-import { CaretLeft, CaretRight, X } from "@phosphor-icons/react/dist/ssr";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 
 interface ProjectWizardProps {
@@ -202,7 +202,7 @@ export function ProjectWizard({ onClose, onCreate }: ProjectWizardProps) {
               <div className="flex items-center justify-between bg-background p-6 border-t border-border">
                 <div>
                   <Button variant="outline" onClick={prevStep}>
-                    <CaretLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4" />
                     Back
                   </Button>
                 </div>
@@ -226,7 +226,7 @@ export function ProjectWizard({ onClose, onCreate }: ProjectWizardProps) {
                       disabled={isNextDisabled()}
                     >
                       {isOptionalStep ? "Continue" : "Next"}
-                      <CaretRight className="h-4 w-4" />
+                      <ChevronRight className="h-4 w-4" />
                     </Button>
                   )}
                 </div>

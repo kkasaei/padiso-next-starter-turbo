@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { Tag, UsersThree, UserCircle, SquaresFour } from "@phosphor-icons/react/dist/ssr"
-import { CircleDashed, Cube, User, Users } from "@phosphor-icons/react/dist/ssr"
+import { Tag, Users as UsersThree, CircleUser as UserCircle, Grid2x2 as SquaresFour } from "lucide-react"
+import { CircleDashed, Cube, User, Users } from "lucide-react"
 
 import type { BacklogSummary } from "@/lib/data/project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
