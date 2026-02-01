@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { SettingsOverview } from "./tabs/settings-overview";
-import { SettingsBilling } from "./tabs/settings-billing";
-import { SettingsNotifications } from "./tabs/settings-notifications";
-import { SettingsBetaProgram } from "./tabs/settings-beta-program";
+import { SettingsOverview } from "./tabs/SettingsOverview";
+import { SettingsBilling } from "./tabs/SettingsBilling";
+import { SettingsNotifications } from "./tabs/SettingsNotifications";
+import { SettingsBetaProgram } from "./tabs/SettingsBetaProgram";
 
 export function SettingsContent() {
   const [activeTab, setActiveTab] = useState("overview");

@@ -4,10 +4,10 @@
  * Reusable components used across the application.
  */
 
-export * from './filter-chip';
-export * from './chip-overflow';
-export * from './filter-popover';
+export * from './FilterChip';
+export * from './ChipOverflow';
+export * from './FilterPopover';
 export * from '../brands/view-options-popover';
-export * from './priority-badge';
-export * from './progress-circle';
+export * from './PriorityBadge';
+export * from './ProgressCircle';
 export * from './QuickCreateModalLayout';

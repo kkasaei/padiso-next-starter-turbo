@@ -2,7 +2,7 @@
 
 import { ListChecks } from "lucide-react"
 import type { Project } from "@/lib/mocks/legacy-projects"
-import { ProgressCircle } from "@/components/shared/progress-circle"
+import { ProgressCircle } from "@/components/shared/ProgressCircle"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type BrandProgressProps = {

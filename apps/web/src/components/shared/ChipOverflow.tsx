@@ -1,7 +1,7 @@
 "use client"
 
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
-import { FilterChip } from "./filter-chip"
+import { FilterChip } from "./FilterChip"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type Chip = { key: string; value: string }
