@@ -2,10 +2,8 @@
 
 import { format } from "date-fns";
 import Image from "next/image";
-import type { Prompt } from "@/lib/data/prompts";
-import { getCategoryConfig } from "@/lib/data/prompts";
-import { Zap, Copy, MoreHorizontal, Folder, Globe, Pencil, Trash2 } from "lucide-react";
-import { cn } from "@workspace/ui/lib/utils";
+import type { Prompt } from "@workspace/db/schema";
+import { Zap, Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -15,44 +13,22 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
 import { Button } from "@workspace/ui/components/button";
+import { getProviderIcon } from "./utils";
 
 type PromptCardProps = {
   prompt: Prompt;
+  brandName?: string;
   onEdit?: (prompt: Prompt) => void;
   onDelete?: (prompt: Prompt) => void;
   onClick?: (prompt: Prompt) => void;
 };
 
-export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProps) {
-  const categoryConfig = getCategoryConfig(prompt.category);
-  
-  console.log('prompt', prompt);
-
-
-  // Get provider icon path directly from provider type
-  const getProviderIcon = (provider?: string) => {
-    if (!provider) return '/icons/default.svg';
-
-
-    
-    // Map provider to icon filename
-    const iconMap: Record<string, string> = {
-      'claude': 'claude',
-      'openai': 'openai',
-      'perplexity': 'perplexity',
-      'gemini': 'gemini',
-      'grok': 'grok',
-      'mistral': 'mistral',
-      'llama': 'meta-brand', // Llama uses Meta icon
-    };
-    
-    const iconName = iconMap[provider.toLowerCase()] || provider.toLowerCase();
-    return `/icons/${iconName}.svg`;
-  };
+export function PromptCard({ prompt, brandName, onEdit, onDelete, onClick }: PromptCardProps) {
+  const providerIcon = getProviderIcon(prompt.aiProvider as string);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(prompt.content);
+    navigator.clipboard.writeText(prompt.prompt);
     toast.success("Prompt copied to clipboard");
   };
 
@@ -80,7 +56,7 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
             {prompt.aiProvider && (
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted/50 border border-border/60">
                 <Image
-                  src={getProviderIcon(prompt.aiProvider)}
+                  src={providerIcon}
                   alt={prompt.aiProvider}
                   width={20}
                   height={20}
@@ -137,29 +113,18 @@ export function PromptCard({ prompt, onEdit, onDelete, onClick }: PromptCardProp
         </div>
 
         <div className="mt-3 p-2 bg-muted/50 rounded-lg">
-          <p className="text-xs text-muted-foreground line-clamp-3 font-mono">{prompt.content}</p>
-        </div>
-
-        <div className="mt-3 flex items-center gap-2 flex-wrap">
-          <div className={cn("flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium", categoryConfig.color)}>
-            {categoryConfig.label}
-          </div>
+          <p className="text-xs text-muted-foreground line-clamp-3 font-mono">{prompt.prompt}</p>
         </div>
 
         <div className="mt-3 border-t border-border/60" />
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            {prompt.isFromProject ? (
-              <>
-                <Folder className="h-3.5 w-3.5" />
-                <span className="truncate max-w-[120px]">{prompt.projectName || "Project"}</span>
-              </>
-            ) : (
-              <>
-                <Globe className="h-3.5 w-3.5" />
-                <span>Global</span>
-              </>
+          <div className="flex items-center gap-2">
+            {brandName && (
+              <span className="font-medium">{brandName}</span>
+            )}
+            {prompt.usageCount > 0 && (
+              <span>• Used {prompt.usageCount}x</span>
             )}
           </div>
           <span>{format(new Date(prompt.createdAt), "MMM d, yyyy")}</span>

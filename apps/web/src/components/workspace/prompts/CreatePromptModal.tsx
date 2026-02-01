@@ -14,27 +14,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
-import { PROMPT_CATEGORIES, AI_PROVIDERS, mockProjects, type Prompt, type PromptCategory, type AIProvider } from "@/lib/data/prompts";
+import type { Prompt } from "@workspace/db/schema";
+import type { AIProvider, PromptCategory } from "./PromptTypes";
+import { PROMPT_CATEGORIES, AI_PROVIDERS } from "./PromptConstants";
 import { toast } from "sonner";
 
 interface CreatePromptModalProps {
   onClose: () => void;
-  onCreate: (prompt: Omit<Prompt, "id" | "createdAt" | "updatedAt">) => void;
+  onCreate: (prompt: Partial<Prompt> & { brandId: string; name: string; prompt: string }) => void;
   editPrompt?: Prompt | null;
+  brands?: Array<{ id: string; brandName: string | null }>;
 }
 
-export function CreatePromptModal({ onClose, onCreate, editPrompt }: CreatePromptModalProps) {
+export function CreatePromptModal({ onClose, onCreate, editPrompt, brands = [] }: CreatePromptModalProps) {
   const [name, setName] = useState(editPrompt?.name ?? "");
   const [description, setDescription] = useState(editPrompt?.description ?? "");
-  const [content, setContent] = useState(editPrompt?.content ?? "");
-  const [category, setCategory] = useState<PromptCategory>(editPrompt?.category ?? "general");
-  const [aiProvider, setAiProvider] = useState<AIProvider>(editPrompt?.aiProvider ?? "claude");
-  const [projectId, setProjectId] = useState<string | null>(editPrompt?.projectId ?? null);
-  const [isGlobal, setIsGlobal] = useState(editPrompt?.isGlobal ?? true);
+  const [promptText, setPromptText] = useState(editPrompt?.prompt ?? "");
+  const [aiProvider, setAiProvider] = useState<AIProvider | null>(editPrompt?.aiProvider ?? null);
+  const [brandId, setBrandId] = useState<string>(editPrompt?.brandId ?? brands[0]?.id ?? "");
 
   const isEditing = !!editPrompt;
-
-  const selectedProject = projectId ? mockProjects.find(p => p.id === projectId) : null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,22 +43,17 @@ export function CreatePromptModal({ onClose, onCreate, editPrompt }: CreatePromp
       return;
     }
     
-    if (!content.trim()) {
+    if (!promptText.trim()) {
       toast.error("Please enter prompt content");
       return;
     }
 
     onCreate({
+      brandId,
       name: name.trim(),
       description: description.trim() || undefined,
-      content: content.trim(),
-      category,
-      aiProvider,
-      projectId: projectId || undefined,
-      projectName: selectedProject?.name,
-      isGlobal,
-      isFromProject: !!projectId,
-      tags: [],
+      prompt: promptText.trim(),
+      aiProvider: aiProvider || undefined,
     });
 
     toast.success(isEditing ? "Prompt updated successfully" : "Prompt created successfully");
@@ -115,15 +109,15 @@ export function CreatePromptModal({ onClose, onCreate, editPrompt }: CreatePromp
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select value={category} onValueChange={(v) => setCategory(v as PromptCategory)}>
+                <Label htmlFor="brand">Brand</Label>
+                <Select value={brandId} onValueChange={(v) => setBrandId(v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select brand" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PROMPT_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id}>
+                        {brand.brandName || "Unnamed Brand"}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -131,12 +125,13 @@ export function CreatePromptModal({ onClose, onCreate, editPrompt }: CreatePromp
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="aiProvider">AI Provider</Label>
-                <Select value={aiProvider} onValueChange={(v) => setAiProvider(v as AIProvider)}>
+                <Label htmlFor="aiProvider">AI Provider (optional)</Label>
+                <Select value={aiProvider || "none"} onValueChange={(v) => setAiProvider(v === "none" ? null : v as AIProvider)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select provider" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">No provider</SelectItem>
                     {AI_PROVIDERS.map((provider) => (
                       <SelectItem key={provider.value} value={provider.value}>
                         {provider.label}
@@ -148,32 +143,12 @@ export function CreatePromptModal({ onClose, onCreate, editPrompt }: CreatePromp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="project">Project (optional)</Label>
-              <Select value={projectId || "none"} onValueChange={(v) => setProjectId(v === "none" ? null : v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="No project (global prompt)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No project (global prompt)</SelectItem>
-                  {mockProjects.map((project) => (
-                    <SelectItem key={project.id} value={project.id}>
-                      {project.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                Assign to a project or leave empty for a global prompt
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="content">Prompt Content</Label>
+              <Label htmlFor="promptText">Prompt Content</Label>
               <Textarea
-                id="content"
+                id="promptText"
                 placeholder="Enter your prompt here. Use {{variable}} for dynamic content."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={promptText}
+                onChange={(e) => setPromptText(e.target.value)}
                 rows={8}
                 className="font-mono text-sm"
               />

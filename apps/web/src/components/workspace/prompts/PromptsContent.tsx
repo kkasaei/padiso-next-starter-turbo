@@ -15,9 +15,9 @@ import {
 } from "@/hooks/use-prompts";
 
 // Types
-import { dbPromptToUI, uiPromptToDB } from "@/lib/types/prompts";
-import { type Prompt, AI_PROVIDERS } from "@/lib/data/prompts";
-import type { FilterChip as FilterChipType } from "./FilterPopover";
+import type { Prompt } from "@workspace/db/schema";
+import type { FilterChip as FilterChipType, PromptFilters } from "./PromptTypes";
+import { AI_PROVIDERS } from "./PromptConstants";
 
 // Components
 import { PromptHeader } from "./PromptHeader";
@@ -25,10 +25,6 @@ import { PromptCardsView } from "./PromptCardsView";
 import { PromptPagination } from "./PromptPagination";
 import { CreatePromptModal } from "./CreatePromptModal";
 import { PromptDetailModal } from "./PromptDetailModal";
-
-interface PromptFilters {
-  filterChips: FilterChipType[];
-}
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
@@ -41,13 +37,20 @@ export function PromptsContent() {
   const { data: brands = [] } = useBrands(workspace?.id);
   const { data: dbPrompts = [], isLoading } = usePromptsByWorkspace(workspace?.id || "");
   
+  // Convert tRPC serialized dates to Date objects
+  const prompts = useMemo(() => {
+    return dbPrompts.map((p: any) => ({
+      ...p,
+      createdAt: typeof p.createdAt === 'string' ? new Date(p.createdAt) : p.createdAt,
+      updatedAt: typeof p.updatedAt === 'string' ? new Date(p.updatedAt) : p.updatedAt,
+      lastUsedAt: p.lastUsedAt ? (typeof p.lastUsedAt === 'string' ? new Date(p.lastUsedAt) : p.lastUsedAt) : null,
+    }));
+  }, [dbPrompts]);
+  
   // Mutations
   const createPromptMutation = useCreatePrompt();
   const updatePromptMutation = useUpdatePrompt();
   const deletePromptMutation = useDeletePrompt();
-  
-  // Convert DB prompts to UI format
-  const prompts = useMemo(() => dbPrompts.map(dbPromptToUI), [dbPrompts]);
   
   // ============================================================
   // STATE MANAGEMENT
@@ -77,9 +80,9 @@ export function PromptsContent() {
           const key = chip.key.toLowerCase();
           const value = chip.value;
 
-          // Project filter
+          // Project/Brand filter
           if (key === "project" || key === "projects") {
-            return prompt.projectId === value;
+            return prompt.brandId === value;
           }
 
           // Provider filter
@@ -103,9 +106,9 @@ export function PromptsContent() {
     };
 
     prompts.forEach((prompt) => {
-      // Count by project
-      if (prompt.projectId) {
-        counts.projects![prompt.projectId] = (counts.projects![prompt.projectId] || 0) + 1;
+      // Count by brand
+      if (prompt.brandId) {
+        counts.projects![prompt.brandId] = (counts.projects![prompt.brandId] || 0) + 1;
       }
 
       // Count by AI provider
@@ -151,44 +154,34 @@ export function PromptsContent() {
     setCurrentPage(1);
   };
 
-  const handleCreatePrompt = async (promptData: Omit<Prompt, "id" | "createdAt" | "updatedAt">) => {
-    if (!workspace?.id) {
-      toast.error("No workspace found");
-      return;
-    }
-
+  const handleCreatePrompt = async (promptData: Partial<Prompt> & { brandId: string; name: string; prompt: string }) => {
     try {
       if (editingPrompt) {
         // Update existing prompt
-        const dbData = uiPromptToDB(promptData);
         await updatePromptMutation.mutateAsync({
           id: editingPrompt.id,
-          name: dbData.name,
-          description: dbData.description ?? undefined,
-          prompt: dbData.prompt,
-          tags: dbData.tags,
-          config: dbData.config ?? undefined,
+          name: promptData.name,
+          description: promptData.description || undefined,
+          prompt: promptData.prompt,
+          aiProvider: promptData.aiProvider || undefined,
+          tagId: promptData.tagId || undefined,
+          config: promptData.config || undefined,
         });
         toast.success("Prompt updated");
         setEditingPrompt(null);
       } else {
-        // Create new prompt - need a brandId
-        if (!promptData.projectId) {
-          toast.error("Please select a brand/project for this prompt");
-          return;
-        }
-
-        const dbData = uiPromptToDB(promptData);
+        // Create new prompt
         await createPromptMutation.mutateAsync({
-          brandId: promptData.projectId,
-          name: dbData.name || "",
-          description: dbData.description ?? undefined,
-          prompt: dbData.prompt || "",
-          tags: dbData.tags,
-          config: dbData.config ?? undefined,
+          brandId: promptData.brandId,
+          name: promptData.name,
+          description: promptData.description || undefined,
+          prompt: promptData.prompt,
+          aiProvider: promptData.aiProvider || undefined,
+          tagId: promptData.tagId || undefined,
+          config: promptData.config || undefined,
         });
         toast.success("Prompt created");
-        setCurrentPage(1); // Go to first page to see new prompt
+        setCurrentPage(1);
       }
       setIsCreateModalOpen(false);
     } catch (error) {
@@ -268,7 +261,8 @@ export function PromptsContent() {
       
       <div className="flex-1 overflow-auto">
         <PromptCardsView
-          prompts={paginatedPrompts as any}
+          prompts={paginatedPrompts}
+          brands={brands}
           onCreatePrompt={openCreateModal}
           onEditPrompt={handleEditPrompt}
           onDeletePrompt={handleDeletePrompt}
@@ -290,12 +284,14 @@ export function PromptsContent() {
           onClose={closeCreateModal}
           onCreate={handleCreatePrompt}
           editPrompt={editingPrompt}
+          brands={brands}
         />
       )}
 
       {viewingPrompt && (
         <PromptDetailModal
           prompt={viewingPrompt}
+          brandName={brands.find(b => b.id === viewingPrompt.brandId)?.brandName || undefined}
           onClose={() => setViewingPrompt(null)}
           onEdit={handleEditPrompt}
         />

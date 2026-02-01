@@ -80,7 +80,8 @@ export const promptsRouter = router({
         name: z.string().min(1),
         description: z.string().optional(),
         prompt: z.string().min(1),
-        tags: z.array(z.string()).optional(),
+        aiProvider: z.enum(["claude", "openai", "perplexity", "gemini", "grok", "mistral", "llama"]).optional(),
+        tagId: z.string().uuid().optional(),
         config: z.record(z.unknown()).optional(),
         createdByUserId: z.string().optional(),
       })
@@ -93,7 +94,8 @@ export const promptsRouter = router({
           name: input.name,
           description: input.description,
           prompt: input.prompt,
-          tags: input.tags || [],
+          aiProvider: input.aiProvider,
+          tagId: input.tagId,
           config: input.config,
           createdByUserId: input.createdByUserId,
         })
@@ -116,7 +118,8 @@ export const promptsRouter = router({
         name: z.string().min(1).optional(),
         description: z.string().optional(),
         prompt: z.string().min(1).optional(),
-        tags: z.array(z.string()).optional(),
+        aiProvider: z.enum(["claude", "openai", "perplexity", "gemini", "grok", "mistral", "llama"]).optional(),
+        tagId: z.string().uuid().nullable().optional(),
         config: z.record(z.unknown()).optional(),
       })
     )
@@ -168,6 +171,97 @@ export const promptsRouter = router({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(prompts).where(eq(prompts.id, input.id));
+      return { success: true };
+    }),
+
+  // ============================================================
+  // PROMPT TAGS ENDPOINTS
+  // ============================================================
+
+  /**
+   * Get all tags for a brand
+   */
+  getTags: publicProcedure
+    .input(z.object({ brandId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(promptTags)
+        .where(eq(promptTags.brandId, input.brandId))
+        .orderBy(desc(promptTags.createdAt));
+    }),
+
+  /**
+   * Create a new prompt tag
+   */
+  createTag: publicProcedure
+    .input(
+      z.object({
+        brandId: z.string().uuid(),
+        name: z.string().min(1),
+        color: z.string().optional(),
+        description: z.string().optional(),
+        createdByUserId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [tag] = await ctx.db
+        .insert(promptTags)
+        .values({
+          brandId: input.brandId,
+          name: input.name,
+          color: input.color,
+          description: input.description,
+          createdByUserId: input.createdByUserId,
+        })
+        .returning();
+
+      if (!tag) {
+        throw new Error("Failed to create tag");
+      }
+
+      return tag;
+    }),
+
+  /**
+   * Update a prompt tag
+   */
+  updateTag: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        name: z.string().min(1).optional(),
+        color: z.string().optional(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...updates } = input;
+
+      const [tag] = await ctx.db
+        .update(promptTags)
+        .set({
+          ...updates,
+          updatedAt: new Date(),
+        })
+        .where(eq(promptTags.id, id))
+        .returning();
+
+      if (!tag) {
+        throw new Error("Tag not found");
+      }
+
+      return tag;
+    }),
+
+  /**
+   * Delete a prompt tag
+   */
+  deleteTag: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Note: This will set tagId to null on prompts due to "set null" cascade
+      await ctx.db.delete(promptTags).where(eq(promptTags.id, input.id));
       return { success: true };
     }),
 });

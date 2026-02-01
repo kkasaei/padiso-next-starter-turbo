@@ -1,25 +1,22 @@
 "use client";
 
 import { motion } from "motion/react";
-import { X, Copy, Zap, Folder, Globe, Pencil } from "lucide-react";
+import { X, Copy, Zap, Pencil } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { format } from "date-fns";
-import { getCategoryConfig, getAIProviderConfig, type Prompt } from "@/lib/data/prompts";
-import { cn } from "@workspace/ui/lib/utils";
+import type { Prompt } from "@workspace/db/schema";
 import { toast } from "sonner";
 
 interface PromptDetailModalProps {
   prompt: Prompt;
+  brandName?: string;
   onClose: () => void;
   onEdit?: (prompt: Prompt) => void;
 }
 
-export function PromptDetailModal({ prompt, onClose, onEdit }: PromptDetailModalProps) {
-  const categoryConfig = getCategoryConfig(prompt.category);
-  const providerConfig = getAIProviderConfig(prompt.aiProvider);
-
+export function PromptDetailModal({ prompt, brandName, onClose, onEdit }: PromptDetailModalProps) {
   const handleCopy = () => {
-    navigator.clipboard.writeText(prompt.content);
+    navigator.clipboard.writeText(prompt.prompt);
     toast.success("Prompt copied to clipboard");
   };
 
@@ -56,45 +53,27 @@ export function PromptDetailModal({ prompt, onClose, onEdit }: PromptDetailModal
 
         {/* Content */}
         <div className="px-6 py-4 space-y-4 max-h-[60vh] overflow-y-auto">
-          {/* Meta info */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className={cn("flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium", providerConfig.color)}>
-              {providerConfig.label}
-            </div>
-            <div className={cn("flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium", categoryConfig.color)}>
-              {categoryConfig.label}
-            </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              {prompt.isFromProject ? (
-                <>
-                  <Folder className="h-3.5 w-3.5" />
-                  <span>From: {prompt.projectName || "Project"}</span>
-                </>
-              ) : (
-                <>
-                  <Globe className="h-3.5 w-3.5" />
-                  <span>Global prompt</span>
-                </>
-              )}
-            </div>
-            <span className="text-xs text-muted-foreground">
+          {/* Metadata */}
+          <div className="flex items-center gap-3 flex-wrap text-sm">
+            {prompt.aiProvider && (
+              <span className="px-2.5 py-1 bg-muted rounded-full capitalize">
+                {prompt.aiProvider}
+              </span>
+            )}
+            {brandName && (
+              <span className="px-2.5 py-1 bg-muted rounded-full">
+                {brandName}
+              </span>
+            )}
+            {prompt.usageCount > 0 && (
+              <span className="text-muted-foreground">
+                Used {prompt.usageCount}x
+              </span>
+            )}
+            <span className="text-muted-foreground ml-auto">
               Created {format(new Date(prompt.createdAt), "MMM d, yyyy")}
             </span>
           </div>
-
-          {/* Tags */}
-          {prompt.tags && prompt.tags.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {prompt.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-0.5 bg-muted rounded-md text-xs text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
 
           {/* Prompt content */}
           <div className="space-y-2">
@@ -107,7 +86,7 @@ export function PromptDetailModal({ prompt, onClose, onEdit }: PromptDetailModal
             </div>
             <div className="p-4 bg-muted/50 rounded-xl border border-border">
               <pre className="text-sm font-mono whitespace-pre-wrap text-foreground">
-                {prompt.content}
+                {prompt.prompt}
               </pre>
             </div>
           </div>

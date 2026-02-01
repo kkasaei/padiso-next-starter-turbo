@@ -1,12 +1,13 @@
 "use client";
 
-import type { Prompt } from "@/lib/data/prompts";
+import type { Prompt } from "@workspace/db/schema";
 import { PromptCard } from "./PromptCard";
 import { Plus, Zap } from "lucide-react";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 
 type PromptCardsViewProps = {
   prompts: Prompt[];
+  brands?: Array<{ id: string; brandName: string | null }>;
   loading?: boolean;
   onCreatePrompt?: () => void;
   onEditPrompt?: (prompt: Prompt) => void;
@@ -16,6 +17,7 @@ type PromptCardsViewProps = {
 
 export function PromptCardsView({
   prompts,
+  brands = [],
   loading = false,
   onCreatePrompt,
   onEditPrompt,
@@ -49,15 +51,19 @@ export function PromptCardsView({
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {prompts.map((p) => (
-            <PromptCard
-              key={p.id}
-              prompt={p}
-              onEdit={onEditPrompt}
-              onDelete={onDeletePrompt}
-              onClick={onPromptClick}
-            />
-          ))}
+          {prompts.map((p) => {
+            const brand = brands.find(b => b.id === p.brandId);
+            return (
+              <PromptCard
+                key={p.id}
+                prompt={p}
+                brandName={brand?.brandName || undefined}
+                onEdit={() => onEditPrompt?.(p)}
+                onDelete={() => onDeletePrompt?.(p)}
+                onClick={() => onPromptClick?.(p)}
+              />
+            );
+          })}
           <button
             className="rounded-2xl border border-dashed border-border/60 bg-background p-6 text-center text-sm text-muted-foreground hover:border-solid hover:border-border/80 hover:text-foreground transition-colors min-h-[200px] flex flex-col items-center justify-center cursor-pointer"
             onClick={onCreatePrompt}
