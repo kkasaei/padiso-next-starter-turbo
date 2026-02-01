@@ -5,7 +5,7 @@ import { Sparkles, FileText, Clock, TrendingUp, TrendingDown, User, Loader2, Arr
 import { Button } from '@workspace/ui/components/button'
 import { TabsContent } from '@workspace/ui/components/tabs'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@workspace/ui/components/select'
-import { ACTIVITY_TYPE_LABELS } from '@/lib/common/constants'
+import { ACTIVITY_TYPE_LABELS } from '@workspace/common/constants'
 
 import type { Activity } from '../types'
 import { PAGE_SIZE_OPTIONS } from '../utils'

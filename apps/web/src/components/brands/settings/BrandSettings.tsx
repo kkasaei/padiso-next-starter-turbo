@@ -25,7 +25,7 @@ import type { ContextFilesState } from '@/lib/shcmea/types/context-files'
 import { SiteDiscoverySection } from '@/components/brands/create-brand/site-discovery-section'
 import { ContextFilesSection } from '@/components/brands/create-brand/context-files-section'
 import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
-import { COUNTRIES, getCountryByCode } from '@/lib/common/countries'
+import { COUNTRIES, getCountryByCode } from '@workspace/common/constants'
 import {
   Popover,
   PopoverContent,

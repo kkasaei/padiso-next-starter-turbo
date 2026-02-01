@@ -8,7 +8,7 @@ import { Input } from '@workspace/ui/components/input'
 import { TabsContent } from '@workspace/ui/components/tabs'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@workspace/ui/components/select'
 import { cn } from '@workspace/ui/lib/utils'
-import { CONTENT_STATUS_CONFIG } from '@/lib/common/constants'
+import { CONTENT_STATUS_CONFIG } from '@workspace/common/constants'
 
 import type { ContentItem } from '../types'
 import { PAGE_SIZE_OPTIONS } from '../utils'

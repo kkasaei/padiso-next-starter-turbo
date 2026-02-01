@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { GridSection } from '@/components/shared/fragments/grid-section';
 import { AEODomainInput } from '@/components/marketing/sections/aeo-domain-input';
-import { ANIMATIONS } from '@/lib/common/constants';
+import { ANIMATIONS } from '@workspace/common/constants';
 
 interface ReportNotFoundProps {
   domain: string;

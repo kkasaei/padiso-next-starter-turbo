@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 import {
   Accordion,
   AccordionContent,

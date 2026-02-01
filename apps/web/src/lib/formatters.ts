@@ -1,4 +1,4 @@
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 
 export function createTitle(title: string, addSuffix: boolean = true): string {
   if (!addSuffix) {

@@ -30,7 +30,7 @@ import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-e
 import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
 import { FormSection } from './form-section'
 import { GenerateWithAIButton } from './generate-with-ai-button'
-import { COUNTRIES, getCountryByCode } from '@/lib/common/countries'
+import { COUNTRIES, getCountryByCode } from '@workspace/common/constants'
 
 function CountryCombobox({
   value,

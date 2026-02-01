@@ -11,7 +11,7 @@ import { MarketCompetition } from '@/components/marketing/aeo-grader/market-comp
 import { AnalysisSummary } from '@/components/marketing/aeo-grader/analysis-summary';
 import { ContextualAnalysis } from '@/components/marketing/aeo-grader/contextual-analysis';
 import { ContentIdeasLimited } from '@/components/marketing/aeo-grader/content-ideas-limited';
-import { PREMIUM_SECTIONS, REPORT_CONFIG } from '@/lib/common/constants';
+import { PREMIUM_SECTIONS, REPORT_CONFIG } from '@workspace/common/constants';
 
 interface ReportContentSectionsProps {
   data: AEOReport;

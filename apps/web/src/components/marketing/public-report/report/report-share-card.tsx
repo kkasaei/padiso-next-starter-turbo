@@ -3,7 +3,7 @@ import Confetti from 'react-confetti';
 import { Share2 } from 'lucide-react';
 
 import { Button } from '@workspace/ui/components/button';
-import { REPORT_CONFIG } from '@/lib/common/constants';
+import { REPORT_CONFIG } from '@workspace/common/constants';
 
 interface ReportShareCardProps {
   averageScore: number;

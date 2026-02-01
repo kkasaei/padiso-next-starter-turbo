@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { PricingTable } from '@/lib/billing/components/pricing-table';
 // import { PricingTable } from '@clerk/nextjs';
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 
 import { GridSection } from '@/components/shared/fragments/grid-section';
 import { SiteHeading } from '@/components/shared/fragments/site-heading';

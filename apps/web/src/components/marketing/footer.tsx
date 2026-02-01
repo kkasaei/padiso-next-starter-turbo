@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Logo } from '@workspace/ui/components/logo';

@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import { APP_NAME } from '@/lib/common/app';
-import { cn } from '@/lib/utils';
+import { APP_NAME } from '@workspace/common/constants';
+import { cn } from '@workspace/ui/lib/utils';
 
 export type LogoElement = React.ComponentRef<'div'>;
 export type LogoProps = React.ComponentPropsWithoutRef<'div'> & {

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 import { cn } from '@/lib/utils';
 
 import { GridSection } from '@/components/shared/fragments/grid-section';

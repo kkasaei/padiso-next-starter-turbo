@@ -1,5 +1,5 @@
 import { type Metadata } from 'next';
-import { APP_NAME } from '@/lib/common/app';
+import { APP_NAME } from '@workspace/common/constants';
 import { baseURL } from '@/routes';
 
 interface ReportLayoutProps {
