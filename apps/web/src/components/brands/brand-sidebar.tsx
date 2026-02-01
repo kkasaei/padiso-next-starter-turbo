@@ -15,7 +15,6 @@ import {
   Plus,
 } from "lucide-react"
 import { useBrands } from "@/hooks/use-brands"
-import { favouriteProjects } from "@/lib/data/sidebar"
 import { cn } from "@/lib/utils"
 import { brandNavItems } from "@/routes"
 import { FavouriteBrands } from "./FavouriteBrands"
@@ -118,6 +117,8 @@ export function BrandSidebar() {
   const filteredProjects = projects.filter((project) =>
     (project.brandName || "").toLowerCase().includes(search.toLowerCase())
   )
+
+  const favouriteBrands = projects.filter((project) => project.isFavourite)
 
   const handleProjectSwitch = (projectId: string) => {
     setSwitcherOpen(false)
@@ -276,10 +277,10 @@ export function BrandSidebar() {
           </ul>
         </nav>
 
-        {favouriteProjects.length > 0 && (
+        {favouriteBrands.length > 0 && (
           <>
             <Separator className="mx-3" />
-            <FavouriteBrands brands={favouriteProjects} />
+            <FavouriteBrands brands={favouriteBrands} />
           </>
         )}
       </div>
