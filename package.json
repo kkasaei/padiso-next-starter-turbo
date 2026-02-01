@@ -8,6 +8,7 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push",
     "-------------------": "-----------------------",
     "build:embed": "pnpm build --filter embed"
   },

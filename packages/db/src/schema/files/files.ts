@@ -1,6 +1,5 @@
 import { pgTable, text, timestamp, uuid, integer, pgEnum, boolean } from "drizzle-orm/pg-core";
-import { projects } from "./projects";
-import { users } from "./users";
+import { brands } from "../brands/brands";
 
 export const fileTypeEnum = pgEnum("file_type", [
   "pdf",
@@ -12,18 +11,16 @@ export const fileTypeEnum = pgEnum("file_type", [
 
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey(),
-  projectId: uuid("project_id")
+  brandId: uuid("brand_id")
     .notNull()
-    .references(() => projects.id, { onDelete: "cascade" }),
+    .references(() => brands.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   type: fileTypeEnum("type").notNull(),
   sizeMB: integer("size_mb").notNull(),
   url: text("url").notNull(),
   description: text("description"),
   isLinkAsset: boolean("is_link_asset").default(false),
-  addedById: uuid("added_by_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  addedById: text("added_by_id").notNull(), // Clerk user ID
   addedDate: timestamp("added_date").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

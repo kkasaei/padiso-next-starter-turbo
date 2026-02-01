@@ -168,7 +168,7 @@ export function AnalyticsContent() {
       span: 1 as const,
     },
     {
-      title: "Reports Generated",
+      title: "Content Generated",
       value: reportsData.reduce((acc, d) => acc + d.value, 0).toLocaleString(),
       dateRange: "Jan 19 – Jan 26, 2026",
       data: reportsData,

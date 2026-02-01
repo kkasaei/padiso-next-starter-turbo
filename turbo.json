@@ -28,6 +28,18 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "db:push": {
+      "dependsOn": ["^db:push"]
+    },
+    "db:generate": {
+      "dependsOn": ["^db:generate"]
+    },
+    "db:studio": {
+      "dependsOn": ["^db:studio"]
+    },
+    "db:seed": {
+      "dependsOn": ["^db:seed"]
     }
   }
 }

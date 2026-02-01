@@ -11,7 +11,6 @@ import {
   timelineTasks,
   projectScope,
   projectOutcomes,
-  keyFeatures,
   files,
   fileAttachments,
   notes,
@@ -31,7 +30,7 @@ function formatDate(date: Date): string {
 }
 
 // Helper to create user ID from name
-function userIdFromName(name: string): string {
+function userIdFromName(name: string): string { 
   return name.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
@@ -48,7 +47,6 @@ async function seed() {
     await db.delete(notes);
     await db.delete(fileAttachments);
     await db.delete(files);
-    await db.delete(keyFeatures);
     await db.delete(projectOutcomes);
     await db.delete(projectScope);
     await db.delete(timelineTasks);
@@ -705,21 +703,7 @@ async function seed() {
         });
       }
 
-      // Add key features
-      const keyFeaturesData = [
-        { priority: "p0", features: ["Onboarding & KYC flow", "Payment confirmation UX"] },
-        { priority: "p1", features: ["Transaction history & filters", "Error / empty states"] },
-        { priority: "p2", features: ["Visual polish & motion guidelines"] },
-      ];
-      for (const { priority, features } of keyFeaturesData) {
-        for (const feature of features) {
-          await db.insert(keyFeatures).values({
-            projectId: project1Id,
-            feature,
-            priority,
-          });
-        }
-      }
+      // Key features removed - no longer needed for brand use case
 
       // Add timeline tasks
       const timelineTasksData = [

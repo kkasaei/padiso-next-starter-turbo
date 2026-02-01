@@ -8,6 +8,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {

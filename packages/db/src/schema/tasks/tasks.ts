@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, uuid, date, pgEnum } from "drizzle-orm/pg-core";
-import { brands } from "./brands/brands";
+import { brands } from "../brands/brands";
 
 export const taskStatusEnum = pgEnum("task_status", [
   "todo",
