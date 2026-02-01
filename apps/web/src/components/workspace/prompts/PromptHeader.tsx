@@ -5,6 +5,13 @@ import { Plus, X } from "lucide-react";
 import Image from "next/image";
 import { FilterPopover, type FilterChip as FilterChipType } from "./FilterPopover";
 import { FilterChip } from "./FilterChip";
+import { PromptsViewOptionsPopover } from "./PromptsViewOptionsPopover";
+
+type ViewOptions = {
+  viewType: "list" | "table";
+  ordering: "alphabetical" | "date" | "provider" | "project" | "name";
+  showClosedProjects: boolean;
+};
 
 interface PromptFilters {
   filterChips: FilterChipType[];
@@ -13,6 +20,8 @@ interface PromptFilters {
 interface PromptHeaderProps {
   filters: PromptFilters;
   onFiltersChange: (filters: PromptFilters) => void;
+  viewOptions?: ViewOptions;
+  onViewOptionsChange?: (options: ViewOptions) => void;
   onAddPrompt?: () => void;
   totalCount: number;
   filteredCount: number;
@@ -26,7 +35,9 @@ interface PromptHeaderProps {
 
 export function PromptHeader({ 
   filters, 
-  onFiltersChange, 
+  onFiltersChange,
+  viewOptions,
+  onViewOptionsChange,
   onAddPrompt,
   totalCount,
   filteredCount,
@@ -143,7 +154,17 @@ export function PromptHeader({
             </Button>
           )}
         </div>
-        
+
+        {/* View Options */}
+        <div className="flex items-center gap-2">
+          {viewOptions && onViewOptionsChange && (
+            <PromptsViewOptionsPopover 
+              options={viewOptions} 
+              onChange={onViewOptionsChange}
+              allowedViewTypes={["list", "table"]}
+            />
+          )}
+        </div>
       </div>
     </header>
   );

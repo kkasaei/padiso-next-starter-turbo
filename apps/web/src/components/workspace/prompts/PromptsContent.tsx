@@ -22,6 +22,7 @@ import { AI_PROVIDERS } from "./PromptConstants";
 // Components
 import { PromptHeader } from "./PromptHeader";
 import { PromptCardsView } from "./PromptCardsView";
+import { PromptTableView } from "./PromptTableView";
 import { PromptPagination } from "./PromptPagination";
 import { CreatePromptModal } from "./CreatePromptModal";
 import { PromptDetailModal } from "./PromptDetailModal";
@@ -60,6 +61,15 @@ export function PromptsContent() {
   const [viewingPrompt, setViewingPrompt] = useState<Prompt | null>(null);
   const [filters, setFilters] = useState<PromptFilters>({
     filterChips: [],
+  });
+  const [viewOptions, setViewOptions] = useState<{
+    viewType: "list" | "table";
+    ordering: "alphabetical" | "date" | "provider" | "project" | "name";
+    showClosedProjects: boolean;
+  }>({
+    viewType: "list", // Default to list (card grid) view
+    ordering: "name", // Default sort by name
+    showClosedProjects: false,
   });
   
   // Pagination state
@@ -251,6 +261,8 @@ export function PromptsContent() {
       <PromptHeader 
         filters={filters}
         onFiltersChange={handleFiltersChange}
+        viewOptions={viewOptions}
+        onViewOptionsChange={setViewOptions}
         onAddPrompt={openCreateModal}
         totalCount={prompts.length}
         filteredCount={filteredPrompts.length}
@@ -259,15 +271,26 @@ export function PromptsContent() {
         providers={providersForFilter}
       />
       
-      <div className="flex-1 overflow-auto">
-        <PromptCardsView
-          prompts={paginatedPrompts}
-          brands={brands}
-          onCreatePrompt={openCreateModal}
-          onEditPrompt={handleEditPrompt}
-          onDeletePrompt={handleDeletePrompt}
-          onPromptClick={handlePromptClick}
-        />
+      <div className="flex-1 overflow-auto p-4">
+        {viewOptions.viewType === "list" && (
+          <PromptCardsView
+            prompts={paginatedPrompts}
+            brands={brands}
+            onCreatePrompt={openCreateModal}
+            onEditPrompt={handleEditPrompt}
+            onDeletePrompt={handleDeletePrompt}
+            onPromptClick={handlePromptClick}
+          />
+        )}
+        
+        {viewOptions.viewType === "table" && (
+          <PromptTableView
+            prompts={paginatedPrompts}
+            brands={brands}
+            onOpenPrompt={handlePromptClick}
+            onEditPrompt={handleEditPrompt}
+          />
+        )}
       </div>
 
       <PromptPagination

@@ -15,9 +15,11 @@ export { PromptsContent } from "./PromptsContent";
 export { PromptHeader } from "./PromptHeader";
 export { PromptCard } from "./PromptCard";
 export { PromptCardsView } from "./PromptCardsView";
+export { PromptTableView } from "./PromptTableView";
 export { PromptPagination } from "./PromptPagination";
 export { CreatePromptModal } from "./CreatePromptModal";
 export { PromptDetailModal } from "./PromptDetailModal";
+export { PromptsViewOptionsPopover } from "./PromptsViewOptionsPopover";
 
 // ============================================================
 // FILTER COMPONENTS
