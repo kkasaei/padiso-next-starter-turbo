@@ -48,12 +48,8 @@ export const workspaces = pgTable("workspaces", {
   id: uuid("id").defaultRandom().primaryKey(),
 
   // Clerk Organization Identity - THIS IS THE KEY!
+  // All basic info (name, slug, logoUrl) comes from Clerk org
   clerkOrgId: text("clerk_org_id").notNull().unique(),
-  
-  // Basic Information
-  name: text("name").notNull(),
-  slug: text("slug"),
-  logoUrl: text("logo_url"),
   
   // Status & Lifecycle
   status: workspaceStatusEnum("status").notNull().default("active"),

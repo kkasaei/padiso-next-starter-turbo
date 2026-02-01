@@ -25,34 +25,11 @@ export enum WorkspaceStatus {
 
 export class CreateWorkspaceDto {
   @ApiProperty({
-    description: 'Clerk organization ID',
+    description: 'Clerk organization ID - source of truth for name, slug, and logo',
     example: 'org_2abc123xyz',
   })
   @IsString()
   clerkOrgId: string;
-
-  @ApiProperty({
-    description: 'Workspace name',
-    example: 'Acme Corporation',
-  })
-  @IsString()
-  name: string;
-
-  @ApiPropertyOptional({
-    description: 'Workspace slug',
-    example: 'acme-corp',
-  })
-  @IsString()
-  @IsOptional()
-  slug?: string;
-
-  @ApiPropertyOptional({
-    description: 'Logo URL',
-    example: 'https://example.com/logo.png',
-  })
-  @IsUrl()
-  @IsOptional()
-  logoUrl?: string;
 
   @ApiPropertyOptional({
     enum: WorkspaceStatus,

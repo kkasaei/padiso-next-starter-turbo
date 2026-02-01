@@ -1,0 +1,133 @@
+import { z } from "zod";
+import { eq, and, desc } from "drizzle-orm";
+import { brands, brandMembers } from "@workspace/db/schema";
+import { router, publicProcedure } from "../trpc";
+
+export const brandsRouter = router({
+  /**
+   * Get all brands for a workspace
+   */
+  getAll: publicProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(brands)
+        .where(eq(brands.workspaceId, input.workspaceId))
+        .orderBy(desc(brands.createdAt));
+    }),
+
+  /**
+   * Get a brand by ID
+   */
+  getById: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [brand] = await ctx.db
+        .select()
+        .from(brands)
+        .where(eq(brands.id, input.id))
+        .limit(1);
+
+      if (!brand) {
+        throw new Error("Brand not found");
+      }
+
+      return brand;
+    }),
+
+  /**
+   * Create a new brand
+   */
+  create: publicProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid(),
+        brandName: z.string().min(1),
+        websiteUrl: z.string().url().optional(),
+        brandColor: z.string().optional(),
+        languages: z.array(z.string()).optional(),
+        targetAudiences: z.array(z.string()).optional(),
+        businessKeywords: z.array(z.string()).optional(),
+        competitors: z.array(z.string()).optional(),
+        status: z.enum(["backlog", "planned", "active", "cancelled", "completed"]),
+        createdByUserId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [brand] = await ctx.db
+        .insert(brands)
+        .values({
+          workspaceId: input.workspaceId,
+          brandName: input.brandName,
+          websiteUrl: input.websiteUrl,
+          brandColor: input.brandColor,
+          languages: input.languages,
+          targetAudiences: input.targetAudiences,
+          businessKeywords: input.businessKeywords,
+          competitors: input.competitors,
+          status: input.status,
+          createdByUserId: input.createdByUserId,
+        })
+        .returning();
+
+      if (!brand) {
+        throw new Error("Failed to create brand");
+      }
+
+      return brand;
+    }),
+
+  /**
+   * Update a brand
+   */
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        brandName: z.string().min(1).optional(),
+        websiteUrl: z.string().url().optional(),
+        brandColor: z.string().optional(),
+        status: z
+          .enum(["backlog", "planned", "active", "cancelled", "completed"])
+          .optional(),
+        languages: z.array(z.string()).optional(),
+        targetAudiences: z.array(z.string()).optional(),
+        businessKeywords: z.array(z.string()).optional(),
+        competitors: z.array(z.string()).optional(),
+        isFavourite: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...updates } = input;
+
+      const [brand] = await ctx.db
+        .update(brands)
+        .set({
+          ...updates,
+          updatedAt: new Date(),
+        })
+        .where(eq(brands.id, id))
+        .returning();
+
+      if (!brand) {
+        throw new Error("Brand not found");
+      }
+
+      return brand;
+    }),
+
+  /**
+   * Delete a brand
+   */
+  delete: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(brands).where(eq(brands.id, input.id));
+      return { success: true };
+    }),
+});

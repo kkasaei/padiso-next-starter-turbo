@@ -28,8 +28,8 @@ export const routes = {
   },
 } as const;
 
-// Navigation items for project detail pages
-export const projectNavItems = [
+// Navigation items for brand detail pages
+export const brandNavItems = [
   { id: "overview", label: "Overview", icon: Home, path: "" },
   { id: "content", label: "Content", icon: Sparkles, path: "/content" },
   { id: "analytics", label: "Analytics", icon: ChartNoAxesCombinedIcon, path: "/analytics" },
