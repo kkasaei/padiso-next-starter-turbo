@@ -77,7 +77,7 @@ function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCr
             </div>
             <div className="space-y-4">
               <Link
-                href="https://discord.gg/example"
+                href="https://discord.gg/3SQYZGdy"
                 className="flex items-start gap-3 rounded-xl bg-muted p-4 transition-all hover:bg-muted/50"
                 target="_blank"
               >
@@ -102,7 +102,7 @@ function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCr
                 </div>
               </Link>
               <Link
-                href="https://x.com/example"
+                href="https://x.com/searchfitai"
                 className="flex items-start gap-3 rounded-xl bg-muted p-4 transition-all hover:bg-muted/50"
                 target="_blank"
               >

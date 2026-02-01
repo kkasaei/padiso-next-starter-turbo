@@ -46,11 +46,14 @@ export const routes = {
     },
   },
   footer: {
-    Roadmap: '#',
-    Changelog: '#',
-    Support: '#',
-    Feedbacks: '#',
+    Roadmap: 'https://searchfit.canny.io/',
+    Changelog: 'https://searchfit.canny.io/changelog',
+    Support: 'https://searchfit.canny.io/support',
+    Feedback: 'https://searchfit.canny.io/feature-requests'
   },
+
+
+
 } as const;
 
 // Navigation items for workspace sidebar
@@ -68,7 +71,7 @@ export const workspaceSidebarFooterItems = [
   { id: "roadmap", label: "Roadmap", icon: Map, href: routes.footer.Roadmap },
   { id: "changelog", label: "Change Log", icon: History, href: routes.footer.Changelog },
   { id: "support", label: "Support", icon: Headphones, href: routes.footer.Support },
-  { id: "feedbacks", label: "Feedbacks", icon: Send, href: routes.footer.Feedbacks },
+  { id: "feedbacks", label: "Feedbacks", icon: Send, href: routes.footer.Feedback },
 ] as const;
 
 // Navigation items for brand detail pages
