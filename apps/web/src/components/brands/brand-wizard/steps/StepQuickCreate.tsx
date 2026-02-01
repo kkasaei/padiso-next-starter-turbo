@@ -18,7 +18,7 @@ import {
   CommandList,
 } from "@workspace/ui/components/command";
 import { Check, X, Maximize2, Star, CalendarDays, CircleUser, Loader2, List, Paperclip, Mic, Rows3, BarChart3, Tag } from "lucide-react";
-import { ProjectDescriptionEditor } from "../ProjectDescriptionEditor";
+import { ProjectDescriptionEditor } from "../BrandDescriptionEditor";
 
 // --- Mock Data ---
 

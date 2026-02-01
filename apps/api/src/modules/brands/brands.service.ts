@@ -28,7 +28,6 @@ export class BrandsService {
         sitemapUrl: createBrandDto.sitemapUrl,
         referralSource: createBrandDto.referralSource,
         status: createBrandDto.status,
-        lastSyncLabel: createBrandDto.lastSyncLabel,
         createdByUserId: createBrandDto.createdByUserId,
         isFavourite: createBrandDto.isFavourite,
       })

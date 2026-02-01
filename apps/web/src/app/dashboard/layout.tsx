@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar"
-import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/workspace/brands/brand-sidebar"
+import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/brand-sidebar"
 
 export default function DashboardLayout({
   children,
@@ -12,8 +12,8 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   
-  // Show project sidebar only on project detail pages: /dashboard/brands/[id]
-  const isProjectDetailPage = pathname.startsWith("/dashboard/brands/") && 
+  // Show brand sidebar only on brand detail pages: /dashboard/brands/[id]
+  const isBrandDetailPage = pathname.startsWith("/dashboard/brands/") && 
     pathname !== "/dashboard/brands" &&
     pathname !== "/dashboard/brands/new"
 
@@ -28,13 +28,13 @@ export default function DashboardLayout({
           <BrandSidebarProvider>
             <div className="relative flex flex-1 m-2">
               <main className="flex flex-1 rounded-2xl border border-border bg-background overflow-hidden">
-                {isProjectDetailPage && <BrandSidebar />}
+                {isBrandDetailPage && <BrandSidebar />}
                 <div className="flex flex-1 flex-col min-w-0">
                   {children}
                 </div>
               </main>
               {/* Toggle button on main card edge when sidebar is closed */}
-              {isProjectDetailPage && <BrandSidebarToggle showWhenOpen={false} className="-left-3" />}
+              {isBrandDetailPage && <BrandSidebarToggle showWhenOpen={false} className="-left-3" />}
             </div>
           </BrandSidebarProvider>
         </div>

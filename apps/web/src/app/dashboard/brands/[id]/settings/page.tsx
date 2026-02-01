@@ -1,6 +1,6 @@
-import ProjectSettings from "@/components/brands/settings/ProjectSettings"
+import BrandSettings from "@/components/brands/settings/BrandSettings"
 
-type PageProps = {
+type PageProps = {  
   params: Promise<{ id: string }>
 }
 
@@ -13,7 +13,7 @@ export default async function SettingsPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
     </div>
     <div className="flex flex-1">
-    <ProjectSettings />
+    <BrandSettings />
     </div>
   </div>
   )

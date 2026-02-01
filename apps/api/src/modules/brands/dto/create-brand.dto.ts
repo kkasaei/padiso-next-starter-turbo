@@ -7,6 +7,10 @@ import {
   IsUrl,
   IsUUID,
   IsBoolean,
+  IsInt,
+  IsDate,
+  Min,
+  Max,
 } from 'class-validator';
 
 export enum BrandStatus {
@@ -153,14 +157,6 @@ export class CreateBrandDto {
   status: BrandStatus;
 
   @ApiPropertyOptional({
-    description: 'Last sync label',
-    example: 'Synced 2 hours ago',
-  })
-  @IsString()
-  @IsOptional()
-  lastSyncLabel?: string;
-
-  @ApiPropertyOptional({
     description: 'Clerk user ID of the creator',
     example: 'user_2abc123',
   })
@@ -175,4 +171,33 @@ export class CreateBrandDto {
   @IsBoolean()
   @IsOptional()
   isFavourite?: boolean;
+
+  // AI Visibility Tracking
+  @ApiPropertyOptional({
+    description: 'AI visibility score (0-100)',
+    example: 75,
+    minimum: 0,
+    maximum: 100,
+  })
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  @IsOptional()
+  visibilityScore?: number;
+
+  @ApiPropertyOptional({
+    description: 'When the brand was last scanned for AI visibility',
+    example: new Date(),
+  })
+  @IsDate()
+  @IsOptional()
+  lastScanAt?: Date;
+
+  @ApiPropertyOptional({
+    description: 'When the next AI visibility scan is scheduled',
+    example: new Date(),
+  })
+  @IsDate()
+  @IsOptional()
+  nextScanAt?: Date;
 }

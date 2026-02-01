@@ -5,30 +5,22 @@ import { Button } from "@workspace/ui/components/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Input } from "@workspace/ui/components/input"
 import { Checkbox } from "@workspace/ui/components/checkbox"
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { cn } from "@workspace/ui/lib/utils"
 import {
-  Filter as Funnel,
   Loader2 as Spinner,
-  Tag,
-  User,
-  BarChart3 as ChartBar,
+  Languages,
 } from "lucide-react"
 
 export type FilterChip = { key: string; value: string }
 
 type FilterTemp = {
   status: Set<string>
-  priority: Set<string>
-  tags: Set<string>
-  members: Set<string>
+  languages: Set<string>
 }
 
 interface FilterCounts {
   status?: Record<string, number>
-  priority?: Record<string, number>
-  tags?: Record<string, number>
-  members?: Record<string, number>
+  languages?: Record<string, number>
 }
 
 interface FilterPopoverProps {
@@ -38,82 +30,72 @@ interface FilterPopoverProps {
   counts?: FilterCounts
 }
 
+const CATEGORIES = [
+  { id: "status", label: "Status", icon: Spinner },
+  { id: "languages", label: "Languages", icon: Languages },
+] as const
+
 export function FilterPopover({ initialChips, onApply, onClear, counts }: FilterPopoverProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
-  const [active, setActive] = useState<
-    "status" | "priority" | "tags" | "members"
-  >("status")
+  const [active, setActive] = useState<"status" | "languages">("status")
 
   const [temp, setTemp] = useState<FilterTemp>(() => ({
     status: new Set<string>(),
-    priority: new Set<string>(),
-    tags: new Set<string>(),
-    members: new Set<string>(),
+    languages: new Set<string>(),
   }))
 
-  const [tagSearch, setTagSearch] = useState("")
+  const [languageSearch, setLanguageSearch] = useState("")
 
   // Preselect from chips when opening
   useEffect(() => {
     if (!open) return
     const next: FilterTemp = {
       status: new Set<string>(),
-      priority: new Set<string>(),
-      tags: new Set<string>(),
-      members: new Set<string>(),
+      languages: new Set<string>(),
     }
     for (const c of initialChips || []) {
       const k = c.key.toLowerCase()
       if (k === "status") next.status.add(c.value.toLowerCase())
-      if (k === "priority") next.priority.add(c.value.toLowerCase())
-      if (k === "member" || k === "pic" || k === "members") next.members.add(c.value)
-      if (k === "tag" || k === "tags") next.tags.add(c.value.toLowerCase())
+      if (k === "language" || k === "languages") next.languages.add(c.value)
     }
     setTemp(next)
   }, [open, initialChips])
 
-  const categories = [
-    { id: "status", label: "Status", icon: Spinner },
-    { id: "priority", label: "Priority", icon: ChartBar },
-    { id: "tags", label: "Tags", icon: Tag },
-    { id: "members", label: "Members", icon: User },
-  ] as const
-
   const statusOptions = [
-    { id: "backlog", label: "Backlog", color: "var(--chart-2)" },
-    { id: "planned", label: "Planned", color: "var(--chart-2)" },
-    { id: "active", label: "Active", color: "var(--chart-3)" },
-    { id: "cancelled", label: "Cancelled", color: "var(--chart-5)" },
-    { id: "completed", label: "Completed", color: "var(--chart-3)" },
+    { id: "active", label: "Active", color: "#10b981" },
+    { id: "planned", label: "Planned", color: "#6b7280" },
+    { id: "backlog", label: "Backlog", color: "#f97316" },
+    { id: "completed", label: "Completed", color: "#3b82f6" },
+    { id: "cancelled", label: "Cancelled", color: "#ef4444" },
   ]
 
-  const priorityOptions = [
-    { id: "urgent", label: "Urgent" },
-    { id: "high", label: "High" },
-    { id: "medium", label: "Medium" },
-    { id: "low", label: "Low" },
-  ]
-
-  const memberOptions = [
-    { id: "no-member", label: "No member", avatar: undefined },
-    { id: "current", label: "Current member", avatar: undefined, hint: "1 projects" },
-    { id: "andrew", label: "andrew smith", avatar: "/placeholder-user.jpg", hint: "3 projects" },
-  ]
-
-  const tagOptions = [
-    { id: "frontend", label: "frontend" },
-    { id: "backend", label: "backend" },
-    { id: "bug", label: "bug" },
-    { id: "feature", label: "feature" },
-    { id: "urgent", label: "urgent" },
+  const languageOptions = [
+    { id: "en-US", label: "English (US)", flag: "🇺🇸" },
+    { id: "en-GB", label: "English (UK)", flag: "🇬🇧" },
+    { id: "es", label: "Spanish", flag: "🇪🇸" },
+    { id: "fr", label: "French", flag: "🇫🇷" },
+    { id: "de", label: "German", flag: "🇩🇪" },
+    { id: "pt", label: "Portuguese", flag: "🇵🇹" },
+    { id: "it", label: "Italian", flag: "🇮🇹" },
+    { id: "nl", label: "Dutch", flag: "🇳🇱" },
+    { id: "pl", label: "Polish", flag: "🇵🇱" },
+    { id: "ru", label: "Russian", flag: "🇷🇺" },
+    { id: "ja", label: "Japanese", flag: "🇯🇵" },
+    { id: "zh", label: "Chinese", flag: "🇨🇳" },
+    { id: "ko", label: "Korean", flag: "🇰🇷" },
+    { id: "ar", label: "Arabic", flag: "🇸🇦" },
+    { id: "hi", label: "Hindi", flag: "🇮🇳" },
+    { id: "bg", label: "Bulgarian", flag: "🇧🇬" },
+    { id: "hu", label: "Hungarian", flag: "🇭🇺" },
+    { id: "hr", label: "Croatian", flag: "🇭🇷" },
   ]
 
   const filteredCategories = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return categories
-    return categories.filter((c) => c.label.toLowerCase().includes(q))
-  }, [categories, query])
+    if (!q) return CATEGORIES
+    return CATEGORIES.filter((c) => c.label.toLowerCase().includes(q))
+  }, [query])
 
   const toggleSet = (set: Set<string>, v: string) => {
     const n = new Set(set)
@@ -125,9 +107,7 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
   const handleApply = () => {
     const chips: FilterChip[] = []
     temp.status.forEach((v) => chips.push({ key: "Status", value: capitalize(v) }))
-    temp.priority.forEach((v) => chips.push({ key: "Priority", value: capitalize(v) }))
-    temp.members.forEach((v) => chips.push({ key: "Member", value: v }))
-    temp.tags.forEach((v) => chips.push({ key: "Tag", value: v }))
+    temp.languages.forEach((v) => chips.push({ key: "Language", value: v }))
     onApply(chips)
     setOpen(false)
   }
@@ -135,9 +115,7 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
   const handleClear = () => {
     setTemp({
       status: new Set<string>(),
-      priority: new Set<string>(),
-      tags: new Set<string>(),
-      members: new Set<string>(),
+      languages: new Set<string>(),
     })
     onClear()
   }
@@ -145,8 +123,7 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 gap-2 rounded-lg border-border/60 px-3 bg-transparent">
-          <Funnel className="h-4 w-4" />
+        <Button variant="outline" size="sm" className="h-8 rounded-lg border-border/60 px-3 bg-transparent">
           Filter
         </Button>
       </PopoverTrigger>
@@ -183,23 +160,6 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
           </div>
 
           <div className="p-3">
-            {active === "priority" && (
-              <div className="grid grid-cols-2 gap-2">
-                {priorityOptions.map((opt) => (
-                  <label key={opt.id} className="flex items-center gap-2 rounded-lg border p-2 hover:bg-accent cursor-pointer">
-                    <Checkbox
-                      checked={temp.priority.has(opt.id)}
-                      onCheckedChange={() => setTemp((t) => ({ ...t, priority: toggleSet(t.priority, opt.id) }))}
-                    />
-                    <span className="text-sm flex-1">{opt.label}</span>
-                    {counts?.priority?.[opt.id] != null && (
-                      <span className="text-xs text-muted-foreground">{counts.priority[opt.id]}</span>
-                    )}
-                  </label>
-                ))}
-              </div>
-            )}
-
             {active === "status" && (
               <div className="grid grid-cols-2 gap-2">
                 {statusOptions.map((opt) => (
@@ -218,47 +178,29 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
               </div>
             )}
 
-            {active === "members" && (
-              <div className="space-y-2">
-                {memberOptions.map((m) => (
-                  <label key={m.id} className="flex items-center gap-2 rounded-lg border p-2 hover:bg-accent cursor-pointer">
-                    <Checkbox
-                      checked={temp.members.has(m.label)}
-                      onCheckedChange={() => setTemp((t) => ({ ...t, members: toggleSet(t.members, m.label) }))}
-                    />
-                    <span className="text-sm flex-1">{m.label}</span>
-                    {counts?.members?.[m.id] != null ? (
-                      <span className="text-xs text-muted-foreground">{counts.members[m.id]}</span>
-                    ) : (
-                      m.hint && <span className="text-xs text-muted-foreground">{m.hint}</span>
-                    )}
-                  </label>
-                ))}
-              </div>
-            )}
-
-            {active === "tags" && (
+            {active === "languages" && (
               <div>
                 <div className="pb-2">
                   <Input
-                    placeholder="Search tags..."
-                    value={tagSearch}
-                    onChange={(e) => setTagSearch(e.target.value)}
+                    placeholder="Search languages..."
+                    value={languageSearch}
+                    onChange={(e) => setLanguageSearch(e.target.value)}
                     className="h-8"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {tagOptions
-                    .filter((t) => t.label.toLowerCase().includes(tagSearch.toLowerCase()))
-                    .map((t) => (
-                      <label key={t.id} className="flex items-center gap-2 rounded-lg border p-2 hover:bg-accent cursor-pointer">
+                <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+                  {languageOptions
+                    .filter((lang) => lang.label.toLowerCase().includes(languageSearch.toLowerCase()))
+                    .map((lang) => (
+                      <label key={lang.id} className="flex items-center gap-2 rounded-lg border p-2 hover:bg-accent cursor-pointer">
                         <Checkbox
-                          checked={temp.tags.has(t.id)}
-                          onCheckedChange={() => setTemp((s) => ({ ...s, tags: toggleSet(s.tags, t.id) }))}
+                          checked={temp.languages.has(lang.id)}
+                          onCheckedChange={() => setTemp((s) => ({ ...s, languages: toggleSet(s.languages, lang.id) }))}
                         />
-                        <span className="text-sm flex-1">{t.label}</span>
-                        {counts?.tags?.[t.id] != null && (
-                          <span className="text-xs text-muted-foreground">{counts.tags[t.id]}</span>
+                        <span className="text-lg">{lang.flag}</span>
+                        <span className="text-sm flex-1">{lang.label}</span>
+                        {counts?.languages?.[lang.id] != null && (
+                          <span className="text-xs text-muted-foreground">{counts.languages[lang.id]}</span>
                         )}
                       </label>
                     ))}

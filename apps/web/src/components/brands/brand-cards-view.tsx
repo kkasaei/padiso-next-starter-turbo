@@ -1,18 +1,18 @@
 "use client"
 
-import type { Project } from "@/lib/mocks/legacy-projects"
-import { BrandCard } from "@/components/workspace/brands/brand-card"
+import { Brand } from "@workspace/db/schema"
+import { BrandCard } from "@/components/brands/brand-card"
 import { Plus, FolderOpen } from "lucide-react"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
 type BrandCardsViewProps = {
-  projects: Project[]
+  brands?: Brand[]
   loading?: boolean
-  onCreateProject?: () => void
+  onCreateBrand?: () => void
 }
 
-export function BrandCardsView({ projects, loading = false, onCreateProject }: BrandCardsViewProps) {
-  const isEmpty = !loading && projects.length === 0
+export function BrandCardsView({ brands = [], loading = false, onCreateBrand }: BrandCardsViewProps) {
+  const isEmpty = !loading && brands.length === 0
 
   return (
     <div className="p-4">
@@ -27,11 +27,11 @@ export function BrandCardsView({ projects, loading = false, onCreateProject }: B
           <div className="p-3 bg-muted rounded-md mb-4">
             <FolderOpen className="h-6 w-6 text-foreground" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-foreground">No projects yet</h3>
-          <p className="mb-6 text-sm text-muted-foreground">Create your first project to get started</p>
+          <h3 className="mb-2 text-lg font-semibold text-foreground">No brands yet</h3>
+          <p className="mb-6 text-sm text-muted-foreground">Create your first brand to get started</p>
           <button
             className="rounded-lg border border-border bg-background px-4 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-            onClick={onCreateProject}
+            onClick={onCreateBrand}
           >
             <Plus className="mr-2 inline h-4 w-4" />
             Create new brand
@@ -39,12 +39,12 @@ export function BrandCardsView({ projects, loading = false, onCreateProject }: B
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {projects.map((p) => (
-            <BrandCard key={p.id} project={p} />
+          {brands.map((b) => (
+            <BrandCard key={b.id} brand={b} />
           ))}
           <button
             className="rounded-2xl border border-dashed border-border/60 bg-background p-6 text-center text-sm text-muted-foreground hover:border-solid hover:border-border/80 hover:text-foreground transition-colors min-h-[180px] flex flex-col items-center justify-center cursor-pointer"
-            onClick={onCreateProject}
+            onClick={onCreateBrand}
           >
             <Plus className="mb-2 h-5 w-5" />
             Create new brand

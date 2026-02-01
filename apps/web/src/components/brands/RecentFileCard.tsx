@@ -3,7 +3,7 @@ import { MoreHorizontal as DotsThree } from "lucide-react"
 import type { ProjectFile } from "@/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/dropdown-menu"
-import { FileTypeIcon } from "@/components/workspace/brands/FileTypeIcon"
+import { FileTypeIcon } from "@/components/brands/FileTypeIcon"
 
 type RecentFileCardProps = {
     file: ProjectFile

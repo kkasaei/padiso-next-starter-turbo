@@ -60,7 +60,7 @@ interface InsightItem {
 
 interface InsightsTabProps {
   analyticsData: PromptAnalyticsData | null
-  projectId: string
+  brandId: string
 }
 
 // Helper to safely parse JSON string
@@ -81,7 +81,7 @@ function parseInsightItem(json: string): { title: string; description: string } 
   }
 }
 
-export function InsightsTab({ analyticsData, projectId }: InsightsTabProps) {
+export function InsightsTab({ analyticsData, brandId }: InsightsTabProps) {
   const [selectedProvider, setSelectedProvider] = useState<ProviderTab>('chatgpt')
 
   // Table state

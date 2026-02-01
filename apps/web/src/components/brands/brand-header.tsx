@@ -1,25 +1,21 @@
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
-import { FilterChip } from "@/components/shared/filter-chip"
-import { ViewOptionsPopover } from "@/components/shared/view-options-popover"
-import { FilterPopover } from "@/components/shared/filter-popover"
-import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { Link as LinkIcon, Plus, Sparkles } from "lucide-react"
-import type { FilterCounts } from "@/lib/mocks/legacy-projects"
-import type { FilterChip as FilterChipType, ViewOptions } from "@/lib/view-options"
+import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
+import { Plus } from "lucide-react"
+import type { ViewOptions } from "@/lib/view-options"
 
 interface BrandHeaderProps {
-  filters: FilterChipType[]
-  onRemoveFilter: (key: string, value: string) => void
-  onFiltersChange: (chips: FilterChipType[]) => void
-  counts?: FilterCounts
   viewOptions: ViewOptions
   onViewOptionsChange: (options: ViewOptions) => void
-  onAddProject?: () => void
+  onAddBrand?: () => void
 }
 
-export function BrandHeader({ filters, onRemoveFilter, onFiltersChange, counts, viewOptions, onViewOptionsChange, onAddProject }: ProjectHeaderProps) {
+export function BrandHeader({ 
+  viewOptions, 
+  onViewOptionsChange, 
+  onAddBrand 
+}: BrandHeaderProps) {
   return (
     <header className="flex flex-col border-b border-border/40">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
@@ -27,26 +23,14 @@ export function BrandHeader({ filters, onRemoveFilter, onFiltersChange, counts, 
           <p className="text-base font-medium text-foreground">Brands</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
-            <LinkIcon className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={onAddProject}>
+          <Button variant="ghost" size="sm" onClick={onAddBrand}>
             <Plus className="h-4 w-4 stroke-[3]" />
             Add brand
           </Button>
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-4 pb-3 pt-3">
-        <div className="flex items-center gap-2">
-          <FilterPopover
-            initialChips={filters}
-            onApply={onFiltersChange}
-            onClear={() => onFiltersChange([])}
-            counts={counts}
-          />
-          <ChipOverflow chips={filters} onRemove={onRemoveFilter} maxVisible={6} />
-        </div>
+      <div className="flex items-center justify-end px-4 pb-3 pt-3 ">
         <div className="flex items-center gap-2">
           <ViewOptionsPopover options={viewOptions} onChange={onViewOptionsChange} />
         </div>

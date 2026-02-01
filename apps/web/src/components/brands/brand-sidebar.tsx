@@ -17,7 +17,7 @@ import {
 import { useBrands } from "@/hooks/use-brands"
 import { favouriteProjects } from "@/lib/data/sidebar"
 import { cn } from "@/lib/utils"
-import { projectNavItems } from "@/routes"
+import { brandNavItems } from "@/routes"
 
 // Context for sidebar state
 type BrandSidebarContextType = {
@@ -115,7 +115,7 @@ export function BrandSidebar() {
   const currentProject = projects.find((p) => p.id === currentProjectId)
 
   const filteredProjects = projects.filter((project) =>
-    project.name.toLowerCase().includes(search.toLowerCase())
+    (project.brandName || "").toLowerCase().includes(search.toLowerCase())
   )
 
   const handleProjectSwitch = (projectId: string) => {
@@ -150,13 +150,13 @@ export function BrandSidebar() {
                 <div className="flex items-center gap-3 min-w-0">
                   <div 
                     className="h-8 w-8 rounded-lg flex items-center justify-center text-white text-sm font-semibold shrink-0"
-                    style={{ backgroundColor: currentProject?.tags?.[0] ? getColorFromTag(currentProject.tags[0]) : "#6366f1" }}
+                    style={{ backgroundColor: currentProject?.brandColor || "#6366f1" }}
                   >
-                    {currentProject?.name?.charAt(0).toUpperCase() ?? "P"}
+                    {currentProject?.brandName?.charAt(0).toUpperCase() ?? "B"}
                   </div>
                   <div className="flex flex-col items-start min-w-0">
                     <span className="text-sm font-medium truncate w-full">
-                      {currentProject?.name ?? "Select Project"}
+                      {currentProject?.brandName ?? "Select Brand"}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {currentProject?.status ?? "Project"}
@@ -209,11 +209,11 @@ export function BrandSidebar() {
                       >
                         <div 
                           className="h-6 w-6 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                          style={{ backgroundColor: project.tags?.[0] ? getColorFromTag(project.tags[0]) : "#6366f1" }}
+                          style={{ backgroundColor: project.brandColor || "#6366f1" }}
                         >
-                          {project.name.charAt(0).toUpperCase()}
+                          {(project.brandName || "B").charAt(0).toUpperCase()}
                         </div>
-                        <span className="flex-1 text-left truncate">{project.name}</span>
+                        <span className="flex-1 text-left truncate">{project.brandName || "Untitled Brand"}</span>
                         {isActive && (
                           <Check className="h-4 w-4 text-primary" strokeWidth={3} />
                         )}
@@ -245,7 +245,7 @@ export function BrandSidebar() {
         {/* Navigation Items */}
         <nav className="p-2">
           <ul className="flex flex-col gap-1">
-            {projectNavItems.map((item) => {
+            {brandNavItems.map((item) => {
               // Handle separator
               if ('isSeparator' in item && item.isSeparator) {
                 return <Separator key={item.id} className="my-2" />
@@ -304,17 +304,4 @@ export function BrandSidebar() {
 
     </div>
   )
-}
-
-// Helper function to generate consistent colors from tags
-function getColorFromTag(tag: string): string {
-  const colors: Record<string, string> = {
-    "web-app": "#6366f1",
-    "mobile": "#10b981",
-    "design": "#f59e0b",
-    "marketing": "#ec4899",
-    "development": "#3b82f6",
-    "research": "#8b5cf6",
-  }
-  return colors[tag.toLowerCase()] ?? "#6366f1"
 }

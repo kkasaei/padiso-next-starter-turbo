@@ -19,7 +19,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { type Project, type FilterCounts } from "@/lib/mocks/legacy-projects"
 import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-details"
 import { useBrands } from "@/hooks/use-brands"
-import { useProject } from "@/hooks/use-projects"
+import { useBrand } from "@/hooks/use-brands"
 import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
 import { TaskWeekBoardView } from "@/components/workspace/tasks/TaskWeekBoardView"
@@ -31,13 +31,15 @@ import {
   ProjectTasksSection,
 } from "@/components/workspace/tasks/task-helpers"
 import { TaskRowBase } from "@/components/workspace/tasks/TaskRowBase"
+import { TaskTableView } from "@/components/workspace/tasks/TaskTableView"
+import { TaskKanbanView } from "@/components/workspace/tasks/TaskKanbanView"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { ProgressCircle } from "@/components/shared/progress-circle"
 import { FilterPopover } from "@/components/shared/filter-popover"
 import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { ViewOptionsPopover } from "@/components/shared/view-options-popover"
+import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
 import { cn } from "@workspace/ui/lib/utils"
 import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
 
@@ -46,32 +48,32 @@ export function MyTasksPage() {
   
   const [groups, setGroups] = useState<ProjectTaskGroup[]>([])
 
-  // Load project tasks when projects data is available
+  // Load brand tasks when brands data is available
   useEffect(() => {
     if (projectsData.length > 0) {
       const projectGroups = projectsData
-        .map((projectData) => {
-          // Transform tRPC project to ProjectListItem format
+        .map((brandData: any) => {
+          // Transform Brand to ProjectListItem format for legacy code compatibility
           const projectListItem = {
-            id: projectData.id,
-            name: projectData.name,
-            taskCount: projectData.taskCount,
-            progress: projectData.progress,
-            startDate: projectData.startDate,
-            endDate: projectData.endDate,
-            status: projectData.status,
-            priority: projectData.priority,
-            tags: projectData.tags || [],
-            members: projectData.members || [],
-            client: projectData.client,
-            typeLabel: projectData.typeLabel,
-            durationLabel: projectData.durationLabel,
+            id: brandData.id,
+            name: brandData.brandName || "Untitled Brand",
+            taskCount: 0,
+            progress: 0,
+            startDate: null,
+            endDate: null,
+            status: brandData.status,
+            priority: "medium", // Default priority since Brand doesn't have this
+            tags: [],
+            members: [],
+            client: null,
+            typeLabel: null,
+            durationLabel: null,
             tasks: [],
           }
           
           const details = baseDetailsFromListItem(projectListItem)
           const tasks = getProjectTasks(details)
-          return { project: projectData as Project, tasks }
+          return { project: projectListItem as Project, tasks }
         })
         .filter((group) => group.tasks.length > 0)
       
@@ -312,7 +314,7 @@ export function MyTasksPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "board"]} />
+            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "table", "kanban"]} />
           </div>
         </div>
       </header>
@@ -327,14 +329,19 @@ export function MyTasksPage() {
             />
           </DndContext>
         )}
-        {viewOptions.viewType === "board" && (
-          <TaskWeekBoardView
+        {viewOptions.viewType === "table" && (
+          <TaskTableView
             tasks={allVisibleTasks}
-            onAddTask={(context) => openCreateTask(context)}
             onToggleTask={toggleTask}
-            onChangeTag={changeTaskTag}
-            onMoveTaskDate={moveTaskDate}
             onOpenTask={openEditTask}
+          />
+        )}
+        {viewOptions.viewType === "kanban" && (
+          <TaskKanbanView
+            tasks={allVisibleTasks}
+            onToggleTask={toggleTask}
+            onOpenTask={openEditTask}
+            onAddTask={(context) => openCreateTask(context)}
           />
         )}
       </div>

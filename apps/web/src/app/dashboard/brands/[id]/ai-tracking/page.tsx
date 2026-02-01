@@ -1,4 +1,4 @@
-import {default as TrackingPageComponent} from '@/components/workspace/brands/tracking/TrackingPage'
+import {default as TrackingPageComponent} from '@/components/brands/tracking/TrackingPage'
 
 type PageProps = {
   params: Promise<{ id: string }>

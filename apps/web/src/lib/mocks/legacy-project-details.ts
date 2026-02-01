@@ -69,8 +69,8 @@ export type WorkstreamGroup = {
 export type ProjectTask = WorkstreamTask & {
   projectId: string
   projectName: string
-  workstreamId: string
-  workstreamName: string
+  workstreamId?: string
+  workstreamName?: string
 }
 
 export type TimeSummary = {
@@ -188,9 +188,9 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
       ? `Project for ${p.client}. This is mock content that will be replaced by API later.`
       : "This is mock content that will be replaced by API later.",
     meta: {
-      priorityLabel: p.priority.charAt(0).toUpperCase() + p.priority.slice(1),
+      priorityLabel: "Medium", // Default since Brand doesn't have priority
       locationLabel: "Australia",
-      sprintLabel: p.typeLabel && p.durationLabel ? `${p.typeLabel} ${p.durationLabel}` : p.durationLabel ?? "MVP 2 weeks",
+      sprintLabel: "MVP 2 weeks", // Default since Brand doesn't have typeLabel/durationLabel
       lastSyncLabel: "Just now",
     },
     scope: {
@@ -292,7 +292,7 @@ export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
     backlog: {
       statusLabel: "Active",
       groupLabel: "None",
-      priorityLabel: p.priority.charAt(0).toUpperCase() + p.priority.slice(1),
+      priorityLabel: "Medium", // Default since Brand doesn't have priority
       labelBadge: "Design",
       picUsers,
       supportUsers: [userFromName("Support", "Support")],

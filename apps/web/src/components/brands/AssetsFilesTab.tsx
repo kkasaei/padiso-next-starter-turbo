@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react"
 
 import type { ProjectFile, User } from "@/lib/mocks/legacy-project-details"
-import { RecentFileCard } from "@/components/workspace/brands/RecentFileCard"
-import { FilesTable } from "@/components/workspace/brands/FilesTable"
-import { AddFileModal } from "@/components/workspace/brands/AddFileModal"
+import { RecentFileCard } from "@/components/brands/RecentFileCard"
+import { FilesTable } from "@/components/brands/FilesTable"
+import { AddFileModal } from "@/components/brands/AddFileModal"
 
 type AssetsFilesTabProps = {
     files: ProjectFile[]

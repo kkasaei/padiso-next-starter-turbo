@@ -5,9 +5,9 @@ import { CircleDashed, Cube, User, Users } from "lucide-react"
 import type { BacklogSummary } from "@/lib/mocks/legacy-project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
-import { StatRow } from "@/components/workspace/brands/StatRow"
+import { StatRow } from "@/components/brands/StatRow"
 import { PriorityGlyphIcon } from "@/components/shared/priority-badge"
-import { AvatarGroup } from "@/components/workspace/brands/AvatarGroup"
+import { AvatarGroup } from "@/components/brands/AvatarGroup"
 
 type BacklogCardProps = {
   backlog: BacklogSummary

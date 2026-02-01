@@ -1,72 +1,69 @@
 "use client"
 
-import type { ReactNode } from "react"
-import { useRef } from "react"
-import { format } from "date-fns"
-import type { Project } from "@/lib/mocks/legacy-projects"
+import { useState } from "react"
+import { formatDistanceToNow } from "date-fns"
+import type { Brand } from "@workspace/db/schema"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { getAvatarUrl } from "@/lib/assets/avatars"
-import { Folder, CalendarDays, Flag, User } from "lucide-react"
-import { cn } from "@workspace/ui/lib/utils"
-import { PriorityBadge } from "@/components/shared/priority-badge"
-import { BrandProgress } from "@/components/workspace/brands/brand-progress"
+import { useUser } from "@clerk/nextjs"
+import { ArrowRight, ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 type BrandCardProps = {
-  project: Project
-  actions?: ReactNode
-  variant?: "list" | "board"
+  brand: Brand
 }
 
-function statusConfig(status: Project["status"]) {
-  switch (status) {
-    case "active":
-      return { label: "Active", dot: "bg-teal-600", pill: "text-teal-700 border-teal-200 bg-teal-50" }
-    case "planned":
-      return { label: "Planned", dot: "bg-zinc-900", pill: "text-zinc-900 border-zinc-200 bg-zinc-50" }
-    case "backlog":
-      return { label: "Backlog", dot: "bg-orange-600", pill: "text-orange-700 border-orange-200 bg-orange-50" }
-    case "completed":
-      return { label: "Completed", dot: "bg-blue-600", pill: "text-blue-700 border-blue-200 bg-blue-50" }
-    case "cancelled":
-      return { label: "Cancelled", dot: "bg-rose-600", pill: "text-rose-700 border-rose-200 bg-rose-50" }
-    default:
-      return { label: status, dot: "bg-zinc-400", pill: "text-zinc-700 border-zinc-200 bg-zinc-50" }
-  }
-}
-
-export function BrandCard({ project, actions, variant = "list" }: BrandCardProps) {
-  const s = statusConfig(project.status)
-  const assignee = project.members?.[0]
-  const dueDate = project.endDate
-  const avatarUrl = getAvatarUrl(assignee)
-  const isBoard = variant === "board"
+export function BrandCard({ brand }: BrandCardProps) {
   const router = useRouter()
-  const draggingRef = useRef(false)
-  const startPosRef = useRef<{ x: number; y: number } | null>(null)
+  const { user } = useUser() // Get current logged-in user from Clerk
+  const [faviconError, setFaviconError] = useState(false)
 
-  const initials = assignee ? assignee.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase() : null
+  // For now, use the current logged-in user's info (since we don't fetch other users)
+  // TODO: Fetch user by createdByUserId when we need to show multiple users
+  const userName = user?.fullName || user?.firstName || "User"
+  const userImage = user?.imageUrl
+  const initials = userName
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
 
-  const secondaryLine = (() => {
-    const a = project.client
-    const b = project.typeLabel
-    const c = project.durationLabel
-    if (a || b || c) {
-      return [a, b, c].filter(Boolean).join(" • ")
+  const brandName = brand.brandName || "Untitled Brand"
+  
+  // Get favicon URL from website
+  const getFaviconUrl = (websiteUrl: string | null) => {
+    if (!websiteUrl) return null
+    try {
+      const url = new URL(websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`)
+      return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`
+    } catch {
+      return null
     }
-    if (project.tags && project.tags.length > 0) {
-      return project.tags.join(" • ")
-    }
-    return ""
-  })()
+  }
 
-  const dueLabel = (() => {
-    if (!dueDate) return "No due date"
-    // Board view: dùng format ngắn gọn cho header
-    return format(dueDate, "MMM d")
-  })()
+  const faviconUrl = getFaviconUrl(brand.websiteUrl)
+  
+  // AI Visibility Score
+  const score = brand.visibilityScore || 0
+  
+  // Last scan date label
+  const lastScanDate = brand.lastScanAt 
+    ? (typeof brand.lastScanAt === 'string' ? new Date(brand.lastScanAt) : brand.lastScanAt)
+    : null
+  const lastScanLabel = lastScanDate 
+    ? formatDistanceToNow(lastScanDate, { addSuffix: true })
+    : "Never scanned"
+  
+  // Next scan date label
+  const nextScanDate = brand.nextScanAt 
+    ? (typeof brand.nextScanAt === 'string' ? new Date(brand.nextScanAt) : brand.nextScanAt)
+    : null
+  const nextScanLabel = nextScanDate 
+    ? formatDistanceToNow(nextScanDate, { addSuffix: true })
+    : "—"
 
-  const goToDetails = () => router.push(`/dashboard/brands/${project.id}`)
+  const goToDetails = () => router.push(`/dashboard/brands/${brand.id}`)
 
   const onKeyNavigate: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -75,110 +72,94 @@ export function BrandCard({ project, actions, variant = "list" }: BrandCardProps
     }
   }
 
-  const onMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    if (!isBoard) return
-    startPosRef.current = { x: e.clientX, y: e.clientY }
-    draggingRef.current = false
-  }
-
-  const onMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    if (!isBoard || !startPosRef.current) return
-    const dx = Math.abs(e.clientX - startPosRef.current.x)
-    const dy = Math.abs(e.clientY - startPosRef.current.y)
-    if (dx > 5 || dy > 5) draggingRef.current = true
-  }
-
-  const onMouseUp: React.MouseEventHandler<HTMLDivElement> = () => {
-    if (!isBoard) return
-    startPosRef.current = null
-  }
-
   return (
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Open project ${project.name}`}
-      onClick={() => {
-        if (isBoard && draggingRef.current) {
-          draggingRef.current = false
-          return
-        }
-        goToDetails()
-      }}
+      aria-label={`Open brand ${brandName}`}
+      onClick={goToDetails}
       onKeyDown={onKeyNavigate}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      className="rounded-2xl border border-border bg-background hover:shadow-lg/5 transition-shadow cursor-pointer focus:outline-none "
+      className="group relative rounded-xl border border-border bg-background hover:shadow-sm transition-all cursor-pointer focus:outline-none"
     >
-      <div className="p-4">
-        <div className="flex items-center justify-between">
-          {isBoard ? (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Flag className="h-4 w-4" />
-              <span>{dueLabel}</span>
-            </div>
-          ) : (
-            <div className="text-muted-foreground">
-              <Folder className="h-5 w-5" />
-            </div>
-          )}
-          <div className="flex items-center gap-2">
-            {!isBoard && (
-              <div className={cn("flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium", s.pill)}>
-                <span className={cn("inline-block size-1.5 rounded-full", s.dot)} />
-                {s.label}
-              </div>
-            )}
-            {isBoard && (
-              <PriorityBadge level={project.priority} appearance="inline" />
-            )}
-            {actions ? (
-              <div
-                className="shrink-0"
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-              >
-                {actions}
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <p className="text-[15px] font-semibold text-foreground leading-6">
-            {project.name}
-          </p>
-          {isBoard
-            ? secondaryLine && (
-                <div className="mt-1 text-sm text-muted-foreground truncate">{secondaryLine}</div>
-              )
-            : secondaryLine && (
-                <p className="mt-1 text-sm text-muted-foreground truncate">{secondaryLine}</p>
+      <div className="p-5">
+        {/* Header with Icon */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            {/* Brand Icon - Favicon or Initial */}
+            <div className="relative flex items-center justify-center rounded-full w-10 h-10 shrink-0 bg-muted overflow-hidden">
+              {faviconUrl && !faviconError ? (
+                <Image
+                  src={faviconUrl}
+                  alt={brandName}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                  onError={() => setFaviconError(true)}
+                />
+              ) : (
+                <div 
+                  className="flex items-center justify-center w-full h-full"
+                  style={{ backgroundColor: brand.brandColor || '#e5e7eb' }}
+                >
+                  <span className="text-sm font-semibold text-white">
+                    {brandName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               )}
+            </div>
+
+            {/* Brand Info */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base font-semibold text-foreground mb-1 truncate">
+                {brandName}
+              </h3>
+              {brand.websiteUrl && (
+                <a
+                  href={brand.websiteUrl.startsWith('http') ? brand.websiteUrl : `https://${brand.websiteUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="group/link inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors truncate max-w-full"
+                >
+                  <span className="truncate">{brand.websiteUrl.replace(/^https?:\/\//, '')}</span>
+                  <ExternalLink className="h-3 w-3 shrink-0 opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* AI Score Box - Top Right */}
+          <div className="flex flex-col items-center gap-0.5 shrink-0">
+            <div className="flex items-center justify-center rounded-lg w-12 h-12 border border-border bg-muted/30">
+              <span className="text-xl font-bold text-foreground">
+                {score}
+              </span>
+            </div>
+            <span className="text-[10px] text-muted-foreground">AI Score</span>
+          </div>
         </div>
 
-
-        {!isBoard && (
-          <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4" />
-              <span>{dueDate ? format(dueDate, "MMM d, yyyy") : "—"}</span>
-            </div>
-            <PriorityBadge level={project.priority} appearance="inline" />
+        {/* Scan Info - Minimal */}
+        <div className="space-y-1.5 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between">
+            <span>Last scan</span>
+            <span className="text-foreground">{lastScanLabel}</span>
           </div>
-        )}
+          <div className="flex items-center justify-between">
+            <span>Next scan</span>
+            <span className="text-foreground">{nextScanLabel}</span>
+          </div>
+        </div>
 
-        <div className="mt-4 border-t border-border/60" />
-
-        <div className="mt-3 flex items-center justify-between">
-          <BrandProgress project={project} size={isBoard ? 20 : 18} />
-          <Avatar className="size-6 border border-border">
-            <AvatarImage alt={assignee ?? ""} src={avatarUrl} />
-            <AvatarFallback className="text-xs">
-              {initials ? initials : <User className="h-4 w-4 text-muted-foreground" />}
+        {/* Footer with Avatar */}
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/40">
+          <Avatar className="size-6">
+            <AvatarImage alt={userName} src={userImage} />
+            <AvatarFallback className="text-xs bg-muted">
+              {initials}
             </AvatarFallback>
           </Avatar>
+          <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
         </div>
       </div>
     </div>

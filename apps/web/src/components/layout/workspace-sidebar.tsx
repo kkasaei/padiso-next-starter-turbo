@@ -32,10 +32,10 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboardIcon, href: "/dashboard" },
-  { id: "my-tasks", label: "My Tasks", icon: SquareCheckBigIcon, href: "/dashboard/tasks" },
   { id: "brands", label: "Brands", icon: BriefcaseBusiness, href: "/dashboard/brands" },
-  { id: "analytics", label: "Analytics", icon: ChartLineIcon, href: "/dashboard/analytics" },
+  { id: "my-tasks", label: "My Tasks", icon: SquareCheckBigIcon, href: "/dashboard/tasks" },
   { id: "prompts", label: "Prompts", icon: ZapIcon, href: "/dashboard/prompts" },
+  { id: "analytics", label: "Analytics", icon: ChartLineIcon, href: "/dashboard/analytics" },
   { id: "settings", label: "Settings", icon: SettingsIcon, href: "/dashboard/settings" },
 ] as const
 

@@ -17,24 +17,24 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
-import { BrandWizard } from "@/components/workspace/brands/brand-wizard/BrandWizard"
+import { BrandWizard } from "@/components/brands/brand-wizard/BrandWizard"
 
-function OnboardingCard({ hasProjects, onCreateProject }: { hasProjects: boolean; onCreateProject: () => void }) {
+function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCreateBrand: () => void }) {
   return (
     <div className="grid grid-cols-1 divide-y divide-border rounded-3xl border border-border bg-card lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-      {/* Create a project */}
+      {/* Create a brand */}
       <div className="flex flex-col gap-6 p-6 md:p-8 lg:p-10">
         <div className="shrink-0">
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-full ${
-              hasProjects
+              hasBrands
                 ? "bg-emerald-100 dark:bg-emerald-950"
                 : "border border-border bg-muted"
             }`}
           >
             <Package
               className={`h-5 w-5 ${
-                hasProjects
+                hasBrands
                   ? "text-emerald-600 dark:text-emerald-400"
                   : ""
               }`}
@@ -43,18 +43,18 @@ function OnboardingCard({ hasProjects, onCreateProject }: { hasProjects: boolean
         </div>
         <div className="flex flex-1 flex-col justify-between gap-6">
           <div className="flex flex-col gap-y-2">
-            <h3 className="text-lg font-medium md:text-xl">Create a Project</h3>
+            <h3 className="text-lg font-medium md:text-xl">Create a Brand</h3>
             <p className="text-sm text-muted-foreground md:text-base">
-              Create your first project to start managing your workflow
+              Create your first brand to start AI tracking and optimization
             </p>
           </div>
-          {hasProjects ? (
+          {hasBrands ? (
             <Button variant="secondary" className="w-full" disabled>
               Completed
             </Button>
           ) : (
-            <Button className="w-full" onClick={onCreateProject}>
-              Create Project
+            <Button className="w-full" onClick={onCreateBrand}>
+              Create Brand
             </Button>
           )}
         </div>
@@ -165,7 +165,7 @@ function TrainingCard() {
       icon: BookOpen,
       title: "Getting Started",
       description:
-        "Learn the fundamentals of project management and how to navigate the dashboard",
+        "Learn the fundamentals of brand management and how to navigate the dashboard",
       duration: "10 min read",
       difficulty: "Beginner",
       color: "bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
@@ -175,7 +175,7 @@ function TrainingCard() {
       icon: TrendingUp,
       title: "Tracking Progress",
       description:
-        "Discover how to monitor project milestones and track team performance",
+        "Discover how to monitor brand milestones and track team performance",
       duration: "15 min read",
       difficulty: "Beginner",
       color:
@@ -197,7 +197,7 @@ function TrainingCard() {
       icon: Users,
       title: "Team Collaboration",
       description:
-        "Understand how to work effectively with your team members on projects",
+        "Understand how to work effectively with your team members on brands",
       duration: "20 min read",
       difficulty: "Intermediate",
       color:
@@ -208,7 +208,7 @@ function TrainingCard() {
       icon: BarChart,
       title: "Analytics & Reports",
       description:
-        "Track and analyze your project performance with key metrics and KPIs",
+        "Track and analyze your brand performance with key metrics and KPIs",
       duration: "18 min read",
       difficulty: "Advanced",
       color: "bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400",
@@ -344,7 +344,7 @@ function TrainingCard() {
 
 export default function DashboardPage() {
   // In a real app, you'd fetch this from an API or context
-  const hasProjects = false
+  const hasBrands = false
   const [showWizard, setShowWizard] = useState(false)
 
   return (
@@ -352,8 +352,8 @@ export default function DashboardPage() {
       {/* Content */}
       <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6 md:p-8">
         <OnboardingCard 
-          hasProjects={hasProjects} 
-          onCreateProject={() => setShowWizard(true)}
+          hasBrands={hasBrands} 
+          onCreateBrand={() => setShowWizard(true)}
         />
 
         <div className="flex flex-col gap-4">
@@ -362,7 +362,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Project Wizard Modal */}
+      {/* Brand Wizard Modal */}
       {showWizard && (
         <BrandWizard 
           onClose={() => setShowWizard(false)}

@@ -24,10 +24,15 @@ async function seed() {
 
     // Seed workspace
     console.log("🏢 Seeding workspace...");
+    
+    // Use environment variable or default for flexibility
+    const clerkOrgId = process.env.CLERK_ORG_ID || "org_37EN42BgW9DyBqRndpdDSeqfdah";
+    console.log(`  Using Clerk Org ID: ${clerkOrgId}`);
+    
     const [workspace] = await db
       .insert(workspaces)
       .values({
-        clerkOrgId: "org_37F6KK9JG1sdxEPp6tATfRb5dea",
+        clerkOrgId,
         status: "active",
         planId: "pro",
         planName: "Pro Plan",
@@ -42,6 +47,9 @@ async function seed() {
 
     // Seed brands
     console.log("🏷️  Seeding brands...");
+    const now = new Date();
+    const nextScan = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+
     const brandsData: Array<typeof brands.$inferInsert> = [
       {
         workspaceId: workspace.id,
@@ -50,6 +58,10 @@ async function seed() {
         brandColor: "#3B82F6",
         status: "active" as const,
         createdByUserId: "user_37EN2vZ0fFCSzsEf8Bmnpov3t2X",
+        // AI Visibility
+        visibilityScore: 72,
+        lastScanAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+        nextScanAt: nextScan,
       },
       {
         workspaceId: workspace.id,
@@ -58,6 +70,10 @@ async function seed() {
         brandColor: "#10B981",
         status: "active" as const,
         createdByUserId: "user_37EN2vZ0fFCSzsEf8Bmnpov3t2X",
+        // AI Visibility
+        visibilityScore: 85,
+        lastScanAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+        nextScanAt: nextScan,
       },
       {
         workspaceId: workspace.id,
@@ -66,6 +82,10 @@ async function seed() {
         brandColor: "#8B5CF6",
         status: "active" as const,
         createdByUserId: "user_37EN2vZ0fFCSzsEf8Bmnpov3t2X",
+        // AI Visibility
+        visibilityScore: 91,
+        lastScanAt: new Date(now.getTime() - 6 * 60 * 60 * 1000), // 6 hours ago
+        nextScanAt: nextScan,
       },
     ];
 

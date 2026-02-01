@@ -10,7 +10,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table"
-import { getFileIcon } from "@/components/workspace/brands/FileLinkRow"
+import { getFileIcon } from "@/components/brands/FileLinkRow"
 
 type FilesTableProps = {
     files: ProjectFile[]

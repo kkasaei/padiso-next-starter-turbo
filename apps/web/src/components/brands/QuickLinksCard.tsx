@@ -7,7 +7,7 @@ import type { QuickLink } from "@/lib/mocks/legacy-project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
-import { FileLinkRow } from "@/components/workspace/brands/FileLinkRow"
+import { FileLinkRow } from "@/components/brands/FileLinkRow"
 
 type QuickLinksCardProps = {
   links: QuickLink[]

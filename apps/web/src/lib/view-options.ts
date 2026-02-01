@@ -1,19 +1,11 @@
-export type ViewType = "list" | "board" | "timeline" | "calendar"
+export type ViewType = "list" | "table" | "kanban"
 
-export type TaskViewMode = "indented" | "collapsed" | "flat"
-
-export type Ordering = "manual" | "alphabetical" | "date"
-
-export type GroupBy = "none" | "status" | "assignee" | "tags"
+export type Ordering = "alphabetical" | "date"
 
 export type ViewOptions = {
     viewType: ViewType
-    tasks: TaskViewMode
     ordering: Ordering
-    showAbsentParent: boolean
     showClosedProjects: boolean
-    groupBy: GroupBy
-    properties: string[]
 }
 
 export type FilterChip = {
@@ -23,10 +15,6 @@ export type FilterChip = {
 
 export const DEFAULT_VIEW_OPTIONS: ViewOptions = {
     viewType: "list",
-    tasks: "indented",
-    ordering: "manual",
-    showAbsentParent: false,
+    ordering: "alphabetical",
     showClosedProjects: true,
-    groupBy: "none",
-    properties: ["title", "status", "assignee", "dueDate"],
 }

@@ -1,6 +1,6 @@
 export interface TrackedPrompt {
   id: string
-  projectId: string
+  brandId: string
   prompt: string
   notes: string | null
   lastVisibilityScore: number | null

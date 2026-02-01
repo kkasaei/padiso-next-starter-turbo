@@ -202,7 +202,24 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
 
         {/* Business Keywords */}
         <div className="space-y-3 p-4 rounded-xl bg-muted">
-          <Label className="text-sm font-medium">Business Keywords</Label>
+          <div className="flex items-center gap-1.5">
+            <Label className="text-sm font-medium">Keywords</Label>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button" 
+                    className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                  >
+                    <HelpCircle className="size-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[280px] text-xs">
+                  <p>Adding keywords helps us optimize your content for relevant search terms, track rankings, and generate keyword-focused recommendations.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
           <div className="flex gap-2">
             <Input

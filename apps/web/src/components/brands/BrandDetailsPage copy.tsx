@@ -7,20 +7,20 @@ import { AnimatePresence, motion } from "motion/react"
 
 import type { ProjectDetails } from "@/lib/mocks/legacy-project-details"
 import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
-import { useProject } from "@/hooks/use-projects"
-import { Breadcrumbs } from "@/components/workspace/brands/Breadcrumbs"
-import { ProjectHeader } from "@/components/workspace/brands/BrandHeader"
-import { ScopeColumns } from "@/components/workspace/brands/ScopeColumns"
-import { OutcomesList } from "@/components/workspace/brands/OutcomesList"
-import { KeyFeaturesColumns } from "@/components/workspace/brands/KeyFeaturesColumns"
-import { TimelineGantt } from "@/components/workspace/brands/TimelineGantt"
-import { RightMetaPanel } from "@/components/workspace/brands/RightMetaPanel"
-import { WorkstreamTab } from "@/components/workspace/brands/WorkstreamTab"
+import { useBrand } from "@/hooks/use-brands"
+import { Breadcrumbs } from "@/components/brands/Breadcrumbs"
+import { ProjectHeader } from "@/components/brands/BrandHeader"
+import { ScopeColumns } from "@/components/brands/ScopeColumns"
+import { OutcomesList } from "@/components/brands/OutcomesList"
+import { KeyFeaturesColumns } from "@/components/brands/KeyFeaturesColumns"
+import { TimelineGantt } from "@/components/brands/TimelineGantt"
+import { RightMetaPanel } from "@/components/brands/RightMetaPanel"
+import { WorkstreamTab } from "@/components/brands/WorkstreamTab"
 import { ProjectTasksTab } from "@/components/brands/ProjectTasksTab"
-import { NotesTab } from "@/components/workspace/brands/NotesTab"
-import { AssetsFilesTab } from "@/components/workspace/brands/AssetsFilesTab"
-import { BrandWizard } from "@/components/workspace/brands/brand-wizard/BrandWizard"
-import { BrandSidebarTrigger } from "@/components/workspace/brands/brand-sidebar"
+import { NotesTab } from "@/components/brands/NotesTab"
+import { AssetsFilesTab } from "@/components/brands/AssetsFilesTab"
+import { BrandWizard } from "@/components/brands/brand-wizard/BrandWizard"
+import { BrandSidebarTrigger } from "@/components/brands/brand-sidebar"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
@@ -35,7 +35,7 @@ type LoadState =
   | { status: "ready"; project: ProjectDetails }
 
 export function ProjectDetailsPage({ projectId }: ProjectDetailsPageProps) {
-  const { data: projectData, isLoading, error } = useProject(projectId)
+  const { data: projectData, isLoading, error } = useBrand(projectId)
   const [showMeta, setShowMeta] = useState(true)
   const [isWizardOpen, setIsWizardOpen] = useState(false)
 

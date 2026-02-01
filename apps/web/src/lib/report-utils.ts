@@ -1,9 +1,4 @@
 // Minimal types for report utilities
-interface LLMProvider {
-  score: number;
-  [key: string]: unknown;
-}
-
 interface MarketCompetitionSegment {
   queries: number;
   [key: string]: unknown;
@@ -11,8 +6,9 @@ interface MarketCompetitionSegment {
 
 /**
  * Calculates the average score from LLM providers
+ * Accepts any array of objects with a score property
  */
-export function calculateAverageScore(providers: LLMProvider[]): number {
+export function calculateAverageScore(providers: Array<{ score: number; [key: string]: unknown }>): number {
   if (providers.length === 0) return 0;
 
   const sum = providers.reduce((acc, provider) => acc + provider.score, 0);

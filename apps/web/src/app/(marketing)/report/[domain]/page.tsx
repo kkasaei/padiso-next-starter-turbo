@@ -22,6 +22,7 @@ import { useReportSharing } from '@workspace/ui/hooks/use-report-sharing';
 import { usePDFDownload } from '@workspace/ui/hooks/use-pdf-download';
 import { calculateAverageScore, generateReportUrl, formatDomain } from '@/lib/report-utils';
 import { REPORT_CONFIG } from '@/lib/common/constants';
+import { trpc } from '@/lib/trpc/client';
 
 /**
  * Report Page Component
@@ -64,17 +65,23 @@ export default function ReportPage(): React.JSX.Element {
   const currentUrl = generateReportUrl(domain);
   const formattedDomain = formatDomain(domain);
 
-  // Check unlock status on mount
+  // Check unlock status on mount using tRPC
+  const { data: unlockStatus } = trpc.publicReport.checkUnlockStatus.useQuery(
+    { domain },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   React.useEffect(() => {
-    async function checkUnlock() {
-      const result = await checkUnlockStatus({ domain });
-      setIsUnlocked(result.unlocked);
-      if (result.unlocked && result.email) {
-        setUserEmail(result.email);
+    if (unlockStatus) {
+      setIsUnlocked(unlockStatus.unlocked);
+      if (unlockStatus.unlocked && 'email' in unlockStatus && unlockStatus.email) {
+        setUserEmail(unlockStatus.email);
       }
     }
-    checkUnlock();
-  }, [domain]);
+  }, [unlockStatus]);
 
   // Handle download attempt
   const handleDownloadAttempt = React.useCallback(() => {
@@ -87,11 +94,14 @@ export default function ReportPage(): React.JSX.Element {
     }
   }, [isUnlocked, downloadPDF]);
 
+  // tRPC utils for manual refetch
+  const utils = trpc.useUtils();
+
   // Handle successful unlock from PDF download button
   const handleUnlockSuccess = React.useCallback(async () => {
     // Re-check unlock status to get user email
-    const result = await checkUnlockStatus({ domain });
-    if (result.unlocked && result.email) {
+    const result = await utils.publicReport.checkUnlockStatus.fetch({ domain });
+    if (result.unlocked && 'email' in result && result.email) {
       setIsUnlocked(true);
       setUserEmail(result.email);
 
@@ -100,13 +110,13 @@ export default function ReportPage(): React.JSX.Element {
         downloadPDF();
       }, 300);
     }
-  }, [domain, downloadPDF]);
+  }, [domain, downloadPDF, utils]);
 
   // Handle successful unlock from overlay (viewing content)
   const handleOverlayUnlockSuccess = React.useCallback(async () => {
     // Re-check unlock status to get user email
-    const result = await checkUnlockStatus({ domain });
-    if (result.unlocked && result.email) {
+    const result = await utils.publicReport.checkUnlockStatus.fetch({ domain });
+    if (result.unlocked && 'email' in result && result.email) {
       setIsUnlocked(true);
       setUserEmail(result.email);
       toast.success('Report unlocked! PDF generation started automatically.');
@@ -116,7 +126,7 @@ export default function ReportPage(): React.JSX.Element {
         downloadPDF();
       }, 500);
     }
-  }, [domain, downloadPDF]);
+  }, [domain, downloadPDF, utils]);
 
   // Show skeleton while loading
   if (isLoading) {
@@ -129,7 +139,7 @@ export default function ReportPage(): React.JSX.Element {
   }
 
   // Calculate metrics
-  const averageScore = calculateAverageScore(data.llmProviders);
+  const averageScore = calculateAverageScore(data.llmProviders as unknown as Array<{ score: number; [key: string]: unknown }>);
 
   return (
       <div className="min-h-screen bg-background">

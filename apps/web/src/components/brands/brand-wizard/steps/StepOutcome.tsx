@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format, parse } from "date-fns";
 import { ProjectData, SuccessType, DeadlineType, ProjectDeliverable, ProjectMetric } from "../types";
-import { ProjectDescriptionEditor } from "../ProjectDescriptionEditor";
+import { ProjectDescriptionEditor } from "../BrandDescriptionEditor";
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
 import { Label } from "@workspace/ui/components/label";
 import { Input } from "@workspace/ui/components/input";

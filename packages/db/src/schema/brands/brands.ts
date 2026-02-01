@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, boolean, pgEnum, json } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, boolean, pgEnum, json, integer } from "drizzle-orm/pg-core";
 import { workspaces } from "../workspace/workspaces";
 
 export const brandStatusEnum = pgEnum("brand_status", [
@@ -67,7 +67,6 @@ export const brands = pgTable("brands", {
   referralSource: referralSourceEnum("referral_source"),
 
   status: brandStatusEnum("status").notNull(),
-  lastSyncLabel: text("last_sync_label"),
 
   // Legacy Clerk reference (deprecated - use workspace relationship instead)
   // Kept for backward compatibility during migration
@@ -76,7 +75,12 @@ export const brands = pgTable("brands", {
   // User tracking
   createdByUserId: text("created_by_user_id"), // Clerk user ID
   isFavourite: boolean("is_favourite").default(false),
-  
+
+  // AI Visibility Tracking
+  visibilityScore: integer("visibility_score").default(0), // 0-100 score
+  lastScanAt: timestamp("last_scan_at"), // When last scanned
+  nextScanAt: timestamp("next_scan_at"), // When next scan is scheduled
+
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

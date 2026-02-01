@@ -7,7 +7,7 @@ import type { User } from "@/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { QuickCreateModalLayout } from "@/components/shared/QuickCreateModalLayout"
-import { ProjectDescriptionEditor } from "@/components/brand-wizard/ProjectDescriptionEditor"
+import { ProjectDescriptionEditor } from "@/components/brands/brand-wizard/BrandDescriptionEditor"
 
 type CreateNoteModalProps = {
     open: boolean

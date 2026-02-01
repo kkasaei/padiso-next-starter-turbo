@@ -1,15 +1,23 @@
 "use client";
 
 import { trpc } from "@/lib/trpc/client";
+import { useOrganization } from "@clerk/nextjs";
+import { useWorkspaceByClerkOrgId } from "./use-workspace";
 
 /**
  * Hooks for managing brands with tRPC
  */
 
-export function useBrands(workspaceId: string) {
+export function useBrands(workspaceId?: string) {
+  // Get workspace ID from Clerk organization if not provided
+  const { organization } = useOrganization();
+  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "");
+
+  const effectiveWorkspaceId = workspaceId || workspace?.id || "";
+
   return trpc.brands.getAll.useQuery(
-    { workspaceId },
-    { enabled: !!workspaceId }
+    { workspaceId: effectiveWorkspaceId },
+    { enabled: !!effectiveWorkspaceId }
   );
 }
 

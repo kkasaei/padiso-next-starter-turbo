@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Checkbox } from "@workspace/ui/components/checkbox"
-import { TimelineBar } from "@/components/workspace/brands/timeline-bar"
+import { TimelineBar } from "@/components/brands/timeline-bar"
 import { ChevronDown as CaretDown, ChevronRight as CaretRight, Folder, BarChart3 as ChartBar } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 import type { Project } from "@/lib/mocks/legacy-projects"

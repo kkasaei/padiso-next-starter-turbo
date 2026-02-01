@@ -13,7 +13,7 @@ import {
 
 import { type Project, type FilterCounts } from "@/lib/mocks/legacy-projects"
 import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-details"
-import { useProject } from "@/hooks/use-projects"
+import { useBrand } from "@/hooks/use-brands"
 import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
 import { TaskWeekBoardView } from "@/components/workspace/tasks/TaskWeekBoardView"
@@ -26,7 +26,7 @@ import {
 import { Button } from "@workspace/ui/components/button"
 import { FilterPopover } from "@/components/shared/filter-popover"
 import { ChipOverflow } from "@/components/shared/chip-overflow"
-import { ViewOptionsPopover } from "@/components/shared/view-options-popover"
+import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
 import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
 
 interface BrandTasksPageProps {
@@ -34,7 +34,7 @@ interface BrandTasksPageProps {
 }
 
 export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
-  const { data: projectData, isLoading } = useProject(projectId)
+  const { data: projectData, isLoading } = useBrand(projectId)
   
   const [tasks, setTasks] = useState<ProjectTask[]>([])
 

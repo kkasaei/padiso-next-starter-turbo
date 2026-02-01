@@ -22,8 +22,8 @@ import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
 import type { SiteDiscoveryState } from '@/lib/shcmea/types/site-discovery'
 import type { ContextFilesState } from '@/lib/shcmea/types/context-files'
 
-import { useProjectContext } from '@/hooks/use-project-context'
-import { SiteDiscoverySection, ContextFilesSection } from '@/components/brands/create-project'
+import { SiteDiscoverySection } from '@/components/brands/create-brand/site-discovery-section'
+import { ContextFilesSection } from '@/components/brands/create-brand/context-files-section'
 import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
 import { COUNTRIES, getCountryByCode } from '@/lib/common/countries'
 import {

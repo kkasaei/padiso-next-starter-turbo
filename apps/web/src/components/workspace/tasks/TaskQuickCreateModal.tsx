@@ -2,24 +2,20 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
-import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder, Rows3 } from 'lucide-react'
+import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
 
-import { type Project } from '@/lib/mocks/legacy-projects'
-import type { ProjectTask, ProjectDetails, User } from '@/lib/mocks/legacy-project-details'
-import { baseDetailsFromListItem } from '@/lib/mocks/legacy-project-details'
-import { useProject, useProjects } from '@/hooks/use-projects'
-import { getAvatarUrl } from '@/lib/assets/avatars'
+import type { ProjectTask, User } from '@/lib/mocks/legacy-project-details'
+import { useBrands } from '@/hooks/use-brands'
 import { Button } from '@workspace/ui/components/button'
 import { Switch } from '@workspace/ui/components/switch'
-import { GenericPicker, DatePicker } from '@/components/workspace/brands/brand-wizard/steps/StepQuickCreate'
-import { ProjectDescriptionEditor } from '@/components/brand-wizard/ProjectDescriptionEditor'
+import { GenericPicker, DatePicker } from '@/components/brands/brand-wizard/steps/StepQuickCreate'
+import { ProjectDescriptionEditor } from '@/components/brands/brand-wizard/BrandDescriptionEditor'
 import { QuickCreateModalLayout } from '@/components/shared/QuickCreateModalLayout'
 import { toast } from 'sonner'
 
 export type CreateTaskContext = {
-  projectId?: string
-  workstreamId?: string
-  workstreamName?: string
+  brandId?: string
 }
 
 interface TaskQuickCreateModalProps {
@@ -41,6 +37,7 @@ type StatusOption = {
 type AssigneeOption = {
   id: string
   name: string
+  avatarUrl?: string
 }
 
 type PriorityOption = {
@@ -59,12 +56,7 @@ const STATUS_OPTIONS: StatusOption[] = [
   { id: 'done', label: 'Done' },
 ]
 
-const ASSIGNEE_OPTIONS: AssigneeOption[] = [
-  { id: 'andrew-smith', name: 'Andrew Smith' },
-  { id: 'hp', name: 'HP' },
-  { id: 'qa', name: 'QA' },
-  { id: 'pm', name: 'PM' },
-]
+// Assignees will be loaded from Clerk organization members
 
 const PRIORITY_OPTIONS: PriorityOption[] = [
   { id: 'no-priority', label: 'No priority' },
@@ -84,68 +76,7 @@ function toUser(option: AssigneeOption | undefined): User | undefined {
   return {
     id: option.id,
     name: option.name,
-    avatarUrl: getAvatarUrl(option.name),
-  }
-}
-
-function useWorkstreamsForProject(projectId: string | undefined): { id: string; label: string }[] {
-  const { data: projectData } = useProject(projectId || "")
-  
-  if (!projectId || !projectData) return []
-  
-  try {
-    // Transform tRPC project to ProjectListItem format
-    const projectListItem = {
-      id: projectData.id,
-      name: projectData.name,
-      taskCount: projectData.taskCount,
-      progress: projectData.progress,
-      startDate: projectData.startDate,
-      endDate: projectData.endDate,
-      status: projectData.status,
-      priority: projectData.priority,
-      tags: projectData.tags || [],
-      members: projectData.members || [],
-      client: projectData.client,
-      typeLabel: projectData.typeLabel,
-      durationLabel: projectData.durationLabel,
-      tasks: [],
-    }
-    
-    const details = baseDetailsFromListItem(projectListItem)
-    return (details.workstreams ?? []).map((ws) => ({ id: ws.id, label: ws.name }))
-  } catch {
-    return []
-  }
-}
-
-// Helper function that uses the hook internally - for use in component
-function getWorkstreamsForProject(projectId: string | undefined, projectData: ReturnType<typeof useProject>['data']): { id: string; label: string }[] {
-  if (!projectId || !projectData) return []
-  
-  try {
-    // Transform tRPC project to ProjectListItem format
-    const projectListItem = {
-      id: projectData.id,
-      name: projectData.name,
-      taskCount: projectData.taskCount,
-      progress: projectData.progress,
-      startDate: projectData.startDate,
-      endDate: projectData.endDate,
-      status: projectData.status,
-      priority: projectData.priority,
-      tags: projectData.tags || [],
-      members: projectData.members || [],
-      client: projectData.client,
-      typeLabel: projectData.typeLabel,
-      durationLabel: projectData.durationLabel,
-      tasks: [],
-    }
-    
-    const details = baseDetailsFromListItem(projectListItem)
-    return (details.workstreams ?? []).map((ws) => ({ id: ws.id, label: ws.name }))
-  } catch {
-    return []
+    avatarUrl: option.avatarUrl,
   }
 }
 
@@ -155,51 +86,72 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
   const [createMore, setCreateMore] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
-  const [projectId, setProjectId] = useState<string | undefined>(undefined)
-  const [workstreamId, setWorkstreamId] = useState<string | undefined>(undefined)
-  const [workstreamName, setWorkstreamName] = useState<string | undefined>(undefined)
+  const [brandId, setBrandId] = useState<string | undefined>(undefined)
   
-  // Get all projects and current project data
-  const { data: allProjects = [] } = useBrands()
-  const { data: projectData } = useProject(projectId || "")
+  // Get all brands
+  const { data: brandsData = [] } = useBrands()
+  const brands = brandsData as any[] // Cast to handle tRPC date serialization
+  
+  // Get current user
+  const { user } = useUser()
 
-  const [assignee, setAssignee] = useState<AssigneeOption | undefined>(ASSIGNEE_OPTIONS[0])
-  const [status, setStatus] = useState<StatusOption>(STATUS_OPTIONS[0])
+  // Convert current user to assignee option
+  const assigneeOptions = useMemo<AssigneeOption[]>(() => {
+    const options: AssigneeOption[] = [
+      { id: 'unassigned', name: 'Unassigned' },
+    ]
+    
+    // Add current user
+    if (user) {
+      options.push({
+        id: user.id,
+        name: user.fullName || user.firstName || 'You',
+        avatarUrl: user.imageUrl,
+      })
+    }
+    
+    return options
+  }, [user])
+
+  const [assignee, setAssignee] = useState<AssigneeOption | undefined>(undefined)
+  const [status, setStatus] = useState<StatusOption>(STATUS_OPTIONS[0]!)
   const [startDate, setStartDate] = useState<Date | undefined>(new Date())
   const [targetDate, setTargetDate] = useState<Date | undefined>(undefined)
   const [priority, setPriority] = useState<PriorityOption | undefined>(PRIORITY_OPTIONS[0])
   const [selectedTag, setSelectedTag] = useState<TagOption | undefined>(undefined)
 
+  // Set default assignee when options load
+  useEffect(() => {
+    if (assigneeOptions.length > 0 && !assignee) {
+      setAssignee(assigneeOptions[0])
+    }
+  }, [assigneeOptions, assignee])
+
   useEffect(() => {
     if (!open) return
 
     if (editingTask) {
-      setProjectId(editingTask.projectId)
-      setWorkstreamId(editingTask.workstreamId)
-      setWorkstreamName(editingTask.workstreamName)
-
+      setBrandId(editingTask.projectId)
       setTitle(editingTask.name)
       setDescription(editingTask.description)
       setCreateMore(false)
       setIsDescriptionExpanded(false)
 
-      if (editingTask.assignee) {
-        const assigneeOption = ASSIGNEE_OPTIONS.find((a) => a.name === editingTask.assignee?.name)
-        setAssignee(assigneeOption ?? ASSIGNEE_OPTIONS[0])
-      } else {
-        setAssignee(ASSIGNEE_OPTIONS[0])
+      if (editingTask.assignee && assigneeOptions.length > 0) {
+        const assigneeOption = assigneeOptions.find((a) => a.id === editingTask.assignee?.id)
+        setAssignee(assigneeOption || assigneeOptions[0])
       }
 
-      const statusOption = STATUS_OPTIONS.find((s) => s.id === editingTask.status)
-      setStatus(statusOption ?? STATUS_OPTIONS[0])
+      const statusOption = STATUS_OPTIONS.find((s) => s.id === editingTask.status) || STATUS_OPTIONS[0]!
+      setStatus(statusOption)
 
       setStartDate(editingTask.startDate ?? new Date())
       setTargetDate(undefined)
 
       const priorityOption = editingTask.priority
         ? PRIORITY_OPTIONS.find((p) => p.id === editingTask.priority)
-        : undefined
-      setPriority(priorityOption ?? PRIORITY_OPTIONS[0])
+        : PRIORITY_OPTIONS[0]
+      setPriority(priorityOption)
 
       const tagOption = editingTask.tag
         ? TAG_OPTIONS.find((t) => t.label === editingTask.tag)
@@ -209,64 +161,29 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       return
     }
 
-    const defaultProjectId = context?.projectId
-    setProjectId(defaultProjectId)
-
-    // Get project data for workstreams
-    const defaultProjectData = defaultProjectId 
-      ? allProjects.find((p) => p.id === defaultProjectId)
-      : undefined
-    const workstreams = getWorkstreamsForProject(defaultProjectId, defaultProjectData)
-    const initialWorkstream = workstreams.find((ws) => ws.id === context?.workstreamId)
-
-    setWorkstreamId(initialWorkstream?.id)
-    setWorkstreamName(context?.workstreamName ?? initialWorkstream?.label)
-
+    // New task - use context brand ID
+    setBrandId(context?.brandId)
     setTitle('')
     setDescription(undefined)
     setCreateMore(false)
     setIsDescriptionExpanded(false)
-    setAssignee(ASSIGNEE_OPTIONS[0])
-    setStatus(STATUS_OPTIONS[0])
+    setStatus(STATUS_OPTIONS[0]!)
     setStartDate(new Date())
     setTargetDate(undefined)
     setPriority(PRIORITY_OPTIONS[0])
     setSelectedTag(undefined)
-  }, [open, context?.projectId, context?.workstreamId, context?.workstreamName, editingTask, allProjects])
+  }, [open, context?.brandId, editingTask, assigneeOptions])
 
-  const projectOptions = useMemo(
-    () => allProjects.map((p) => ({ id: p.id, label: p.name })),
-    [allProjects],
+  const brandOptions = useMemo(
+    () => brands.map((b: any) => ({ id: b.id, label: b.brandName || 'Untitled Brand' })),
+    [brands],
   )
-
-  const workstreamOptions = useMemo(
-    () => getWorkstreamsForProject(projectId, projectData),
-    [projectId, projectData],
-  )
-
-  useEffect(() => {
-    if (!projectId) return
-
-    if (!workstreamOptions.length) {
-      setWorkstreamId(undefined)
-      setWorkstreamName(undefined)
-      return
-    }
-
-    const existing = workstreamOptions.find((ws) => ws.id === workstreamId)
-    const fallback = workstreamOptions[0]
-    const next = existing ?? fallback
-    setWorkstreamId(next?.id)
-    if (!workstreamName) {
-      setWorkstreamName(next?.label)
-    }
-  }, [projectId, workstreamOptions, workstreamId, workstreamName])
 
   const handleSubmit = () => {
     if (editingTask) {
-      const effectiveProjectId = projectId ?? editingTask.projectId
-      const project: Project | undefined = effectiveProjectId
-        ? allProjects.find((p) => p.id === effectiveProjectId)
+      const effectiveBrandId = brandId ?? editingTask.projectId
+      const brand = effectiveBrandId
+        ? brands.find((b: any) => b.id === effectiveBrandId)
         : undefined
 
       const updatedTask: ProjectTask = {
@@ -279,10 +196,10 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
         priority: priority?.id,
         tag: selectedTag?.label,
         description,
-        projectId: effectiveProjectId ?? editingTask.projectId,
-        projectName: project?.name ?? editingTask.projectName,
-        workstreamId: workstreamId ?? editingTask.workstreamId,
-        workstreamName: workstreamName ?? editingTask.workstreamName,
+        projectId: effectiveBrandId ?? editingTask.projectId,
+        projectName: brand?.brandName ?? editingTask.projectName,
+        workstreamId: editingTask.workstreamId,
+        workstreamName: editingTask.workstreamName,
       }
 
       onTaskUpdated?.(updatedTask)
@@ -291,14 +208,17 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       return
     }
 
-    const effectiveProjectId = projectId ?? allProjects[0]?.id
-    if (!effectiveProjectId) return
+    const effectiveBrandId = brandId ?? brands[0]?.id
+    if (!effectiveBrandId) {
+      toast.error("Please select a brand")
+      return
+    }
 
-    const project: Project | undefined = allProjects.find((p) => p.id === effectiveProjectId)
-    if (!project) return
+    const brand = brands.find((b: any) => b.id === effectiveBrandId)
+    if (!brand) return
 
     const newTask: ProjectTask = {
-      id: `${effectiveProjectId}-task-${Date.now()}`,
+      id: `${effectiveBrandId}-task-${Date.now()}`,
       name: title.trim() || 'Untitled task',
       status: status.id,
       dueLabel: targetDate ? format(targetDate, 'dd/MM/yyyy') : undefined,
@@ -307,10 +227,10 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       priority: priority?.id,
       tag: selectedTag?.label,
       description,
-      projectId: effectiveProjectId,
-      projectName: project.name,
-      workstreamId: workstreamId ?? `${effectiveProjectId}-ws`,
-      workstreamName: workstreamName ?? 'General',
+      projectId: effectiveBrandId,
+      projectName: brand.brandName || 'Untitled Brand',
+      workstreamId: undefined,
+      workstreamName: undefined,
     }
 
     onTaskCreated?.(newTask)
@@ -319,7 +239,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       toast.success("Task created! Ready for another.")
       setTitle('')
       setDescription(undefined)
-      setStatus(STATUS_OPTIONS[0])
+      setStatus(STATUS_OPTIONS[0]!)
       setTargetDate(undefined)
       return
     }
@@ -328,7 +248,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     onClose()
   }
 
-  const projectLabel = projectOptions.find((p) => p.id === projectId)?.label
+  const brandLabel = brandOptions.find((b) => b.id === brandId)?.label
 
   return (
     <QuickCreateModalLayout
@@ -341,10 +261,10 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap">
           <GenericPicker
-            items={projectOptions}
-            selectedId={projectId}
-            onSelect={(item) => setProjectId(item.id)}
-            placeholder="Choose project..."
+            items={brandOptions}
+            selectedId={brandId}
+            onSelect={(item) => setBrandId(item.id)}
+            placeholder="Choose brand..."
             renderItem={(item) => (
               <div className="flex items-center justify-between w-full gap-2">
                 <span>{item.label}</span>
@@ -356,40 +276,11 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
               >
                 <Folder className="size-4 text-muted-foreground" />
                 <span className="truncate max-w-[160px] font-medium text-foreground">
-                  {projectLabel ?? 'Choose project'}
+                  {brandLabel ?? 'Choose brand'}
                 </span>
               </button>
             }
           />
-          {workstreamOptions.length > 0 && (
-            <>
-              <div className="w-2 h-2 bg-muted-foreground/15 rounded-full" />
-              <GenericPicker
-                items={workstreamOptions}
-                selectedId={workstreamId}
-                onSelect={(item) => {
-                  setWorkstreamId(item.id)
-                  setWorkstreamName(item.label)
-                }}
-                placeholder="Choose workstream..."
-                renderItem={(item) => (
-                  <div className="flex items-center justify-between w-full gap-2">
-                    <span>{item.label}</span>
-                  </div>
-                )}
-                trigger={
-                  <button
-                    className="bg-background flex gap-2 h-7 items-center px-2 py-1 rounded-lg border border-background hover:border-primary/50 transition-colors text-xs disabled:opacity-60"
-                  >
-                    <Rows3 className="size-4 text-muted-foreground" />
-                    <span className="truncate max-w-[160px] font-medium text-foreground">
-                      {workstreamName ?? 'Choose workstream'}
-                    </span>
-                  </button>
-                }
-              />
-            </>
-          )}
         </div>
 
         <Button
@@ -431,7 +322,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       <div className="flex flex-wrap gap-2.5 items-start w-full shrink-0">
         {/* Assignee */}
         <GenericPicker
-          items={ASSIGNEE_OPTIONS}
+          items={assigneeOptions}
           onSelect={setAssignee}
           selectedId={assignee?.id}
           placeholder="Assign owner..."

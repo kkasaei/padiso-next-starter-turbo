@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { GridSection } from '../../fragments/grid-section';
+import { GridSection } from '../../shared/fragments/grid-section';
 
 interface ReportSkeletonProps {
   domain: string;

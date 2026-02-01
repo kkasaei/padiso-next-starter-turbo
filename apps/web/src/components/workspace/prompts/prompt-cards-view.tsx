@@ -1,7 +1,7 @@
 "use client";
 
 import type { Prompt } from "@/lib/data/prompts";
-import { PromptCard } from "@/components/prompts/prompt-card";
+import { PromptCard } from "@/components/workspace/prompts/prompt-card";
 import { Plus, Zap } from "lucide-react";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 

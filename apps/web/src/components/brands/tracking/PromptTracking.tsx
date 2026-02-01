@@ -36,7 +36,7 @@ import type { PromptAnalyticsData } from '@/lib/shcmea/types/dtos/prompt-analyti
 // ============================================================
 const MOCK_PROMPT: TrackedPrompt = {
   id: 'prompt-001',
-  projectId: 'project-001',
+  brandId: 'project-001',
   prompt: 'Best project management software for remote teams',
   notes: 'Tracking visibility for our main product keyword',
   lastVisibilityScore: 78,
@@ -421,11 +421,11 @@ const MOCK_ANALYTICS_DATA: PromptAnalyticsData = {
 // ============================================================
 function PromptAnalyticsWrapper({
   promptId,
-  projectId,
+  brandId,
   children
 }: {
   promptId: string
-  projectId: string
+  brandId: string
   children: (data: PromptAnalyticsData | null) => React.ReactNode
 }) {
   const { dateRange } = useAnalyticsDateRange()
@@ -434,11 +434,11 @@ function PromptAnalyticsWrapper({
 
   // Analytics data would be loaded here when integrated with data source
   useEffect(() => {
-    if (promptId && projectId && dateRange.from) {
+    if (promptId && brandId && dateRange.from) {
       // Data loading placeholder - using mock data for now
-      console.log('Load analytics for:', projectId, promptId, dateRange)
+      console.log('Load analytics for:', brandId, promptId, dateRange)
     }
-  }, [projectId, promptId, dateRange])
+  }, [brandId, promptId, dateRange])
 
   return <>{children(analyticsData)}</>
 }
@@ -446,7 +446,7 @@ function PromptAnalyticsWrapper({
 // ============================================================
 // MAIN PAGE COMPONENT
 // ============================================================
-export default function PromptTrackingPage({ projectId, promptId }: { projectId: string, promptId: string }) {
+export default function PromptTrackingPage({ brandId, promptId }: { brandId: string, promptId: string }) {
   // State - using mock data for testing
   const [prompt] = useState<TrackedPrompt | null>(MOCK_PROMPT)
   const [isLoading, setIsLoading] = useState(true)
@@ -487,7 +487,7 @@ export default function PromptTrackingPage({ projectId, promptId }: { projectId:
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href={`/dashboard/brands/${projectId}/tracking?tab=prompts`}>
+            <Link href={`/dashboard/brands/${brandId}/tracking?tab=prompts`}>
               Back to Prompts
             </Link>
           </Button>
@@ -498,7 +498,7 @@ export default function PromptTrackingPage({ projectId, promptId }: { projectId:
 
   return (
     <AnalyticsDateRangeProvider>
-      <PromptAnalyticsWrapper promptId={promptId} projectId={projectId}>
+      <PromptAnalyticsWrapper promptId={promptId} brandId={brandId}>
         {(analyticsData) => (
           <div className="relative flex flex-2 flex-col items-center">
             <div className="flex w-full flex-col gap-y-2">
@@ -580,7 +580,7 @@ export default function PromptTrackingPage({ projectId, promptId }: { projectId:
                   <AIResponsesSection analyticsData={analyticsData} />
                 </TabsContent>
                 <SentimentsTab analyticsData={analyticsData} />
-                <InsightsTab analyticsData={analyticsData} projectId={projectId} />
+                <InsightsTab analyticsData={analyticsData} brandId={brandId} />
               </Tabs>
             </div>
           </div>

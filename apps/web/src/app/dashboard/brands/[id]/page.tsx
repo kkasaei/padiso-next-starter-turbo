@@ -1,4 +1,4 @@
-import { BrandDetailsPage } from "@/components/workspace/brands/BrandDetailsPage"
+import { BrandDetailsPage } from "@/components/brands/BrandDetailsPage"
 
 type PageProps = {
   params: Promise<{ id: string }>

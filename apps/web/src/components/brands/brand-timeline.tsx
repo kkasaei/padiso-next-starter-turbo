@@ -25,7 +25,7 @@ import { Input } from "@workspace/ui/components/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import { cn } from "@workspace/ui/lib/utils"
-import { DraggableBar } from "@/components/workspace/brands/brand-timeline-draggable-bar"
+import { DraggableBar } from "@/components/brands/brand-timeline-draggable-bar"
 import { PriorityGlyphIcon } from "@/components/shared/priority-badge"
 
 // Fixed "today" so the demo stays visually consistent over time.

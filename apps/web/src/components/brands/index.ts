@@ -5,7 +5,7 @@
  */
 
 // Main Views
-export * from './brands-content';
+export * from './BrandsListPage';
 export * from './BrandDetailsPage';
 
 // Brand UI Components
@@ -16,6 +16,7 @@ export * from './brand-header';
 export * from './brand-timeline';
 export * from './brand-sidebar';
 export * from './brand-cards-view';
+export * from './brand-table-view';
 export * from './brand-board-view';
 
 // Wizard

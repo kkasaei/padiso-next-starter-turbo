@@ -1,4 +1,4 @@
-import ToolsPageContent from '@/components/workspace/brands/tools/llmtext-generator/page'
+import ToolsPageContent from '@/components/brands/tools/llmtext-generator/page'
 
 type PageProps = {
   params: Promise<{ id: string }>

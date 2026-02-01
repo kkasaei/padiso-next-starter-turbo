@@ -1,14 +1,13 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
-import type { Project } from "@/lib/mocks/legacy-projects"
-import { BrandCard } from "@/components/workspace/brands/brand-card"
+import type { Brand } from "@workspace/db/schema"
+import { BrandCard } from "@/components/brands/brand-card"
 import { Skeleton } from "@workspace/ui/components/skeleton"
-import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Button } from "@workspace/ui/components/button"
-import { MoreVertical as DotsThreeVertical, Plus, Layers as StackSimple, Loader as Spinner, Loader2 as CircleNotch, CheckCircle } from "lucide-react"
+import { Plus, Layers as StackSimple, Loader as Spinner, Loader2 as CircleNotch, CheckCircle, MoreVertical } from "lucide-react"
 
-function columnStatusIcon(status: Project["status"]): React.JSX.Element {
+function columnStatusIcon(status: Brand["status"]): React.JSX.Element {
   switch (status) {
     case "backlog":
       return <StackSimple className="h-4 w-4 text-muted-foreground" />
@@ -24,14 +23,14 @@ function columnStatusIcon(status: Project["status"]): React.JSX.Element {
 }
 
 type BrandBoardViewProps = {
-  projects: Project[]
+  brands: Brand[]
   loading?: boolean
-  onAddProject?: () => void
+  onAddBrand?: () => void
 }
 
-const COLUMN_ORDER: Array<Project["status"]> = ["backlog", "planned", "active", "completed"]
+const COLUMN_ORDER: Array<Brand["status"]> = ["backlog", "planned", "active", "completed"]
 
-function columnStatusLabel(status: Project["status"]): string {
+function columnStatusLabel(status: Brand["status"]): string {
   switch (status) {
     case "backlog":
       return "Backlog"
@@ -48,22 +47,22 @@ function columnStatusLabel(status: Project["status"]): string {
   }
 }
 
-export function BrandBoardView({ projects, loading = false, onAddProject }: ProjectBoardViewProps) {
-  const [items, setItems] = useState<Project[]>(projects)
+export function BrandBoardView({ brands = [], loading = false, onAddBrand }: BrandBoardViewProps) {
+  const [items, setItems] = useState<Brand[]>(brands)
   const [draggingId, setDraggingId] = useState<string | null>(null)
 
   useEffect(() => {
-    setItems(projects)
-  }, [projects])
+    setItems(brands)
+  }, [brands])
 
   const groups = useMemo(() => {
-    const m = new Map<Project["status"], Project[]>()
+    const m = new Map<Brand["status"], Brand[]>()
     for (const s of COLUMN_ORDER) m.set(s, [])
     for (const p of items) m.get(p.status)!.push(p)
     return m
   }, [items])
 
-  const onDropTo = (status: Project["status"]) => (e: React.DragEvent<HTMLDivElement>) => {
+  const onDropTo = (status: Brand["status"]) => (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     const id = e.dataTransfer.getData("text/id")
     if (!id) return
@@ -75,7 +74,7 @@ export function BrandBoardView({ projects, loading = false, onAddProject }: Proj
     e.preventDefault()
   }
 
-  const draggableCard = (p: Project) => (
+  const draggableCard = (p: Brand) => (
     <div
       key={p.id}
       draggable
@@ -90,32 +89,7 @@ export function BrandBoardView({ projects, loading = false, onAddProject }: Proj
       }}
       onDragEnd={() => setDraggingId(null)}
     >
-      <BrandCard
-        project={p}
-        variant="board"
-        actions={
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg">
-                <DotsThreeVertical className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-40 p-2" align="end">
-              <div className="space-y-1">
-                {COLUMN_ORDER.map((s) => (
-                  <button
-                    key={s}
-                    className="w-full rounded-md px-2 py-1 text-left text-sm hover:bg-accent"
-                    onClick={() => setItems((prev) => prev.map((x) => (x.id === p.id ? { ...x, status: s } : x)))}
-                  >
-                    Move to {s}
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-        }
-      />
+      <BrandCard brand={p} />
     </div>
   )
 
@@ -172,7 +146,7 @@ export function BrandBoardView({ projects, loading = false, onAddProject }: Proj
                   size="icon"
                   className="h-7 w-7 rounded-lg"
                   type="button"
-                  onClick={onAddProject}
+                  onClick={onAddBrand}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -182,7 +156,7 @@ export function BrandBoardView({ projects, loading = false, onAddProject }: Proj
                   className="h-7 w-7 rounded-lg"
                   type="button"
                 >
-                  <DotsThreeVertical className="h-4 w-4" />
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -192,7 +166,7 @@ export function BrandBoardView({ projects, loading = false, onAddProject }: Proj
                 variant="ghost"
                 size="sm"
                 type="button"
-                onClick={onAddProject}
+                onClick={onAddBrand}
               >
                 <Plus className="mr-1 h-4 w-4" />
                 Add brand

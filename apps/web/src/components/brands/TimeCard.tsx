@@ -3,7 +3,7 @@ import { CalendarDays as CalendarBlank, Clock } from "lucide-react"
 import type { TimeSummary } from "@/lib/mocks/legacy-project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Progress } from "@workspace/ui/components/progress"
-import { StatRow } from "@/components/workspace/brands/StatRow"
+import { StatRow } from "@/components/brands/StatRow"
 
 type TimeCardProps = {
   time: TimeSummary

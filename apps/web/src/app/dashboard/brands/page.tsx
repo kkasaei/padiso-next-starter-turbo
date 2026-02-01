@@ -1,10 +1,10 @@
 import { Suspense } from "react"
-import { BrandsContent } from "@/components/brands-content"
+import { BrandsListPage } from "@/components/brands/BrandsListPage"
 
 export default function BrandsPage() {
   return (
     <Suspense fallback={null}>
-      <BrandsContent />
+      <BrandsListPage />
     </Suspense>
   )
 }

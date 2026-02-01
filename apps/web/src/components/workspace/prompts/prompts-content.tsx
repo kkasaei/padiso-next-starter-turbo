@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PromptHeader } from "@/components/prompts/prompt-header";
-import { PromptCardsView } from "@/components/prompts/prompt-cards-view";
-import { PromptPagination } from "@/components/prompts/prompt-pagination";
-import { CreatePromptModal } from "@/components/prompts/create-prompt-modal";
-import { PromptDetailModal } from "@/components/prompts/prompt-detail-modal";
+import { PromptHeader } from "@/components/workspace/prompts/prompt-header";
+import { PromptCardsView } from "@/components/workspace/prompts/prompt-cards-view";
+import { PromptPagination } from "@/components/workspace/prompts/prompt-pagination";
+import { CreatePromptModal } from "@/components/workspace/prompts/create-prompt-modal";
+import { PromptDetailModal } from "@/components/workspace/prompts/prompt-detail-modal";
 import { mockPrompts, type Prompt, type AIProvider } from "@/lib/data/prompts";
 import { toast } from "sonner";
 

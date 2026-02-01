@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { Plus, X, Globe, Info } from "lucide-react";
+import { Plus, X, Globe, HelpCircle } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Badge } from "@workspace/ui/components/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip";
 import { BusinessData } from "../types";
 
 interface StepCompetitorsProps {
@@ -18,7 +24,7 @@ export function StepCompetitors({ data, updateData }: StepCompetitorsProps) {
   const addCompetitor = () => {
     if (competitorInput.trim()) {
       // Clean up the URL - just keep the domain
-      let domain = competitorInput.trim()
+      const domain = competitorInput.trim()
         .replace(/^https?:\/\//, '')
         .replace(/^www\./, '')
         .split('/')[0];
@@ -68,18 +74,26 @@ export function StepCompetitors({ data, updateData }: StepCompetitorsProps) {
       </p>
 
       <div className="space-y-6">
-        {/* Info Box */}
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-muted text-sm text-muted-foreground">
-          <Info className="size-4 shrink-0 mt-0.5" />
-          <p>If you add competitors, we can better:</p>
-        </div>
-
         {/* Competitor Input */}
         <div className="space-y-3 p-4 rounded-xl bg-muted">
-          <Label className="text-sm font-medium flex items-center gap-1">
-            Competitor Domains
-            <Info className="size-3 text-muted-foreground" />
-          </Label>
+          <div className="flex items-center gap-1.5">
+            <Label className="text-sm font-medium">Competitor Domains</Label>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button" 
+                    className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                  >
+                    <HelpCircle className="size-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[280px] text-xs">
+                  <p>Add competitors to benchmark your AI visibility, identify content gaps, track competitive performance, and get strategic recommendations.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
           <div className="flex gap-2">
             <div className="relative flex-1">
