@@ -1105,7 +1105,7 @@ function PageContent() {
 
   return (
     <div className="relative flex min-w-0 flex-2 flex-col items-center md:overflow-y-auto md:bg-white md:shadow-xs">
-      <div className="flex h-full w-full max-w-7xl flex-col">
+      <div className="flex h-full w-full flex-col">
 
         {/* Tabs Container */}
         <Tabs defaultValue="overview" className="w-full">
