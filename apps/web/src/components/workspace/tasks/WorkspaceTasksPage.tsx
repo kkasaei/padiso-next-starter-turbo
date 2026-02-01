@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Plus, Sparkles } from "lucide-react"
+import { Plus } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,
@@ -16,54 +16,56 @@ import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-de
 import { useBrand } from "@/hooks/use-brands"
 import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
-import { TaskWeekBoardView } from "@/components/workspace/tasks/TaskWeekBoardView"
 import {
   ProjectTaskGroup,
   ProjectTaskListView,
   filterTasksByChips,
   computeTaskFilterCounts,
 } from "@/components/workspace/tasks/task-helpers"
+import { TaskTableView } from "@/components/workspace/tasks/TaskTableView"
+import { TaskKanbanView } from "@/components/workspace/tasks/TaskKanbanView"
 import { Button } from "@workspace/ui/components/button"
 import { FilterPopover } from "@/components/shared/filter-popover"
 import { ChipOverflow } from "@/components/shared/chip-overflow"
 import { ViewOptionsPopover } from "@/components/brands/view-options-popover"
 import { TaskQuickCreateModal, type CreateTaskContext } from "@/components/workspace/tasks/TaskQuickCreateModal"
 
-interface BrandTasksPageProps {
-  projectId: string
+interface WorkspaceTasksPageProps {
+  brandId: string
 }
 
-export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
-  const { data: projectData, isLoading } = useBrand(projectId)
+export function WorkspaceTasksPage({ brandId }: WorkspaceTasksPageProps) {
+  const { data: brandData, isLoading } = useBrand(brandId)
   
   const [tasks, setTasks] = useState<ProjectTask[]>([])
 
-  // Load project tasks when project data is available
+  // Load brand tasks when brand data is available
   useEffect(() => {
-    if (projectData) {
-      // Transform tRPC project to ProjectListItem format
+    if (brandData) {
+      // Transform Brand to ProjectListItem format for legacy code compatibility
+      const now = new Date()
       const projectListItem = {
-        id: projectData.id,
-        name: projectData.name,
-        taskCount: projectData.taskCount,
-        progress: projectData.progress,
-        startDate: projectData.startDate,
-        endDate: projectData.endDate,
-        status: projectData.status,
-        priority: projectData.priority,
-        tags: projectData.tags || [],
-        members: projectData.members || [],
-        client: projectData.client,
-        typeLabel: projectData.typeLabel,
-        durationLabel: projectData.durationLabel,
+        id: brandData.id,
+        name: (brandData as any).brandName || "Untitled Brand",
+        taskCount: 0,
+        progress: 0,
+        startDate: now,
+        endDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        status: brandData.status,
+        priority: "medium" as const,
+        tags: [],
+        members: [],
+        client: "",
+        typeLabel: "",
+        durationLabel: "",
         tasks: [],
       }
       
       const details = baseDetailsFromListItem(projectListItem)
-      const projectTasks = getProjectTasks(details)
-      setTasks(projectTasks)
+      const brandTasks = getProjectTasks(details)
+      setTasks(brandTasks)
     }
-  }, [projectData])
+  }, [brandData])
 
   const [filters, setFilters] = useState<FilterChipType[]>([])
   const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
@@ -81,15 +83,32 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
     return filterTasksByChips(tasks, filters)
   }, [tasks, filters])
 
-  // Create a single group for the project
+  // Create a single group for the brand
   const visibleGroups = useMemo<ProjectTaskGroup[]>(() => {
-    if (!projectData || visibleTasks.length === 0) return []
-    return [{ project: projectData as Project, tasks: visibleTasks }]
-  }, [projectData, visibleTasks])
+    if (!brandData || visibleTasks.length === 0) return []
+    
+    // Transform to Project format for display
+    const now = new Date()
+    const projectFormat = {
+      id: brandData.id,
+      name: (brandData as any).brandName || "Untitled Brand",
+      status: brandData.status,
+      taskCount: tasks.length,
+      progress: 0,
+      startDate: now,
+      endDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
+      priority: "medium" as const,
+      tags: [],
+      members: [],
+      tasks: [],
+    }
+    
+    return [{ project: projectFormat as Project, tasks: visibleTasks }]
+  }, [brandData, visibleTasks, tasks.length])
 
   const openCreateTask = (context?: CreateTaskContext) => {
     setEditingTask(undefined)
-    setCreateContext(context ?? { projectId })
+    setCreateContext(context ?? { brandId })
     setIsCreateTaskOpen(true)
   }
 
@@ -177,7 +196,7 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             <div className="space-y-1">
               <p className="text-base font-medium text-foreground">Tasks</p>
               <p className="text-xs text-muted-foreground">
-                {projectData?.name ? `Manage tasks for ${projectData.name}` : "No tasks available yet."}
+                {`Manage tasks for your workspace`}
               </p>
             </div>
             <Button
@@ -258,7 +277,7 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             />
           </div>
           <div className="flex items-center gap-2">
-            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "board"]} />
+            <ViewOptionsPopover options={viewOptions} onChange={setViewOptions} allowedViewTypes={["list", "table", "kanban"]} />
           </div>
         </div>
       </header>
@@ -274,14 +293,19 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             />
           </DndContext>
         )}
-        {viewOptions.viewType === "board" && (
-          <TaskWeekBoardView
+        {viewOptions.viewType === "table" && (
+          <TaskTableView
             tasks={visibleTasks}
-            onAddTask={(context) => openCreateTask(context)}
             onToggleTask={toggleTask}
-            onChangeTag={changeTaskTag}
-            onMoveTaskDate={moveTaskDate}
             onOpenTask={openEditTask}
+          />
+        )}
+        {viewOptions.viewType === "kanban" && (
+          <TaskKanbanView
+            tasks={visibleTasks}
+            onToggleTask={toggleTask}
+            onOpenTask={openEditTask}
+            onAddTask={(context) => openCreateTask(context)}
           />
         )}
       </div>

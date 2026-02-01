@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { BrandTasksPage } from "@/components/workspace/tasks/BrandTasksPage"
+import { WorkspaceTasksPage } from "@/components/workspace/tasks/WorkspaceTasksPage"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -15,7 +15,7 @@ export default async function Page({ params }: PageProps) {
           <p className="text-muted-foreground">Loading tasks...</p>
         </div>
       }>
-        <BrandTasksPage projectId={id} />
+        <WorkspaceTasksPage brandId={id} />
       </Suspense>
     </div>
   )
