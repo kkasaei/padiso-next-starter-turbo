@@ -23,7 +23,13 @@ async function bootstrap() {
     .setTitle('SearchFit API')
     .setDescription('The SearchFit API documentation')
     .setVersion('1.0')
-    .addTag('projects', 'Project management endpoints')
+    .addTag('workspaces', 'Workspace management endpoints')
+    .addTag('brands', 'Brand management endpoints')
+    .addTag('brand-members', 'Brand member management endpoints')
+    .addTag('subscriptions', 'Subscription management endpoints')
+    .addTag('tasks', 'Task management endpoints')
+    .addTag('files', 'File management endpoints')
+    .addTag('prompts', 'Prompt template management endpoints')
     .addTag('health', 'Health check endpoints')
     .build();
 
