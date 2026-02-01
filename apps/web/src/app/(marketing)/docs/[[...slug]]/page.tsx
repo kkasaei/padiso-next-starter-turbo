@@ -10,9 +10,9 @@ import { baseURL } from '@/routes';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { cn } from '@/lib/utils';
 
-import { Mdx } from '@/components/marketing/blog/mdx-component';
-import { DocsPager } from '@/components/marketing/docs/docs-pager';
-import { DocsToc } from '@/components/marketing/docs/docs-toc';
+import { Mdx } from '@/components/marketing/blog/MdxComponent';
+import { DocsPager } from '@/components/marketing/docs/DocsPager';
+import { DocsToc } from '@/components/marketing/docs/DocsToc';
 import { getTableOfContents } from '@/lib/toc';
 
 async function getDocFromParams(props: { params: Promise<{ slug: string[] }> }) {

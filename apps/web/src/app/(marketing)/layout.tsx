@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { Footer } from '@/components/marketing/footer';
-import { CookieBanner } from '@/components/shared/fragments/cookie-banner';
-import { Navbar } from '@/components/marketing/navbar';
+import { Footer } from '@/components/marketing/Footer';
+import { CookieBanner } from '@/components/shared/fragments/CookieBanner';
+import { Navbar } from '@/components/marketing/Navbar';
 // import GoogleAnalytics from '@/components/modules/analytics/analytics';
 
 export default function MarketingLayout({

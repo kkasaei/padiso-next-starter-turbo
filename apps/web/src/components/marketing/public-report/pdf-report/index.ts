@@ -3,15 +3,15 @@
  * Matches SerchFIT.io report design
  */
 
-export { AEOReportPDF } from './pdf-document';
-export { PDFCoverPage } from './pages/pdf-cover-page';
-export { PDFScoresSummary } from './pages/pdf-scores-summary';
-export { PDFBrandRecognitionPage } from './pages/pdf-brand-recognition';
-export { PDFPositioningCompetition } from './pages/pdf-positioning-competition';
-export { PDFSentimentAnalysis } from './pages/pdf-sentiment-analysis';
-export { PDFStrategicInsights } from './pages/pdf-strategic-insights';
-export { PDFNarrativeThemes } from './pages/pdf-narrative-themes';
-export { PDFContentIdeas } from './pages/pdf-content-ideas';
-export { PDFAboutSearchFit } from './pages/pdf-about-searchfit';
-export { PDFContactCTA } from './pages/pdf-contact-cta';
-export { PDFThankYou } from './pages/pdf-thank-you';
+export { AEOReportPDF } from './PdfDocument';
+export { PDFCoverPage } from './pages/PdfCoverPage';
+export { PDFScoresSummary } from './pages/PdfScoresSummary';
+export { PDFBrandRecognitionPage } from './pages/PdfBrandRecognition';
+export { PDFPositioningCompetition } from './pages/PdfPositioningCompetition';
+export { PDFSentimentAnalysis } from './pages/PdfSentimentAnalysis';
+export { PDFStrategicInsights } from './pages/PdfStrategicInsights';
+export { PDFNarrativeThemes } from './pages/PdfNarrativeThemes';
+export { PDFContentIdeas } from './pages/PdfContentIdeas';
+export { PDFAboutSearchFit } from './pages/PdfAboutSearchfit';
+export { PDFContactCTA } from './pages/PdfContactCta';
+export { PDFThankYou } from './pages/PdfThankYou';

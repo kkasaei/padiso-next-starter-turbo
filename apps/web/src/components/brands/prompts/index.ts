@@ -1,10 +1,10 @@
 export * from './types'
 export * from './constants'
-export * from './label-with-help'
-export * from './prompts-table'
-export * from './prompt-form-sheet'
-export * from './suggestions-sheet'
-export * from './prompts-header'
+export * from './LabelWithHelp'
+export * from './PromptsTable'
+export * from './PromptFormSheet'
+export * from './SuggestionsSheet'
+export * from './PromptsHeader'
 
 // Analytics components
 export * from './analytics'

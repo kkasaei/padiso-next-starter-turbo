@@ -2,29 +2,29 @@
 // ==================================
 
 // Charts (existing)
-export * from './charts'
+export * from './Charts'
 
 // Overview Stats
-export { OverviewStats } from './overview-stats'
+export { OverviewStats } from './OverviewStats'
 
 // Provider Scores
-export { ProviderScores } from './provider-scores'
+export { ProviderScores } from './ProviderScores'
 
 // Brand Recognition
-export { BrandRecognitionSection } from './brand-recognition-section'
+export { BrandRecognitionSection } from './BrandRecognitionSection'
 
 // Sentiment Analysis
-export { SentimentSection } from './sentiment-section'
+export { SentimentSection } from './SentimentSection'
 
 // Market Competition
-export { MarketCompetitionSection } from './market-competition-section'
+export { MarketCompetitionSection } from './MarketCompetitionSection'
 
 // Analysis Summary (Strengths & Opportunities)
-export { AnalysisSummarySection } from './analysis-summary-section'
+export { AnalysisSummarySection } from './AnalysisSummarySection'
 
 // Brand Positioning
-export { BrandPositioningSection } from './brand-positioning-section'
+export { BrandPositioningSection } from './BrandPositioningSection'
 
 // Narrative Themes / Contextual Analysis
-export { NarrativeThemesSection } from './narrative-themes-section'
+export { NarrativeThemesSection } from './NarrativeThemesSection'
 

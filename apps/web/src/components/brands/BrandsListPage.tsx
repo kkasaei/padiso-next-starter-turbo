@@ -4,14 +4,14 @@ import { useState, useMemo } from "react"
 import { useOrganization, useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
 import type { Brand } from "@workspace/db/schema"
-import { BrandHeader } from "./brand-header"
-import { BrandCardsView } from "./brand-cards-view"
-import { BrandTableView } from "./brand-table-view"
+import { BrandHeader } from "./BrandHeaderAlt"
+import { BrandCardsView } from "./BrandCardsView"
+import { BrandTableView } from "./BrandTableView"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from "@/lib/view-options"
 import { useBrands, useCreateBrand } from "@/hooks/use-brands"
 import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace"
-import type { BusinessData } from "./brand-wizard/types"
+import type { BusinessData } from "./BrandWizard/types"
 
 export function BrandsListPage() {
   // Get organization and workspace

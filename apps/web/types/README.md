@@ -1,1 +1,0 @@
-# Just use this folder to capture what is needed for the Database Design

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { WorkspaceSidebar } from "@/components/layout/WorkspaceSidebar"
-import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/brand-sidebar"
+import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/BrandSidebar"
 
 export default function DashboardLayout({
   children,

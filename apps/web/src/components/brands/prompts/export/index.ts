@@ -1,3 +1,3 @@
-export * from './export-prompts-modal'
-export * from './csv-export-tab'
-export * from './google-sheets-export-tab'
+export * from './ExportPromptsModal'
+export * from './CsvExportTab'
+export * from './GoogleSheetsExportTab'

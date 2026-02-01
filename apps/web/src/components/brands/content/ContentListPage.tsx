@@ -16,7 +16,7 @@ import {
   FileText,
 } from 'lucide-react'
 import { Sparkles } from 'lucide-react'
-import { ViewOptionsPopover } from '@/components/brands/view-options-popover'
+import { ViewOptionsPopover } from '@/components/brands/ViewOptionsPopover'
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@/lib/view-options'
 import { cn } from '@/lib/utils'
 

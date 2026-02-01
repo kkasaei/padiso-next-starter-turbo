@@ -6,7 +6,7 @@ import { allPosts } from 'content-collections';
 
 import { baseURL } from '@/routes';
 
-import { BlogPost } from '@/components/marketing/sections/blog-post';
+import { BlogPost } from '@/components/marketing/sections/BlogPost';
 
 async function getBlogPostFromParams(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params;

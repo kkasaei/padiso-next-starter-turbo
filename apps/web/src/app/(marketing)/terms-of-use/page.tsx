@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { TermsOfUse } from '@/components/marketing/sections/terms-of-use';
+import { TermsOfUse } from '@/components/marketing/sections/TermsOfUse';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { CookiePolicy } from '@/components/marketing/sections/cookie-policy';
+import { CookiePolicy } from '@/components/marketing/sections/CookiePolicy';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

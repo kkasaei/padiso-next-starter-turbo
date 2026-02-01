@@ -6,18 +6,18 @@
 
 // Main Views
 export * from './BrandsListPage';
-export * from './BrandDetailsPage-v2';
+export * from './BrandDetailsPageV2';
 
 // Brand UI Components
-export * from './brand-card';
-export * from './brand-row';
-export * from './brand-progress';
-export * from './brand-header';
-export * from './brand-timeline';
-export * from './brand-sidebar';
-export * from './brand-cards-view';
-export * from './brand-table-view';
-export * from './brand-board-view';
+export * from './BrandCard';
+export * from './BrandRow';
+export * from './BrandProgress';
+export * from './BrandHeaderAlt';
+export * from './BrandTimeline';
+export * from './BrandSidebar';
+export * from './BrandCardsView';
+export * from './BrandTableView';
+export * from './BrandBoardView';
 
 // Wizard
 export * from './brand-wizard/BrandWizard';

@@ -4,11 +4,11 @@ import * as React from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { ReportSkeleton } from '@/components/marketing/aeo-grader/report-skeleton';
-import { StickyBottomBar } from '@/components/marketing/aeo-grader/sticky-bottom-bar';
-import { ExitIntentModal } from '@/components/marketing/aeo-grader/exit-intent-modal';
-import { ShareModal } from '@/components/marketing/aeo-grader/share-modal';
-import { UnlockReportModal } from '@/components/marketing/aeo-grader/unlock-report-modal';
+import { ReportSkeleton } from '@/components/marketing/aeo-grader/ReportSkeleton';
+import { StickyBottomBar } from '@/components/marketing/aeo-grader/StickyBottomBar';
+import { ExitIntentModal } from '@/components/marketing/aeo-grader/ExitIntentModal';
+import { ShareModal } from '@/components/marketing/aeo-grader/ShareModal';
+import { UnlockReportModal } from '@/components/marketing/aeo-grader/UnlockReportModal';
 import {
   ReportNotFound,
   ReportHeader,
