@@ -30,7 +30,7 @@ import {
 } from "lucide-react"
 import { favouriteProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
 import { useUser } from "@clerk/nextjs"
-import { SidebarHeaderContent } from "./sidebar-header"
+import { SidebarHeaderContent } from "./WorkspaceSwitcher"
 
 const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }>> = {
   overview: Grid2x2,

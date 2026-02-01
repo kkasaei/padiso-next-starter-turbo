@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
-import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar"
+import { WorkspaceSidebar } from "@/components/layout/WorkspaceSidebar"
 import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/brand-sidebar"
 
 export default function DashboardLayout({
