@@ -1,11 +1,11 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { StoryHero } from '@/components/modules/marketing/sections/story-hero';
-import { StoryTeam } from '@/components/modules/marketing/sections/story-team';
-import { StoryTimeline } from '@/components/modules/marketing/sections/story-timeline';
-import { StoryValues } from '@/components/modules/marketing/sections/story-values';
-import { StoryVision } from '@/components/modules/marketing/sections/story-vision';
+import { StoryHero } from '@/components/marketing/sections/story-hero';
+import { StoryTeam } from '@/components/marketing/sections/story-team';
+import { StoryTimeline } from '@/components/marketing/sections/story-timeline';
+import { StoryValues } from '@/components/marketing/sections/story-values';
+import { StoryVision } from '@/components/marketing/sections/story-vision';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

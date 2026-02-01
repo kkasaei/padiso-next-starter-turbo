@@ -1,4 +1,4 @@
-import RedditPage from '@/components/projects/reddit/RedditPage'
+import RedditPage from '@/components/workspace/brands/reddit/RedditPage'
 
 type PageProps = {
   params: Promise<{ id: string }>

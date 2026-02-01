@@ -1,4 +1,4 @@
-import ContentListPage from "@/components/projects/content/ContentListPage"
+import ContentListPage from "@/components/workspace/brands/content/ContentListPage"
 
 export default function Page() {
   return <ContentListPage />

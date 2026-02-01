@@ -1,4 +1,4 @@
-import { ProjectDetailsPage } from "@/components/projects/ProjectDetailsPage"
+import { BrandDetailsPage } from "@/components/workspace/brands/BrandDetailsPage"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -12,7 +12,7 @@ export default async function Page({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
     </div>
     <div className="flex flex-1">
-    <ProjectDetailsPage projectId={id} />
+    <BrandDetailsPage brandId={id} />
     </div>
   </div>
   )

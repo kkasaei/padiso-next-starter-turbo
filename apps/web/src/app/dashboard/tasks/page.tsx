@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-import { MyTasksPage } from "@/components/tasks/MyTasksPage"
+import { MyTasksPage } from "@/components/workspace/tasks/MyTasksPage"
 
 export default function TasksPage() {
   return (

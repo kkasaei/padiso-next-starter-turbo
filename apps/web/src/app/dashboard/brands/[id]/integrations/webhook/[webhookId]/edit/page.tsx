@@ -1,4 +1,4 @@
-import { default as WebhookEditPageComponent } from '@/components/projects/integrations/WebhookEditPage'
+import { default as WebhookEditPageComponent } from '@/components/workspace/brands/integrations/WebhookEditPage'
 
 type PageProps = {
   params: Promise<{ id: string; webhookId: string }>

@@ -1,4 +1,4 @@
-import { default as AuditPageComponent } from "@/components/projects/audit/AuditPage"
+import { default as AuditPageComponent } from "@/components/workspace/brands/audit/AuditPage"
 
 type PageProps = {
   params: Promise<{ id: string }>

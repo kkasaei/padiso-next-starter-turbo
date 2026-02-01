@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { PricingFAQ } from '@/components/modules/marketing/sections/pricing-faq';
-import { PricingHero } from '@/components/modules/marketing/sections/pricing-hero';
+import { PricingFAQ } from '@/components/marketing/sections/pricing-faq';
+import { PricingHero } from '@/components/marketing/sections/pricing-hero';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { PrivacyPolicy } from '@/components/modules/marketing/sections/privacy-policy';
+import { PrivacyPolicy } from '@/components/marketing/sections/privacy-policy';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

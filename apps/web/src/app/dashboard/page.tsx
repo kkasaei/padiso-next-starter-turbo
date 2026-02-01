@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
-import { ProjectWizard } from "@/components/project-wizard/ProjectWizard"
+import { BrandWizard } from "@/components/workspace/brands/brand-wizard/BrandWizard"
 
 function OnboardingCard({ hasProjects, onCreateProject }: { hasProjects: boolean; onCreateProject: () => void }) {
   return (
@@ -364,7 +364,7 @@ export default function DashboardPage() {
 
       {/* Project Wizard Modal */}
       {showWizard && (
-        <ProjectWizard 
+        <BrandWizard 
           onClose={() => setShowWizard(false)}
           onCreate={(data) => {
             console.log("Business created:", data)

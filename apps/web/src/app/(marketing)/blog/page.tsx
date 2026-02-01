@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 
-import { BlogPosts } from '@/components/modules/marketing/sections/blog-posts';
+import { BlogPosts } from '@/components/marketing/sections/blog-posts';
 import { createTitle } from '@/lib/formatters';
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
-import {default as PromptTrackingPageComponent} from '@/components/projects/tracking/PromptTracking'
-import {default as ProjectTrackingBreadcrumbs} from '@/components/projects/tracking/Breadcrumbs'
+import {default as PromptTrackingPageComponent} from '@/components/workspace/brands/tracking/PromptTracking'
+import {default as ProjectTrackingBreadcrumbs} from '@/components/workspace/brands/tracking/Breadcrumbs'
 
 type PageProps = {
   params: Promise<{ id: string; promptId: string }>

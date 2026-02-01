@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 
-import { DocsSidebar } from '@/components/modules/marketing/docs/docs-sidebar';
+import { DocsSidebar } from '@/components/marketing/docs/docs-sidebar';
 
 export default function DocLayout(
   props: React.PropsWithChildren

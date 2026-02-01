@@ -1,4 +1,4 @@
-import { default as IntegrationsPageComponent } from '@/components/projects/integrations/IntegrationsPage'
+import { default as IntegrationsPageComponent } from '@/components/workspace/brands/integrations/IntegrationsPage'
 
 type PageProps = {
   params: Promise<{ id: string }>

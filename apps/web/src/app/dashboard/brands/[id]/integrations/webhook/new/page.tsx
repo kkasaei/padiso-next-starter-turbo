@@ -1,4 +1,4 @@
-import { default as NewWebhookPageComponent } from '@/components/projects/integrations/NewWebhookPage'
+import { default as NewWebhookPageComponent } from '@/components/workspace/brands/integrations/NewWebhookPage'
 
 type PageProps = {
   params: Promise<{ id: string }>

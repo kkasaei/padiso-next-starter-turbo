@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
-import { Providers } from "@/components/providers"
+import { Providers } from "@/components/layout/providers"
 import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css"
 

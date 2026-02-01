@@ -1,4 +1,4 @@
-import BacklinkPage from '@/components/projects/backlinks/BacklinkPage'
+import BacklinkPage from '@/components/workspace/brands/backlinks/BacklinkPage'
 
 type PageProps = {
   params: Promise<{ id: string }>

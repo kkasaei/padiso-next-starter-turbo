@@ -4,11 +4,11 @@ import * as React from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { ReportSkeleton } from '@/components/modules/marketing/aeo-grader/report-skeleton';
-import { StickyBottomBar } from '@/components/modules/marketing/aeo-grader/sticky-bottom-bar';
-import { ExitIntentModal } from '@/components/modules/marketing/aeo-grader/exit-intent-modal';
-import { ShareModal } from '@/components/modules/marketing/aeo-grader/share-modal';
-import { UnlockReportModal } from '@/components/modules/marketing/aeo-grader/unlock-report-modal';
+import { ReportSkeleton } from '@/components/marketing/aeo-grader/report-skeleton';
+import { StickyBottomBar } from '@/components/marketing/aeo-grader/sticky-bottom-bar';
+import { ExitIntentModal } from '@/components/marketing/aeo-grader/exit-intent-modal';
+import { ShareModal } from '@/components/marketing/aeo-grader/share-modal';
+import { UnlockReportModal } from '@/components/marketing/aeo-grader/unlock-report-modal';
 import {
   ReportNotFound,
   ReportHeader,
@@ -16,7 +16,7 @@ import {
   ReportHeroBanner,
   ReportShareCard,
   ReportContentSections
-} from '@/components/modules/public-report/report';
+} from '@/components/marketing/public-report/report';
 import { useReportData } from '@workspace/ui/hooks/use-report-data';
 import { useReportSharing } from '@workspace/ui/hooks/use-report-sharing';
 import { usePDFDownload } from '@workspace/ui/hooks/use-pdf-download';

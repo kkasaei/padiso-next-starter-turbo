@@ -1,4 +1,4 @@
-import ProjectSettings from "@/components/projects/settings/ProjectSettings"
+import ProjectSettings from "@/components/brands/settings/ProjectSettings"
 
 type PageProps = {
   params: Promise<{ id: string }>

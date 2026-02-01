@@ -1,4 +1,4 @@
-import AnalyticsPageComponent from "@/components/projects/analytics/AnalyticaPage"
+import AnalyticsPageComponent from "@/components/workspace/brands/analytics/AnalyticaPage"
 
 type PageProps = {
   params: Promise<{ id: string }>

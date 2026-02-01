@@ -5,7 +5,7 @@
  */
 
 import type { WebsiteAuditDto, PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
-import type { AuditHistoryEntry } from '@/components/modules/audit';
+import type { AuditHistoryEntry } from '@/components/brands/audit';
 import { MOCK_COMPANY, MOCK_PAGES, buildUrl, getRecentTimestamp } from './common';
 
 // ============================================================

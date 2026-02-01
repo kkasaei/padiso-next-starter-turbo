@@ -5,7 +5,7 @@
  */
 
 import { MOCK_COMPANY, MOCK_PAGES, buildUrl, getRecentTimestamp } from './common';
-import type { PageAuditDto } from '@/components/modules/audit';
+import type { PageAuditDto } from '@/components/brands/audit';
 
 // ============================================================
 // MOCK PAGE CONTENT
