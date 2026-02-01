@@ -34,7 +34,7 @@ export function ProjectCardsView({ projects, loading = false, onCreateProject }:
             onClick={onCreateProject}
           >
             <Plus className="mr-2 inline h-4 w-4" />
-            Create new project
+            Create new brand
           </button>
         </div>
       ) : (
@@ -47,7 +47,7 @@ export function ProjectCardsView({ projects, loading = false, onCreateProject }:
             onClick={onCreateProject}
           >
             <Plus className="mb-2 h-5 w-5" />
-            Create new project
+            Create new brand
           </button>
         </div>
       )}

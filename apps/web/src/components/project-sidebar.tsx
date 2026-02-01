@@ -233,7 +233,7 @@ export function ProjectSidebar() {
                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
                 >
                   <Plus className="h-5 w-5 text-muted-foreground" />
-                  <span>Create new project</span>
+                  <span>Create new brand</span>
                 </Link>
               </div>
             </PopoverContent>
