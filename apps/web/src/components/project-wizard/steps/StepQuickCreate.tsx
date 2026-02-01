@@ -23,7 +23,7 @@ import { ProjectDescriptionEditor } from "../ProjectDescriptionEditor";
 // --- Mock Data ---
 
 const USERS = [
-  { id: "1", name: "Jason D", avatar: "/placeholder-user.jpg" },
+  { id: "1", name: "Andrew S", avatar: "/placeholder-user.jpg" },
   { id: "2", name: "Sarah Connor", avatar: "" },
   { id: "3", name: "Alex Murphy", avatar: "" },
 ];

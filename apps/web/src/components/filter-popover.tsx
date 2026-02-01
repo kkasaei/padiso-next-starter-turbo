@@ -98,7 +98,7 @@ export function FilterPopover({ initialChips, onApply, onClear, counts }: Filter
   const memberOptions = [
     { id: "no-member", label: "No member", avatar: undefined },
     { id: "current", label: "Current member", avatar: undefined, hint: "1 projects" },
-    { id: "jason", label: "jason duong", avatar: "/placeholder-user.jpg", hint: "3 projects" },
+    { id: "andrew", label: "andrew smith", avatar: "/placeholder-user.jpg", hint: "3 projects" },
   ]
 
   const tagOptions = [

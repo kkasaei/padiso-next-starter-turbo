@@ -23,13 +23,13 @@ interface Account {
   initials: string;
 }
 
-const DEFAULT_OWNER_ID = "jason-d";
+const DEFAULT_OWNER_ID = "andrew-s";
 
 const DEFAULT_ACCOUNTS: Account[] = [
   {
-    id: "jason-d",
-    name: "Jason D",
-    email: "jason.duong@mail.com",
+    id: "andrew-s",
+    name: "Andrew S",
+    email: "andrew.smith@mail.com",
     team: "Product",
     initials: "JD",
   },

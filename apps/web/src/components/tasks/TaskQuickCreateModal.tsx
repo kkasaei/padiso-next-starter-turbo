@@ -60,7 +60,7 @@ const STATUS_OPTIONS: StatusOption[] = [
 ]
 
 const ASSIGNEE_OPTIONS: AssigneeOption[] = [
-  { id: 'jason-duong', name: 'Jason Duong' },
+  { id: 'andrew-smith', name: 'Andrew Smith' },
   { id: 'hp', name: 'HP' },
   { id: 'qa', name: 'QA' },
   { id: 'pm', name: 'PM' },

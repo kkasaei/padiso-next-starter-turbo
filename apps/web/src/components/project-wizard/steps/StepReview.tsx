@@ -44,7 +44,7 @@ export function StepReview({ data, onEditStep }: StepReviewProps) {
     };
 
     const ownerNameMap: Record<string, string> = {
-        "jason-d": "Jason D",
+        "andrew-s": "Andrew S",
         "alex-morgan": "Alex Morgan",
         "sarah-chen": "Sarah Chen",
         "mike-ross": "Mike Ross",

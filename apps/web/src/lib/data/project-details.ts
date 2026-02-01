@@ -177,7 +177,7 @@ function userFromName(name: string, role?: string): User {
 }
 
 export function baseDetailsFromListItem(p: ProjectListItem): ProjectDetails {
-  const picUsers = p.members.length ? p.members.map((n) => userFromName(n, "PIC")) : [userFromName("Jason Duong", "PIC")]
+  const picUsers = p.members.length ? p.members.map((n) => userFromName(n, "PIC")) : [userFromName("Andrew Smith", "PIC")]
   const primaryUser = picUsers[0]! // Always defined due to fallback above
   const today = new Date()
 

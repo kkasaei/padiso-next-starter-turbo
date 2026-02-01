@@ -40,7 +40,7 @@ export const projects: Project[] = [
     status: "active",
     priority: "high",
     tags: ["frontend", "feature"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Bank",
     typeLabel: "MVP",
     durationLabel: "2 weeks",
@@ -89,7 +89,7 @@ export const projects: Project[] = [
     status: "active",
     priority: "medium",
     tags: ["backend"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Corp Internal",
     typeLabel: "Improvement",
     durationLabel: "2 weeks",
@@ -154,7 +154,7 @@ export const projects: Project[] = [
     status: "active",
     priority: "urgent",
     tags: ["feature", "urgent"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Learning",
     typeLabel: "Revamp",
     durationLabel: "3 weeks",
@@ -244,7 +244,7 @@ export const projects: Project[] = [
     status: "completed",
     priority: "medium",
     tags: ["frontend"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Retail",
     typeLabel: "Audit",
     durationLabel: "1 week",
@@ -301,7 +301,7 @@ export const projects: Project[] = [
     status: "planned",
     priority: "medium",
     tags: ["frontend", "feature"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Marketing",
     typeLabel: "Phase 1",
     durationLabel: "2 weeks",
@@ -342,7 +342,7 @@ export const projects: Project[] = [
     status: "planned",
     priority: "low",
     tags: ["backend"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Corp Internal",
     typeLabel: "Refactor",
     durationLabel: "1 week",
@@ -391,7 +391,7 @@ export const projects: Project[] = [
     status: "completed",
     priority: "high",
     tags: ["feature", "urgent"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme SaaS",
     typeLabel: "Experiment",
     durationLabel: "1 week",
@@ -432,7 +432,7 @@ export const projects: Project[] = [
     status: "completed",
     priority: "medium",
     tags: ["frontend"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Helpdesk",
     typeLabel: "Revamp",
     durationLabel: "2 weeks",
@@ -481,7 +481,7 @@ export const projects: Project[] = [
     status: "completed",
     priority: "low",
     tags: ["bug"],
-    members: ["jason duong"],
+    members: ["andrew smith"],
     client: "Acme Finance",
     typeLabel: "Polish",
     durationLabel: "3 days",
@@ -537,8 +537,8 @@ export function computeFilterCounts(list: Project[]): FilterCounts {
     if (p.members.length > 0) {
       res.members!["current"] = (res.members!["current"] || 0) + 1
     }
-    if (p.members.some((m) => m.toLowerCase() === "jason duong")) {
-      res.members!["jason"] = (res.members!["jason"] || 0) + 1
+    if (p.members.some((m) => m.toLowerCase() === "andrew smith")) {
+      res.members!["andrew"] = (res.members!["andrew"] || 0) + 1
     }
   }
   return res

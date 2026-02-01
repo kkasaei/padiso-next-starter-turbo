@@ -65,7 +65,7 @@ async function seed() {
     const userMap = new Map<string, string>(); // name -> uuid
 
     const userNames = [
-      "jason duong",
+      "andrew smith",
       "JD",
       "HP",
       "BE",
@@ -80,8 +80,8 @@ async function seed() {
         .insert(users)
         .values({
           name,
-          avatarUrl: name === "jason duong" ? "/placeholder-user.jpg" : undefined,
-          role: name === "jason duong" ? "PIC" : name.toUpperCase(),
+          avatarUrl: name === "andrew smith" ? "/placeholder-user.jpg" : undefined,
+          role: name === "andrew smith" ? "PIC" : name.toUpperCase(),
         })
         .returning();
       if (!user) {
@@ -111,7 +111,7 @@ async function seed() {
         status: "active" as const,
         priority: "high" as const,
         tags: ["frontend", "feature"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Bank",
         typeLabel: "MVP",
         durationLabel: "2 weeks",
@@ -160,7 +160,7 @@ async function seed() {
         status: "active" as const,
         priority: "medium" as const,
         tags: ["backend"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Corp Internal",
         typeLabel: "Improvement",
         durationLabel: "2 weeks",
@@ -225,7 +225,7 @@ async function seed() {
         status: "active" as const,
         priority: "urgent" as const,
         tags: ["feature", "urgent"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Learning",
         typeLabel: "Revamp",
         durationLabel: "3 weeks",
@@ -315,7 +315,7 @@ async function seed() {
         status: "completed" as const,
         priority: "medium" as const,
         tags: ["frontend"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Retail",
         typeLabel: "Audit",
         durationLabel: "1 week",
@@ -372,7 +372,7 @@ async function seed() {
         status: "planned" as const,
         priority: "medium" as const,
         tags: ["frontend", "feature"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Marketing",
         typeLabel: "Phase 1",
         durationLabel: "2 weeks",
@@ -413,7 +413,7 @@ async function seed() {
         status: "planned" as const,
         priority: "low" as const,
         tags: ["backend"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Corp Internal",
         typeLabel: "Refactor",
         durationLabel: "1 week",
@@ -462,7 +462,7 @@ async function seed() {
         status: "completed" as const,
         priority: "high" as const,
         tags: ["feature", "urgent"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme SaaS",
         typeLabel: "Experiment",
         durationLabel: "1 week",
@@ -503,7 +503,7 @@ async function seed() {
         status: "completed" as const,
         priority: "medium" as const,
         tags: ["frontend"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Helpdesk",
         typeLabel: "Revamp",
         durationLabel: "2 weeks",
@@ -552,7 +552,7 @@ async function seed() {
         status: "completed" as const,
         priority: "low" as const,
         tags: ["bug"],
-        members: ["jason duong"],
+        members: ["andrew smith"],
         client: "Acme Finance",
         typeLabel: "Polish",
         durationLabel: "3 days",
@@ -622,7 +622,7 @@ async function seed() {
       }
 
       // Add members
-      const memberList = projectData.members.length > 0 ? projectData.members : ["jason duong"];
+      const memberList = projectData.members.length > 0 ? projectData.members : ["andrew smith"];
       for (const memberName of memberList) {
         const userId = userMap.get(memberName.toLowerCase());
         if (userId) {
@@ -649,9 +649,9 @@ async function seed() {
 
     // Seed project details for project "1" (Fintech Mobile App Redesign)
     const project1Id = projectMap.get("1");
-    const jasonUserId = userMap.get("jason duong");
+    const andrewUserId = userMap.get("andrew smith");
 
-    if (project1Id && jasonUserId) {
+    if (project1Id && andrewUserId) {
       console.log("📝 Seeding project details for project 1...");
 
       // Update project description
@@ -769,7 +769,7 @@ async function seed() {
               status: "done" as const,
               dueLabel: "Today",
               dueTone: "muted" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: today,
             },
             {
@@ -777,7 +777,7 @@ async function seed() {
               status: "todo" as const,
               dueLabel: "Today",
               dueTone: "danger" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: today,
             },
             {
@@ -785,13 +785,13 @@ async function seed() {
               status: "todo" as const,
               dueLabel: "Tomorrow",
               dueTone: "warning" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: new Date(today.getTime() + 24 * 60 * 60 * 1000),
             },
             {
               name: "Track client signature",
               status: "todo" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000),
             },
           ],
@@ -804,19 +804,19 @@ async function seed() {
               status: "in-progress" as const,
               dueLabel: "This week",
               dueTone: "muted" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000),
             },
             {
               name: "Configure sandbox account",
               status: "todo" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000),
             },
             {
               name: "Schedule onboarding session",
               status: "todo" as const,
-              assignee: "jason duong",
+              assignee: "andrew smith",
               startDate: new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000),
             },
           ],
@@ -880,7 +880,7 @@ async function seed() {
           type: fileData.type,
           sizeMB: fileData.sizeMB,
           url: "#",
-          addedById: jasonUserId,
+          addedById: andrewUserId,
           addedDate: filesBaseDate,
         });
       }
@@ -1012,7 +1012,7 @@ async function seed() {
             content: noteData.content ?? null,
             noteType: noteData.noteType,
             status: noteData.status,
-            addedById: jasonUserId,
+            addedById: andrewUserId,
             addedDate: noteData.addedDate,
           })
           .returning();
