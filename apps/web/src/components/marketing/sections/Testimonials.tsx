@@ -6,7 +6,7 @@ import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { APP_NAME } from '@workspace/common/constants';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { GridSection } from '@/components/shared/fragments/GridSection';
 import { Marquee } from '@/components/shared/fragments/Marquee';

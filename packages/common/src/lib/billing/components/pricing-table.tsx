@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import { PLANS } from '../plans';
 import { PriceIntervalSelector, type PriceInterval } from './price-interval-selector';
 import { PricingCard } from './pricing-card';

@@ -14,7 +14,7 @@ import * as React from 'react';
 import { MarkdownPlugin } from '@platejs/markdown';
 import { createSlateEditor, normalizeNodeId, KEYS } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { PromptEditorKit } from './prompt-editor-kit';
 import { Editor, EditorContainer } from './editor';
@@ -35,7 +35,7 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command';
-import type { PromptTemplateDto } from '@/lib/shcmea/types/prompt-template';
+import type { PromptTemplateDto } from '@workspace/common/lib/shcmea/types/prompt-template';
 import { Library, Loader2 } from 'lucide-react';
 
 export interface PromptEditorProps {

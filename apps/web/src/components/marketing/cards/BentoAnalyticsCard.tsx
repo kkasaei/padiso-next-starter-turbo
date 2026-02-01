@@ -15,7 +15,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@workspace/ui/components/chart';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 const DATA = [
   { name: 'January', value: 400 },

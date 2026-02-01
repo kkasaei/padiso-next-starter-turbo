@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { useBrands, useCreateBrand } from "@/hooks/use-brands"
 import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace"
-import { cn } from "@/lib/utils"
+import { cn } from "@workspace/common/lib"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
 import type { BusinessData } from "./brand-wizard/types"
 

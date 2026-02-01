@@ -17,9 +17,9 @@ import {
 } from 'recharts'
 import { HelpCircle, PieChart as PieChartIcon } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
-import type { PromptAnalyticsData, CompetitorData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, CompetitorData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { COMPETITION_PROVIDERS } from './constants'
 import { getFaviconUrl, getMarketPositionData } from './helpers'
 

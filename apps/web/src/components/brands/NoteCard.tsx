@@ -1,7 +1,7 @@
 import { File, MoreHorizontal as DotsThree, AudioLines as Waveform } from "lucide-react"
 import { format } from "date-fns"
 
-import type { ProjectNote } from "@/lib/mocks/legacy-project-details"
+import type { ProjectNote } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import {
     DropdownMenu,

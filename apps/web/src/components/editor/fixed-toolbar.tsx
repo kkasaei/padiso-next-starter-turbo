@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Toolbar } from './toolbar';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 export function FixedToolbar({
   className,

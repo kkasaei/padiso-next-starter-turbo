@@ -8,7 +8,7 @@ import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import { cn } from "@workspace/ui/lib/utils"
-import type { UITask } from "@/lib/types/tasks";
+import type { UITask } from "@workspace/common/lib/types/tasks";
 
 // Backward compatibility  
 type ProjectTask = UITask;

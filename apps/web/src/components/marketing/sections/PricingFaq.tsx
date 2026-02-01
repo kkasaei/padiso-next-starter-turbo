@@ -2,7 +2,7 @@ import * as React from 'react';
 import Link from 'next/link';
 
 import { APP_NAME } from '@workspace/common/constants';
-import { routes } from '@/routes';
+import { routes } from '@workspace/common';
 import {
   Accordion,
   AccordionContent,

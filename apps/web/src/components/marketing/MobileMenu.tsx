@@ -7,8 +7,8 @@ import { BuildingIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon, LogOutIcon, Se
 import { motion } from 'framer-motion';
 import { useUser, useClerk, useOrganizationList } from '@clerk/nextjs';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
-import { baseURL, getPathname } from '@/routes';
+import { FEATURE_FLAGS } from '@workspace/common';
+import { baseURL, getPathname } from '@workspace/common';
 import {
   Avatar,
   AvatarFallback,
@@ -23,8 +23,8 @@ import {
 import { Logo } from '@workspace/ui/components/logo';
 import { Portal } from '@workspace/ui/components/portal';
 import { ThemeSwitcher } from '@workspace/ui/components/theme-switcher';
-import { RemoveScroll } from '@/lib/remove-scroll';
-import { cn } from '@/lib/utils';
+import { RemoveScroll } from '@workspace/common/lib';
+import { cn } from '@workspace/common/lib';
 
 import { ExternalLink } from '@/components/shared/fragments/ExternalLink';
 import { DOCS_LINKS, MENU_LINKS } from '@/components/marketing/MarketingLinks';

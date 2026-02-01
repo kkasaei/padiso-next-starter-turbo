@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { format } from "date-fns"
 
-import type { ProjectNote, TranscriptSegment } from "@/lib/mocks/legacy-project-details"
+import type { ProjectNote, TranscriptSegment } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import {
     Dialog,

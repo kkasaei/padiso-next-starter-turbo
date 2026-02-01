@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Lightbulb, FileText, Target, TrendingUp, Lock } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
+import { FEATURE_FLAGS } from '@workspace/common';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 

@@ -2,7 +2,7 @@
 
 import { Label } from '@workspace/ui/components/label'
 import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group'
-import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
+import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 
 interface TrackingSettingsSectionProps {

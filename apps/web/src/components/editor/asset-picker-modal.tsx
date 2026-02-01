@@ -15,7 +15,7 @@ import {
 
 
 import { useMediaUploadContext } from '@/contexts/media-upload-context';
-import type { ProjectAssetDto, ProjectAssetMediaType } from '@/lib/shcmea/types/asset';
+import type { ProjectAssetDto, ProjectAssetMediaType } from '@workspace/common/lib/shcmea/types/asset';
 
 import {
   Dialog,
@@ -28,7 +28,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 // ============================================================
 // TYPES

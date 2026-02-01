@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { Loader2, CheckCircle, Clock, XCircle } from 'lucide-react';
-import type { WebsiteAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import type { WebsiteAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 import type { PageStats } from './utils';
 
 // ============================================================

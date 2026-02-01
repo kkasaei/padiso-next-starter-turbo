@@ -9,7 +9,7 @@ import {
 import { Loader2, Sparkles, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import type { SuggestedPrompt } from './types'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 
 // ============================================================
 // Types

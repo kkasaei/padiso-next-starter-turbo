@@ -15,7 +15,7 @@ import {
   CardContent,
   CardFooter
 } from '@workspace/ui/components/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 export function AiAdvisorCard({
   className,

@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import type { User } from "@/lib/mocks/legacy-project-details"
+import type { User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 import { cn } from "@workspace/ui/lib/utils"

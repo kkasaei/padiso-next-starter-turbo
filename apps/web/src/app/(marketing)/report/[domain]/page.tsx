@@ -20,7 +20,7 @@ import {
 import { useReportData } from '@workspace/ui/hooks/use-report-data';
 import { useReportSharing } from '@workspace/ui/hooks/use-report-sharing';
 import { usePDFDownload } from '@workspace/ui/hooks/use-pdf-download';
-import { calculateAverageScore, generateReportUrl, formatDomain } from '@/lib/report-utils';
+import { calculateAverageScore, generateReportUrl, formatDomain } from '@workspace/common/lib';
 import { REPORT_CONFIG } from '@workspace/common/constants';
 import { trpc } from '@/lib/trpc/client';
 

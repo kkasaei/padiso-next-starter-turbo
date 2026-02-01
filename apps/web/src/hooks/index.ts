@@ -3,6 +3,9 @@
  * 
  * Barrel file for all custom React hooks.
  * Import from '@/hooks' instead of individual files.
+ * 
+ * Note: Generic UI hooks (use-debounce, use-mobile, use-mounted, 
+ * use-is-touch-device, use-analytics-date-range) are now in @workspace/ui
  */
 
 // Brand & Workspace Management
@@ -16,12 +19,5 @@ export * from './use-brand-wizard-context';
 export * from './use-tasks';
 export * from './use-prompts';
 
-// Analytics & Date
-export * from './use-analytics-date-range';
-
-// UI & Utilities
-export * from './use-debounce';
-export * from './use-mobile';
-export * from './use-mounted';
-export * from './use-is-touch-device';
+// File Upload
 export * from './use-upload-file';

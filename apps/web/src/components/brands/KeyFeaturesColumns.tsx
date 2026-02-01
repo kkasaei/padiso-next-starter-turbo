@@ -1,4 +1,4 @@
-import type { KeyFeatures } from "@/lib/mocks/legacy-project-details"
+import type { KeyFeatures } from "@workspace/common/lib/mocks/legacy-project-details"
 
 type KeyFeaturesColumnsProps = {
   features: KeyFeatures

@@ -22,7 +22,7 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
-import type { WorkstreamGroup, WorkstreamTask } from "@/lib/mocks/legacy-project-details"
+import type { WorkstreamGroup, WorkstreamTask } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@workspace/ui/components/accordion"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"

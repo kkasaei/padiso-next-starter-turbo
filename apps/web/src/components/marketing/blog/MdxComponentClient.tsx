@@ -17,7 +17,7 @@ import {
   UnderlinedTabsList,
   UnderlinedTabsTrigger
 } from '@workspace/ui/components/tabs';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { Callout } from '@/components/marketing/blog/Callout';
 

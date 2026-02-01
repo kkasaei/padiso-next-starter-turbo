@@ -38,7 +38,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit';
 import {
   type TDiscussion,

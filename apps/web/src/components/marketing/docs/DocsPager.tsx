@@ -4,7 +4,7 @@ import { Doc } from 'content-collections';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 import { buttonVariants } from '@workspace/ui/components/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { DOCS_LINKS } from '@/components/marketing/MarketingLinks';
 

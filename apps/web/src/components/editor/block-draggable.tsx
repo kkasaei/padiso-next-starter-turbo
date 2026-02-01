@@ -24,7 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@workspace/ui/components/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 const UNDRAGGABLE_KEYS = [KEYS.column, KEYS.tr, KEYS.td];
 

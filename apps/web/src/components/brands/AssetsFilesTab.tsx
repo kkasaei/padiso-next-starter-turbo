@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 
-import type { ProjectFile, User } from "@/lib/mocks/legacy-project-details"
+import type { ProjectFile, User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { RecentFileCard } from "@/components/brands/RecentFileCard"
 import { FilesTable } from "@/components/brands/FilesTable"
 import { AddFileModal } from "@/components/brands/AddFileModal"

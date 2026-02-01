@@ -12,8 +12,8 @@ import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace";
 import { useTasksByWorkspace, useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
 
 // Types
-import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@/lib/types/tasks";
-import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options";
+import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@workspace/common/lib/types/tasks";
+import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@workspace/common/lib";
 
 // Local Task Components
 import { TaskTableView } from "./TaskTableView";

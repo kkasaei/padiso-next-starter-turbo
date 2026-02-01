@@ -64,7 +64,7 @@ import {
   Users,
   MessageSquare,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import {
   MOCK_KEYWORDS,
   MOCK_COMPETITORS,
@@ -75,7 +75,7 @@ import {
   type SuggestedKeywordItem,
   type KeywordIntent,
   type KeywordTrend,
-} from '@/lib/mocks/tracking'
+} from '@workspace/common/lib/mocks/tracking'
 
 // ============================================================
 // PROMPTS TYPES & CONSTANTS

@@ -5,7 +5,7 @@ import { MoreHorizontal as DotsThree, Search as MagnifyingGlass, Plus } from "lu
 import { format } from "date-fns"
 import Image from "next/image"
 
-import type { ProjectFile } from "@/lib/mocks/legacy-project-details"
+import type { ProjectFile } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Checkbox } from "@workspace/ui/components/checkbox"

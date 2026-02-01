@@ -1,7 +1,7 @@
 import { Download as DownloadSimple } from "lucide-react"
 import Image from "next/image"
 
-import type { QuickLink } from "@/lib/mocks/legacy-project-details"
+import type { QuickLink } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 

@@ -6,7 +6,7 @@ import { StoryTeam } from '@/components/marketing/sections/StoryTeam';
 import { StoryTimeline } from '@/components/marketing/sections/StoryTimeline';
 import { StoryValues } from '@/components/marketing/sections/StoryValues';
 import { StoryVision } from '@/components/marketing/sections/StoryVision';
-import { createTitle } from '@/lib/formatters';
+import { createTitle } from '@workspace/common/lib';
 
 export const metadata: Metadata = {
   title: createTitle('Story')

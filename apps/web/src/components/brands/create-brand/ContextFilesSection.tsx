@@ -13,10 +13,10 @@ import {
 } from 'lucide-react'
 import type { 
   ContextFilesState,
-} from '@/lib/shcmea/types/context-files'
+} from '@workspace/common/lib/shcmea/types/context-files'
 import { 
   DEFAULT_CONTEXT_FILES_STATE,
-} from '@/lib/shcmea/types/context-files'
+} from '@workspace/common/lib/shcmea/types/context-files'
 
 // ============================================================
 // TYPES

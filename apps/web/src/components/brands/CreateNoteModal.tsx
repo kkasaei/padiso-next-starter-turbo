@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Paperclip, Mic as Microphone, Upload as UploadSimple, Tag, X } from "lucide-react"
 
-import type { User } from "@/lib/mocks/legacy-project-details"
+import type { User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { QuickCreateModalLayout } from "@/components/shared/QuickCreateModalLayout"

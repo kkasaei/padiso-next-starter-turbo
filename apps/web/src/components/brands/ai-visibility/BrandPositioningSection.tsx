@@ -3,9 +3,9 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
-import type { BrandPositioning } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import type { BrandPositioning } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface BrandPositioningSectionProps {
   positioning: BrandPositioning

@@ -16,7 +16,7 @@ import * as React from 'react';
 import { MarkdownPlugin } from '@platejs/markdown';
 import { createSlateEditor, normalizeNodeId, KEYS } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { SimpleEditorKit } from './simple-editor-kit';
 import { Editor, EditorContainer } from './editor';

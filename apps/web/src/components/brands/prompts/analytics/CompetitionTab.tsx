@@ -21,7 +21,7 @@ import {
 } from '@workspace/ui/components/select'
 
 import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
-import type { PromptAnalyticsData, CompetitorItem, MarketSegment } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, CompetitorItem, MarketSegment } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 import { CompetitorMentionsChart } from './CompetitorMentionsChart'
 import { MarketSegmentsCard } from './MarketSegmentsCard'

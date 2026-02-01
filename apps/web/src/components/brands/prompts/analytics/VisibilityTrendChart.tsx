@@ -17,7 +17,7 @@ import {
 } from 'recharts'
 
 import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
-import type { VisibilityDataPoint } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { VisibilityDataPoint } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { PROVIDERS } from './constants'
 import { formatDateRangeDisplay } from './helpers'
 

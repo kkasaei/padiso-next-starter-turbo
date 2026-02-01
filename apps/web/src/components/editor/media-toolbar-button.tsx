@@ -37,7 +37,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Input } from '@workspace/ui/components/input';
 import { AssetPickerModal } from './asset-picker-modal';
-import type { ProjectAssetDto } from '@/lib/shcmea/types/asset';
+import type { ProjectAssetDto } from '@workspace/common/lib/shcmea/types/asset';
 
 import {
   ToolbarSplitButton,

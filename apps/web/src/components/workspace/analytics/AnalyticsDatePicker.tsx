@@ -5,11 +5,11 @@ import { format } from 'date-fns'
 import { ChevronDown, Check } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { Button } from '@workspace/ui/components/button'
 import { Calendar } from '@workspace/ui/components/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
-import { useAnalyticsDateRange, getPresetRange, type DateRangePresetId } from '@/hooks/use-analytics-date-range'
+import { useAnalyticsDateRange, getPresetRange, type DateRangePresetId } from '@workspace/ui/hooks/use-analytics-date-range'
 
 // ============================================================
 // Date Range Presets (Google Search Console style)

@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
-import type { UITask } from "@/lib/types/tasks";
+import type { UITask } from "@workspace/common/lib/types/tasks";
 import type { User } from '@/lib/mocks/legacy-project-details';
 
 // Backward compatibility

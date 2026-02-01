@@ -8,7 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { format, eachDayOfInterval, subDays, differenceInDays, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns'
 import { useAnalyticsDateRange } from '@/hooks/use-analytics-date-range'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 
 // ============================================================
 // Provider Configuration

@@ -33,8 +33,8 @@ import {
   getFacebookShareText,
   getInstagramShareText,
   getTikTokShareText
-} from '@/lib/social-share-text';
-import { baseURL } from '@/routes';
+} from '@workspace/common/lib';
+import { baseURL } from '@workspace/common';
 
 interface ShareModalProps {
   open: boolean;

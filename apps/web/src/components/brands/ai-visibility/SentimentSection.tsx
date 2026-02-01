@@ -3,8 +3,8 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { Smile, Meh, Frown, ChevronDown, ChevronUp, AlertCircle, CheckCircle2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { SentimentProvider } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import { cn } from '@workspace/common/lib'
+import type { SentimentProvider } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface SentimentSectionProps {
   providers: SentimentProvider[]

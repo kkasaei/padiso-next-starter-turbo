@@ -4,7 +4,7 @@ import { useState } from "react"
 import { MoreHorizontal as DotsThree, Search as MagnifyingGlass, Plus } from "lucide-react"
 import { format } from "date-fns"
 
-import type { ProjectNote, NoteStatus } from "@/lib/mocks/legacy-project-details"
+import type { ProjectNote, NoteStatus } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import { cn } from "@workspace/ui/lib/utils"

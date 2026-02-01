@@ -1,7 +1,7 @@
 "use client"
 
 import { ListChecks } from "lucide-react"
-import type { Project } from "@/lib/mocks/legacy-projects"
+import type { Project } from "@workspace/common/lib/mocks/legacy-projects"
 import { ProgressCircle } from "@/components/shared/ProgressCircle"
 import { cn } from "@workspace/ui/lib/utils"
 

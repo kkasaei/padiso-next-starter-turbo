@@ -26,14 +26,14 @@ import {
   Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import type { 
   SiteFile, 
   SiteFileType, 
   SiteDiscoveryState, 
   DiscoverFilesResult 
-} from '@/lib/shcmea/types/site-discovery'
-import { DEFAULT_SITE_DISCOVERY_CONFIG } from '@/lib/shcmea/types/site-discovery'
+} from '@workspace/common/lib/shcmea/types/site-discovery'
+import { DEFAULT_SITE_DISCOVERY_CONFIG } from '@workspace/common/lib/shcmea/types/site-discovery'
 
 // ============================================================
 // TYPES

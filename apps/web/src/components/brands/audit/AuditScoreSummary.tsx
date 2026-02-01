@@ -1,6 +1,6 @@
 'use client';
 
-import type { WebsiteAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import type { WebsiteAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 import { ScoreCardsGrid, IssuesSummaryCards } from './ScoreCards';
 
 // ============================================================

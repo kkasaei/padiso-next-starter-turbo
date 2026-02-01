@@ -10,7 +10,7 @@ import { Image, ImagePlugin, useMediaState } from '@platejs/media/react';
 import { ResizableProvider, useResizableValue } from '@platejs/resizable';
 import { PlateElement, withHOC } from 'platejs/react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { Caption, CaptionTextarea } from '@/components/editor/caption';
 import { MediaToolbar } from './media-toolbar';

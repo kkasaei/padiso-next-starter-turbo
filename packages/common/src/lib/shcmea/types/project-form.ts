@@ -1,5 +1,5 @@
-import type { SiteDiscoveryState } from '@/lib/shcmea/types/site-discovery';
-import type { ContextFilesState } from '@/lib/shcmea/types/context-files';
+import type { SiteDiscoveryState } from './site-discovery';
+import type { ContextFilesState } from './context-files';
 
 export type TrackingFrequency = 'daily' | 'weekly' | 'monthly';
 

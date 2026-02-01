@@ -4,7 +4,7 @@ import { useState } from "react"
 import type { PointerEvent as ReactPointerEvent } from "react"
 import { addDays, differenceInCalendarDays, format } from "date-fns"
 
-import type { Project } from "@/lib/mocks/legacy-projects"
+import type { Project } from "@workspace/common/lib/mocks/legacy-projects"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type TimelineBarItem = {

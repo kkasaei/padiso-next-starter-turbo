@@ -17,8 +17,8 @@ import {
 } from 'lucide-react'
 import { Sparkles } from 'lucide-react'
 import { ViewOptionsPopover } from '@/components/brands/ViewOptionsPopover'
-import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@/lib/view-options'
-import { cn } from '@/lib/utils'
+import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@workspace/common/lib'
+import { cn } from '@workspace/common/lib'
 
 // ============================================================
 // TYPES

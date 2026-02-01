@@ -2,7 +2,7 @@ import React from 'react';
 import { Page, View, Text, Image } from '@react-pdf/renderer';
 import { PDFDecorativeCurves } from '../shared/PdfDecorativeCurves';
 import { pdfStyles, colors } from '../pdf-styles';
-import type { AEOReport } from '@/lib/shcmea/aeo-report';
+import type { AEOReport } from '@workspace/common/lib';
 
 interface PDFBrandRecognitionPageProps {
   brandRecognition: AEOReport['brandRecognition'];

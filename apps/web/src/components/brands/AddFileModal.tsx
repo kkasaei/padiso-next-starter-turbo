@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Paperclip, Upload as UploadSimple, X } from "lucide-react"
 
-import type { ProjectFile, QuickLink, User } from "@/lib/mocks/legacy-project-details"
+import type { ProjectFile, QuickLink, User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { QuickCreateModalLayout } from "@/components/shared/QuickCreateModalLayout"
 import { ProjectDescriptionEditor } from "@/components/brands/brand-wizard/BrandDescriptionEditor"

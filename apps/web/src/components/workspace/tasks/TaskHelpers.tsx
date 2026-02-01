@@ -10,8 +10,8 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
-import type { Project, FilterCounts } from "@/lib/mocks/legacy-projects"
-import type { UITask } from "@/lib/types/tasks";
+import type { Project, FilterCounts } from "@workspace/common/lib/mocks/legacy-projects"
+import type { UITask } from "@workspace/common/lib/types/tasks";
 
 // Backward compatibility
 type ProjectTask = UITask;
@@ -21,7 +21,7 @@ import { Badge } from "@workspace/ui/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { ProgressCircle } from "./ProgressCircle"
 import { cn } from "@workspace/ui/lib/utils"
-import type { FilterChip as FilterChipType } from "@/lib/view-options"
+import type { FilterChip as FilterChipType } from "@workspace/common/lib"
 import type { CreateTaskContext } from "./TaskQuickCreateModal"
 
 export type ProjectTaskGroup = {

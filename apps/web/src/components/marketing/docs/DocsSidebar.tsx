@@ -4,8 +4,8 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { baseURL, getPathname } from '@/routes';
-import { cn } from '@/lib/utils';
+import { baseURL, getPathname } from '@workspace/common';
+import { cn } from '@workspace/common/lib';
 
 import { DocsSearch } from '@/components/marketing/docs/DocsSearch';
 import { DOCS_LINKS } from '@/components/marketing/MarketingLinks';

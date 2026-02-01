@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { AEOReport } from '@/lib/shcmea/aeo-report';
+import type { AEOReport } from '@workspace/common/lib';
 import { AEOScoreCard } from '@/components/marketing/aeo-grader/AeoScoreCard';
 import { BrandRecognition } from '@/components/marketing/aeo-grader/BrandRecognition';
 import { BrandPositioningChart } from '@/components/marketing/aeo-grader/BrandPositioningChart';

@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, XAxis } from 'recharts';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { cn } from '@/lib/utils';
-import type { WebsiteAuditDto, PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import { cn } from '@workspace/common/lib';
+import type { WebsiteAuditDto, PageAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 
 // ============================================================
 // TYPES

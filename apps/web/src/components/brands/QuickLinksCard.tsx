@@ -3,7 +3,7 @@
 import { Paperclip, Upload as UploadSimple } from "lucide-react"
 import { toast } from "sonner"
 
-import type { QuickLink } from "@/lib/mocks/legacy-project-details"
+import type { QuickLink } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"

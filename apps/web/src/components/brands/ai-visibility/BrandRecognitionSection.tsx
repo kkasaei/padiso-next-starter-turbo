@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
-import type { BrandRecognitionProvider } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import { cn } from '@workspace/common/lib'
+import type { BrandRecognitionProvider } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface BrandRecognitionSectionProps {
   providers: BrandRecognitionProvider[]

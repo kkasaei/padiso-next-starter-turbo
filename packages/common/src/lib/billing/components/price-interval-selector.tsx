@@ -7,7 +7,7 @@ import {
   RadioGroup,
   RadioGroupItem
 } from '@workspace/ui/components/radio-group';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 export type PriceInterval = 'month' | 'year';
 

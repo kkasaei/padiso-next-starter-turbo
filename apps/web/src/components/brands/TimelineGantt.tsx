@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { addDays, differenceInDays, format, isWithinInterval, startOfWeek } from "date-fns"
 
-import type { TimelineTask } from "@/lib/mocks/legacy-project-details"
+import type { TimelineTask } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Separator } from "@workspace/ui/components/separator"
 import { ChevronLeft as CaretLeft, ChevronRight as CaretRight, CalendarDays as CalendarBlank, Search as MagnifyingGlass } from "lucide-react"

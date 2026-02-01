@@ -13,8 +13,8 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { cn } from '@/lib/utils';
-import type { PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import { cn } from '@workspace/common/lib';
+import type { PageAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 import {
   TABLE_COLUMNS,
   PAGE_SIZE_OPTIONS,

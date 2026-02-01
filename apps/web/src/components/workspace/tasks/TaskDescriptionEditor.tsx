@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
-import "@/styles/tiptap.css";
+import "@workspace/ui/styles/tiptap.css";
 import { Plus, Sparkle, Maximize2 } from "lucide-react";
 
  type TemplateType = "goal" | "scope" | "inScope" | "outScope" | "outcomes" | "feature";

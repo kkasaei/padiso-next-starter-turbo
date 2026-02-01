@@ -3,7 +3,7 @@
 import { Button } from "@workspace/ui/components/button"
 import { ViewOptionsPopover } from "@/components/brands/ViewOptionsPopover"
 import { Plus } from "lucide-react"
-import type { ViewOptions } from "@/lib/view-options"
+import type { ViewOptions } from "@workspace/common/lib"
 
 interface BrandHeaderProps {
   viewOptions: ViewOptions

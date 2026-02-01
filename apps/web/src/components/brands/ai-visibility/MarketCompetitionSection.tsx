@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import type { MarketSegment } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import type { MarketSegment } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface MarketCompetitionSectionProps {
   segments: MarketSegment[]

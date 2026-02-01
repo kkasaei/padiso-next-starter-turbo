@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
+import { FEATURE_FLAGS } from '@workspace/common';
 import { buttonVariants } from '@workspace/ui/components/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { BlurFade } from '@/components/shared/fragments/BlurFade';
 import { GridSection } from '@/components/shared/fragments/GridSection';

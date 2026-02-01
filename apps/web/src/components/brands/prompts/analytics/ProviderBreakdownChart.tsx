@@ -14,7 +14,7 @@ import {
 } from 'recharts'
 import { PieChart as PieChartIcon } from 'lucide-react'
 
-import type { PromptAnalyticsData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 const PROVIDER_COLORS = ['#00A67E', '#FFAA00', '#4285F4', '#7C3AED']
 

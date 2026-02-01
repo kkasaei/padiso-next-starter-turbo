@@ -39,7 +39,7 @@ import {
 import { TrendingUp, Clock, Sparkles, Search, ArrowLeft, Plus, MoreHorizontal, FileText, Zap, Loader2 } from 'lucide-react'
 import { Checkbox } from '@workspace/ui/components/checkbox'
 
-import type { PromptAnalyticsData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 import { PROVIDERS } from './constants'
 import { getProviderLogo } from './helpers'

@@ -21,18 +21,18 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { toast } from 'sonner'
 
 import type {
   PromptImportRow,
   PromptValidationResult,
   PromptValidationError,
-} from '@/lib/shcmea/types/prompt-import'
+} from '@workspace/common/lib/shcmea/types/prompt-import'
 import {
   PROMPT_CSV_TEMPLATE,
   REQUIRED_PROMPT_COLUMNS,
-} from '@/lib/shcmea/types/prompt-import'
+} from '@workspace/common/lib/shcmea/types/prompt-import'
 
 interface CsvImportTabProps {
   projectId: string

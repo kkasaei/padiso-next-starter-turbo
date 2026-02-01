@@ -27,7 +27,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@workspace/ui/components/popover';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 export function EquationElement(props: PlateElementProps<TEquationElement>) {
   const selected = useSelected();

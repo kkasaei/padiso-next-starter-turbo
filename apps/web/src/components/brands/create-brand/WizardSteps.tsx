@@ -1,7 +1,7 @@
 'use client'
 
 import { Check, Loader2, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 
 // ============================================================
 // TYPES

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 type MarqueeProps = React.HtmlHTMLAttributes<HTMLDivElement> & {
   reverse?: boolean;

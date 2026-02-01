@@ -6,8 +6,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useUser, useClerk, useOrganizationList } from '@clerk/nextjs';
 import { LogOutIcon, SettingsIcon } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
-import { baseURL, getPathname, routes } from '@/routes';
+import { FEATURE_FLAGS } from '@workspace/common';
+import { baseURL, getPathname, routes } from '@workspace/common';
 import {
   Avatar,
   AvatarFallback,
@@ -34,7 +34,7 @@ import {
   navigationMenuTriggerStyle
 } from '@workspace/ui/components/navigation-menu';
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { ExternalLink } from '@/components/shared/fragments/ExternalLink';
 import { MENU_LINKS } from '@/components/marketing/MarketingLinks';

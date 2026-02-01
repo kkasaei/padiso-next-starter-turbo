@@ -13,8 +13,8 @@ import {
   Plus,
 } from "lucide-react"
 import { useOrganization, useOrganizationList, CreateOrganization } from "@clerk/nextjs"
-import { cn } from "@/lib/utils"
-import { routes } from "@/routes"
+import { cn } from "@workspace/common/lib"
+import { routes } from "@workspace/common"
 
 export function WorkspaceSwitcher() {
   const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false)

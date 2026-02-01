@@ -6,7 +6,7 @@ import { allPosts } from 'content-collections';
 import { format, isBefore } from 'date-fns';
 import { ArrowRightIcon } from 'lucide-react';
 
-import { baseURL } from '@/routes';
+import { baseURL } from '@workspace/common';
 import {
   Avatar,
   AvatarFallback,
@@ -15,7 +15,7 @@ import {
 
 import { GridSection } from '@/components/shared/fragments/GridSection';
 import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
-import { getInitials } from '@/lib/formatters';
+import { getInitials } from '@workspace/common/lib';
 
 export function BlogPosts(): React.JSX.Element {
   return (

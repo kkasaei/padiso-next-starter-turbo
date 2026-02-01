@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import type { QuickLink } from "@/lib/mocks/legacy-project-details"
+import type { QuickLink } from "@workspace/common/lib/mocks/legacy-project-details"
 import { getFileIcon } from "@/components/brands/FileLinkRow"
 
 type FileTypeIconProps = {

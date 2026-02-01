@@ -1,6 +1,6 @@
 import { type Metadata } from 'next';
 import { APP_NAME } from '@workspace/common/constants';
-import { baseURL } from '@/routes';
+import { baseURL } from '@workspace/common';
 
 interface ReportLayoutProps {
   children: React.ReactNode;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { AEOReport } from '@/lib/shcmea/aeo-report';
+import type { AEOReport } from '@workspace/common/lib';
 
 interface ScorePreviewCardProps {
   averageScore: number;

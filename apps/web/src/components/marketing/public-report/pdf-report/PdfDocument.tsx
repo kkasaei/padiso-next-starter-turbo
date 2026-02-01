@@ -1,6 +1,6 @@
 import React from 'react';
 import { Document } from '@react-pdf/renderer';
-import type { AEOReport } from '@/lib/shcmea/aeo-report';
+import type { AEOReport } from '@workspace/common/lib';
 
 // Import all page components
 import { PDFCoverPage } from './pages/PdfCoverPage';

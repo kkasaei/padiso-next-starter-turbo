@@ -19,7 +19,7 @@ import {
 } from '@workspace/ui/components/collapsible'
 import { Heart, ChevronUp, CheckCircle, Tag } from 'lucide-react'
 
-import type { PromptAnalyticsData, SentimentMetricItem } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, SentimentMetricItem } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 import { PROVIDERS } from './constants'
 import { getProviderLogo } from './helpers'

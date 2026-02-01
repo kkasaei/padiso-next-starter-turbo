@@ -21,7 +21,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@workspace/ui/components/context-menu';
-import { useIsTouchDevice } from '@/hooks/use-is-touch-device';
+import { useIsTouchDevice } from '@workspace/ui/hooks/use-is-touch-device';
 
 type Value = 'askAI' | null;
 

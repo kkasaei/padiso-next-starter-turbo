@@ -36,10 +36,10 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import { useOrganization } from '@clerk/nextjs';
 
-import type { WebsiteAuditDto, PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import type { WebsiteAuditDto, PageAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 
 // ============================================================
 // TYPES

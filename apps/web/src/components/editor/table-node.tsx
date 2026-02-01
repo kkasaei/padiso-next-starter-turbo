@@ -71,7 +71,7 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Popover, PopoverContent } from '@workspace/ui/components/popover';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { blockSelectionVariants } from './block-selection';
 import {

@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Lightbulb, ArrowRight } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
+import { FEATURE_FLAGS } from '@workspace/common';
 
 interface InlineCTACardProps {
   brandArchetype?: string;

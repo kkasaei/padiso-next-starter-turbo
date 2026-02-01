@@ -3,7 +3,7 @@
 // Provider configurations, table columns, and static config
 // ============================================================
 
-import type { ProviderConfig } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { ProviderConfig } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 // ============================================================
 // PROVIDER CONFIGURATION

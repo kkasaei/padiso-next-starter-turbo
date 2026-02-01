@@ -11,7 +11,7 @@ import {
   CardTitle
 } from '@workspace/ui/components/card';
 import { Progress } from '@workspace/ui/components/progress';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 const DATA = [
   {

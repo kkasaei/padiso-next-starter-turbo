@@ -6,7 +6,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import type { PageAnalysis } from './types';
 
 // ============================================================

@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import Image from 'next/image';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 interface LLMProvider {
   name: string;

@@ -38,7 +38,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@workspace/ui/components/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import { ToolbarButton } from '@/components/editor/toolbar';
 
 export function EmojiToolbarButton({

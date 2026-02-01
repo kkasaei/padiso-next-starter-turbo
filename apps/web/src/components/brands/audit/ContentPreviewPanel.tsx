@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import type { PageAuditDto, PageIssue } from './types';
 
 // ============================================================

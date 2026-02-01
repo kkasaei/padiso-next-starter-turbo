@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import { Target, TrendingUp, CheckCircle2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { AnalysisSummary } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import { cn } from '@workspace/common/lib'
+import type { AnalysisSummary } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface AnalysisSummarySectionProps {
   summary: AnalysisSummary

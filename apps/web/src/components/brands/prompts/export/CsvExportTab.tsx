@@ -7,7 +7,7 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { toast } from 'sonner'
 import type { TrackedPrompt } from '../types'
-import { PROMPT_EXPORT_CSV_HEADERS } from '@/lib/shcmea/types/prompt-export'
+import { PROMPT_EXPORT_CSV_HEADERS } from '@workspace/common/lib/shcmea/types/prompt-export'
 
 interface CsvExportTabProps {
   prompts: TrackedPrompt[]

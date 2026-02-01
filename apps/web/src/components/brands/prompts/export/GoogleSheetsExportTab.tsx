@@ -25,11 +25,11 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@workspace/ui/components/dialog'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { toast } from 'sonner'
 
 import type { TrackedPrompt } from '../types'
-import type { GoogleDriveFolder, GoogleDriveFolderBreadcrumb } from '@/lib/shcmea/types/opportunity-export'
+import type { GoogleDriveFolder, GoogleDriveFolderBreadcrumb } from '@workspace/common/lib/shcmea/types/opportunity-export'
 
 interface GoogleSheetsExportTabProps {
   projectId: string

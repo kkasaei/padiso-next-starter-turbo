@@ -8,7 +8,7 @@
 
 import { Smile } from 'lucide-react'
 
-import type { PromptAnalyticsData, SentimentBreakdown as SentimentBreakdownType } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, SentimentBreakdown as SentimentBreakdownType } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 interface SentimentBreakdownProps {
   analyticsData: PromptAnalyticsData | null

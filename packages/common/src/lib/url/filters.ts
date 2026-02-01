@@ -1,4 +1,4 @@
-import type { FilterChip } from "@/lib/view-options"
+import type { FilterChip } from "../view-options"
 
 function normalizeKey(key: string): string {
     const s = key.trim().toLowerCase()

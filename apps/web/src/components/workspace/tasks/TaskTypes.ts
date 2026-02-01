@@ -5,7 +5,7 @@
  * All task-related components should import types from this file.
  */
 
-import type { UITask } from "@/lib/types/tasks";
+import type { UITask } from "@workspace/common/lib/types/tasks";
 
 // ============================================================
 // CORE TASK TYPES

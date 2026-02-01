@@ -4,7 +4,7 @@ import { useRef, useCallback } from 'react'
 import { Label } from '@workspace/ui/components/label'
 import { TooltipContent } from '@workspace/ui/components/tooltip'
 import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
-import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
+import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 import { GenerateWithAIButton } from './GenerateWithAiButton'
 

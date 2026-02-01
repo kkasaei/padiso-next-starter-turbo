@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
-import { type Project } from "@/lib/mocks/legacy-projects"
+import { type Project } from "@workspace/common/lib/mocks/legacy-projects"
 import { useBrands } from "@/hooks/use-brands"
 import {
   differenceInCalendarDays,

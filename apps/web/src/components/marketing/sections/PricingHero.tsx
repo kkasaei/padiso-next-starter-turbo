@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { PricingTable } from '@/lib/billing/components/pricing-table';
+import { PricingTable } from '@workspace/common/lib/billing/components/pricing-table';
 // import { PricingTable } from '@clerk/nextjs';
 import { APP_NAME } from '@workspace/common/constants';
 

@@ -18,10 +18,10 @@ import {
   Tooltip as RechartsTooltip,
 } from 'recharts'
 
-import type { MarketSegmentData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { MarketSegmentData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { getFaviconUrl, getProviderLogo } from './helpers'
 import { PROVIDERS } from './constants'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 
 type ProviderTab = 'chatgpt' | 'perplexity' | 'gemini'
 

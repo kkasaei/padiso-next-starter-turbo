@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ProjectFormData } from '@/lib/shcmea/types/project-form';
+import type { ProjectFormData } from '@workspace/common/lib';
 
 // ============================================================
 // Types

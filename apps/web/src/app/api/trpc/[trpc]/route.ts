@@ -1,7 +1,7 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { type NextRequest } from "next/server";
-import { appRouter } from "@/server/trpc/routers/_app";
-import { createContext } from "@/server/trpc/context";
+import { appRouter } from "@workspace/trpc/routers";
+import { createContext } from "@workspace/trpc/context";
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({

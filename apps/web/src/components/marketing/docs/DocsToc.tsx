@@ -3,9 +3,9 @@
 import * as React from 'react';
 
 import { useMounted } from '@workspace/ui/hooks/use-mounted';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
-import { type TableOfContents } from '@/lib/toc';
+import { type TableOfContents } from '@workspace/common/lib';
 
 type DocsTocProps = {
   toc: TableOfContents;

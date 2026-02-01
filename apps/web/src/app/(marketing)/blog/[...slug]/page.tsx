@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { allPosts } from 'content-collections';
 
-import { baseURL } from '@/routes';
+import { baseURL } from '@workspace/common';
 
 import { BlogPost } from '@/components/marketing/sections/BlogPost';
 

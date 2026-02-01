@@ -11,7 +11,7 @@ import {
 import { Separator } from '@workspace/ui/components/separator';
 
 import { Mdx } from '@/components/marketing/blog/MdxComponent';
-import { getInitials } from '@/lib/formatters';
+import { getInitials } from '@workspace/common/lib';
 
 type BlogPostProps = {
   post: {

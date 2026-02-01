@@ -1,4 +1,4 @@
-import type { ProjectScope } from "@/lib/mocks/legacy-project-details"
+import type { ProjectScope } from "@workspace/common/lib/mocks/legacy-project-details"
 
 type ScopeColumnsProps = {
   scope: ProjectScope

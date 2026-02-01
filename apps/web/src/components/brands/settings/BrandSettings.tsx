@@ -18,9 +18,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { Badge } from '@workspace/ui/components/badge'
 import { Sparkle, HelpCircle, Loader2 } from 'lucide-react'
-import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
-import type { SiteDiscoveryState } from '@/lib/shcmea/types/site-discovery'
-import type { ContextFilesState } from '@/lib/shcmea/types/context-files'
+import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
+import type { SiteDiscoveryState } from '@workspace/common/lib/shcmea/types/site-discovery'
+import type { ContextFilesState } from '@workspace/common/lib/shcmea/types/context-files'
 
 import { SiteDiscoverySection } from '@/components/brands/create-brand/SiteDiscoverySection'
 import { ContextFilesSection } from '@/components/brands/create-brand/ContextFilesSection'
@@ -41,7 +41,7 @@ import {
   CommandList,
 } from '@workspace/ui/components/command'
 import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 
 function FormSection({
   title,

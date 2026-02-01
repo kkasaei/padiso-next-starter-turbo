@@ -8,9 +8,9 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { HelpCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
-import type { PromptAnalyticsData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { PROVIDERS } from './constants'
 
 interface BrandPositioningMapProps {

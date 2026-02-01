@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { GridSection } from '@/components/shared/fragments/GridSection';
 import { NumberTicker } from '@/components/shared/fragments/NumberTicket';

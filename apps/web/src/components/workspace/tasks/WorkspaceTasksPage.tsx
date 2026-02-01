@@ -11,11 +11,11 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable"
 
-import { type Project, type FilterCounts } from "@/lib/mocks/legacy-projects"
-import { getProjectTasks, type ProjectTask } from "@/lib/mocks/legacy-project-details"
+import { type Project, type FilterCounts } from "@workspace/common/lib/mocks/legacy-projects"
+import { getProjectTasks, type ProjectTask } from "@workspace/common/lib/mocks/legacy-project-details"
 import { useBrand } from "@/hooks/use-brands"
-import { baseDetailsFromListItem } from "@/lib/mocks/legacy-project-details"
-import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@/lib/view-options"
+import { baseDetailsFromListItem } from "@workspace/common/lib/mocks/legacy-project-details"
+import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptions } from "@workspace/common/lib"
 import {
   ProjectTaskGroup,
   ProjectTaskListView,

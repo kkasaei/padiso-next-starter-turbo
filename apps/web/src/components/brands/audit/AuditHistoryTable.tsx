@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 // ============================================================
 // TYPES

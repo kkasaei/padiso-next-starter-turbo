@@ -54,7 +54,7 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import type { WorkflowNode, WorkflowNodeType } from './workflow-types'
 import { PromptEditor } from '@/components/editor/prompt-editor'
 

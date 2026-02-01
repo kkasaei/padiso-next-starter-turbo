@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@workspace/ui/components/table";
 import { cn } from "@workspace/ui/lib/utils";
-import type { UITask } from "@/lib/types/tasks";
+import type { UITask } from "@workspace/common/lib/types/tasks";
 import { getTaskStatusConfig, getTaskPriorityConfig } from "./TaskConstants";
 
 // Backward compatibility

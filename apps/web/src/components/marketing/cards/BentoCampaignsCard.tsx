@@ -23,7 +23,7 @@ import {
   CarouselContent,
   CarouselItem
 } from '@workspace/ui/components/carousel';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 const DATA = [
   {

@@ -10,7 +10,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Search, ArrowLeft, HelpCircle, MessageSquare } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { Button } from '@workspace/ui/components/button'
 import { Badge } from '@workspace/ui/components/badge'
 import { Input } from '@workspace/ui/components/input'
@@ -24,7 +24,7 @@ import {
   } from '@workspace/ui/components/select'
 
 import { useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
-import type { PromptAnalyticsData, MentionSortKey, SortDirection } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData, MentionSortKey, SortDirection } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 import { COMPETITION_PROVIDERS, MENTION_TABLE_COLUMNS, PAGE_SIZE_OPTIONS } from './constants'
 import { getSentimentColor, getProviderLogo, getPageNumbers } from './helpers'
 

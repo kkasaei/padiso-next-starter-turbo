@@ -21,7 +21,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { NODE_DEFINITIONS, NODE_CATEGORIES, type NodeDefinition } from './workflow-types'
-import type { AgentDto } from '@/lib/shcmea/types/agent'
+import type { AgentDto } from '@workspace/common/lib/shcmea/types/agent'
 import { toast } from 'sonner'
 
 // ============================================================

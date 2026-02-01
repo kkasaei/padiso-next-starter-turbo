@@ -9,8 +9,8 @@ import {
   PanelLeftOpen,
 } from "lucide-react"
 import { useBrands } from "@/hooks/use-brands"
-import { cn } from "@/lib/utils"
-import { brandNavItems } from "@/routes"
+import { cn } from "@workspace/common/lib"
+import { brandNavItems } from "@workspace/common"
 import { FavouriteBrands } from "./FavouriteBrands"
 import { BrandSwitcher } from "./BrandSwitcher"
 

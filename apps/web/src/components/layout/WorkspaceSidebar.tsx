@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@workspace/ui/components/tooltip"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { useUser } from "@clerk/nextjs"
-import { cn } from "@/lib/utils"
-import { isNavItemActive } from "@/lib/navigation"
+import { cn } from "@workspace/common/lib"
+import { isNavItemActive } from "@workspace/common/lib"
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher"
-import { workspaceSidebarNavItems, workspaceSidebarFooterItems } from "@/routes"
+import { workspaceSidebarNavItems, workspaceSidebarFooterItems } from "@workspace/common"
 
 export function WorkspaceSidebar() {
   const pathname = usePathname()

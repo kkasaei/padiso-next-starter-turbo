@@ -29,11 +29,11 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import { toast } from 'sonner'
 
-import type { PromptValidationResult } from '@/lib/shcmea/types/prompt-import'
-import { PROMPT_CSV_TEMPLATE } from '@/lib/shcmea/types/prompt-import'
+import type { PromptValidationResult } from '@workspace/common/lib/shcmea/types/prompt-import'
+import { PROMPT_CSV_TEMPLATE } from '@workspace/common/lib/shcmea/types/prompt-import'
 
 // Types for Drive items (previously imported from actions)
 interface DriveItem {

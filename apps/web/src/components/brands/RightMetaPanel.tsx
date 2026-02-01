@@ -1,4 +1,4 @@
-import type { ProjectDetails } from "@/lib/mocks/legacy-project-details"
+import type { ProjectDetails } from "@workspace/common/lib/mocks/legacy-project-details"
 import { TimeCard } from "@/components/brands/TimeCard"
 import { BacklogCard } from "@/components/brands/BacklogCard"
 import { QuickLinksCard } from "@/components/brands/QuickLinksCard"

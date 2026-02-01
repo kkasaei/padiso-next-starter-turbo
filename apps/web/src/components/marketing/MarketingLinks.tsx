@@ -14,7 +14,7 @@ import {
   Bot
 } from 'lucide-react';
 
-import { baseURL } from '@/routes';
+import { baseURL } from '@workspace/common';
 import {
   FacebookIcon,
   InstagramIcon,

@@ -13,7 +13,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@workspace/ui/components/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 export function Toolbar({
   className,

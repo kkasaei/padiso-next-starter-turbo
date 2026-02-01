@@ -3,7 +3,7 @@
 import { Label } from '@workspace/ui/components/label'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { TooltipContent } from '@workspace/ui/components/tooltip'
-import type { ProjectFormData } from '@/lib/shcmea/types/project-form'
+import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 import { GenerateWithAIButton } from './GenerateWithAiButton'
 

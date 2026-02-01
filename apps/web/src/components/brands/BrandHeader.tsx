@@ -1,7 +1,7 @@
 import { Star, User, Pencil as PencilSimpleLine } from "lucide-react"
 import { RefreshCw as ArrowsClockwise, Globe, Timer } from "lucide-react"
 
-import type { ProjectDetails } from "@/lib/mocks/legacy-project-details"
+import type { ProjectDetails } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Separator } from "@workspace/ui/components/separator"
 import { MetaChipsRow } from "@/components/brands/MetaChipsRow"
 import { Badge } from "@workspace/ui/components/badge"

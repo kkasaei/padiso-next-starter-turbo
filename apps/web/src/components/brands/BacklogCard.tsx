@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Tag, Users as UsersThree, CircleUser as UserCircle, Grid2x2 as SquaresFour } from "lucide-react"
 import { CircleDashed, Cube, User, Users } from "lucide-react"
 
-import type { BacklogSummary } from "@/lib/mocks/legacy-project-details"
+import type { BacklogSummary } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
 import { StatRow } from "@/components/brands/StatRow"

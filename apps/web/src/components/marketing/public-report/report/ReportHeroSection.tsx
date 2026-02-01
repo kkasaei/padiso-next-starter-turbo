@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import type { AEOReport } from '@/lib/shcmea/aeo-report';
+import type { AEOReport } from '@workspace/common/lib';
 import { ReportActions } from './ReportActions';
 import { ScorePreviewCard } from './ScorePreviewCard';
-import { calculateTotalQueries } from '@/lib/report-utils';
+import { calculateTotalQueries } from '@workspace/common/lib';
 
 interface ReportHeroSectionProps {
   domain: string;

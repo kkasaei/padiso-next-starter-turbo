@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 
-import type { ProjectNote, User } from "@/lib/mocks/legacy-project-details"
+import type { ProjectNote, User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { NoteCard } from "@/components/brands/NoteCard"
 import { NotesTable } from "@/components/brands/NotesTable"

@@ -29,7 +29,7 @@ import {
 
 // Import types
 import type { TrackedPrompt } from '@/components/brands/prompts/types'
-import type { PromptAnalyticsData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { PromptAnalyticsData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 // ============================================================
 // MOCK DATA FOR TESTING

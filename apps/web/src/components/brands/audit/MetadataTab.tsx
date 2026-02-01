@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import type { PageMetadata } from './types';
 
 // ============================================================

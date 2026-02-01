@@ -56,7 +56,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { toast } from 'sonner'
 
-import type { AgentDto, AgentStatus, AgentTrigger } from '@/lib/shcmea/types/agent'
+import type { AgentDto, AgentStatus, AgentTrigger } from '@workspace/common/lib/shcmea/types/agent'
 import { formatDistanceToNow } from 'date-fns'
 
 // Tab type

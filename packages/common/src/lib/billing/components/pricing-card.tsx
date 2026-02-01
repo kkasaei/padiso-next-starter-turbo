@@ -6,7 +6,7 @@ import { CheckIcon, ChevronRightIcon, XIcon, Users } from 'lucide-react';
 
 import { Badge } from '@workspace/ui/components/badge';
 import { Button, buttonVariants } from '@workspace/ui/components/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import { PLANS, type PlanId, type PlanFeature } from '../plans';
 import type { PriceInterval } from './price-interval-selector';
 

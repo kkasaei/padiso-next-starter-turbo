@@ -23,7 +23,7 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 
 import { Button } from "@workspace/ui/components/button"
-import type { UITask } from "@/lib/types/tasks";
+import type { UITask } from "@workspace/common/lib/types/tasks";
 
 // Backward compatibility
 type ProjectTask = UITask;

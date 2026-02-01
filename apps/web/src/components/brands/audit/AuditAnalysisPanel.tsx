@@ -43,7 +43,7 @@ import {
 } from '@workspace/ui/components/ai-elements/message';
 import { Loader } from '@workspace/ui/components/ai-elements/loader';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import type { PageAuditDto, PageIssue } from './types';
 
 // ============================================================

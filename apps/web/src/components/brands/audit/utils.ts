@@ -4,7 +4,7 @@
  * Helper functions for the technical audit feature
  */
 
-import type { PageAuditDto } from '@/lib/shcmea/types/dtos/audit-dto';
+import type { PageAuditDto } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 import type { SortKey, SortDirection } from './constants';
 
 // ============================================================

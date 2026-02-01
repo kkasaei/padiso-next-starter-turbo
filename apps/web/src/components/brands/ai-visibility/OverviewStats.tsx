@@ -1,8 +1,8 @@
 'use client'
 
 import { TrendingUp, TrendingDown, Minus, Bot, Users, BarChart3 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { AIVisibilityStats, TrendDirection } from '@/lib/shcmea/types/dtos/ai-visibility-dto'
+import { cn } from '@workspace/common/lib'
+import type { AIVisibilityStats, TrendDirection } from '@workspace/common/lib/shcmea/types/dtos/ai-visibility-dto'
 
 interface OverviewStatsProps {
   stats: AIVisibilityStats

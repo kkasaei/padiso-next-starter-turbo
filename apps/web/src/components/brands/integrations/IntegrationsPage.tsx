@@ -48,7 +48,7 @@ import {
   Unplug,
   Settings2,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@workspace/common/lib'
 import {
   PROVIDER_METADATA,
   SERVICE_METADATA,
@@ -57,8 +57,8 @@ import {
   type IntegrationProvider,
   type ProviderCategory,
   type ProviderMetadata,
-} from '@/lib/shcmea/types/integration'
-import type { IntegrationDetailDto } from '@/lib/shcmea/types/dtos/integration-dto'
+} from '@workspace/common/lib/shcmea/types/integration'
+import type { IntegrationDetailDto } from '@workspace/common/lib/shcmea/types/dtos/integration-dto'
 
 // ============================================================
 // CONSTANTS

@@ -30,7 +30,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { ToolbarButton } from './toolbar';
 

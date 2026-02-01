@@ -3,7 +3,7 @@
 // Utility functions for analytics components
 // ============================================================
 
-import type { CompetitorData } from '@/lib/shcmea/types/dtos/prompt-analytics-dto'
+import type { CompetitorData } from '@workspace/common/lib/shcmea/types/dtos/prompt-analytics-dto'
 
 // ============================================================
 // FAVICON HELPER

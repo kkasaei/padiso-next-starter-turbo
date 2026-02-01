@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle
 } from '@workspace/ui/components/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 function RedditIcon(
   props: React.SVGAttributes<SVGSVGElement>

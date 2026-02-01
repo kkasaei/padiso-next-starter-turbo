@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@/feature_flags';
+import { FEATURE_FLAGS } from '@workspace/common';
 import { Button } from '@workspace/ui/components/button';
 
 interface StickyBottomBarProps {

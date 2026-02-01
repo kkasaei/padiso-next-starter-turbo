@@ -18,7 +18,7 @@ import {
   Target,
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 import type { PageAuditDto, PageIssue } from './types';
 
 // ============================================================

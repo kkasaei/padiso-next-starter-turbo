@@ -1,6 +1,6 @@
-import type { Project as ProjectListItem } from "@/lib/mocks/legacy-projects"
-import { projects } from "@/lib/mocks/legacy-projects"
-import { getAvatarUrl } from "@/lib/assets/avatars"
+import type { Project as ProjectListItem } from "./legacy-projects"
+import { projects } from "./legacy-projects"
+import { getAvatarUrl } from "../assets/avatars"
 
 function addDays(base: Date, days: number): Date {
   const d = new Date(base)

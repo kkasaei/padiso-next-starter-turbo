@@ -2,7 +2,7 @@
  * Audit Module Types
  */
 
-import type { PageAuditDto, PageIssue, PageAnalysis, PageMetadata } from '@/lib/shcmea/types/dtos/audit-dto';
+import type { PageAuditDto, PageIssue, PageAnalysis, PageMetadata } from '@workspace/common/lib/shcmea/types/dtos/audit-dto';
 
 export type { PageAuditDto, PageIssue, PageAnalysis, PageMetadata };
 

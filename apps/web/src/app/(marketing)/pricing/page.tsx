@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 import { PricingFAQ } from '@/components/marketing/sections/PricingFaq';
 import { PricingHero } from '@/components/marketing/sections/PricingHero';
-import { createTitle } from '@/lib/formatters';
+import { createTitle } from '@workspace/common/lib';
 
 export const metadata: Metadata = {
   title: createTitle('Pricing')

@@ -6,14 +6,14 @@ import { notFound } from 'next/navigation';
 import { allDocs } from 'content-collections';
 import { ChevronRightIcon } from 'lucide-react';
 
-import { baseURL } from '@/routes';
+import { baseURL } from '@workspace/common';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn } from '@workspace/common/lib';
 
 import { Mdx } from '@/components/marketing/blog/MdxComponent';
 import { DocsPager } from '@/components/marketing/docs/DocsPager';
 import { DocsToc } from '@/components/marketing/docs/DocsToc';
-import { getTableOfContents } from '@/lib/toc';
+import { getTableOfContents } from '@workspace/common/lib';
 
 async function getDocFromParams(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params;
