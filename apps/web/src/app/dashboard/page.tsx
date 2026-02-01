@@ -147,7 +147,18 @@ function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCr
               5 Minutes to get you started with the dashboard.
             </p>
           </div>
-          <Button className="w-full">Watch the video</Button>
+          <Button 
+            className="w-full" 
+            asChild
+          >
+            <a 
+              href="https://www.youtube.com/@searchfitai" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Watch the video
+            </a>
+          </Button>
         </div>
       </div>
     </div>
