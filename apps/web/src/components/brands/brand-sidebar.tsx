@@ -18,6 +18,7 @@ import { useBrands } from "@/hooks/use-brands"
 import { favouriteProjects } from "@/lib/data/sidebar"
 import { cn } from "@/lib/utils"
 import { brandNavItems } from "@/routes"
+import { FavouriteBrands } from "./FavouriteBrands"
 
 // Context for sidebar state
 type BrandSidebarContextType = {
@@ -275,30 +276,12 @@ export function BrandSidebar() {
           </ul>
         </nav>
 
-        <Separator className="mx-3" />
-
-        {/* Favourite Projects */}
-        <div className="flex-1 p-2 overflow-y-auto">
-          <p className="px-3 py-2 text-xs font-medium text-muted-foreground">
-            Favourite Projects
-          </p>
-          <ul className="flex flex-col gap-1">
-            {favouriteProjects.map((project) => (
-              <li key={project.name}>
-                <button className="flex w-full items-center gap-2 h-9 rounded-lg px-3 hover:bg-accent transition-colors group">
-                  <span
-                    className="h-3 w-3 rounded-full shrink-0"
-                    style={{ backgroundColor: project.color }}
-                  />
-                  <span className="flex-1 truncate text-sm text-left">{project.name}</span>
-                  <span className="opacity-0 group-hover:opacity-100 rounded p-0.5 hover:bg-accent">
-                    <span className="text-muted-foreground text-lg">···</span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {favouriteProjects.length > 0 && (
+          <>
+            <Separator className="mx-3" />
+            <FavouriteBrands brands={favouriteProjects} />
+          </>
+        )}
       </div>
       </div>
 

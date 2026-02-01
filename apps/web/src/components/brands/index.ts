@@ -6,7 +6,7 @@
 
 // Main Views
 export * from './BrandsListPage';
-export * from './BrandDetailsPage';
+export * from './BrandDetailsPage-v2';
 
 // Brand UI Components
 export * from './brand-card';

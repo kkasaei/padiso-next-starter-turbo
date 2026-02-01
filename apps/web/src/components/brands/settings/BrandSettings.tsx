@@ -26,6 +26,7 @@ import { SiteDiscoverySection } from '@/components/brands/create-brand/site-disc
 import { ContextFilesSection } from '@/components/brands/create-brand/context-files-section'
 import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
 import { COUNTRIES, getCountryByCode } from '@workspace/common/constants'
+import { useBrandWizardContext } from '@/hooks/use-brand-wizard-context'
 import {
   Popover,
   PopoverContent,
