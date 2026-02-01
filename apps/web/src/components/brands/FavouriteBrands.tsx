@@ -1,9 +1,14 @@
 "use client"
 
-import type { Brand } from "@workspace/db"
+interface FavouriteBrand {
+  id: string
+  brandName: string | null
+  brandColor: string | null
+  isFavourite?: boolean | null
+}
 
 interface FavouriteBrandsProps {
-  brands: Brand[]
+  brands: FavouriteBrand[]
 }
 
 export function FavouriteBrands({ brands }: FavouriteBrandsProps) {
@@ -25,7 +30,7 @@ export function FavouriteBrands({ brands }: FavouriteBrandsProps) {
                 className="h-3 w-3 rounded-full shrink-0"
                 style={{ backgroundColor: brand.brandColor || "#6366f1" }}
               />
-              <span className="flex-1 truncate text-sm text-left">{brand.brandName}</span>
+              <span className="flex-1 truncate text-sm text-left">{brand.brandName || "Untitled Brand"}</span>
               <span className="opacity-0 group-hover:opacity-100 rounded p-0.5 hover:bg-accent">
                 <span className="text-muted-foreground text-lg">···</span>
               </span>
