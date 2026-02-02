@@ -6,6 +6,8 @@ import { promptsRouter } from "./prompts";
 import { workspacesRouter } from "./workspaces";
 import { publicReportRouter } from "./public-report";
 import { subscriptionsRouter } from "./subscriptions";
+import { contentRouter } from "./content";
+import { integrationsRouter } from "./integrations";
 
 export const appRouter = router({
   brands: brandsRouter,
@@ -15,6 +17,8 @@ export const appRouter = router({
   workspaces: workspacesRouter,
   publicReport: publicReportRouter,
   subscriptions: subscriptionsRouter,
+  content: contentRouter,
+  integrations: integrationsRouter,
 });
 
 export type AppRouter = typeof appRouter;
