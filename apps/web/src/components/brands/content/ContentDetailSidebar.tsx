@@ -77,7 +77,7 @@ function ArticleScoreCard({ score, showScoreFactors, onToggleScoreFactors }: Art
   const scoreLabel = getScoreLabel(score)
 
   return (
-    <div className="group flex w-full flex-col justify-between rounded-xl border border-transparent bg-gray-50 p-2 shadow-xs transition-all hover:shadow-md dark:border-polar-700 dark:bg-polar-800 lg:rounded-4xl">
+    <div className="group flex w-full flex-col justify-between rounded-xl border border-transparent bg-gray-200 p-2 shadow-xs transition-all hover:shadow-md dark:border-polar-700 dark:bg-polar-800 lg:rounded-4xl">
       <div className="flex flex-col gap-6 p-6">
         <div className="flex w-full flex-col gap-y-4">
           <div className="flex flex-row items-center justify-between">
@@ -340,7 +340,7 @@ export function ContentDetailSidebar({ content }: ContentDetailSidebarProps) {
   const [showScoreFactors, setShowScoreFactors] = useState(false)
 
   return (
-    <aside className="h-full border-l border-border">
+    <aside className="h-full border-l border-border bg-muted/20">
       <div className="flex h-full flex-col">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <ArticleScoreCard
