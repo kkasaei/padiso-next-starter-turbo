@@ -289,14 +289,15 @@ export default function ContentEditPage() {
       </div>
 
       {/* Editor */}
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0">
         <TiptapEditor
           ref={editorRef}
           key={content.id}
           initialValue={content.content}
           onContentChange={handleContentChange}
-          className="h-full border-0 rounded-none"
-          height="100%"
+          className="border-0 rounded-none"
+          height="calc(100vh - 120px)"
+          brandId={projectId}
         />
       </div>
     </div>

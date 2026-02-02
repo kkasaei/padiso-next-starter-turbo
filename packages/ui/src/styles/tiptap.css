@@ -1,5 +1,12 @@
 .tiptap-editor {
   outline: none;
+  min-height: 100%;
+  height: auto;
+}
+
+.tiptap-editor .ProseMirror {
+  outline: none;
+  min-height: 100%;
 }
 
 .tiptap-editor p.is-editor-empty:first-child::before {
@@ -311,13 +318,146 @@
   border-color: hsl(var(--primary) / 0.2);
 }
 
-/* Image Styles */
-.tiptap-editor img {
+/* Text Alignment */
+.tiptap-editor [data-text-align="left"] {
+  text-align: left;
+}
+
+.tiptap-editor [data-text-align="center"] {
+  text-align: center;
+}
+
+.tiptap-editor [data-text-align="right"] {
+  text-align: right;
+}
+
+.tiptap-editor [data-text-align="justify"] {
+  text-align: justify;
+}
+
+/* Figure (Image with Caption) */
+.tiptap-editor figure[data-type="image"] {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  position: relative;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="left"] {
+  align-items: flex-start;
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="center"] {
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="right"] {
+  align-items: flex-end;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.tiptap-editor figure[data-type="image"] img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 0.5rem;
+  display: block;
+  margin: 0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Ensure figure doesn't take full width */
+.tiptap-editor figure[data-type="image"][data-align="left"],
+.tiptap-editor figure[data-type="image"][data-align="right"] {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="center"] {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tiptap-editor figure[data-type="image"].ProseMirror-selectednode {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 0.625rem;
+  background-color: hsl(var(--primary) / 0.05);
+}
+
+.tiptap-editor figure[data-type="image"].ProseMirror-selectednode img {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.tiptap-editor figure[data-type="image"] figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="left"] figcaption {
+  text-align: left;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="center"] figcaption {
+  text-align: center;
+}
+
+.tiptap-editor figure[data-type="image"][data-align="right"] figcaption {
+  text-align: right;
+}
+
+.tiptap-editor figure[data-type="image"] figcaption:empty::before {
+  content: attr(data-placeholder);
+  color: hsl(var(--muted-foreground) / 0.5);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.tiptap-editor figure[data-type="image"] figcaption:focus {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.tiptap-editor figure[data-type="image"] figcaption:not(:empty) {
+  font-style: italic;
+}
+
+/* Regular Image Styles (for fallback/markdown images) */
+.tiptap-editor img:not(figure img) {
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.tiptap-editor img[data-align="left"] {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.tiptap-editor img[data-align="center"] {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.tiptap-editor img[data-align="right"] {
+  margin-left: auto;
+  margin-right: 0;
   display: block;
 }
 
