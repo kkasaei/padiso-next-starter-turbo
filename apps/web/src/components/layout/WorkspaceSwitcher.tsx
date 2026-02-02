@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Input } from "@workspace/ui/components/input"
@@ -20,6 +20,7 @@ export function WorkspaceSwitcher() {
   const router = useRouter()
   const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const prevOrgIdRef = useRef<string | null>(null)
 
   const { organization: activeOrg } = useOrganization()
   const { userMemberships, setActive } = useOrganizationList({
@@ -27,6 +28,16 @@ export function WorkspaceSwitcher() {
       pageSize: 50,
     },
   })
+
+  // Revalidate membership list when active organization changes
+  // This ensures newly created workspaces appear in the list
+  useEffect(() => {
+    if (activeOrg?.id && activeOrg.id !== prevOrgIdRef.current) {
+      prevOrgIdRef.current = activeOrg.id
+      // Revalidate the membership list to include new workspaces
+      userMemberships.revalidate?.()
+    }
+  }, [activeOrg?.id, userMemberships])
 
   const filteredOrgs = userMemberships.data?.filter((membership) =>
     membership.organization.name.toLowerCase().includes(search.toLowerCase())

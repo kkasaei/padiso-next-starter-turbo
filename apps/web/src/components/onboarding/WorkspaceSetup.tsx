@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -16,6 +16,7 @@ import { Loader2, Check, ArrowRight, LogOut } from "lucide-react";
 import { useCreateWorkspace } from "@/hooks/use-workspace";
 import { routes } from "@workspace/common";
 import { cn } from "@workspace/ui/lib/utils";
+import { PLANS, type PlanId } from "@workspace/billing";
 
 type SetupStep = 1 | 2 | 3 | 4;
 
@@ -26,35 +27,19 @@ const STEPS = [
   { number: 4, title: "Complete" },
 ];
 
-const GROWTH_FEATURES = [
-  "5 brands with 150 prompts tracked",
-  "10 competitors & 50 keywords monitoring",
-  "30 SEO & AI-optimized articles published monthly",
-  "Real-time AI-driven research & expert-backed content",
-  "Articles with citations, internal links & branded infographics",
-  "JSON-LD schema markup for featured snippets",
-  "Technical SEO audit (Google & AI crawlability)",
-  "Visibility dashboard with weekly refresh",
-  "Integrates with WordPress, Webflow, Shopify, Wix & API",
-  "Webhook support & weekly email digest",
-  "Email support (24hr response)",
-];
-
-const AGENCY_FEATURES = [
-  "Tailormade solution for your needs",
-  "Unlimited brands & prompts",
-  "Customer Success Manager",
-  "Priority support",
-  "Custom integrations",
-  "White-label options",
-];
+// Get features from actual PLANS configuration
+const GROWTH_FEATURES = PLANS.growth.features.slice(0, 11) as readonly string[];
+const CUSTOM_FEATURES = PLANS.custom.features.slice(0, 6) as readonly string[];
 
 export function WorkspaceSetup() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<SetupStep>(1);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<"growth" | "agency" | null>(null);
-  const [billingInterval, setBillingInterval] = useState<"monthly" | "yearly">("monthly");
+  const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(null);
+  const [billingInterval, setBillingInterval] = useState<"month" | "year">("month");
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   
   const initialOrgIdRef = useRef<string | null | undefined>(undefined);
   const isSettingUpRef = useRef(false);
@@ -63,6 +48,24 @@ export function WorkspaceSetup() {
   const { setActive } = useOrganizationList();
   const { signOut } = useClerk();
   const createWorkspace = useCreateWorkspace();
+
+  // Check for return from Stripe checkout on mount
+  useEffect(() => {
+    const success = searchParams.get("success");
+    const canceled = searchParams.get("canceled");
+    const workspaceIdParam = searchParams.get("workspace_id");
+
+    if (success === "true" && workspaceIdParam) {
+      // User returned from successful Stripe checkout
+      setWorkspaceId(workspaceIdParam);
+      setStep(4);
+    } else if (canceled === "true" && workspaceIdParam) {
+      // User canceled Stripe checkout - return to plan selection
+      setWorkspaceId(workspaceIdParam);
+      setStep(3);
+      setError("Checkout was canceled. Please select a plan to continue.");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (initialOrgIdRef.current === undefined) {
@@ -79,10 +82,16 @@ export function WorkspaceSetup() {
     setError(null);
 
     try {
-      await createWorkspace.mutateAsync({
+      const workspace = await createWorkspace.mutateAsync({
         clerkOrgId: orgId,
         status: "active",
       });
+
+      // Store workspace ID for later use
+      if (!workspace?.id) {
+        throw new Error("Workspace creation failed - no ID returned");
+      }
+      setWorkspaceId(workspace.id);
 
       await setActive?.({ organization: orgId });
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -111,13 +120,43 @@ export function WorkspaceSetup() {
     }
   }, [organization?.id, step, handleCreateWorkspaceInDB]);
 
-  const handleSelectPlan = (plan: "growth" | "agency") => {
+  const handleSelectPlan = (plan: PlanId) => {
     setSelectedPlan(plan);
   };
 
-  const handleStartTrial = () => {
-    // TODO: Integrate with Stripe for subscription
-    setStep(4);
+  const handleStartTrial = async () => {
+    if (!selectedPlan || !workspaceId) {
+      setError("Please select a plan to continue.");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspaceId,
+          planId: selectedPlan,
+          interval: billingInterval, // "month" or "year"
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Checkout error:", err);
+      setError(err instanceof Error ? err.message : "Failed to start checkout");
+      setIsCheckingOut(false);
+    }
   };
 
   const handleGoToDashboard = () => {
@@ -129,14 +168,17 @@ export function WorkspaceSetup() {
     router.push("/");
   };
 
-  // Calculate savings
-  const growthMonthlyCost = 99;
-  const growthYearlyCost = 79;
+  // Get pricing from actual PLANS configuration
+  const growthPlan = PLANS.growth;
+  const customPlan = PLANS.custom;
+  
+  const growthMonthlyCost = growthPlan.prices.month.amount;
+  const growthYearlyCost = Math.round(growthPlan.prices.year.amount / 12);
   const growthYearlySavings = (growthMonthlyCost - growthYearlyCost) * 12;
   
-  const agencyMonthlyCost = 2000;
-  const agencyYearlyCost = 20000;
-  const agencyYearlySavings = (agencyMonthlyCost * 12) - agencyYearlyCost;
+  const customMonthlyCost = customPlan.prices.month.amount;
+  const customYearlyCost = customPlan.prices.year.amount;
+  const customYearlySavings = (customMonthlyCost * 12) - customYearlyCost;
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -248,17 +290,23 @@ export function WorkspaceSetup() {
                     Select your plan
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Start with a 7-day free trial. Cancel anytime.
+                    Start with a {growthPlan.trialDays}-day free trial. Cancel anytime.
                   </p>
+
+                  {error && (
+                    <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+                      {error}
+                    </div>
+                  )}
 
                   {/* Billing Toggle */}
                   <div className="flex items-center gap-3 mb-6">
                     <div className="flex items-center p-1 bg-muted rounded-lg">
                       <button
-                        onClick={() => setBillingInterval("monthly")}
+                        onClick={() => setBillingInterval("month")}
                         className={cn(
                           "px-4 py-2 text-sm font-medium rounded-md transition-colors",
-                          billingInterval === "monthly"
+                          billingInterval === "month"
                             ? "bg-background text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
                         )}
@@ -266,10 +314,10 @@ export function WorkspaceSetup() {
                         Monthly
                       </button>
                       <button
-                        onClick={() => setBillingInterval("yearly")}
+                        onClick={() => setBillingInterval("year")}
                         className={cn(
                           "px-4 py-2 text-sm font-medium rounded-md transition-colors",
-                          billingInterval === "yearly"
+                          billingInterval === "year"
                             ? "bg-background text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
                         )}
@@ -277,7 +325,7 @@ export function WorkspaceSetup() {
                         Yearly
                       </button>
                     </div>
-                    {billingInterval === "yearly" && (
+                    {billingInterval === "year" && (
                       <span className="text-xs text-muted-foreground">
                         Save up to ${growthYearlySavings}/year
                       </span>
@@ -297,36 +345,38 @@ export function WorkspaceSetup() {
                     >
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground uppercase tracking-wide">
-                          For Smart Entrepreneurs
+                          For Growing Brands
                         </span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
-                          Recommended
-                        </span>
+                        {'recommended' in growthPlan && growthPlan.recommended && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+                            Recommended
+                          </span>
+                        )}
                       </div>
                       
                       <div className="flex items-baseline justify-between mb-3">
-                        <span className="text-lg font-semibold text-foreground">Growth Engine</span>
+                        <span className="text-lg font-semibold text-foreground">{growthPlan.name}</span>
                         <div className="text-right">
-                          {billingInterval === "yearly" && (
+                          {billingInterval === "year" && (
                             <span className="text-sm text-muted-foreground line-through mr-2">
                               ${growthMonthlyCost}
                             </span>
                           )}
                           <span className="text-2xl font-bold text-foreground">
-                            ${billingInterval === "monthly" ? growthMonthlyCost : growthYearlyCost}
+                            ${billingInterval === "month" ? growthMonthlyCost : growthYearlyCost}
                           </span>
                           <span className="text-sm text-muted-foreground">/mo</span>
                         </div>
                       </div>
 
-                      {billingInterval === "yearly" && (
+                      {billingInterval === "year" && (
                         <p className="text-xs text-primary mb-3">
                           Save ${growthYearlySavings}/year
                         </p>
                       )}
 
                       <p className="text-sm text-muted-foreground mb-4">
-                        Everything you need to build lasting organic visibility.
+                        {growthPlan.description}
                       </p>
 
                       <ul className="space-y-2">
@@ -343,19 +393,19 @@ export function WorkspaceSetup() {
                           </li>
                         ))}
                       </ul>
-                      {selectedPlan !== "growth" && (
+                      {selectedPlan !== "growth" && GROWTH_FEATURES.length > 5 && (
                         <p className="text-xs text-muted-foreground mt-2">
                           +{GROWTH_FEATURES.length - 5} more features
                         </p>
                       )}
                     </button>
 
-                    {/* Agency Plan */}
+                    {/* Custom Plan */}
                     <button
-                      onClick={() => handleSelectPlan("agency")}
+                      onClick={() => handleSelectPlan("custom")}
                       className={cn(
                         "w-full p-5 rounded-xl border text-left transition-colors",
-                        selectedPlan === "agency"
+                        selectedPlan === "custom"
                           ? "border-foreground bg-muted/50"
                           : "border-border hover:border-muted-foreground/50"
                       )}
@@ -367,30 +417,30 @@ export function WorkspaceSetup() {
                       </div>
                       
                       <div className="flex items-baseline justify-between mb-3">
-                        <span className="text-lg font-semibold text-foreground">Scale Partner</span>
+                        <span className="text-lg font-semibold text-foreground">{customPlan.name}</span>
                         <div className="text-right">
                           <span className="text-sm text-muted-foreground">starts at </span>
                           <span className="text-2xl font-bold text-foreground">
-                            ${billingInterval === "monthly" ? "2,000" : "20,000"}
+                            ${billingInterval === "month" ? customMonthlyCost : customYearlyCost.toLocaleString()}
                           </span>
                           <span className="text-sm text-muted-foreground">
-                            /{billingInterval === "monthly" ? "mo" : "yr"}
+                            /{billingInterval === "month" ? "mo" : "yr"}
                           </span>
                         </div>
                       </div>
 
-                      {billingInterval === "yearly" && (
+                      {billingInterval === "year" && customYearlySavings > 0 && (
                         <p className="text-xs text-primary mb-3">
-                          Save ${agencyYearlySavings.toLocaleString()}/year
+                          Save ${customYearlySavings.toLocaleString()}/year
                         </p>
                       )}
 
                       <p className="text-sm text-muted-foreground mb-4">
-                        Custom solutions for agencies and enterprises.
+                        {customPlan.description}
                       </p>
 
                       <ul className="space-y-2">
-                        {AGENCY_FEATURES.map((feature, i) => (
+                        {CUSTOM_FEATURES.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                             <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
                             <span>{feature}</span>
@@ -402,11 +452,20 @@ export function WorkspaceSetup() {
 
                   <Button
                     onClick={handleStartTrial}
-                    disabled={!selectedPlan}
+                    disabled={!selectedPlan || isCheckingOut}
                     className="w-full"
                   >
-                    Start your 7-day free trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    {isCheckingOut ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Redirecting to checkout...
+                      </>
+                    ) : (
+                      <>
+                        Start your {growthPlan.trialDays}-day free trial
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
                   </Button>
                 </motion.div>
               )}
@@ -424,7 +483,7 @@ export function WorkspaceSetup() {
                     Workspace setup complete
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Your 7-day free trial has started. Let&apos;s get started.
+                    Your {growthPlan.trialDays}-day free trial has started. Let&apos;s get started.
                   </p>
 
                   <div className="rounded-2xl border border-border bg-card p-6 mb-6 space-y-4">
@@ -443,9 +502,9 @@ export function WorkspaceSetup() {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {selectedPlan === "growth" ? "Growth Engine" : "Scale Partner"}
+                          {selectedPlan === "growth" ? growthPlan.name : customPlan.name} Plan
                         </p>
-                        <p className="text-sm text-muted-foreground">7-day free trial active</p>
+                        <p className="text-sm text-muted-foreground">{growthPlan.trialDays}-day free trial active</p>
                       </div>
                     </div>
                   </div>

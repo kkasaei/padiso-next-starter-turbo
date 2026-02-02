@@ -37,8 +37,8 @@ async function seed() {
       .values({
         clerkOrgId,
         status: "active",
-        planId: "pro",
-        planName: "Pro Plan",
+        planId: "growth",
+        planName: "Growth Plan",
       })
       .returning();
 

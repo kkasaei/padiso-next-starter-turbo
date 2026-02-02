@@ -46,7 +46,7 @@ const DATA = [
   },
   {
     question: 'Can I try SearchFit before committing?',
-    answer: `Yes! Start with our free AEO Grader to see your current AI visibility in 90 seconds. Want more? Starter, Growth, and Pro plans include a 7-day free trial with full access to competitor tracking, content optimization, and automated reporting. See exactly how you stack up in AI search before spending a dollar.`
+    answer: `Yes! Start with our free AEO Grader to see your current AI visibility in 90 seconds. Want more? Our Growth plan includes a 14-day free trial with full access to competitor tracking, content optimization, and automated reporting. See exactly how you stack up in AI search before spending a dollar.`
   }
 ];
 

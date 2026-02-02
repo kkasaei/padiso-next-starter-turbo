@@ -26,6 +26,7 @@ export {
 // Data Management
 export * from './use-tasks';
 export * from './use-prompts';
+export * from './use-subscription';
 
 // File Upload - now in @workspace/ui
 export * from '@workspace/ui/hooks/use-upload-file';

@@ -739,6 +739,12 @@ importers:
 
   packages/billing:
     dependencies:
+      '@workspace/db':
+        specifier: workspace:*
+        version: link:../db
+      drizzle-orm:
+        specifier: ^0.36.4
+        version: 0.36.4(@opentelemetry/api@1.9.0)(@types/react@19.2.7)(postgres@3.4.8)(react@19.2.4)
       stripe:
         specifier: ^20.2.0
         version: 20.2.0(@types/node@22.19.7)
@@ -1240,6 +1246,9 @@ importers:
       '@trpc/server':
         specifier: ^11.0.0
         version: 11.0.0(typescript@5.9.3)
+      '@workspace/billing':
+        specifier: workspace:*
+        version: link:../billing
       '@workspace/db':
         specifier: workspace:*
         version: link:../db

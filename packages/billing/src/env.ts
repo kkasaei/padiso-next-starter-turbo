@@ -2,6 +2,10 @@
  * Environment variable configuration for @workspace/billing package
  * 
  * This module validates and exports all environment variables needed for billing functionality.
+ * 
+ * New 2-tier pricing model:
+ * - Growth Plan: For growing brands ready to take action
+ * - Custom Plan: For agencies and large brands with custom needs
  */
 
 // Stripe API Keys (Server-side only)
@@ -9,25 +13,17 @@ export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 // Stripe Price IDs (Public - safe to expose to client)
-export const NEXT_PUBLIC_BILLING_PRICE_STARTER_MONTH_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_STARTER_MONTH_ID || '';
-export const NEXT_PUBLIC_BILLING_PRICE_STARTER_YEAR_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_STARTER_YEAR_ID || '';
+// Growth Plan
+export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_MONTHLY_ID = 
+  process.env.NEXT_PUBLIC_BILLING_PRICE_GRWOTH_PLAN_MONTHLY_ID || '';
+export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_YEARLY_ID = 
+  process.env.NEXT_PUBLIC_BILLING_PRICE_GRWOTH_PLAN_YEARLY_ID || '';
 
-export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_MONTH_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_GROWTH_MONTH_ID || '';
-export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_YEAR_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_GROWTH_YEAR_ID || '';
-
-export const NEXT_PUBLIC_BILLING_PRICE_PRO_MONTH_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_PRO_MONTH_ID || '';
-export const NEXT_PUBLIC_BILLING_PRICE_PRO_YEAR_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_PRO_YEAR_ID || '';
-
-export const NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_MONTH_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_MONTH_ID || '';
-export const NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_YEAR_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_YEAR_ID || '';
+// Custom Plan
+export const NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID = 
+  process.env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID || '';
+export const NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID = 
+  process.env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID || '';
 
 // Environment object (compatible with the existing usage pattern)
 export const env = {
@@ -35,15 +31,13 @@ export const env = {
   STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET,
   
-  // Public price IDs
-  NEXT_PUBLIC_BILLING_PRICE_STARTER_MONTH_ID,
-  NEXT_PUBLIC_BILLING_PRICE_STARTER_YEAR_ID,
-  NEXT_PUBLIC_BILLING_PRICE_GROWTH_MONTH_ID,
-  NEXT_PUBLIC_BILLING_PRICE_GROWTH_YEAR_ID,
-  NEXT_PUBLIC_BILLING_PRICE_PRO_MONTH_ID,
-  NEXT_PUBLIC_BILLING_PRICE_PRO_YEAR_ID,
-  NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_MONTH_ID,
-  NEXT_PUBLIC_BILLING_PRICE_ENTERPRISE_YEAR_ID,
+  // Public price IDs - Growth Plan
+  NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_MONTHLY_ID,
+  NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_YEARLY_ID,
+  
+  // Public price IDs - Custom Plan
+  NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID,
+  NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID,
 } as const;
 
 /**

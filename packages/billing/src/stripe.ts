@@ -75,7 +75,7 @@ export async function createCustomer(params: {
 
 export async function createCheckoutSession(params: {
   returnUrl: string;
-  organizationId: string;
+  organizationId: string; // This is the workspaceId
   planId: PlanId;
   interval: 'month' | 'year';
   customerId: string;
@@ -97,22 +97,26 @@ export async function createCheckoutSession(params: {
     );
   }
 
+  // Build success/cancel URLs with workspace_id for redirect handling
+  const successUrl = `${params.returnUrl}?success=true&workspace_id=${params.organizationId}&session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${params.returnUrl}?canceled=true&workspace_id=${params.organizationId}`;
+
   const session = await getStripe().checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'subscription',
     allow_promotion_codes: true,
     line_items: [{ price: priceId, quantity: 1 }],
-    client_reference_id: params.organizationId,
+    client_reference_id: params.organizationId, // workspaceId - used by webhook to find workspace
     customer: params.customerId,
     subscription_data: {
       trial_period_days: trialDays,
       metadata: {
-        organizationId: params.organizationId,
+        organizationId: params.organizationId, // workspaceId
         planId: params.planId,
       },
     },
-    success_url: `${params.returnUrl}?success=true&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${params.returnUrl}?canceled=true`,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
   });
 
   if (!session.url) {
@@ -233,7 +237,7 @@ export async function handleWebhookEvent(
     }
 
     default:
-      console.log(`Unhandled Stripe event: ${event.type}`);
+      // Unhandled event type - ignore silently
   }
 }
 

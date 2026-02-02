@@ -1,14 +1,15 @@
 /**
  * @workspace/billing package
  * 
- * Central export for billing and payment functionality
+ * Client-safe exports for billing and payment functionality.
+ * For server-only exports (Stripe API, webhooks), import from '@workspace/billing/server'
  */
 
-// Environment configuration
+// Environment configuration (client-safe parts)
 export { env, validateEnv } from './env';
 export type * from './env';
 
-// Plans configuration
+// Plans configuration (fully client-safe)
 export {
   PLAN_LIMITS,
   PLANS,
@@ -19,28 +20,9 @@ export {
 } from './plans';
 export type { PlanFeature, PlanId } from './plans';
 
-// Stripe integration
-export {
-  getStripe,
-  createCustomer,
-  createCheckoutSession,
-  createBillingPortalSession,
-  getInvoices,
-  verifyWebhookSignature,
-  handleWebhookEvent,
-} from './stripe';
+// Re-export types only from stripe (types are client-safe)
 export type {
   SubscriptionPayload,
   CustomerPayload,
   Invoice,
 } from './stripe';
-
-// Webhook handlers
-export {
-  handleCheckoutCompleted,
-  handleSubscriptionUpdated,
-  handleSubscriptionDeleted,
-  handleCustomerCreated,
-  handleCustomerUpdated,
-  handleCustomerDeleted,
-} from './webhook';
