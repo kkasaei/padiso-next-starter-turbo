@@ -13,7 +13,7 @@ export default async function AnalyticsPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold tracking-tight px-4">Analytics</h1>
     </div>
     <div className="flex flex-1">
-     <AnalyticsPageComponent />
+     <AnalyticsPageComponent brandId={id} />
     </div>
   </div>
   )

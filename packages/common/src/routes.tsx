@@ -12,7 +12,7 @@ import {
 import { 
   ChartNoAxesCombinedIcon, 
   TowerControlIcon, 
-  GlobeIcon, 
+  Ear, 
   SquareCheckBigIcon,
   BriefcaseBusiness,
   LayoutDashboardIcon,
@@ -83,7 +83,7 @@ export const brandNavItems = [
   { id: "ai-tracking", label: "AI Tracking", icon: TowerControlIcon, path: "/ai-tracking" },
   { id: "backlinks", label: "Backlinks", icon: Link2, path: "/backlinks" },
   { id: "technical-audit", label: "Technical Audit", icon: SearchCheck, path: "/technical-audit" },
-  { id: "reddit", label: "Reddit", icon: GlobeIcon, path: "/reddit" },
+  { id: "social-listening", label: "Social Listening", icon: Ear, path: "/social-listening" },
   { id: "separator", label: "", icon: null, path: "", isSeparator: true },
   { id: "tasks", label: "Tasks", icon: SquareCheckBigIcon, path: "/tasks" },
   { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
