@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useOrganization, useUser } from "@clerk/nextjs"
-import { toast } from "sonner"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
@@ -16,6 +14,72 @@ import {
 import { useBrands } from "@/hooks/use-brands"
 import { cn } from "@workspace/common/lib"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
+import Image from "next/image"
+
+/**
+ * Get favicon URL from website URL using Google's favicon service
+ */
+function getFaviconUrl(websiteUrl: string | null | undefined): string | null {
+  if (!websiteUrl) return null
+  try {
+    const url = new URL(websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`)
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Brand icon component with favicon support and fallback
+ */
+function BrandIcon({ 
+  iconUrl, 
+  websiteUrl, 
+  brandName, 
+  brandColor,
+  size = "md"
+}: { 
+  iconUrl?: string | null
+  websiteUrl?: string | null
+  brandName?: string | null
+  brandColor?: string | null
+  size?: "sm" | "md"
+}) {
+  const [imgError, setImgError] = useState(false)
+  
+  const faviconUrl = iconUrl || getFaviconUrl(websiteUrl)
+  const showFavicon = faviconUrl && !imgError
+  
+  const sizeClasses = size === "sm" 
+    ? "w-6 h-6 rounded-md text-xs" 
+    : "w-8 h-8 rounded-lg text-sm"
+  
+  const imgSize = size === "sm" ? 24 : 32
+  
+  if (showFavicon) {
+    return (
+      <div className={cn(sizeClasses, "flex items-center justify-center shrink-0 bg-muted overflow-hidden")}>
+        <Image
+          src={faviconUrl}
+          alt={brandName || "Brand"}
+          width={imgSize}
+          height={imgSize}
+          className="w-full h-full object-cover"
+          onError={() => setImgError(true)}
+        />
+      </div>
+    )
+  }
+  
+  return (
+    <div 
+      className={cn(sizeClasses, "flex items-center justify-center text-white font-semibold shrink-0")}
+      style={{ backgroundColor: brandColor || "#6366f1" }}
+    >
+      {(brandName || "B").charAt(0).toUpperCase()}
+    </div>
+  )
+}
 
 export function BrandSwitcher() {
   const params = useParams()
@@ -48,12 +112,13 @@ export function BrandSwitcher() {
         <PopoverTrigger asChild>
           <button className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-accent/50 transition-colors">
             <div className="flex items-center gap-3 min-w-0">
-              <div 
-                className="h-8 w-8 rounded-lg flex items-center justify-center text-white text-sm font-semibold shrink-0"
-                style={{ backgroundColor: currentProject?.brandColor || "#6366f1" }}
-              >
-                {currentProject?.brandName?.charAt(0).toUpperCase() ?? "B"}
-              </div>
+              <BrandIcon
+                iconUrl={currentProject?.iconUrl}
+                websiteUrl={currentProject?.websiteUrl}
+                brandName={currentProject?.brandName}
+                brandColor={currentProject?.brandColor}
+                size="md"
+              />
               <div className="flex flex-col items-start min-w-0">
                 <span className="text-sm font-medium truncate w-full">
                   {currentProject?.brandName ?? "Select Brand"}
@@ -107,12 +172,13 @@ export function BrandSwitcher() {
                       isActive && "bg-accent/50"
                     )}
                   >
-                    <div 
-                      className="h-6 w-6 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                      style={{ backgroundColor: project.brandColor || "#6366f1" }}
-                    >
-                      {(project.brandName || "B").charAt(0).toUpperCase()}
-                    </div>
+                    <BrandIcon
+                      iconUrl={project.iconUrl}
+                      websiteUrl={project.websiteUrl}
+                      brandName={project.brandName}
+                      brandColor={project.brandColor}
+                      size="sm"
+                    />
                     <span className="flex-1 text-left truncate">{project.brandName || "Untitled Brand"}</span>
                     {isActive && (
                       <Check className="h-4 w-4 text-primary" strokeWidth={3} />
