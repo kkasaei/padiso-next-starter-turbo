@@ -3,10 +3,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { BrandSettingsTab } from "./brand-tabs/BrandSettingsTab";
-import { ArticlesSettingsTab } from "./brand-tabs/ArticlesSettingsTab";
-import { AssetsSettingsTab } from "./brand-tabs/AssetsSettingsTab";
-import { ContextSettingsTab } from "./brand-tabs/ContextSettingsTab";
-import { AgentsSettingsTab } from "./brand-tabs/AgentsSettingsTab";
 import { IntegrationsSettingsTab } from "./brand-tabs/IntegrationsSettingsTab";
 
 export function BrandSettingsPageV2({ brandId }: { brandId: string }) {
@@ -25,30 +21,6 @@ export function BrandSettingsPageV2({ brandId }: { brandId: string }) {
                 Brand
               </TabsTrigger>
               <TabsTrigger
-                value="articles"
-                className="data-[state=active]:bg-gray-100 dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Articles
-              </TabsTrigger>
-              <TabsTrigger
-                value="assets"
-                className="data-[state=active]:bg-gray-100 dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Assets
-              </TabsTrigger>
-              <TabsTrigger
-                value="context"
-                className="data-[state=active]:bg-gray-100 dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Context
-              </TabsTrigger>
-              <TabsTrigger
-                value="agents"
-                className="data-[state=active]:bg-gray-100 dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Agents
-              </TabsTrigger>
-              <TabsTrigger
                 value="integrations"
                 className="data-[state=active]:bg-gray-100 dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
@@ -59,22 +31,6 @@ export function BrandSettingsPageV2({ brandId }: { brandId: string }) {
 
           <TabsContent value="brand" className="space-y-6">
             <BrandSettingsTab brandId={brandId} />
-          </TabsContent>
-
-          <TabsContent value="articles" className="space-y-6">
-            <ArticlesSettingsTab brandId={brandId} />
-          </TabsContent>
-
-          <TabsContent value="assets" className="space-y-6">
-            <AssetsSettingsTab brandId={brandId} />
-          </TabsContent>
-
-          <TabsContent value="context" className="space-y-6">
-            <ContextSettingsTab brandId={brandId} />
-          </TabsContent>
-
-          <TabsContent value="agents" className="space-y-6">
-            <AgentsSettingsTab brandId={brandId} />
           </TabsContent>
 
           <TabsContent value="integrations" className="space-y-6">
