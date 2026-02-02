@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { db, workspaces, subscriptions } from '@workspace/db';
+import { db, workspaces } from '@workspace/db';
 import {
   type SubscriptionPayload,
   type CustomerPayload,
@@ -21,21 +21,21 @@ export async function handleCheckoutCompleted(payload: SubscriptionPayload): Pro
  * Called when a subscription is updated (plan change, renewal, etc.)
  */
 export async function handleSubscriptionUpdated(payload: SubscriptionPayload): Promise<void> {
-  // Find existing subscription to check if period changed
+  // Find existing workspace to check if period changed
   const [existing] = await db
     .select({
-      currentPeriodStart: subscriptions.currentPeriodStart,
-      workspaceId: subscriptions.workspaceId,
+      subscriptionPeriodStartsAt: workspaces.subscriptionPeriodStartsAt,
+      id: workspaces.id,
     })
-    .from(subscriptions)
-    .where(eq(subscriptions.stripeSubscriptionId, payload.subscriptionId))
+    .from(workspaces)
+    .where(eq(workspaces.stripeSubscriptionId, payload.subscriptionId))
     .limit(1);
 
   await upsertSubscription(payload);
 
   // Reset usage if billing period changed
-  if (existing && new Date(payload.periodStartsAt) > existing.currentPeriodStart) {
-    const workspaceId = payload.organizationId || existing.workspaceId;
+  if (existing && existing.subscriptionPeriodStartsAt && new Date(payload.periodStartsAt) > existing.subscriptionPeriodStartsAt) {
+    const workspaceId = payload.organizationId || existing.id;
     await resetUsage(workspaceId, payload.periodStartsAt, payload.periodEndsAt);
   }
 }
@@ -45,31 +45,15 @@ export async function handleSubscriptionUpdated(payload: SubscriptionPayload): P
  * Called when a subscription is canceled
  */
 export async function handleSubscriptionDeleted(subscriptionId: string): Promise<void> {
-  // Find subscription by Stripe ID
-  const [subscription] = await db
-    .select({
-      id: subscriptions.id,
-      workspaceId: subscriptions.workspaceId,
-    })
-    .from(subscriptions)
-    .where(eq(subscriptions.stripeSubscriptionId, subscriptionId))
-    .limit(1);
-
-  if (!subscription) return;
-
   // Update workspace status to canceled
   await db
     .update(workspaces)
     .set({
       status: 'canceled',
+      canceledAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(workspaces.id, subscription.workspaceId));
-
-  // Delete the subscription record
-  await db
-    .delete(subscriptions)
-    .where(eq(subscriptions.id, subscription.id));
+    .where(eq(workspaces.stripeSubscriptionId, subscriptionId));
 }
 
 /**
@@ -118,24 +102,6 @@ export async function handleCustomerDeleted(customerId: string): Promise<void> {
 // ======================== Database Operations ======================== //
 
 /**
- * Map Stripe subscription status to our subscription status enum
- */
-function mapSubscriptionStatus(status: string): 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'incomplete_expired' | 'paused' {
-  const map: Record<string, 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'incomplete_expired' | 'paused'> = {
-    active: 'active',
-    trialing: 'trialing',
-    past_due: 'past_due',
-    canceled: 'canceled',
-    cancelled: 'canceled',
-    unpaid: 'unpaid',
-    incomplete: 'incomplete',
-    incomplete_expired: 'incomplete_expired',
-    paused: 'paused',
-  };
-  return map[status.toLowerCase()] || 'active';
-}
-
-/**
  * Map subscription status to workspace status
  */
 function mapWorkspaceStatus(subscriptionStatus: string, isActive: boolean): 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'incomplete_expired' | 'paused' | 'admin_suspended' | 'deleted' {
@@ -149,22 +115,22 @@ function mapWorkspaceStatus(subscriptionStatus: string, isActive: boolean): 'act
 }
 
 /**
- * Create or update subscription and workspace from Stripe webhook payload
+ * Create or update workspace from Stripe webhook payload
  */
 async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
   // Find workspace ID - it should be in organizationId (passed as client_reference_id)
   let workspaceId = payload.organizationId;
   
   if (!workspaceId) {
-    // Try to find by existing subscription with this Stripe subscription ID
-    const [existingSubscription] = await db
-      .select({ workspaceId: subscriptions.workspaceId })
-      .from(subscriptions)
-      .where(eq(subscriptions.stripeSubscriptionId, payload.subscriptionId))
+    // Try to find by existing workspace with this Stripe subscription ID
+    const [existingWorkspace] = await db
+      .select({ id: workspaces.id })
+      .from(workspaces)
+      .where(eq(workspaces.stripeSubscriptionId, payload.subscriptionId))
       .limit(1);
 
-    if (existingSubscription) {
-      workspaceId = existingSubscription.workspaceId;
+    if (existingWorkspace) {
+      workspaceId = existingWorkspace.id;
     } else {
       console.error('Workspace not found for subscription:', payload.subscriptionId);
       throw new Error('Workspace not found for subscription');
@@ -177,48 +143,6 @@ async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
   const interval = getIntervalFromPriceId(payload.priceId || '');
   const limits = getPlanLimits(planId);
 
-  // Check if subscription already exists for this workspace
-  const [existingSub] = await db
-    .select({ id: subscriptions.id })
-    .from(subscriptions)
-    .where(eq(subscriptions.workspaceId, workspaceId))
-    .limit(1);
-
-  const subscriptionData = {
-    workspaceId,
-    stripeSubscriptionId: payload.subscriptionId,
-    stripeCustomerId: payload.customerId,
-    stripePriceId: payload.priceId || null,
-    planId,
-    planName: plan?.name || 'Unknown',
-    status: mapSubscriptionStatus(payload.status),
-    isActive: payload.active,
-    cancelAtPeriodEnd: payload.cancelAtPeriodEnd,
-    priceAmount: String((payload.priceAmount ?? 0) / 100), // Convert cents to dollars
-    currency: payload.currency,
-    billingInterval: interval,
-    currentPeriodStart: new Date(payload.periodStartsAt),
-    currentPeriodEnd: new Date(payload.periodEndsAt),
-    trialStart: payload.trialStartsAt ? new Date(payload.trialStartsAt) : null,
-    trialEnd: payload.trialEndsAt ? new Date(payload.trialEndsAt) : null,
-    startedAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  if (existingSub) {
-    // Update existing subscription
-    await db
-      .update(subscriptions)
-      .set(subscriptionData)
-      .where(eq(subscriptions.id, existingSub.id));
-  } else {
-    // Create new subscription
-    await db.insert(subscriptions).values({
-      ...subscriptionData,
-      createdAt: new Date(),
-    });
-  }
-
   // Update workspace with subscription info
   await db
     .update(workspaces)
@@ -226,6 +150,7 @@ async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
       status: mapWorkspaceStatus(payload.status, payload.active),
       stripeCustomerId: payload.customerId,
       stripeSubscriptionId: payload.subscriptionId,
+      stripePriceId: payload.priceId || null,
       planId,
       planName: plan?.name || 'Unknown',
       billingInterval: interval,
@@ -242,7 +167,6 @@ async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
       updatedAt: new Date(),
     })
     .where(eq(workspaces.id, workspaceId));
-
 }
 
 /**

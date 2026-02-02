@@ -61,6 +61,7 @@ export const workspaces = pgTable("workspaces", {
   // Billing & Subscription
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
+  stripePriceId: text("stripe_price_id"),
   planId: text("plan_id"), // e.g., 'free', 'pro', 'enterprise'
   planName: text("plan_name"),
   billingInterval: text("billing_interval"), // 'month' or 'year'
@@ -71,7 +72,11 @@ export const workspaces = pgTable("workspaces", {
   trialEndsAt: timestamp("trial_ends_at"),
   subscriptionPeriodStartsAt: timestamp("subscription_period_starts_at"),
   subscriptionPeriodEndsAt: timestamp("subscription_period_ends_at"),
+  
+  // Cancellation
   cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false).notNull(),
+  canceledAt: timestamp("canceled_at"),
+  cancelReason: text("cancel_reason"),
   
   // Pricing
   priceAmount: numeric("price_amount", { precision: 10, scale: 2 }), // Monthly/Yearly price

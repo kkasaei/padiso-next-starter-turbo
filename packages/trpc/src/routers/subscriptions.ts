@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { workspaces, subscriptions } from "@workspace/db/schema";
+import { workspaces } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 import {
   createBillingPortalSession,
@@ -15,21 +15,6 @@ import {
 } from "@workspace/billing/server";
 
 export const subscriptionsRouter = router({
-  /**
-   * Get subscription status for a workspace
-   */
-  getByWorkspaceId: publicProcedure
-    .input(z.object({ workspaceId: z.string().uuid() }))
-    .query(async ({ ctx, input }) => {
-      const [subscription] = await ctx.db
-        .select()
-        .from(subscriptions)
-        .where(eq(subscriptions.workspaceId, input.workspaceId))
-        .limit(1);
-
-      return subscription ?? null;
-    }),
-
   /**
    * Get subscription status from workspace table (quick check)
    * Auto-creates workspace if it doesn't exist for the Clerk org
