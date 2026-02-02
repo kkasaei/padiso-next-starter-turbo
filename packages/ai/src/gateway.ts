@@ -1,4 +1,5 @@
 import { createGatewayProvider } from "@ai-sdk/gateway";
+import { env } from "./env";
 
 // ============================================================================
 // AI Gateway - Centralized LLM Provider
@@ -49,9 +50,9 @@ export type LLMProvider =
 // ============================================================================
 
 export const gateway = createGatewayProvider({
-  apiKey: process.env.AI_GATEWAY_API_KEY,
-  ...(process.env.AI_GATEWAY_BASE_URL && {
-    baseURL: process.env.AI_GATEWAY_BASE_URL,
+  apiKey: env.AI_GATEWAY_API_KEY,
+  ...(env.AI_GATEWAY_BASE_URL && {
+    baseURL: env.AI_GATEWAY_BASE_URL,
   }),
 });
 

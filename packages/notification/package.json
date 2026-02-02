@@ -10,6 +10,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5.7.2"

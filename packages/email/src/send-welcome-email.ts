@@ -1,7 +1,5 @@
 import { render } from '@react-email/render';
 
-import { APP_NAME } from '@/lib/common/app';
-
 import { EmailProvider } from './provider';
 import {
   WelcomeEmail,
@@ -17,7 +15,7 @@ export async function sendWelcomeEmail(
 
   await EmailProvider.sendEmail({
     recipient: input.recipient,
-    subject: `Welcome to ${APP_NAME}`,
+    subject: `Welcome to ${input.appName}`,
     html,
     text
   });

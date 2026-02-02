@@ -1,4 +1,4 @@
-import { env } from '@/env';
+import { env } from './env';
 import { EmailProvider } from './provider';
 import { renderMJML } from './mjml/render-mjml';
 import { generateReportLinkEmail } from './mjml/templates/report-link-email';

@@ -8,8 +8,12 @@
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.980.0",
+    "@aws-sdk/s3-request-presigner": "^3.980.0"
+  },
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5.7.2"

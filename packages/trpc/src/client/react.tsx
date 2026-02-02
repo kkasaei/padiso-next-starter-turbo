@@ -5,7 +5,7 @@ import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact, type CreateTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import type { AnyRouter } from "@trpc/server";
-import { getBaseUrl } from "./vanilla";
+import { getBaseUrl } from "../env";
 
 /**
  * Configuration options for TRPCReactProvider

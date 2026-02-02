@@ -1,6 +1,6 @@
 import { Resend, type CreateEmailResponse } from 'resend';
 
-import { env } from '@/env';
+import { env } from '../../env';
 import { type EmailPayload, type EmailProvider } from '../types';
 
 class ResendEmailProvider implements EmailProvider {

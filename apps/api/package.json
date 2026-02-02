@@ -24,7 +24,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/swagger": "^8.1.0",
+    "@nestjs/swagger": "^11.2.5",
     "@workspace/db": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

@@ -9,10 +9,17 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-email/components": "^0.0.31",
     "@react-email/render": "^2.0.4",
-    "mjml": "^4.18.0"
+    "@react-email/tailwind": "^1.1.0",
+    "mjml": "^4.18.0",
+    "react": "^19.2.4",
+    "resend": "^6.9.1"
   },
   "devDependencies": {
+    "@types/mjml": "^4.7.4",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5.7.2"

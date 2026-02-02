@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
+import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/layout/providers"
@@ -33,7 +34,9 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={`font-sans antialiased`} suppressHydrationWarning>
           <Providers>
-            <PostHogPageView />
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
             <PostHogIdentifier />
             {children}
             <Analytics />

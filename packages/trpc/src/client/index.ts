@@ -11,5 +11,6 @@
  */
 
 export { createTRPCReact } from "@trpc/react-query";
-export { createVanillaClient, getBaseUrl } from "./vanilla";
+export { createVanillaClient } from "./vanilla";
+export { getBaseUrl } from "../env";
 export type { TRPCReactProviderConfig } from "./react";

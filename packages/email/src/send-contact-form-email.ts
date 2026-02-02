@@ -1,5 +1,4 @@
 import { EmailProvider } from './provider';
-import { env } from '@/env';
 
 export interface SendContactFormEmailInput {
   recipient: string; // Team email (hi@searchfit.ai)

@@ -1,197 +1,151 @@
 # @workspace/ai
 
-AI-powered functionality for SearchFit - completely self-contained with no external database dependencies.
+Self-contained AI module for SearchFit with AI Gateway integration for multiple LLM providers.
 
 ## Features
 
-- 🤖 **AI Gateway** - Unified interface for multiple LLM providers
-- 📊 **AEO Reports** - Answer Engine Optimization analysis
-- 🔍 **Website Audits** - Comprehensive SEO/AEO auditing
-- 📈 **Project Scanner** - Brand visibility tracking across AI platforms
-- ✨ **Content Generation** - Project descriptions, guidelines, and targeting
-- 🎨 **Image Generation** - AI-powered image creation
-- 📝 **Prompt Generation** - Smart prompt suggestions
+- 🤖 **AI Gateway Integration**: Centralized access to multiple LLM providers
+- 📊 **AEO Report Generation**: Comprehensive Answer Engine Optimization reports
+- 🔍 **Website Audits**: AI-powered website content analysis
+- 🎯 **Project Scanner**: Automated project analysis and insights
+- 💡 **Prompt Suggestions**: AI-generated prompt recommendations
+- 🖼️ **Image Generation**: AI-powered image creation capabilities
+- 🧪 **Mock Database**: Built-in testing infrastructure
+
+## Supported Models
+
+- **OpenAI**: GPT-5 Mini (primary)
+- **Anthropic**: Claude Sonnet 4.5
+- **DeepSeek**: DeepSeek V3.2
+- **Google**: Gemini 2.5 Flash
+- **Perplexity**: Sonar (search-optimized)
+- **xAI**: Grok 3
 
 ## Installation
 
-This package is part of the SearchFit monorepo:
+This package is part of the workspace monorepo. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
+## Environment Variables
+
+Required environment variables (add to your `.env` file):
+
+```bash
+# AI Gateway Configuration
+AI_GATEWAY_API_KEY=your_gateway_api_key_here  # Required
+AI_GATEWAY_BASE_URL=https://your-gateway.com  # Optional (uses AI SDK defaults)
+
+# Node Environment
+NODE_ENV=development  # development | production | test
+```
+
 ## Usage
 
-### AI Gateway
+### Environment Configuration
 
 ```typescript
-import { gateway } from '@workspace/ai';
+import { env, validateEnv } from '@workspace/ai';
+
+// Validate environment on startup
+validateEnv();
+
+console.log('AI Gateway configured:', !!env.AI_GATEWAY_API_KEY);
+```
+
+### Using AI Gateway
+
+```typescript
+import { gateway, DEFAULT_MODEL } from '@workspace/ai';
 import { generateText } from 'ai';
 
 const result = await generateText({
-  model: gateway('openai/gpt-4'),
-  prompt: 'Analyze this website...',
+  model: gateway(DEFAULT_MODEL),
+  prompt: 'Explain quantum computing',
 });
+
+console.log(result.text);
 ```
 
-### AEO Report Generation
+### Generate AEO Reports
 
 ```typescript
 import { generateAEOReport } from '@workspace/ai';
 
 const report = await generateAEOReport({
   domain: 'example.com',
-  domainURL: 'https://example.com',
-  forceRegenerate: false,
+  brandName: 'Example Inc',
+  industry: 'Technology',
 });
+
+console.log('AEO Score:', report.overallScore);
+```
+
+### Generate Prompt Suggestions
+
+```typescript
+import { generatePromptSuggestions } from '@workspace/ai';
+
+const result = await generatePromptSuggestions({
+  projectName: 'SearchFit',
+  domain: 'searchfit.ai',
+  description: 'AI-powered search visibility platform',
+  count: 10,
+});
+
+if (result.success) {
+  console.log('Generated suggestions:', result.suggestions);
+}
 ```
 
 ### Website Audit
 
 ```typescript
-import { runWebsiteAudit } from '@workspace/ai';
+import { auditWebsite } from '@workspace/ai';
 
-const audit = await runWebsiteAudit({
-  projectId: 'project-123',
-  auditId: 'audit-456',
-  websiteUrl: 'https://example.com',
-  maxPagesToAudit: 100,
-  maxPagesToScan: 50,
+const audit = await auditWebsite({
+  url: 'https://example.com',
+  includeContent: true,
+  maxPages: 10,
 });
-```
 
-### Project Scanner
-
-```typescript
-import { runProjectScan } from '@workspace/ai';
-
-const scan = await runProjectScan(
-  {
-    projectId: 'project-123',
-    organizationId: 'org-456',
-    brandName: 'My Brand',
-    websiteUrl: 'https://mybrand.com',
-    industry: 'Technology',
-    targetAudience: 'Developers',
-    trackedPrompts: [
-      { prompt: 'best project management tools', category: 'product' },
-    ],
-  },
-  {
-    providers: ['chatgpt', 'perplexity', 'gemini'],
-    useRichAnalysis: true,
-  }
-);
-```
-
-## Architecture
-
-### Self-Contained Design
-
-This package is **completely self-contained**:
-
-- ✅ No external database dependencies
-- ✅ Internal type definitions
-- ✅ Mock database for development
-- ✅ Ready for production integration
-
-### Directory Structure
-
-```
-src/
-├── types/              # Internal type definitions
-│   ├── audit-dto.ts
-│   └── aeo-report.ts
-├── mock-db.ts          # Mock database implementation
-├── gateway.ts          # AI gateway configuration
-├── aeo-report/         # AEO report generation
-├── audit/              # Website audit system
-├── project-scanner/    # Brand visibility scanning
-├── project/            # Project content generators
-├── prompt/             # Prompt generation
-├── image-generation.ts # Image generation
-└── icons.tsx           # React icon components
+console.log('Pages analyzed:', audit.pages.length);
 ```
 
 ## Development
 
-### Using Mock Database
+### Type Checking
 
-The package includes a mock database for development and testing:
-
-```typescript
-import { mockPrisma, addMockProject, clearMockData } from '@workspace/ai';
-
-// Add test data
-addMockProject('project-123', {
-  name: 'Test Project',
-  websiteUrl: 'https://example.com',
-});
-
-// Clear all mock data
-clearMockData();
+```bash
+pnpm type-check
 ```
 
-### Type Definitions
+### Linting
 
-All types are defined internally in `src/types/`:
-
-```typescript
-import type {
-  PageIssue,
-  PageAnalysis,
-  PageMetadata,
-} from '@workspace/ai';
-
-import type {
-  AEOReport,
-  LLMProviderData,
-  BrandRecognitionData,
-} from '@workspace/ai';
+```bash
+pnpm lint
 ```
 
-## Integration
+## Architecture
 
-### Production Database
-
-To integrate with a real database, see [REFACTOR.md](./REFACTOR.md) for migration instructions.
-
-### Environment Variables
-
-Required environment variables:
-
-```env
-# OpenAI
-OPENAI_API_KEY=sk-...
-
-# Anthropic (optional)
-ANTHROPIC_API_KEY=sk-...
-
-# Google (optional)
-GOOGLE_GENERATIVE_AI_API_KEY=...
-
-# Perplexity (optional)
-PERPLEXITY_API_KEY=...
 ```
-
-## API Reference
-
-See individual module documentation:
-
-- [Gateway](./src/gateway.ts)
-- [AEO Reports](./src/aeo-report/)
-- [Audits](./src/audit/)
-- [Project Scanner](./src/project-scanner/)
-- [Project Generators](./src/project/)
-
-## Contributing
-
-1. Make changes in `src/`
-2. Run type check: `pnpm type-check`
-3. Run linter: `pnpm lint`
-4. Test with mock database
-5. Submit PR
+src/
+├── env.ts                    # Environment configuration
+├── index.ts                  # Central exports
+├── gateway.ts                # AI Gateway setup
+├── aeo-report/              # AEO report generation
+├── audit/                   # Website auditing
+├── project-scanner/         # Project analysis
+├── project/                 # Project utilities
+│   └── prompt-suggestions-generator.ts
+├── prompt/                  # Prompt generation
+├── image-generation.ts      # Image creation
+├── mock-db.ts              # Testing utilities
+└── types/                  # TypeScript types
+```
 
 ## License
 
-MIT
+Private workspace package

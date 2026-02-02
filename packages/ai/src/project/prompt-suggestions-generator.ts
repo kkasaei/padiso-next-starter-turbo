@@ -285,7 +285,8 @@ export async function generatePromptSuggestions(
     });
     
     // Log the full user prompt for debugging (only in development)
-    if (process.env.NODE_ENV === 'development') {
+    const { NODE_ENV } = await import('../env');
+    if (NODE_ENV === 'development') {
       console.log('[generatePromptSuggestions] Full user prompt:', userPrompt);
     }
 

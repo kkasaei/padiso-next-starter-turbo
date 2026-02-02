@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { db } from "./db.js";
+import { env } from "./env";
 import {
   workspaces,
   brands,
@@ -28,7 +29,7 @@ async function seed() {
     console.log("🏢 Seeding workspace...");
     
     // Use environment variable or default for flexibility
-    const clerkOrgId = process.env.CLERK_ORG_ID || "org_37EN42BgW9DyBqRndpdDSeqfdah";
+    const clerkOrgId = env.CLERK_ORG_ID || "org_37EN42BgW9DyBqRndpdDSeqfdah";
     console.log(`  Using Clerk Org ID: ${clerkOrgId}`);
     
     const [workspace] = await db
