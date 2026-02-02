@@ -16,7 +16,12 @@
   },
   "dependencies": {
     "@trigger.dev/build": "4.3.3",
-    "@trigger.dev/sdk": "4.3.3"
+    "@trigger.dev/sdk": "4.3.3",
+    "@workspace/ai": "workspace:*",
+    "@workspace/db": "workspace:*",
+    "@workspace/integrations": "workspace:*",
+    "drizzle-orm": "^0.38.3",
+    "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

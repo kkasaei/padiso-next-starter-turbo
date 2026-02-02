@@ -19,3 +19,6 @@ export * from './types/integration';
 
 // Google services
 export * from './google';
+
+// Reddit services
+export * from './reddit';

@@ -4,6 +4,20 @@
   "private": true,
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./reddit": {
+      "types": "./src/reddit/index.ts",
+      "default": "./src/reddit/index.ts"
+    },
+    "./google": {
+      "types": "./src/google/index.ts",
+      "default": "./src/google/index.ts"
+    }
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit"

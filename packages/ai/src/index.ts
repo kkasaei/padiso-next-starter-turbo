@@ -55,6 +55,12 @@ export * from './image-generation';
 export * from './brand-analyzer';
 
 // ============================================================
+// Reddit Agent
+// ============================================================
+export * from './reddit-agent';
+export type * from './reddit-agent/types';
+
+// ============================================================
 // Types (selective exports to avoid conflicts)
 // ============================================================
 export type {

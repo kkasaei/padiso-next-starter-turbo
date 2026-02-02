@@ -28,6 +28,10 @@ const envSchema = z.object({
   // Client URL for OAuth callbacks
   NEXT_PUBLIC_CLIENT_URL: z.string().url().optional(),
 
+  // Reddit API Configuration
+  INTEGRATION_REDDIT_CLIENT_ID: z.string().min(1).optional(),
+  INTEGRATION_REDDIT_CLIENT_SECRET: z.string().min(1).optional(),
+
   // Add other integration-specific environment variables here
   // INTEGRATION_SLACK_CLIENT_ID: z.string().optional(),
   // INTEGRATION_SLACK_CLIENT_SECRET: z.string().optional(),

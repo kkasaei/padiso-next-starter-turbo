@@ -8,6 +8,7 @@ import { publicReportRouter } from "./public-report";
 import { subscriptionsRouter } from "./subscriptions";
 import { contentRouter } from "./content";
 import { integrationsRouter } from "./integrations";
+import { redditRouter } from "./reddit";
 
 export const appRouter = router({
   brands: brandsRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   subscriptions: subscriptionsRouter,
   content: contentRouter,
   integrations: integrationsRouter,
+  reddit: redditRouter,
 });
 
 export type AppRouter = typeof appRouter;

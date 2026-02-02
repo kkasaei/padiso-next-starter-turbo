@@ -38,6 +38,7 @@
     "@workspace/ai": "workspace:*",
     "@workspace/billing": "workspace:*",
     "@workspace/db": "workspace:*",
+    "@workspace/integrations": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "next": "16.0.10",
     "react": "19.2.3",
