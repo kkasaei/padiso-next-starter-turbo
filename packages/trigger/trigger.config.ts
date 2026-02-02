@@ -2,7 +2,12 @@ import { defineConfig } from "@trigger.dev/sdk/v3";
 
 export default defineConfig({
   project: process.env.TRIGGER_PROJECT_ID ?? "",
-  // Your other config settings
+  runtime: "node",
+  logLevel: "log",
+  maxDuration: 3600,
+  // Default machine size for all tasks (can be overridden per-task)
+  // Options: "micro" | "small-1x" | "small-2x" | "medium-1x" | "medium-2x" | "large-1x" | "large-2x"
+  machine: "medium-1x", // 1 vCPU, 2 GB RAM - good for AI processing tasks
   retries: {
     enabledInDev: true,
     default: {
