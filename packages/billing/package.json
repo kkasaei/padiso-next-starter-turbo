@@ -8,7 +8,10 @@
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "stripe": "^20.2.0",
+    "zod": "^4.3.6"
+  },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",

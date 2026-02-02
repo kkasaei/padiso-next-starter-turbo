@@ -1,4 +1,4 @@
-import { env } from '@/env';
+import { env } from './env';
 
 // Feature type that supports optional badges
 export type PlanFeature = string | { text: string; badge: string };

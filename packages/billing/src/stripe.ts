@@ -1,7 +1,5 @@
-import 'server-only';
-
 import { Stripe } from 'stripe';
-import { env } from '@/env';
+import { env } from './env';
 import { PLANS, type PlanId } from './plans';
 
 // Singleton Stripe instance
@@ -14,7 +12,7 @@ export function getStripe(): Stripe {
       throw new Error('STRIPE_SECRET_KEY environment variable is not configured.');
     }
     stripeInstance = new Stripe(secretKey, {
-      apiVersion: '2025-11-17.clover',
+      apiVersion: '2025-12-15.clover',
     });
   }
   return stripeInstance;
