@@ -25,6 +25,7 @@ import { cn } from '@workspace/common/lib'
 // ============================================================
 type ContentStatus = 'scheduled' | 'published' | 'draft'
 type ContentType = 'Listicle' | 'How To' | 'Explainer' | 'Product Listicle' | 'Guide' | 'Tutorial'
+type CalendarPeriod = 'day' | 'week' | 'month'
 
 interface ContentItem {
   id: string
@@ -84,6 +85,32 @@ function isSameDay(d1: Date, d2: Date): boolean {
 
 function isSameMonth(d1: Date, d2: Date): boolean {
   return d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear()
+}
+
+// Get week days starting from Monday of the given date's week
+function getWeekDays(date: Date): Date[] {
+  const days: Date[] = []
+  const dayOfWeek = date.getDay()
+  // Convert to Monday-first (0 = Monday, 6 = Sunday)
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+  const monday = new Date(date.getFullYear(), date.getMonth(), date.getDate() + mondayOffset)
+  
+  for (let i = 0; i < 7; i++) {
+    days.push(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i))
+  }
+  return days
+}
+
+// Format week range
+function formatWeekRange(date: Date): string {
+  const weekDays = getWeekDays(date)
+  const start = weekDays[0]
+  const end = weekDays[6]
+  
+  if (start.getMonth() === end.getMonth()) {
+    return `${start.toLocaleDateString('en-US', { month: 'long' })} ${start.getDate()} - ${end.getDate()}, ${start.getFullYear()}`
+  }
+  return `${start.toLocaleDateString('en-US', { month: 'short' })} ${start.getDate()} - ${end.toLocaleDateString('en-US', { month: 'short' })} ${end.getDate()}, ${end.getFullYear()}`
 }
 
 // ============================================================
@@ -210,6 +237,7 @@ export default function ContentListPage() {
 
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1)) // January 2026
+  const [calendarPeriod, setCalendarPeriod] = useState<CalendarPeriod>('month')
 
   // Filter content based on search
   const filteredContent = useMemo(() => {
@@ -222,17 +250,48 @@ export default function ContentListPage() {
   }, [content, searchQuery])
 
   // Calendar navigation
-  const goToPreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
+  const goToPrevious = () => {
+    if (calendarPeriod === 'month') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
+    } else if (calendarPeriod === 'week') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7))
+    } else {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1))
+    }
   }
 
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
+  const goToNext = () => {
+    if (calendarPeriod === 'month') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
+    } else if (calendarPeriod === 'week') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7))
+    } else {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1))
+    }
+  }
+
+  const goToToday = () => {
+    setCurrentDate(new Date())
   }
 
   const monthDays = useMemo(() => {
     return getMonthDays(currentDate.getFullYear(), currentDate.getMonth())
   }, [currentDate])
+
+  const weekDays = useMemo(() => {
+    return getWeekDays(currentDate)
+  }, [currentDate])
+
+  // Get display label based on period
+  const getDateLabel = () => {
+    if (calendarPeriod === 'month') {
+      return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    } else if (calendarPeriod === 'week') {
+      return formatWeekRange(currentDate)
+    } else {
+      return currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    }
+  }
 
   const getContentForDate = (date: Date): ContentItem[] => {
     return filteredContent.filter(c => isSameDay(c.scheduledDate, date))
@@ -265,15 +324,50 @@ export default function ContentListPage() {
           <div className="flex items-center gap-2">
             {viewOptions.viewType === 'calendar' && (
               <>
-                <span className="text-lg font-medium">
-                  {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </span>
-                <div className="flex items-center gap-1 ml-2">
+                {/* Period toggle */}
+                <div className="flex items-center rounded-lg bg-muted p-1 mr-4">
+                  <button
+                    onClick={() => setCalendarPeriod('day')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                      calendarPeriod === 'day' 
+                        ? "bg-background shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Day
+                  </button>
+                  <button
+                    onClick={() => setCalendarPeriod('week')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                      calendarPeriod === 'week' 
+                        ? "bg-background shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Week
+                  </button>
+                  <button
+                    onClick={() => setCalendarPeriod('month')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                      calendarPeriod === 'month' 
+                        ? "bg-background shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Month
+                  </button>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex items-center gap-1">
                   <Button 
                     variant="outline" 
                     size="icon" 
                     className="h-8 w-8 rounded-full"
-                    onClick={goToPreviousMonth}
+                    onClick={goToPrevious}
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -281,11 +375,24 @@ export default function ContentListPage() {
                     variant="outline" 
                     size="icon" 
                     className="h-8 w-8 rounded-full"
-                    onClick={goToNextMonth}
+                    onClick={goToNext}
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
+
+                <span className="text-lg font-medium ml-2">
+                  {getDateLabel()}
+                </span>
+
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="ml-2 h-8"
+                  onClick={goToToday}
+                >
+                  Today
+                </Button>
               </>
             )}
             {(viewOptions.viewType === 'card' || viewOptions.viewType === 'kanban') && (
@@ -320,11 +427,25 @@ export default function ContentListPage() {
           </div>
         ) : (
           <>
-            {viewOptions.viewType === 'calendar' && (
-              <CalendarView 
+            {viewOptions.viewType === 'calendar' && calendarPeriod === 'month' && (
+              <MonthCalendarView 
                 days={monthDays}
                 currentDate={currentDate}
                 getContentForDate={getContentForDate}
+                projectId={projectId}
+              />
+            )}
+            {viewOptions.viewType === 'calendar' && calendarPeriod === 'week' && (
+              <WeekCalendarView 
+                days={weekDays}
+                getContentForDate={getContentForDate}
+                projectId={projectId}
+              />
+            )}
+            {viewOptions.viewType === 'calendar' && calendarPeriod === 'day' && (
+              <DayCalendarView 
+                currentDate={currentDate}
+                content={filteredContent.filter(c => isSameDay(c.scheduledDate, currentDate))}
                 projectId={projectId}
               />
             )}
@@ -348,16 +469,16 @@ export default function ContentListPage() {
 }
 
 // ============================================================
-// CALENDAR VIEW
+// MONTH CALENDAR VIEW
 // ============================================================
-interface CalendarViewProps {
+interface MonthCalendarViewProps {
   days: Date[]
   currentDate: Date
   getContentForDate: (date: Date) => ContentItem[]
   projectId: string
 }
 
-function CalendarView({ days, currentDate, getContentForDate, projectId }: CalendarViewProps) {
+function MonthCalendarView({ days, currentDate, getContentForDate, projectId }: MonthCalendarViewProps) {
   const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
   const today = new Date()
 
@@ -410,6 +531,113 @@ function CalendarView({ days, currentDate, getContentForDate, projectId }: Calen
             </div>
           )
         })}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// WEEK CALENDAR VIEW
+// ============================================================
+interface WeekCalendarViewProps {
+  days: Date[]
+  getContentForDate: (date: Date) => ContentItem[]
+  projectId: string
+}
+
+function WeekCalendarView({ days, getContentForDate, projectId }: WeekCalendarViewProps) {
+  const today = new Date()
+
+  return (
+    <div className="p-4">
+      <div className="grid grid-cols-7 gap-4">
+        {days.map((day, idx) => {
+          const dayContent = getContentForDate(day)
+          const isToday = isSameDay(day, today)
+          const dayName = day.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+
+          return (
+            <div key={idx} className="flex flex-col">
+              {/* Day header */}
+              <div className={cn(
+                "text-center py-3 rounded-t-lg border border-b-0 border-border/40",
+                isToday ? "bg-primary/10" : "bg-muted/30"
+              )}>
+                <div className="text-xs font-medium text-muted-foreground">{dayName}</div>
+                <div className={cn(
+                  "text-2xl font-semibold mt-1",
+                  isToday && "text-primary"
+                )}>
+                  {day.getDate()}
+                </div>
+              </div>
+
+              {/* Content area */}
+              <div className="flex-1 min-h-[400px] border border-border/40 rounded-b-lg p-2 space-y-2">
+                {dayContent.map(item => (
+                  <ContentCalendarCard key={item.id} content={item} projectId={projectId} />
+                ))}
+                {dayContent.length === 0 && (
+                  <div className="text-xs text-muted-foreground text-center py-4">
+                    No content
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// DAY CALENDAR VIEW
+// ============================================================
+interface DayCalendarViewProps {
+  currentDate: Date
+  content: ContentItem[]
+  projectId: string
+}
+
+function DayCalendarView({ currentDate, content, projectId }: DayCalendarViewProps) {
+  const today = new Date()
+  const isToday = isSameDay(currentDate, today)
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Day header */}
+      <div className={cn(
+        "text-center py-6 rounded-xl border border-border/40 mb-6",
+        isToday ? "bg-primary/10" : "bg-muted/30"
+      )}>
+        <div className="text-sm font-medium text-muted-foreground">
+          {currentDate.toLocaleDateString('en-US', { weekday: 'long' })}
+        </div>
+        <div className={cn(
+          "text-5xl font-bold mt-2",
+          isToday && "text-primary"
+        )}>
+          {currentDate.getDate()}
+        </div>
+        <div className="text-sm text-muted-foreground mt-1">
+          {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        </div>
+      </div>
+
+      {/* Content list */}
+      <div className="space-y-3">
+        {content.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-medium">No content scheduled for this day</p>
+            <p className="text-sm mt-1">Content scheduled for this date will appear here</p>
+          </div>
+        ) : (
+          content.map(item => (
+            <ContentCard key={item.id} content={item} projectId={projectId} />
+          ))
+        )}
       </div>
     </div>
   )
