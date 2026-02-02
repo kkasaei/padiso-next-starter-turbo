@@ -1,17 +1,20 @@
 'use client'
 
-import React, { useEffect, useImperativeHandle, forwardRef } from 'react'
+import { useEffect, useImperativeHandle, forwardRef, useCallback } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
+import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
+import { Markdown } from '@tiptap/markdown'
 import { cn } from '@workspace/common/lib'
 import '@workspace/ui/styles/tiptap.css'
+import type { LucideIcon } from 'lucide-react'
 import {
   Bold,
   Italic,
-  Underline as UnderlineIcon,
   Strikethrough,
   Code,
   List,
@@ -19,6 +22,11 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  Link2,
+  ImagePlus,
 } from 'lucide-react'
 
 export interface TiptapEditorProps {
@@ -46,6 +54,64 @@ export interface TiptapEditorRef {
   getContent: () => string
 }
 
+type ToolbarAction = 
+  | { type: 'mark'; name: string }
+  | { type: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6 }
+  | { type: 'list'; variant: 'bullet' | 'ordered' }
+  | { type: 'link' }
+  | { type: 'image' }
+
+interface ToolbarButton {
+  icon: LucideIcon
+  title: string
+  action: ToolbarAction
+}
+
+const TOOLBAR_GROUPS: ToolbarButton[][] = [
+  // Text formatting
+  [
+    { icon: Bold, title: 'Bold', action: { type: 'mark', name: 'bold' } },
+    { icon: Italic, title: 'Italic', action: { type: 'mark', name: 'italic' } },
+    { icon: Strikethrough, title: 'Strikethrough', action: { type: 'mark', name: 'strike' } },
+    { icon: Code, title: 'Code', action: { type: 'mark', name: 'code' } },
+  ],
+  // Headings
+  [
+    { icon: Heading1, title: 'Heading 1', action: { type: 'heading', level: 1 } },
+    { icon: Heading2, title: 'Heading 2', action: { type: 'heading', level: 2 } },
+    { icon: Heading3, title: 'Heading 3', action: { type: 'heading', level: 3 } },
+    { icon: Heading4, title: 'Heading 4', action: { type: 'heading', level: 4 } },
+    { icon: Heading5, title: 'Heading 5', action: { type: 'heading', level: 5 } },
+    { icon: Heading6, title: 'Heading 6', action: { type: 'heading', level: 6 } },
+  ],
+  // Lists
+  [
+    { icon: List, title: 'Bullet List', action: { type: 'list', variant: 'bullet' } },
+    { icon: ListOrdered, title: 'Numbered List', action: { type: 'list', variant: 'ordered' } },
+  ],
+  // Media
+  [
+    { icon: Link2, title: 'Add Link', action: { type: 'link' } },
+    { icon: ImagePlus, title: 'Add Image', action: { type: 'image' } },
+  ],
+]
+
+function isActionActive(editor: ReturnType<typeof useEditor>, action: ToolbarAction): boolean {
+  if (!editor) return false
+  switch (action.type) {
+    case 'mark':
+      return editor.isActive(action.name)
+    case 'heading':
+      return editor.isActive('heading', { level: action.level })
+    case 'list':
+      return editor.isActive(action.variant === 'bullet' ? 'bulletList' : 'orderedList')
+    case 'link':
+      return editor.isActive('link')
+    case 'image':
+      return false
+  }
+}
+
 export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
   function TiptapEditor(
     {
@@ -61,63 +127,128 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
   ) {
     const editor = useEditor({
       extensions: [
-        StarterKit.configure({
-          heading: {
-            levels: [1, 2, 3],
+        Markdown, // Must be first to properly handle markdown parsing
+        StarterKit.configure({ 
+          heading: { 
+            levels: [1, 2, 3, 4, 5, 6] // Support all heading levels
+          } 
+        }),
+        Placeholder.configure({ placeholder }),
+        TaskList,
+        TaskItem.configure({ nested: true }),
+        Link.configure({
+          openOnClick: false,
+          HTMLAttributes: {
+            class: 'tiptap-link',
           },
         }),
-        Placeholder.configure({
-          placeholder,
-        }),
-        TaskList,
-        TaskItem.configure({
-          nested: true,
+        Image.configure({
+          HTMLAttributes: {
+            class: 'tiptap-image',
+          },
         }),
       ],
       editorProps: {
         attributes: {
-          class:
-            'tiptap-editor h-full w-full outline-none prose prose-sm max-w-none text-foreground px-4 py-3',
+          class: 'tiptap-editor h-full w-full outline-none max-w-none text-foreground px-4 py-3',
         },
       },
       content: initialValue,
+      contentType: 'markdown', // Set default content type to markdown
       editable: !readOnly,
       immediatelyRender: false,
       onUpdate: ({ editor }) => {
-        if (onContentChange) {
-          onContentChange(editor.getHTML())
-        }
+        onContentChange?.(editor.getHTML())
       },
     })
 
-    // Sync external value changes
-    useEffect(() => {
-      if (!editor || editor.isDestroyed) return
+    const handleAddLink = useCallback(() => {
+      if (!editor) return
       
-      const currentContent = editor.getHTML()
-      if (initialValue && initialValue !== currentContent) {
-        editor.commands.setContent(initialValue)
+      const previousUrl = editor.getAttributes('link').href
+      const url = window.prompt('Enter URL:', previousUrl || '')
+      
+      if (url === null) return // Cancelled
+      
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run()
+        return
+      }
+      
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    }, [editor])
+
+    const handleAddImage = useCallback(() => {
+      if (!editor) return
+      
+      // Create a file input element
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = 'image/*'
+      
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0]
+        if (!file) return
+        
+        // Convert to base64 or use URL
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          const src = event.target?.result as string
+          if (src) {
+            editor.chain().focus().setImage({ src }).run()
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+      
+      input.click()
+    }, [editor])
+
+    const handleToolbarAction = useCallback((action: ToolbarAction) => {
+      if (!editor) return
+      
+      switch (action.type) {
+        case 'mark':
+          editor.chain().focus().toggleMark(action.name).run()
+          break
+        case 'heading':
+          editor.chain().focus().toggleHeading({ level: action.level }).run()
+          break
+        case 'list':
+          editor.chain().focus()[action.variant === 'bullet' ? 'toggleBulletList' : 'toggleOrderedList']().run()
+          break
+        case 'link':
+          handleAddLink()
+          break
+        case 'image':
+          handleAddImage()
+          break
+      }
+    }, [editor, handleAddLink, handleAddImage])
+
+    useEffect(() => {
+      if (editor && !editor.isDestroyed && initialValue) {
+        const currentContent = editor.getHTML()
+        if (initialValue !== currentContent) {
+          // Parse as markdown - TipTap's Markdown extension handles the conversion
+          editor.commands.setContent(initialValue, { contentType: 'markdown' })
+        }
       }
     }, [initialValue, editor])
 
-    // Expose methods via ref
-    useImperativeHandle(
-      ref,
-      () => ({
-        setContent: (content: string) => {
-          if (editor && !editor.isDestroyed) {
-            editor.commands.setContent(content)
-          }
-        },
-        getContent: () => {
-          if (editor && !editor.isDestroyed) {
-            return editor.getHTML()
-          }
-          return ''
-        },
-      }),
-      [editor]
-    )
+    useImperativeHandle(ref, () => ({
+      setContent: (content: string) => {
+        if (editor && !editor.isDestroyed) {
+          editor.commands.setContent(content, { contentType: 'markdown' })
+        }
+      },
+      getContent: () => {
+        if (editor && !editor.isDestroyed) {
+          return editor.getHTML()
+        }
+        return ''
+      },
+    }), [editor])
 
     if (!editor) {
       return null
@@ -125,125 +256,31 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
 
     return (
       <div className={cn('flex flex-col rounded-lg border overflow-hidden bg-background', className)}>
-        {/* Toolbar */}
         {showToolbar && !readOnly && (
           <div className="flex items-center gap-1 border-b border-border bg-muted/30 px-2 py-1.5">
-            {/* Text formatting */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('bold') && 'bg-muted'
-              )}
-              title="Bold"
-            >
-              <Bold className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('italic') && 'bg-muted'
-              )}
-              title="Italic"
-            >
-              <Italic className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleStrike().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('strike') && 'bg-muted'
-              )}
-              title="Strikethrough"
-            >
-              <Strikethrough className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('code') && 'bg-muted'
-              )}
-              title="Code"
-            >
-              <Code className="h-4 w-4" />
-            </button>
-
-            <div className="w-px h-6 bg-border mx-1" />
-
-            {/* Headings */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('heading', { level: 1 }) && 'bg-muted'
-              )}
-              title="Heading 1"
-            >
-              <Heading1 className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('heading', { level: 2 }) && 'bg-muted'
-              )}
-              title="Heading 2"
-            >
-              <Heading2 className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('heading', { level: 3 }) && 'bg-muted'
-              )}
-              title="Heading 3"
-            >
-              <Heading3 className="h-4 w-4" />
-            </button>
-
-            <div className="w-px h-6 bg-border mx-1" />
-
-            {/* Lists */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('bulletList') && 'bg-muted'
-              )}
-              title="Bullet List"
-            >
-              <List className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className={cn(
-                'p-2 rounded hover:bg-muted',
-                editor.isActive('orderedList') && 'bg-muted'
-              )}
-              title="Numbered List"
-            >
-              <ListOrdered className="h-4 w-4" />
-            </button>
+            {TOOLBAR_GROUPS.map((group, groupIndex) => (
+              <div key={groupIndex} className="flex items-center gap-1">
+                {groupIndex > 0 && <div className="w-px h-6 bg-border mx-1" />}
+                {group.map(({ icon: Icon, title, action }, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => handleToolbarAction(action)}
+                    className={cn(
+                      'p-2 rounded hover:bg-muted transition-colors',
+                      isActionActive(editor, action) && 'bg-muted'
+                    )}
+                    title={title}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                ))}
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Editor Content */}
-        <div
-          className="relative overflow-y-auto bg-background"
-          style={{ height, maxHeight: height }}
-        >
+        <div className="relative overflow-y-auto bg-background" style={{ height, maxHeight: height }}>
           <EditorContent editor={editor} className="h-full" />
         </div>
       </div>
