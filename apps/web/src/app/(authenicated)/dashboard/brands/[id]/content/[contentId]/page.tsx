@@ -97,7 +97,7 @@ export default function ContentDetailPage() {
 
         {/* Sidebar Panel - 30% */}
         <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
-          <ContentDetailSidebar content={content} brandId={projectId} />
+          <ContentDetailSidebar content={content} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

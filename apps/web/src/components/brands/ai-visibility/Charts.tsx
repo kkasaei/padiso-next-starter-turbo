@@ -143,27 +143,29 @@ export function VisibilityChartCard() {
   }, [dateRange, activeProviders])
 
   return (
-    <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-      <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
+    <div className="group flex w-full flex-col justify-between rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="flex w-full flex-col gap-y-4">
           {/* Title */}
           <div className="flex flex-row items-center gap-x-2">
-            <span className="text-sm text-muted-foreground">AI Visibility Score</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              AI Visibility Score
+            </span>
           </div>
 
           {/* Score Display */}
           <div className="flex items-baseline gap-x-3">
-            <h2 className="text-5xl font-light">{averageScore}</h2>
+            <h2 className="text-5xl font-semibold tracking-tight">{averageScore}</h2>
             <span className={cn(
-              'text-lg font-medium',
-              scoreChange > 0 ? 'text-green-600 dark:text-green-400' : scoreChange < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'
+              'text-sm font-medium',
+              scoreChange > 0 ? 'text-emerald-500' : scoreChange < 0 ? 'text-rose-500' : 'text-muted-foreground'
             )}>
               {scoreChange > 0 ? '+' : ''}{scoreChange}
             </span>
           </div>
 
           {/* Period Label */}
-          <p className="text-sm text-muted-foreground">{currentPeriodLabel}</p>
+          <p className="text-xs text-muted-foreground">{currentPeriodLabel}</p>
         </div>
 
         {/* Provider Legend / Toggles */}
@@ -175,10 +177,10 @@ export function VisibilityChartCard() {
                 key={provider.id}
                 onClick={() => toggleProvider(provider.id)}
                 className={cn(
-                  'flex items-center gap-x-2 rounded-full px-3 py-1.5 text-sm transition-all',
+                  'flex items-center gap-x-2 rounded-full border border-transparent px-3 py-1.5 text-xs transition-all',
                   isActive
-                    ? 'bg-card shadow-sm ring-1 ring-border'
-                    : 'opacity-50 hover:opacity-75'
+                    ? 'border-border/60 bg-background shadow-sm'
+                    : 'opacity-50 hover:opacity-80'
                 )}
               >
                 <div className="relative h-4 w-4">
@@ -201,13 +203,13 @@ export function VisibilityChartCard() {
       </div>
 
       {/* Chart Container */}
-      <div className="flex w-full flex-col gap-y-2 rounded-3xl bg-card p-4">
+      <div className="flex w-full flex-col gap-y-2 rounded-2xl border border-border/60 bg-background p-4">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid
-              strokeDasharray="6 6"
+              strokeDasharray="4 6"
               stroke="hsl(var(--border))"
-              opacity={0.5}
+              opacity={0.35}
               vertical={true}
             />
             <XAxis
@@ -234,19 +236,19 @@ export function VisibilityChartCard() {
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="rounded-lg bg-popover px-3 py-2 shadow-md ring-1 ring-border">
-                      <p className="mb-2 text-sm font-medium">{label}</p>
+                    <div className="rounded-xl bg-popover px-3 py-2 shadow-md ring-1 ring-border/60">
+                      <p className="mb-2 text-xs font-semibold text-foreground">{label}</p>
                       {payload.map((entry) => {
                         const provider = AI_PROVIDERS.find(p => p.id === entry.dataKey)
                         if (!provider) return null
                         return (
-                          <div key={entry.dataKey} className="flex items-center gap-x-2 text-sm">
+                          <div key={entry.dataKey} className="flex items-center gap-x-2 text-xs text-muted-foreground">
                             <span
                               className="h-2 w-2 rounded-full"
                               style={{ backgroundColor: provider.color }}
                             />
                             <span>{provider.name}:</span>
-                            <span className="font-medium">{entry.value}</span>
+                            <span className="font-semibold text-foreground">{entry.value}</span>
                           </div>
                         )
                       })}
@@ -276,7 +278,7 @@ export function VisibilityChartCard() {
             <div
               key={provider.id}
               className={cn(
-                'flex items-center gap-x-2 text-sm',
+                'flex items-center gap-x-2 text-xs',
                 !activeProviders.has(provider.id) && 'opacity-40'
               )}
             >
