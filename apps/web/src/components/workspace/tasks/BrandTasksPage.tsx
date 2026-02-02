@@ -6,10 +6,12 @@ import { DndContext, type DragEndEvent, closestCenter } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Button } from "@workspace/ui/components/button";
 import { toast } from "sonner";
+import { useOrganization } from "@clerk/nextjs";
 
 // Hooks
 import { useBrand } from "@/hooks/use-brands";
 import { useTasksByBrand, useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
+import { useTaskTagsByBrand, useCreateTaskTag, useDeleteTaskTag } from "@/hooks/use-task-tags";
 
 // Types
 import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@workspace/common/lib/types/tasks";
@@ -19,11 +21,9 @@ import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptio
 import {
   type ProjectTaskGroup,
   ProjectTaskListView,
-  filterTasksByChips,
-  computeTaskFilterCounts,
 } from "./TaskHelpers";
 import { TaskWeekBoardView } from "./TaskWeekBoardView";
-import { FilterPopover } from "./FilterPopover";
+import { TaskFilterPopover } from "./TaskFilterPopover";
 import { ChipOverflow } from "./ChipOverflow";
 import { ViewOptionsPopover } from "./ViewOptionsPopover";
 import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal";
@@ -45,12 +45,18 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
   // ============================================================
   // DATA FETCHING
   // ============================================================
+  const { membershipList } = useOrganization({
+    membershipList: {}
+  });
   const { data: brandData, isLoading: isBrandLoading } = useBrand(projectId);
   const { data: dbTasks = [], isLoading: isTasksLoading } = useTasksByBrand(projectId);
+  const { data: dbTaskTags = [] } = useTaskTagsByBrand(projectId);
   
   // Mutations
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
+  const createTagMutation = useCreateTaskTag();
+  const deleteTagMutation = useDeleteTaskTag();
 
   const isLoading = isBrandLoading || isTasksLoading;
 
@@ -78,8 +84,38 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
   // Apply filters
   const visibleTasks = useMemo(() => {
     if (filters.length === 0) return tasks;
-    return filterTasksByChips(tasks, filters);
-  }, [tasks, filters]);
+
+    return tasks.filter((task) => {
+      return filters.every((chip) => {
+        const key = chip.key.toLowerCase();
+        const value = chip.value.toLowerCase();
+
+        if (key === "status") {
+          return task.status === value;
+        }
+        
+        if (key === "priority") {
+          return task.priority?.toLowerCase() === value;
+        }
+        
+        if (key === "tag") {
+          // value is now a tag ID, need to map to tag name
+          const tagObj = dbTaskTags.find((t: any) => t.id === value);
+          return tagObj && task.tag?.toLowerCase() === tagObj.name.toLowerCase();
+        }
+        
+        if (key === "brand") {
+          return task.brandId === value || task.projectId === value;
+        }
+        
+        if (key === "assignee") {
+          return task.assignee?.id === value;
+        }
+
+        return true;
+      });
+    });
+  }, [tasks, filters, dbTaskTags]);
 
   // Create task groups for list view
   const visibleGroups = useMemo<ProjectTaskGroup[]>(() => {
@@ -95,10 +131,103 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
     }];
   }, [brandData, visibleTasks]);
 
+  // Get workspace members as potential assignees
+  const assigneesForFilter = useMemo(() => {
+    if (!membershipList?.data) return [];
+    
+    return membershipList.data.map((membership) => ({
+      id: membership.publicUserData.userId,
+      name: membership.publicUserData.firstName && membership.publicUserData.lastName
+        ? `${membership.publicUserData.firstName} ${membership.publicUserData.lastName}`
+        : membership.publicUserData.identifier || 'Unknown User',
+    }));
+  }, [membershipList]);
+
+  // Brands for filter (current brand only)
+  const brandsForFilter = useMemo(() => {
+    if (!brandData) return [];
+    return [{
+      id: brandData.id,
+      name: brandData.brandName || "Untitled Brand",
+    }];
+  }, [brandData]);
+
+  // Prepare tags for filter
+  const tagsForFilter = useMemo(() => {
+    return dbTaskTags.map((tag: any) => ({
+      id: tag.id,
+      label: tag.name,
+      color: tag.color,
+    }));
+  }, [dbTaskTags]);
+
   // Filter counts for popover
   const counts = useMemo(() => {
-    return computeTaskFilterCounts(tasks);
-  }, [tasks]);
+    const filterCounts: { 
+      status?: Record<string, number>
+      priority?: Record<string, number>
+      tag?: Record<string, number>
+      brand?: Record<string, number>
+      assignee?: Record<string, number>
+    } = { 
+      status: {}, 
+      priority: {}, 
+      tag: {}, 
+      brand: {}, 
+      assignee: {} 
+    };
+
+    tasks.forEach((task) => {
+      if (task.status) {
+        filterCounts.status![task.status] = (filterCounts.status![task.status] || 0) + 1;
+      }
+      if (task.priority) {
+        filterCounts.priority![task.priority] = (filterCounts.priority![task.priority] || 0) + 1;
+      }
+      if (task.tag) {
+        // Map tag name to tag ID
+        const tagObj = dbTaskTags.find((t: any) => t.name.toLowerCase() === task.tag?.toLowerCase());
+        if (tagObj) {
+          filterCounts.tag![tagObj.id] = (filterCounts.tag![tagObj.id] || 0) + 1;
+        }
+      }
+      if (task.brandId) {
+        filterCounts.brand![task.brandId] = (filterCounts.brand![task.brandId] || 0) + 1;
+      }
+      if (task.assignee?.id) {
+        filterCounts.assignee![task.assignee.id] = (filterCounts.assignee![task.assignee.id] || 0) + 1;
+      }
+    });
+
+    return filterCounts;
+  }, [tasks, dbTaskTags]);
+
+  // ============================================================
+  // EVENT HANDLERS - Tag Management
+  // ============================================================
+  const handleCreateTag = async (name: string, color: string) => {
+    try {
+      await createTagMutation.mutateAsync({
+        brandId: projectId,
+        name,
+        color,
+      });
+      toast.success("Tag created");
+    } catch (error) {
+      console.error("Error creating tag:", error);
+      toast.error("Failed to create tag");
+    }
+  };
+
+  const handleDeleteTag = async (tagId: string) => {
+    try {
+      await deleteTagMutation.mutateAsync({ id: tagId });
+      toast.success("Tag deleted");
+    } catch (error) {
+      console.error("Error deleting tag:", error);
+      toast.error("Failed to delete tag");
+    }
+  };
 
   // ============================================================
   // EVENT HANDLERS - Modal Management
@@ -312,11 +441,16 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
         {/* Filter & View Options Row */}
         <div className="flex items-center justify-between px-4 pb-3 pt-3">
           <div className="flex items-center gap-2">
-            <FilterPopover
+            <TaskFilterPopover
               initialChips={filters}
               onApply={setFilters}
               onClear={() => setFilters([])}
               counts={counts}
+              brands={brandsForFilter}
+              assignees={assigneesForFilter}
+              tags={tagsForFilter}
+              onCreateTag={handleCreateTag}
+              onDeleteTag={handleDeleteTag}
             />
             <ChipOverflow
               chips={filters}
@@ -359,6 +493,7 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
             onChangeTag={changeTaskTag}
             onMoveTaskDate={moveTaskDate}
             onOpenTask={openEditTask}
+            tags={tagsForFilter}
           />
         )}
       </div>

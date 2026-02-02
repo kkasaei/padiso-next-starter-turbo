@@ -2,8 +2,10 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
-import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder } from 'lucide-react'
+import { CalendarDays, BarChart3, Paperclip, Tag as TagIcon, Mic, CircleUser, X, Folder, Plus as PlusIcon } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
+import { Input } from '@workspace/ui/components/input'
 
 import type { UITask } from "@workspace/common/lib/types/tasks";
 import type { User } from '@/lib/mocks/legacy-project-details';
@@ -11,6 +13,7 @@ import type { User } from '@/lib/mocks/legacy-project-details';
 // Backward compatibility
 type ProjectTask = UITask;
 import { useBrands } from '@/hooks/use-brands'
+import { useTaskTagsByBrand, useCreateTaskTag, useDeleteTaskTag } from '@/hooks/use-task-tags'
 import { Button } from '@workspace/ui/components/button'
 import { Switch } from '@workspace/ui/components/switch'
 import { GenericPicker, DatePicker } from './TaskPickers'
@@ -69,12 +72,6 @@ const PRIORITY_OPTIONS: PriorityOption[] = [
   { id: 'high', label: 'High' },
 ]
 
-export const TAG_OPTIONS: TagOption[] = [
-  { id: 'feature', label: 'Feature' },
-  { id: 'bug', label: 'Bug' },
-  { id: 'internal', label: 'Internal' },
-]
-
 function toUser(option: AssigneeOption | undefined): User | undefined {
   if (!option) return undefined
   return {
@@ -98,6 +95,28 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
   
   // Get current user
   const { user } = useUser()
+
+  // Determine which brand we're working with for tag fetching
+  const currentBrandId = brandId || context?.brandId || editingTask?.brandId || brands[0]?.id
+  
+  // Fetch tags for the current brand
+  const { data: dbTags = [] } = useTaskTagsByBrand(currentBrandId || "")
+  
+  // Mutations for tags
+  const createTagMutation = useCreateTaskTag()
+  const deleteTagMutation = useDeleteTaskTag()
+
+  // Convert tags to options
+  const tagOptions = useMemo<TagOption[]>(() => {
+    return dbTags.map((tag: any) => ({
+      id: tag.id,
+      label: tag.name,
+    }));
+  }, [dbTags]);
+
+  // State for creating new tag
+  const [isCreatingTag, setIsCreatingTag] = useState(false)
+  const [newTagName, setNewTagName] = useState('')
 
   // Convert current user to assignee option
   const assigneeOptions = useMemo<AssigneeOption[]>(() => {
@@ -158,7 +177,7 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
       setPriority(priorityOption)
 
       const tagOption = editingTask.tag
-        ? TAG_OPTIONS.find((t) => t.label === editingTask.tag)
+        ? tagOptions.find((t) => t.label === editingTask.tag)
         : undefined
       setSelectedTag(tagOption)
 
@@ -176,12 +195,41 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     setTargetDate(undefined)
     setPriority(PRIORITY_OPTIONS[0])
     setSelectedTag(undefined)
-  }, [open, context?.brandId, editingTask, assigneeOptions])
+  }, [open, context?.brandId, editingTask, assigneeOptions, tagOptions])
 
   const brandOptions = useMemo(
     () => brands.map((b: any) => ({ id: b.id, label: b.brandName || 'Untitled Brand' })),
     [brands],
   )
+
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) return
+    if (!currentBrandId) {
+      toast.error("Please select a brand first")
+      return
+    }
+
+    try {
+      const newTag = await createTagMutation.mutateAsync({
+        brandId: currentBrandId,
+        name: newTagName.trim(),
+        color: '#8b5cf6', // Default purple color
+      })
+      
+      // Set the newly created tag as selected
+      setSelectedTag({
+        id: newTag.id,
+        label: newTag.name,
+      })
+      
+      setNewTagName('')
+      setIsCreatingTag(false)
+      toast.success("Tag created")
+    } catch (error) {
+      console.error("Error creating tag:", error)
+      toast.error("Failed to create tag")
+    }
+  }
 
   const handleSubmit = () => {
     if (editingTask) {
@@ -418,26 +466,86 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
           }
         />
 
-        {/* Tag */}
-        <GenericPicker
-          items={TAG_OPTIONS}
-          onSelect={setSelectedTag}
-          selectedId={selectedTag?.id}
-          placeholder="Add tag..."
-          renderItem={(item) => (
-            <div className="flex items-center gap-2 w-full">
-              <span className="flex-1">{item.label}</span>
-            </div>
-          )}
-          trigger={
+        {/* Tag - Custom picker with create functionality */}
+        <Popover>
+          <PopoverTrigger asChild>
             <button className="bg-background flex gap-2 h-9 items-center px-3 py-2 rounded-lg border border-border hover:bg-black/5 transition-colors">
               <TagIcon className="size-4 text-muted-foreground" />
               <span className="font-medium text-foreground text-sm leading-5">
                 {selectedTag?.label ?? 'Tag'}
               </span>
             </button>
-          }
-        />
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-[280px] p-3">
+            {/* Create new tag */}
+            {isCreatingTag ? (
+              <div className="flex gap-2 pb-3 border-b border-border/40 mb-3">
+                <Input
+                  placeholder="Tag name..."
+                  value={newTagName}
+                  onChange={(e) => setNewTagName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleCreateTag()
+                    }
+                    if (e.key === 'Escape') {
+                      setIsCreatingTag(false)
+                      setNewTagName('')
+                    }
+                  }}
+                  autoFocus
+                  className="h-8"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleCreateTag}
+                  disabled={!newTagName.trim()}
+                  className="h-8"
+                >
+                  Add
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start h-8 mb-2"
+                onClick={() => setIsCreatingTag(true)}
+              >
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Create new tag
+              </Button>
+            )}
+
+            {/* Tag list */}
+            <div className="space-y-1 max-h-[200px] overflow-y-auto">
+              <button
+                className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent"
+                onClick={() => setSelectedTag(undefined)}
+              >
+                No tag
+              </button>
+              {tagOptions.map((tag) => (
+                <button
+                  key={tag.id}
+                  className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent flex items-center justify-between group"
+                  onClick={() => setSelectedTag(tag)}
+                >
+                  <span>{tag.label}</span>
+                  {selectedTag?.id === tag.id && (
+                    <span className="text-xs text-muted-foreground">✓</span>
+                  )}
+                </button>
+              ))}
+              {tagOptions.length === 0 && !isCreatingTag && (
+                <p className="text-xs text-muted-foreground text-center py-4">
+                  No tags yet. Create one above.
+                </p>
+              )}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Footer */}

@@ -13,9 +13,13 @@ import type { UITask } from "@workspace/common/lib/types/tasks";
 // Backward compatibility  
 type ProjectTask = UITask;
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/dropdown-menu"
-import { TAG_OPTIONS } from "./TaskQuickCreateModal"
 
 type TaskBoardCardVariant = "default" | "completed" | "empty"
+
+type TagOption = {
+  id: string
+  label: string
+}
 
 type TaskBoardCardProps = {
   task?: ProjectTask
@@ -27,9 +31,13 @@ type TaskBoardCardProps = {
    * The value is the tag label (e.g. "Feature") or undefined for no tag.
    */
   onChangeTag?: (tagLabel?: string) => void
+  /**
+   * Available tags for the dropdown
+   */
+  tags?: TagOption[]
 }
 
-export function TaskBoardCard({ task, variant = "default", onToggle, onOpen, onChangeTag }: TaskBoardCardProps) {
+export function TaskBoardCard({ task, variant = "default", onToggle, onOpen, onChangeTag, tags = [] }: TaskBoardCardProps) {
   const isDefault = variant === "default" && task
   const isCompleted = variant === "completed" && task
   const isEmpty = variant === "empty"
@@ -146,7 +154,7 @@ export function TaskBoardCard({ task, variant = "default", onToggle, onOpen, onC
             <DropdownMenuItem onClick={() => onChangeTag?.(undefined)}>
               <span className="text-xs">No tag</span>
             </DropdownMenuItem>
-            {TAG_OPTIONS.map((opt) => (
+            {tags.map((opt) => (
               <DropdownMenuItem key={opt.id} onClick={() => onChangeTag?.(opt.label)}>
                 <span className="text-xs">{opt.label}</span>
               </DropdownMenuItem>

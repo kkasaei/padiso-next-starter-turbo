@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useBrands } from "@/hooks/use-brands";
 import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace";
 import { useTasksByWorkspace, useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
+import { useTaskTagsByWorkspace, useCreateTaskTag, useDeleteTaskTag } from "@/hooks/use-task-tags";
 
 // Types
 import { dbTaskToUI, uiTaskToCreateDB, uiTaskToUpdateDB, type UITask } from "@workspace/common/lib/types/tasks";
@@ -18,7 +19,7 @@ import { DEFAULT_VIEW_OPTIONS, type FilterChip as FilterChipType, type ViewOptio
 // Local Task Components
 import { TaskTableView } from "./TaskTableView";
 import { TaskKanbanView } from "./TaskKanbanView";
-import { FilterPopover } from "./FilterPopover";
+import { TaskFilterPopover } from "./TaskFilterPopover";
 import { ChipOverflow } from "./ChipOverflow";
 import { TaskViewOptionsPopover } from "./TaskViewOptionsPopover";
 import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal";
@@ -38,13 +39,19 @@ export function MyTasksPage() {
   // ============================================================
   // DATA FETCHING
   // ============================================================
-  const { organization } = useOrganization();
+  const { organization, membershipList } = useOrganization({
+    membershipList: {}
+  });
   const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "");
   const { data: brands = [] } = useBrands(workspace?.id);
   const { data: dbTasks = [], isLoading } = useTasksByWorkspace(workspace?.id || "");
+  const { data: dbTaskTags = [] } = useTaskTagsByWorkspace(workspace?.id || "");
+  
   // Mutations
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
+  const createTagMutation = useCreateTaskTag();
+  const deleteTagMutation = useDeleteTaskTag();
 
   // ============================================================
   // STATE MANAGEMENT
@@ -83,25 +90,99 @@ export function MyTasksPage() {
         if (key === "status") {
           return task.status === value;
         }
+        
+        if (key === "priority") {
+          return task.priority?.toLowerCase() === value;
+        }
+        
+        if (key === "tag") {
+          // value is now a tag ID, need to map to tag name
+          const tagObj = dbTaskTags.find((t: any) => t.id === value);
+          return tagObj && task.tag?.toLowerCase() === tagObj.name.toLowerCase();
+        }
+        
+        if (key === "brand") {
+          return task.brandId === value || task.projectId === value;
+        }
+        
+        if (key === "assignee") {
+          return task.assignee?.id === value;
+        }
 
-        // Add more filter logic as needed
         return true;
       });
     });
-  }, [tasks, filters]);
+  }, [tasks, filters, dbTaskTags]);
+
+  // Prepare brands for filter
+  const brandsForFilter = useMemo(() => {
+    return brands.map((brand: any) => ({
+      id: brand.id,
+      name: brand.brandName || "Untitled Brand",
+    }));
+  }, [brands]);
+
+  // Prepare tags for filter
+  const tagsForFilter = useMemo(() => {
+    return dbTaskTags.map((tag: any) => ({
+      id: tag.id,
+      label: tag.name,
+      color: tag.color,
+    }));
+  }, [dbTaskTags]);
+
+  // Get workspace members as potential assignees
+  const assigneesForFilter = useMemo(() => {
+    if (!membershipList?.data) return [];
+    
+    return membershipList.data.map((membership) => ({
+      id: membership.publicUserData.userId,
+      name: membership.publicUserData.firstName && membership.publicUserData.lastName
+        ? `${membership.publicUserData.firstName} ${membership.publicUserData.lastName}`
+        : membership.publicUserData.identifier || 'Unknown User',
+    }));
+  }, [membershipList]);
 
   // Filter counts for popover
   const filterCounts = useMemo(() => {
-    const counts: { status?: Record<string, number> } = { status: {} };
+    const counts: { 
+      status?: Record<string, number>
+      priority?: Record<string, number>
+      tag?: Record<string, number>
+      brand?: Record<string, number>
+      assignee?: Record<string, number>
+    } = { 
+      status: {}, 
+      priority: {}, 
+      tag: {}, 
+      brand: {}, 
+      assignee: {} 
+    };
 
     tasks.forEach((task) => {
       if (task.status) {
         counts.status![task.status] = (counts.status![task.status] || 0) + 1;
       }
+      if (task.priority) {
+        counts.priority![task.priority] = (counts.priority![task.priority] || 0) + 1;
+      }
+      if (task.tag) {
+        // Map tag name to tag ID
+        const tagObj = dbTaskTags.find((t: any) => t.name.toLowerCase() === task.tag?.toLowerCase());
+        if (tagObj) {
+          counts.tag![tagObj.id] = (counts.tag![tagObj.id] || 0) + 1;
+        }
+      }
+      if (task.brandId) {
+        counts.brand![task.brandId] = (counts.brand![task.brandId] || 0) + 1;
+      }
+      if (task.assignee?.id) {
+        counts.assignee![task.assignee.id] = (counts.assignee![task.assignee.id] || 0) + 1;
+      }
     });
 
     return counts;
-  }, [tasks]);
+  }, [tasks, dbTaskTags]);
 
   // ============================================================
   // EVENT HANDLERS - Modal Management
@@ -122,6 +203,41 @@ export function MyTasksPage() {
     setIsCreateTaskOpen(false);
     setEditingTask(undefined);
     setCreateContext(undefined);
+  };
+
+  // ============================================================
+  // EVENT HANDLERS - Tag Management
+  // ============================================================
+  const handleCreateTag = async (name: string, color: string) => {
+    // Create tag for the first brand in the workspace
+    // In a real app, you might want to prompt which brand or create for all
+    const firstBrandId = brands[0]?.id;
+    if (!firstBrandId) {
+      toast.error("No brand found to create tag");
+      return;
+    }
+
+    try {
+      await createTagMutation.mutateAsync({
+        brandId: firstBrandId,
+        name,
+        color,
+      });
+      toast.success("Tag created");
+    } catch (error) {
+      console.error("Error creating tag:", error);
+      toast.error("Failed to create tag");
+    }
+  };
+
+  const handleDeleteTag = async (tagId: string) => {
+    try {
+      await deleteTagMutation.mutateAsync({ id: tagId });
+      toast.success("Tag deleted");
+    } catch (error) {
+      console.error("Error deleting tag:", error);
+      toast.error("Failed to delete tag");
+    }
   };
 
   // ============================================================
@@ -262,17 +378,22 @@ export function MyTasksPage() {
         {/* Filter & View Options Row */}
         <div className="flex items-center justify-between px-4 pb-3 pt-3">
           <div className="flex items-center gap-2">
-            <FilterPopover
+            <TaskFilterPopover
               initialChips={filters}
               onApply={setFilters}
               onClear={() => setFilters([])}
               counts={filterCounts}
+              brands={brandsForFilter}
+              assignees={assigneesForFilter}
+              tags={tagsForFilter}
+              onCreateTag={handleCreateTag}
+              onDeleteTag={handleDeleteTag}
             />
             <ChipOverflow
               chips={filters}
               onRemove={(key, value) =>
                 setFilters((prev) => 
-                  prev.filter((chip) => !(chip.key === chip.key && chip.value === value))
+                  prev.filter((chip) => !(chip.key === key && chip.value === value))
                 )
               }
               maxVisible={6}

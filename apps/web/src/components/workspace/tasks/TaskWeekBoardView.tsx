@@ -38,6 +38,11 @@ type DayColumn = {
   done: number
 }
 
+type TagOption = {
+  id: string
+  label: string
+}
+
 type TaskWeekBoardViewProps = {
   tasks: ProjectTask[]
   onAddTask?: (context?: CreateTaskContext) => void
@@ -45,9 +50,10 @@ type TaskWeekBoardViewProps = {
   onChangeTag?: (taskId: string, tagLabel?: string) => void
   onMoveTaskDate?: (taskId: string, newDate: Date) => void
   onOpenTask?: (task: ProjectTask) => void
+  tags?: TagOption[]
 }
 
-export function TaskWeekBoardView({ tasks, onAddTask, onToggleTask, onChangeTag, onMoveTaskDate, onOpenTask }: TaskWeekBoardViewProps) {
+export function TaskWeekBoardView({ tasks, onAddTask, onToggleTask, onChangeTag, onMoveTaskDate, onOpenTask, tags = [] }: TaskWeekBoardViewProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 }) // Monday
   )
@@ -289,6 +295,7 @@ export function TaskWeekBoardView({ tasks, onAddTask, onToggleTask, onChangeTag,
               onToggle={() => onToggleTask?.(activeTask.id)}
               onOpen={() => onOpenTask?.(activeTask)}
               onChangeTag={(tagLabel) => onChangeTag?.(activeTask.id, tagLabel)}
+              tags={tags}
             />
           ) : null}
         </DragOverlay>
@@ -378,6 +385,7 @@ function DayColumnDroppable({
                 onToggle={onToggleTask}
                 onOpen={onOpenTask}
                 onChangeTag={onChangeTag}
+                tags={tags}
               />
             ))
           )}
@@ -403,9 +411,10 @@ type SortableTaskCardProps = {
   onToggle?: (taskId: string) => void
   onOpen?: (task: ProjectTask) => void
   onChangeTag?: (taskId: string, tagLabel?: string) => void
+  tags?: TagOption[]
 }
 
-function SortableTaskCard({ task, dayKey, onToggle, onOpen, onChangeTag }: SortableTaskCardProps) {
+function SortableTaskCard({ task, dayKey, onToggle, onOpen, onChangeTag, tags = [] }: SortableTaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: task.id,
     data: { dayKey },
@@ -424,6 +433,7 @@ function SortableTaskCard({ task, dayKey, onToggle, onOpen, onChangeTag }: Sorta
         onToggle={() => onToggle?.(task.id)}
         onOpen={() => onOpen?.(task)}
         onChangeTag={(tagLabel) => onChangeTag?.(task.id, tagLabel)}
+        tags={tags}
       />
     </div>
   )
