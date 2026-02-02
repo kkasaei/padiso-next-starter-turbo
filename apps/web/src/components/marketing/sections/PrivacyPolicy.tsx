@@ -15,8 +15,8 @@ import {
   CardTitle
 } from '@workspace/ui/components/card';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { SiteHeading } from '@workspace/ui/components/fragments/SiteHeading';
 
 const DATA_CARDS = [
   {

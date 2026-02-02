@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { BlurFade } from '@/components/shared/fragments/BlurFade';
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { BlurFade } from '@workspace/ui/components/fragments/BlurFade';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 function Capitaly(props: React.SVGAttributes<SVGSVGElement>): React.JSX.Element {
   return (

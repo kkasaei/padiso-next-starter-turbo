@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { useMediaUploadContext } from '@/contexts/media-upload-context';
 
 // ============================================================
 // TYPES
@@ -19,9 +18,25 @@ export interface UploadedFile {
 }
 
 interface UseUploadFileProps {
+  /**
+   * Project/brand/entity ID for upload context
+   */
+  projectId?: string | null;
+  /**
+   * Called when upload completes successfully
+   */
   onUploadComplete?: (file: UploadedFile) => void;
+  /**
+   * Called when upload fails
+   */
   onUploadError?: (error: unknown) => void;
+  /**
+   * Called when upload begins
+   */
   onUploadBegin?: (fileName: string) => void;
+  /**
+   * Called during upload with progress updates
+   */
   onUploadProgress?: (opts: { progress: number }) => void;
 }
 
@@ -30,13 +45,12 @@ interface UseUploadFileProps {
 // ============================================================
 
 export function useUploadFile({
+  projectId,
   onUploadComplete,
   onUploadError,
   onUploadBegin,
   onUploadProgress,
 }: UseUploadFileProps = {}) {
-  const { projectId } = useMediaUploadContext();
-  
   const [uploadedFile, setUploadedFile] = React.useState<UploadedFile>();
   const [uploadingFile, setUploadingFile] = React.useState<File>();
   const [progress, setProgress] = React.useState<number>(0);
@@ -44,12 +58,9 @@ export function useUploadFile({
 
   const uploadFile = React.useCallback(
     async (file: File): Promise<UploadedFile | undefined> => {
-      // Check if projectId is available
+      // Check if projectId is available if required
       if (!projectId) {
-        console.error('[useUploadFile] No projectId available in context');
-        toast.error('Upload failed: No project context');
-        onUploadError?.(new Error('No project context'));
-        return undefined;
+        console.warn('[useUploadFile] No projectId provided - upload may fail if required by backend');
       }
 
       setIsUploading(true);
@@ -76,6 +87,13 @@ export function useUploadFile({
         await new Promise((resolve) => setTimeout(resolve, 200));
 
         // TODO: Replace with actual upload API call
+        // Example implementation:
+        // const formData = new FormData();
+        // formData.append('file', file);
+        // if (projectId) formData.append('projectId', projectId);
+        // const response = await fetch('/api/upload', { method: 'POST', body: formData });
+        // const data = await response.json();
+        
         // Mock successful upload response
         const mockAssetId = `asset-${Date.now()}`;
         const mockCdnUrl = URL.createObjectURL(file);

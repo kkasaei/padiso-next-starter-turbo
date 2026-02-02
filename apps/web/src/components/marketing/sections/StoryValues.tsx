@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { FlickeringGrid } from '@/components/shared/fragments/FlickeringGrid';
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { FlickeringGrid } from '@workspace/ui/components/fragments/FlickeringGrid';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 export function StoryValues(): React.JSX.Element {
   return (

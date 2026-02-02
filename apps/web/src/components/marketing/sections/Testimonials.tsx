@@ -8,8 +8,8 @@ import { motion } from 'framer-motion';
 import { APP_NAME } from '@workspace/common/constants';
 import { cn } from '@workspace/common/lib';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { Marquee } from '@/components/shared/fragments/Marquee';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { Marquee } from '@workspace/ui/components/fragments/Marquee';
 
 const DATA = [
   {

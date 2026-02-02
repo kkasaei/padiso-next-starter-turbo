@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 
-import { useMediaUploadContext } from '@/contexts/media-upload-context';
+import { useMediaUploadContext } from '@workspace/react-providers/media-upload';
 import type { ProjectAssetDto, ProjectAssetMediaType } from '@workspace/common/lib/shcmea/types/asset';
 
 import {

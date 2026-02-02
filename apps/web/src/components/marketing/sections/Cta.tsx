@@ -5,9 +5,9 @@ import { FEATURE_FLAGS } from '@workspace/common';
 import { buttonVariants } from '@workspace/ui/components/button';
 import { cn } from '@workspace/common/lib';
 
-import { BlurFade } from '@/components/shared/fragments/BlurFade';
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { TextGenerateEffect } from '@/components/shared/fragments/TextGenerateEffect';
+import { BlurFade } from '@workspace/ui/components/fragments/BlurFade';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { TextGenerateEffect } from '@workspace/ui/components/fragments/TextGenerateEffect';
 
 export function CTA(): React.JSX.Element {
   const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;

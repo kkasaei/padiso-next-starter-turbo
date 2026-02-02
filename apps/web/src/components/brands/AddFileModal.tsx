@@ -5,7 +5,7 @@ import { Paperclip, Upload as UploadSimple, X } from "lucide-react"
 
 import type { ProjectFile, QuickLink, User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
-import { QuickCreateModalLayout } from "@/components/shared/QuickCreateModalLayout"
+import { QuickCreateModalLayout } from '@workspace/ui/components/QuickCreateModalLayout"
 import { ProjectDescriptionEditor } from "@/components/brands/brand-wizard/BrandDescriptionEditor"
 import { UploadAssetFilesModal } from "@/components/brands/UploadAssetFilesModal"
 

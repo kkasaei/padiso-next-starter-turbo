@@ -27,7 +27,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@w
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import { Separator } from "@workspace/ui/components/separator"
-import { ProgressCircle } from "@/components/shared/ProgressCircle"
+import { ProgressCircle } from '@workspace/ui/components/ProgressCircle"
 import { cn } from "@workspace/ui/lib/utils"
 import { TaskRowBase } from "@/components/workspace/tasks/TaskRowBase"
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { SearchX, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 import { AEODomainInput } from '@/components/marketing/sections/AeoDomainInput';
 import { ANIMATIONS } from '@workspace/common/constants';
 

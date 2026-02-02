@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { SiteHeading } from '@workspace/ui/components/fragments/SiteHeading';
 
 export function StoryHero(): React.JSX.Element {
   return (

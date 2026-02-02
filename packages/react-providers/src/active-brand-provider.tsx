@@ -5,8 +5,7 @@ import type { Brand } from '@workspace/db/schema';
 
 // ============================================================
 // ACTIVE BRAND CONTEXT
-// Provides the current brand to all child components under
-// /dashboard/brands/[brandId]/* routes
+// Provides the current brand to all child components
 // ============================================================
 
 const BrandContext = React.createContext<Brand | undefined>(undefined);
@@ -36,4 +35,3 @@ export function useActiveBrand() {
 export function useActiveBrandOptional() {
   return React.useContext(BrandContext);
 }
-

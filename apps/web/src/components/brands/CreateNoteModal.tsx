@@ -6,7 +6,7 @@ import { Paperclip, Mic as Microphone, Upload as UploadSimple, Tag, X } from "lu
 import type { User } from "@workspace/common/lib/mocks/legacy-project-details"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { QuickCreateModalLayout } from "@/components/shared/QuickCreateModalLayout"
+import { QuickCreateModalLayout } from '@workspace/ui/components/QuickCreateModalLayout"
 import { ProjectDescriptionEditor } from "@/components/brands/brand-wizard/BrandDescriptionEditor"
 
 type CreateNoteModalProps = {

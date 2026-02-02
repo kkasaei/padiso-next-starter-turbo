@@ -26,7 +26,7 @@ import { ThemeSwitcher } from '@workspace/ui/components/theme-switcher';
 import { RemoveScroll } from '@workspace/common/lib';
 import { cn } from '@workspace/common/lib';
 
-import { ExternalLink } from '@/components/shared/fragments/ExternalLink';
+import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { DOCS_LINKS, MENU_LINKS } from '@/components/marketing/MarketingLinks';
 
 function getInitials(name?: string | null): string {

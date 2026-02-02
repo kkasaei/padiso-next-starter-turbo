@@ -13,8 +13,8 @@ import {
   AvatarImage
 } from '@workspace/ui/components/avatar';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { SiteHeading } from '@workspace/ui/components/fragments/SiteHeading';
 import { getInitials } from '@workspace/common/lib';
 
 export function BlogPosts(): React.JSX.Element {

@@ -7,7 +7,7 @@ import { BentoCampaignsCard } from '@/components/marketing/cards/BentoCampaignsC
 import { BentoCustomersCard } from '@/components/marketing/cards/BentoCustomersCard';
 import { BentoMagicInboxCard } from '@/components/marketing/cards/BentoMagicInboxCard';
 import { BentoPipelinesCard } from '@/components/marketing/cards/BentoPipelinesCard';
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 export function Solution(): React.JSX.Element {
   return (

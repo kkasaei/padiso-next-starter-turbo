@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ClockIcon, PuzzleIcon, TrendingUpIcon } from 'lucide-react';
 
-import { BlurFade } from '@/components/shared/fragments/BlurFade';
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { TextGenerateWithSelectBoxEffect } from '@/components/shared/fragments/TextGenerateWithSelectBoxEffect';
+import { BlurFade } from '@workspace/ui/components/fragments/BlurFade';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { TextGenerateWithSelectBoxEffect } from '@workspace/ui/components/fragments/TextGenerateWithSelectBoxEffect';
 
 const DATA = [
   {

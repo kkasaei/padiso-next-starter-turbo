@@ -5,19 +5,30 @@
  * Import from '@/hooks' instead of individual files.
  * 
  * Note: Generic UI hooks (use-debounce, use-mobile, use-mounted, 
- * use-is-touch-device, use-analytics-date-range) are now in @workspace/ui
+ * use-is-touch-device, use-analytics-date-range, use-upload-file, 
+ * use-form-wizard-context) are now in @workspace/ui
  */
 
-// Brand & Workspace Management
-export * from './use-active-brand';
-export * from './use-active-organization';
+// Brand & Workspace Management (Re-export from shared packages)
+export * from '@workspace/react-providers/active-brand';
+export * from '@workspace/react-providers/active-organization';
 export * from './use-brands';
 export * from './use-workspace';
-export * from './use-brand-wizard-context';
+
+// Generic form wizard context - now in @workspace/ui
+export { 
+  useFormWizardContext as useBrandWizardContext,
+  type FormWizardContext as BrandWizardContext,
+  type UseFormWizardContextResult as UseBrandWizardContextResult,
+  type FormData as ProjectFormData
+} from '@workspace/ui/hooks/use-form-wizard-context';
 
 // Data Management
 export * from './use-tasks';
 export * from './use-prompts';
 
-// File Upload
-export * from './use-upload-file';
+// File Upload - now in @workspace/ui
+export * from '@workspace/ui/hooks/use-upload-file';
+
+// Media Upload Context
+export * from '@workspace/react-providers/media-upload';

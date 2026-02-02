@@ -1,7 +1,7 @@
 "use client"
 
 import { OctagonAlert } from "lucide-react"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "../lib/utils"
 
 export type PriorityLevel = "urgent" | "high" | "medium" | "low"
 

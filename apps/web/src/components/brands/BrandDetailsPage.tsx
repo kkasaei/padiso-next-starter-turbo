@@ -37,7 +37,7 @@ import { AnalyticsDateRangeProvider, useAnalyticsDateRange } from '@workspace/ui
 import { ACTIVITY_TYPE_LABELS, type ProjectActivityDto } from '@workspace/common/lib/shcmea/types/activity'
 import type { ContentDraftDto } from '@workspace/common/lib/shcmea/types/content'
 import { CONTENT_STATUS_CONFIG } from '@workspace/common/lib/shcmea/types/content'
-import { ActiveBrandProvider, useActiveBrand } from '@/hooks/use-active-brand'
+import { ActiveBrandProvider, useActiveBrand } from '@workspace/react-providers/active-brand'
 import { useBrand } from '@/hooks/use-brands'
 import { cn } from '@workspace/ui/lib/utils'
 import { Skeleton } from '@workspace/ui/components/skeleton'

@@ -5,7 +5,7 @@ import type { ProjectDetails } from "@workspace/common/lib/mocks/legacy-project-
 import { Separator } from "@workspace/ui/components/separator"
 import { MetaChipsRow } from "@/components/brands/MetaChipsRow"
 import { Badge } from "@workspace/ui/components/badge"
-import { PriorityBadge, type PriorityLevel } from "@/components/shared/PriorityBadge"
+import { PriorityBadge, type PriorityLevel } from '@workspace/ui/components/PriorityBadge"
 import { Button } from "@workspace/ui/components/button"
 
 type ProjectHeaderProps = {

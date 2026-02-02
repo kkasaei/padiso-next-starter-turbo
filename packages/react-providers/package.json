@@ -1,0 +1,32 @@
+{
+  "name": "@workspace/react-providers",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "react": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "@workspace/db": "workspace:*",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "exports": {
+    "./active-brand": "./src/active-brand-provider.tsx",
+    "./active-organization": "./src/active-organization-provider.tsx",
+    "./media-upload": "./src/media-upload-provider.tsx"
+  },
+  "typesVersions": {
+    "*": {
+      "active-brand": ["./src/active-brand-provider.tsx"],
+      "active-organization": ["./src/active-organization-provider.tsx"],
+      "media-upload": ["./src/media-upload-provider.tsx"]
+    }
+  }
+}

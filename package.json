@@ -12,6 +12,9 @@
     "db:seed": "turbo db:seed",
     "db:studio": "turbo db:studio",
     "-------------------": "-----------------------",
+    "stripe:listen": "stripe listen --forward-to localhost:3001/api/webhooks/stripe",
+    "trigger:dev": "pnpm --filter @workspace/trigger trigger:dev",
+    "-------------------2": "-----------------------",
     "build:embed": "pnpm build --filter embed",
     "killport": "npx kill-port 3000 3001 3002 3003"
   },

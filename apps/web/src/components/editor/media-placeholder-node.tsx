@@ -16,7 +16,7 @@ import { PlateElement, useEditorPlugin, withHOC } from 'platejs/react';
 import { useFilePicker } from 'use-file-picker';
 
 import { cn } from '@workspace/common/lib';
-import { useUploadFile } from '@/hooks/use-upload-file';
+import { useUploadFile } from '@workspace/ui/hooks/use-upload-file';
 
 const CONTENT: Record<
   string,

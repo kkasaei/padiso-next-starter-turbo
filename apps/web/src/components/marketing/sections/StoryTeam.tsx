@@ -21,7 +21,7 @@ import {
   AvatarImage
 } from '@workspace/ui/components/avatar';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 const DATA = [
   {

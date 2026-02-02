@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 interface ReportHeroBannerProps {
   children: React.ReactNode;

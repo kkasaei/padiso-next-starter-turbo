@@ -36,7 +36,7 @@ import {
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle';
 import { cn } from '@workspace/common/lib';
 
-import { ExternalLink } from '@/components/shared/fragments/ExternalLink';
+import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { MENU_LINKS } from '@/components/marketing/MarketingLinks';
 import { MobileMenu } from '@/components/marketing/MobileMenu';
 

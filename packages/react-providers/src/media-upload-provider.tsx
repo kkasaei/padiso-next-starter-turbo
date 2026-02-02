@@ -42,4 +42,3 @@ export function useMediaUploadContext() {
   const context = React.useContext(MediaUploadContext);
   return context;
 }
-

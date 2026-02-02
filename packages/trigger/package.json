@@ -7,10 +7,16 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "dev": "trigger.dev dev"
+    "--------------Trigger.dev--------------": "--------------------------------",
+    "trigger:deploy": "pnpm dlx trigger.dev@latest deploy",
+    "trigger:deploy:staging": "pnpm dlx trigger.dev@latest deploy --env staging",
+    "trigger:deploy:production": "pnpm dlx trigger.dev@latest deploy --env production",
+    "trigger:dev": "pnpm dlx trigger.dev@latest dev",
+    "dev": "pnpm dlx trigger.dev@latest dev"
   },
   "dependencies": {
-    "@trigger.dev/sdk": "^3.3.17"
+    "@trigger.dev/build": "4.3.3",
+    "@trigger.dev/sdk": "4.3.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

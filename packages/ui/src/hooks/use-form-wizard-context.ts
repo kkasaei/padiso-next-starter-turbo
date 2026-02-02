@@ -1,13 +1,23 @@
 import { useMemo } from 'react';
-import type { ProjectFormData } from '@workspace/common/lib';
 
 // ============================================================
 // Types
 // ============================================================
 
-export interface BrandWizardContext {
+/**
+ * Generic form data structure for wizard contexts
+ * Extend this interface for specific wizard implementations
+ */
+export interface FormData {
+  name?: string;
+  description?: string;
+  websiteUrl?: string;
+  [key: string]: any;
+}
+
+export interface FormWizardContext {
   domain: string | null;
-  brandName: string | null;
+  name: string | null;
   description: string | null;
   websiteUrl: string | null;
   hasMinimumContext: boolean;
@@ -16,19 +26,26 @@ export interface BrandWizardContext {
   canGenerateGuidelines: boolean;
 }
 
-export interface UseBrandWizardContextResult {
-  context: BrandWizardContext;
+export interface UseFormWizardContextResult {
+  context: FormWizardContext;
   extractDomain: () => { success: true; domain: string } | { success: false; error: string };
   getDescriptionInput: () => { domain: string; context?: string } | null;
   getTargetingInput: () => { domain: string; description?: string } | null;
-  getGuidelinesInput: () => { domain: string; brandName?: string; description?: string } | null;
+  getGuidelinesInput: () => { domain: string; name?: string; description?: string } | null;
 }
 
 // ============================================================
 // Hook
 // ============================================================
 
-export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizardContextResult {
+/**
+ * Hook for managing form wizard context with domain extraction and AI generation helpers.
+ * Useful for brand/project creation wizards that need URL validation and AI-powered content generation.
+ * 
+ * @param formData - The current form data containing name, description, and websiteUrl
+ * @returns Wizard context with domain info and helper functions for AI generation
+ */
+export function useFormWizardContext(formData: FormData): UseFormWizardContextResult {
   // Extract domain from URL helper
   const extractDomain = (): { success: true; domain: string } | { success: false; error: string } => {
     if (formData.websiteUrl && formData.websiteUrl.trim()) {
@@ -44,17 +61,17 @@ export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizard
       }
     }
 
-    // Fallback: use project name as domain
+    // Fallback: use name as domain
     if (formData.name && formData.name.trim()) {
       const domain = formData.name.toLowerCase().replace(/\s+/g, '-') + '.com';
       return { success: true, domain };
     }
 
-    return { success: false, error: 'Please enter a website URL or project name' };
+    return { success: false, error: 'Please enter a website URL or name' };
   };
 
-  // Compute brand wizard context
-  const context: BrandWizardContext = useMemo(() => {
+  // Compute wizard context
+  const context: FormWizardContext = useMemo(() => {
     // Extract domain inline to avoid dependency issues
     let domain: string | null = null;
     let hasValidUrl = false;
@@ -86,7 +103,7 @@ export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizard
 
     return {
       domain,
-      brandName: formData.name || null,
+      name: formData.name || null,
       description: formData.description || null,
       websiteUrl: formData.websiteUrl || null,
       hasMinimumContext: !!domain,
@@ -115,7 +132,6 @@ export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizard
     return {
       domain: domainResult.domain,
       description: formData.description || undefined,
-      context: undefined, // Not used for targeting, but schema expects it
     };
   };
 
@@ -126,9 +142,8 @@ export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizard
 
     return {
       domain: domainResult.domain,
-      brandName: formData.name || undefined,
+      name: formData.name || undefined,
       description: formData.description || undefined,
-      context: undefined, // Not used for guidelines, but schema expects it
     };
   };
 
@@ -140,4 +155,3 @@ export function useBrandWizardContext(formData: ProjectFormData): UseBrandWizard
     getGuidelinesInput,
   };
 }
-

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { TRPCReactProvider } from "@/lib/trpc/react"
-import { PostHogProvider } from "@/components/analytics/posthog-provider"
+import { PostHogProvider } from "@workspace/analytics/posthog"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

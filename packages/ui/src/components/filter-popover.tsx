@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Button } from "@workspace/ui/components/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
-import { Input } from "@workspace/ui/components/input"
-import { Checkbox } from "@workspace/ui/components/checkbox"
-import { cn } from "@workspace/ui/lib/utils"
+import { Button } from "./button"
+import { Popover, PopoverContent, PopoverTrigger } from "./popover"
+import { Input } from "./input"
+import { Checkbox } from "./checkbox"
+import { cn } from "../lib/utils"
 import {
   Loader2 as Spinner,
   Languages,

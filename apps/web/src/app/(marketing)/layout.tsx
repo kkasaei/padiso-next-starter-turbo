@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Footer } from '@/components/marketing/Footer';
-import { CookieBanner } from '@/components/shared/fragments/CookieBanner';
+import { CookieBanner } from '@workspace/ui/components/fragments/CookieBanner';
 import { Navbar } from '@/components/marketing/Navbar';
 // import GoogleAnalytics from '@/components/modules/analytics/analytics';
 

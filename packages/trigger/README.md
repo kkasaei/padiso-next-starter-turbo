@@ -26,7 +26,7 @@ Create new tasks in the `src/tasks` directory:
 
 ```typescript
 // src/tasks/example-task.ts
-import { task } from "@trigger.dev/sdk/v3";
+import { task } from "@trigger.dev/sdk";
 
 export const exampleTask = task({
   id: "example-task",
@@ -58,4 +58,4 @@ pnpm dev
 ## Documentation
 
 - [Trigger.dev Documentation](https://trigger.dev/docs)
-- [Trigger.dev SDK v3](https://trigger.dev/docs/v3/overview)
+- [Trigger.dev Quick Start](https://trigger.dev/docs/quick-start)

@@ -84,12 +84,16 @@
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./components/icons": "./src/components/icons.tsx",
+    "./components/fragments": "./src/components/fragments/index.ts",
+    "./components/fragments/*": "./src/components/fragments/*.tsx",
     "./hooks/*": "./src/hooks/*"
   },
   "typesVersions": {
     "*": {
       "components/icons": ["./src/components/icons.tsx"],
       "components/*": ["./src/components/*.tsx"],
+      "components/fragments": ["./src/components/fragments/index.ts"],
+      "components/fragments/*": ["./src/components/fragments/*.tsx"],
       "lib/*": ["./src/lib/*.ts"],
       "hooks/*": ["./src/hooks/*"]
     }

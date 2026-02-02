@@ -24,7 +24,7 @@ import {
   UnderlinedTabsTrigger
 } from '@workspace/ui/components/tabs';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 import { AEODomainInput } from '@/components/marketing/sections/AeoDomainInput';
 
 function HeroPill(): React.JSX.Element {

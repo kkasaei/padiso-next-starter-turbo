@@ -1,0 +1,28 @@
+{
+  "name": "@workspace/analytics",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "posthog-js": "^1.214.0",
+    "react": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "exports": {
+    "./posthog": "./src/posthog/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "posthog": ["./src/posthog/index.ts"]
+    }
+  }
+}

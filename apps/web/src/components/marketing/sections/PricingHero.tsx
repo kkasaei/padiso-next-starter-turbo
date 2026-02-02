@@ -6,8 +6,8 @@ import { PricingTable } from '@workspace/common/lib/billing/components/pricing-t
 // import { PricingTable } from '@clerk/nextjs';
 import { APP_NAME } from '@workspace/common/constants';
 
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { SiteHeading } from '@workspace/ui/components/fragments/SiteHeading';
 
 export type PricingHeroProps = {
   /**

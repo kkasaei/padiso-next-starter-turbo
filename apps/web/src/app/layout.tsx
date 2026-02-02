@@ -5,8 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/layout/providers"
 import { ClerkProvider } from '@clerk/nextjs';
-import { PostHogPageView } from "@/components/analytics/posthog-pageview"
-import { PostHogIdentifier } from "@/components/analytics/posthog-provider"
+import { PostHogPageView, PostHogIdentifier } from "@workspace/analytics/posthog"
 import "./globals.css"
 
 

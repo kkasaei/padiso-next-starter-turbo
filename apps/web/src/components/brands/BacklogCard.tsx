@@ -6,7 +6,7 @@ import type { BacklogSummary } from "@workspace/common/lib/mocks/legacy-project-
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
 import { StatRow } from "@/components/brands/StatRow"
-import { PriorityGlyphIcon } from "@/components/shared/PriorityBadge"
+import { PriorityGlyphIcon } from '@workspace/ui/components/PriorityBadge"
 import { AvatarGroup } from "@/components/brands/AvatarGroup"
 
 type BacklogCardProps = {

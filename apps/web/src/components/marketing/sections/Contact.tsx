@@ -14,8 +14,8 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from '@workspace/ui/components/sonner';
 import { Textarea } from '@workspace/ui/components/textarea';
-import { GridSection } from '@/components/shared/fragments/GridSection';
-import { SiteHeading } from '@/components/shared/fragments/SiteHeading';
+import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+import { SiteHeading } from '@workspace/ui/components/fragments/SiteHeading';
 
 // ============================================================
 // VALIDATION SCHEMA

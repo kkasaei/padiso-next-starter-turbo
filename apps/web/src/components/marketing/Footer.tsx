@@ -11,7 +11,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { toast } from '@workspace/ui/components/sonner';
 import { ThemeSwitcher } from '@workspace/ui/components/theme-switcher';
 
-import { ExternalLink } from '@/components/shared/fragments/ExternalLink';
+import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { FOOTER_LINKS, SOCIAL_LINKS } from '@/components/marketing/MarketingLinks';
 
 export function Footer(): React.JSX.Element {

@@ -3,7 +3,6 @@
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider } from "posthog-js/react"
 import { useEffect } from "react"
-import { useUser } from "@clerk/nextjs"
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -25,18 +24,12 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return <PHProvider client={posthog}>{children}</PHProvider>
 }
 
-export function PostHogIdentifier() {
-  const { user, isSignedIn } = useUser()
-
+export function PostHogIdentifier({ userId, isSignedIn }: { userId: string, isSignedIn: boolean }) {
   useEffect(() => {
-    if (isSignedIn && user) {
-      posthog.identify(user.id, {
-        email: user.primaryEmailAddress?.emailAddress,
-        name: user.fullName,
-        username: user.username,
-      })
+    if (isSignedIn && userId) {
+      posthog.identify(userId)
     }
-  }, [isSignedIn, user])
+  }, [isSignedIn, userId])
 
   return null
 }

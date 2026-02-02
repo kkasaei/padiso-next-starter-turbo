@@ -2,20 +2,21 @@
 
 import * as React from 'react';
 
-import { getAuthOrganizationContext } from '@/lib/auth/context';
+// Generic organization type - apps can extend this with their own types
+export interface Organization {
+  id: string;
+  name: string;
+  [key: string]: any;
+}
 
-export type ActiveOrganization = NonNullable<
-  Awaited<ReturnType<typeof getAuthOrganizationContext>>
->['organization'];
-
-const OrganizationContext = React.createContext<ActiveOrganization | undefined>(
+const OrganizationContext = React.createContext<Organization | undefined>(
   undefined
 );
 
 export function ActiveOrganizationProvider({
   organization,
   children
-}: React.PropsWithChildren<{ organization: ActiveOrganization }>) {
+}: React.PropsWithChildren<{ organization: Organization }>) {
   return (
     <OrganizationContext.Provider value={organization}>
       {children}
@@ -31,4 +32,8 @@ export function useActiveOrganization() {
     );
   }
   return context;
+}
+
+export function useActiveOrganizationOptional() {
+  return React.useContext(OrganizationContext);
 }
