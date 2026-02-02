@@ -16,6 +16,7 @@ import {
 import type { Prompt } from "@workspace/db/schema";
 import { getProviderIcon } from "./PromptConstants";
 import { toast } from "sonner";
+import { PromptsEmptyState } from "./PromptsEmptyState";
 
 type PromptTableViewProps = {
   prompts: Prompt[];
@@ -32,10 +33,10 @@ export function PromptTableView({
 }: PromptTableViewProps) {
   if (prompts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-center p-8">
-        <p className="text-muted-foreground mb-2">No prompts found</p>
-        <p className="text-sm text-muted-foreground">Create your first prompt to get started</p>
-      </div>
+      <PromptsEmptyState
+        description="Create your first prompt to get started"
+        onCreatePrompt={() => {}}
+      />
     );
   }
 

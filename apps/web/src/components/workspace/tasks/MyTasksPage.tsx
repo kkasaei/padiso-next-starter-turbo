@@ -222,6 +222,16 @@ export function MyTasksPage() {
           description={tasks.length === 0 ? "Create your first task to get started" : "No tasks match your filters"}
           onCreateTask={() => openCreateTask()}
         />
+
+        {/* Task Creation/Edit Modal */}
+        <TaskQuickCreateModal
+          open={isCreateTaskOpen}
+          onClose={closeTaskModal}
+          context={editingTask ? undefined : createContext}
+          onTaskCreated={(task) => handleTaskCreated(task)}
+          editingTask={editingTask}
+          onTaskUpdated={(task) => handleTaskUpdated(task)}
+        />
       </>
     );
   }

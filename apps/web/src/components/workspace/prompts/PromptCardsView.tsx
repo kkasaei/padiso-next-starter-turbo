@@ -4,6 +4,7 @@ import type { Prompt } from "@workspace/db/schema";
 import { PromptCard } from "./PromptCard";
 import { Plus, Zap } from "lucide-react";
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { PromptsEmptyState } from "./PromptsEmptyState";
 
 type PromptCardsViewProps = {
   prompts: Prompt[];
@@ -35,20 +36,10 @@ export function PromptCardsView({
           ))}
         </div>
       ) : isEmpty ? (
-        <div className="flex h-60 flex-col items-center justify-center text-center">
-          <div className="p-3 bg-primary/10 rounded-md mb-4">
-            <Zap className="h-6 w-6 text-primary fill-current" />
-          </div>
-          <h3 className="mb-2 text-lg font-semibold text-foreground">No prompts yet</h3>
-          <p className="mb-6 text-sm text-muted-foreground">Create your first prompt to get started</p>
-          <button
-            className="rounded-lg border border-border bg-background px-4 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-            onClick={onCreatePrompt}
-          >
-            <Plus className="mr-2 inline h-4 w-4" />
-            Create new prompt
-          </button>
-        </div>
+        <PromptsEmptyState
+          description="Create your first prompt to get started"
+          onCreatePrompt={() => onCreatePrompt?.()}
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {prompts.map((p) => {

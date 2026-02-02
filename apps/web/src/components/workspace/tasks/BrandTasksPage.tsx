@@ -254,21 +254,35 @@ export function BrandTasksPage({ projectId }: BrandTasksPageProps) {
           </div>
         </header>
 
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 py-16">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <Plus className="h-8 w-8 text-muted-foreground" />
+        <div className="flex flex-1 flex-col min-w-0 p-6">
+          <div className="md:dark:bg-polar-900 dark:border-polar-700 w-full md:rounded-xl md:border md:border-gray-100 md:bg-gray-50 md:p-8 lg:rounded-4xl items-center justify-center gap-y-6 md:flex md:flex-col md:py-48">
+            <div className="text-gray-300 dark:text-gray-600">
+              <Plus className="h-12 w-12" />
+            </div>
+            <div className="flex flex-col items-center gap-y-6">
+              <div className="flex flex-col items-center gap-y-2">
+                <h3 className="text-lg font-medium">No tasks yet</h3>
+                <p className="dark:text-polar-500 text-gray-500 text-center max-w-md">
+                  {tasks.length === 0 ? "Create your first task to get started" : "No tasks match your filters"}
+                </p>
+              </div>
+              <Button onClick={() => openCreateTask()} className="rounded-2xl gap-2">
+                <Plus className="h-4 w-4" />
+                Create Task
+              </Button>
+            </div>
           </div>
-          <div className="text-center">
-            <h3 className="text-lg font-medium">No tasks yet</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {tasks.length === 0 ? "Create your first task to get started" : "No tasks match your filters"}
-            </p>
-          </div>
-          <Button onClick={() => openCreateTask()}>
-            <Plus className="mr-1.5 h-4 w-4" />
-            Create Task
-          </Button>
         </div>
+
+        {/* Task Creation/Edit Modal */}
+        <TaskQuickCreateModal
+          open={isCreateTaskOpen}
+          onClose={closeTaskModal}
+          context={editingTask ? undefined : createContext}
+          onTaskCreated={(task) => handleTaskCreated(task)}
+          editingTask={editingTask}
+          onTaskUpdated={(task) => handleTaskUpdated(task)}
+        />
       </>
     );
   }

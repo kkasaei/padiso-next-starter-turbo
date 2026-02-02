@@ -18,6 +18,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { BrandWizard } from "@/components/brands/brand-wizard/BrandWizard"
+import { useBrands } from "@/hooks/use-brands"
 
 function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCreateBrand: () => void }) {
   return (
@@ -354,9 +355,11 @@ function TrainingCard() {
 }
 
 export default function DashboardPage() {
-  // In a real app, you'd fetch this from an API or context
-  const hasBrands = false
+  const { data: brands = [] } = useBrands()
   const [showWizard, setShowWizard] = useState(false)
+  
+  // Mark as completed if user has at least one brand
+  const hasBrands = brands.length >= 1
 
   return (
     <div className="mt-10">
