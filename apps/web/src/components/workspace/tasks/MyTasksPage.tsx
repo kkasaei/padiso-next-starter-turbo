@@ -22,6 +22,7 @@ import { FilterPopover } from "./FilterPopover";
 import { ChipOverflow } from "./ChipOverflow";
 import { TaskViewOptionsPopover } from "./TaskViewOptionsPopover";
 import { TaskQuickCreateModal, type CreateTaskContext } from "./TaskQuickCreateModal";
+import { TasksEmptyState } from "./TasksEmptyState";
 
 
 /**
@@ -216,20 +217,11 @@ export function MyTasksPage() {
             </div>
           </div>
         </header>
-        
-        <div className="flex items-center justify-center h-64">
-          <div className="space-y-2 text-center">
-            <p className="text-muted-foreground">
-              {tasks.length === 0 ? "No tasks yet" : "No tasks match your filters"}
-            </p>
-            {tasks.length === 0 && (
-              <Button size="sm" onClick={() => openCreateTask()}>
-                <Plus className="mr-1.5 h-4 w-4" />
-                Create Your First Task
-              </Button>
-            )}
-          </div>
-        </div>
+
+        <TasksEmptyState
+          description={tasks.length === 0 ? "Create your first task to get started" : "No tasks match your filters"}
+          onCreateTask={() => openCreateTask()}
+        />
       </>
     );
   }
