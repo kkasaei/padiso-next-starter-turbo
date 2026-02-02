@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@workspace/db": "workspace:*",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.1",
     "stripe": "^20.2.0",
     "zod": "^4.3.6"
   },
