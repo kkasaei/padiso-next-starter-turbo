@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/layout/providers"
 import { ClerkProvider } from '@clerk/nextjs';
+import { PostHogPageView } from "@/components/analytics/posthog-pageview"
+import { PostHogIdentifier } from "@/components/analytics/posthog-provider"
 import "./globals.css"
 
 
@@ -31,6 +33,8 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={`font-sans antialiased`} suppressHydrationWarning>
           <Providers>
+            <PostHogPageView />
+            <PostHogIdentifier />
             {children}
             <Analytics />
             <Toaster richColors closeButton />

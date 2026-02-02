@@ -83,6 +83,15 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
+    "./components/icons": "./src/components/icons.tsx",
     "./hooks/*": "./src/hooks/*"
+  },
+  "typesVersions": {
+    "*": {
+      "components/icons": ["./src/components/icons.tsx"],
+      "components/*": ["./src/components/*.tsx"],
+      "lib/*": ["./src/lib/*.ts"],
+      "hooks/*": ["./src/hooks/*"]
+    }
   }
 }

@@ -8,7 +8,10 @@
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@react-email/render": "^2.0.4",
+    "mjml": "^4.18.0"
+  },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
