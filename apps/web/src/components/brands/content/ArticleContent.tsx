@@ -1,4 +1,6 @@
+import { useMemo } from 'react'
 import { Calendar, User, Clock } from 'lucide-react'
+import { marked } from 'marked'
 import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
 
 type ArticleContentProps = {
@@ -14,9 +16,23 @@ const formatDate = (date: Date | null) => {
   })
 }
 
+// Configure marked options
+marked.setOptions({
+  gfm: true, // GitHub Flavored Markdown
+  breaks: true, // Convert \n to <br>
+})
+
+const normalizeMarkdown = (value: string) => {
+  return value.replace(/\r\n/g, '\n').replace(/\\n/g, '\n')
+}
+
 export function ArticleContent({ content }: ArticleContentProps) {
+  const html = useMemo(() => {
+    return marked.parse(normalizeMarkdown(content.content)) as string
+  }, [content.content])
+
   return (
-    <article className="max-w-3xl mx-auto px-6 py-12">
+    <article className="mx-auto py-12 px-6 max-h-[calc(100vh-82px)] overflow-y-auto">
       {/* Title */}
       <h1 className="text-4xl font-bold tracking-tight mb-6 leading-tight">
         {content.title}
@@ -42,29 +58,9 @@ export function ArticleContent({ content }: ArticleContentProps) {
 
       {/* Body */}
       <div 
-        className="prose prose-gray dark:prose-invert max-w-none
-          prose-headings:font-semibold prose-headings:tracking-tight
-          prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-          prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-          prose-p:text-base prose-p:leading-7 prose-p:mb-4
-          prose-li:text-base prose-li:leading-7
-          prose-strong:font-semibold
-          prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+        className="markdown-content max-w-none"
         dangerouslySetInnerHTML={{ 
-          __html: content.content
-            .replace(/^## /gm, '<h2>')
-            .replace(/^### /gm, '<h3>')
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/<h2>/g, '</p><h2>')
-            .replace(/<h3>/g, '</p><h3>')
-            .replace(/<\/h2>\n/g, '</h2><p>')
-            .replace(/<\/h3>\n/g, '</h3><p>')
-            .replace(/^- /gm, '<li>')
-            .replace(/<li>([^<]+)(?=<li>|<\/p>|<h|$)/g, '<li>$1</li>')
-            .replace(/(<li>.*<\/li>)+/g, '<ul>$&</ul>')
-            .replace(/---/g, '<hr>')
-            .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+          __html: html
         }}
       />
     </article>
