@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { prisma, OrganizationStatus, SubscriptionStatus } from '@/lib/db';
+import { prisma, OrganizationStatus, SubscriptionStatus } from '@workspace/db';
 import {
   type SubscriptionPayload,
   type CustomerPayload,

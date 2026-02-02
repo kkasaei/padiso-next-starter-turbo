@@ -19,7 +19,7 @@ import {
   Download
 } from 'lucide-react'
 import { StatRow } from '@/components/brands/StatRow'
-import type { ContentData } from '@/app/dashboard/brands/[id]/content/[contentId]/_mockData'
+import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
 
 type ContentDetailSidebarProps = {
   content: ContentData

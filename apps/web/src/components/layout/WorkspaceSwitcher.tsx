@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover"
-import { Dialog, DialogContent } from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 import {
@@ -12,13 +12,13 @@ import {
   Settings,
   Plus,
 } from "lucide-react"
-import { useOrganization, useOrganizationList, CreateOrganization } from "@clerk/nextjs"
+import { useOrganization, useOrganizationList } from "@clerk/nextjs"
 import { cn } from "@workspace/common/lib"
 import { routes } from "@workspace/common"
 
 export function WorkspaceSwitcher() {
+  const router = useRouter()
   const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false)
-  const [createOrgOpen, setCreateOrgOpen] = useState(false)
   const [search, setSearch] = useState("")
 
   const { organization: activeOrg } = useOrganization()
@@ -32,8 +32,6 @@ export function WorkspaceSwitcher() {
     membership.organization.name.toLowerCase().includes(search.toLowerCase())
   ) ?? []
 
-  console.log(userMemberships.data)
-
   const handleOrgSwitch = async (orgId: string) => {
     await setActive?.({ organization: orgId })
     setOrgSwitcherOpen(false)
@@ -41,7 +39,7 @@ export function WorkspaceSwitcher() {
 
   const handleCreateOrg = () => {
     setOrgSwitcherOpen(false)
-    setCreateOrgOpen(true)
+    router.push(routes.dashboard.WorkspaceSetup)
   }
 
   return (
@@ -161,16 +159,7 @@ export function WorkspaceSwitcher() {
           </div>
         </PopoverContent>
       </Popover>
-
-      {/* Create Organization Dialog */}
-      <Dialog open={createOrgOpen} onOpenChange={setCreateOrgOpen}>
-        <DialogContent className="p-0 w-[432px] max-w-[432px] border-0 gap-0 [&>button]:hidden">
-          <CreateOrganization 
-            afterCreateOrganizationUrl={routes.dashboard.Home}
-            skipInvitationScreen={false}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
+

@@ -56,7 +56,7 @@ import {
 } from '@workspace/ui/components/command'
 import { cn } from '@workspace/common/lib'
 import type { WorkflowNode, WorkflowNodeType } from './workflow-types'
-import { PromptEditor } from '@/components/editor/prompt-editor'
+import { PromptEditor } from '@workspace/editor/prompt-editor'
 
 // ============================================================
 // TYPES

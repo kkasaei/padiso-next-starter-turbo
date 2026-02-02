@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 
-import { useMediaUploadContext } from '@/contexts/media-upload-context';
+import { useMediaUploadContext } from './hooks/use-media-upload';
 import type { ProjectAssetDto, ProjectAssetMediaType } from '@workspace/common/lib/shcmea/types/asset';
 
 import {
@@ -28,7 +28,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { cn } from '@workspace/common/lib';
+import { cn } from '@workspace/ui/lib/utils';
 
 // ============================================================
 // TYPES

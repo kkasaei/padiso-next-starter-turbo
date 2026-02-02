@@ -12,7 +12,7 @@ import { toTPlatePlugin } from 'platejs/react';
 import {
   SuggestionLeaf,
   SuggestionLineBreak,
-} from '@/components/editor/suggestion-node';
+} from '../suggestion-node';
 
 import { discussionPlugin } from './discussion-kit';
 

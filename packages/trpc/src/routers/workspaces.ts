@@ -5,6 +5,42 @@ import { router, publicProcedure } from "../trpc";
 
 export const workspacesRouter = router({
   /**
+   * Create a new workspace from Clerk organization
+   */
+  create: publicProcedure
+    .input(
+      z.object({
+        clerkOrgId: z.string(),
+        status: z.enum(["active", "trialing"]).optional().default("active"),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check if workspace already exists for this Clerk org
+      const [existing] = await ctx.db
+        .select()
+        .from(workspaces)
+        .where(eq(workspaces.clerkOrgId, input.clerkOrgId))
+        .limit(1);
+
+      if (existing) {
+        return existing;
+      }
+
+      // Create new workspace
+      const [workspace] = await ctx.db
+        .insert(workspaces)
+        .values({
+          clerkOrgId: input.clerkOrgId,
+          status: input.status,
+          hasCompletedWelcomeScreen: false,
+          hasCompletedOnboarding: false,
+        })
+        .returning();
+
+      return workspace;
+    }),
+
+  /**
    * Get workspace by Clerk organization ID
    */
   getByClerkOrgId: publicProcedure

@@ -4,23 +4,23 @@
  * Reusable UI fragments and effects used across applications.
  */
 
-export { BlurFade } from './blur-fade';
-export type { BlurFadeProps } from './blur-fade';
+export { BlurFade } from './BlurFade';
+export type { BlurFadeProps } from './BlurFade';
 
-export { CookieBanner } from './cookie-banner';
+export { CookieBanner } from './CookieBanner';
 
-export { ExternalLink } from './external-link';
+export { ExternalLink } from './ExternalLink';
 
-export { FlickeringGrid } from './flickering-grid';
+export { FlickeringGrid } from './FlickeringGrid';
 
-export { GridSection } from './grid-section';
+export { GridSection } from './GridSection';
 
-export { Marquee } from './marquee';
+export { Marquee } from './Marquee';
 
-export { NumberTicket } from './number-ticket';
+export { NumberTicker } from './NumberTicker';
 
-export { SiteHeading } from './site-heading';
+export { SiteHeading } from './SiteHeading';
 
-export { TextGenerateEffect } from './text-generate-effect';
+export { TextGenerateEffect } from './TextGenerateEffect';
 
-export { TextGenerateWithSelectBoxEffect } from './text-generate-with-select-box-effect';
+export { TextGenerateWithSelectBoxEffect } from './TextGenerateWithSelectBoxEffect';

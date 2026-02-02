@@ -2,7 +2,7 @@
 
 import { ColumnItemPlugin, ColumnPlugin } from '@platejs/layout/react';
 
-import { ColumnElement, ColumnGroupElement } from '@/components/editor/column-node';
+import { ColumnElement, ColumnGroupElement } from '../column-node';
 
 export const ColumnKit = [
   ColumnPlugin.withComponent(ColumnGroupElement),

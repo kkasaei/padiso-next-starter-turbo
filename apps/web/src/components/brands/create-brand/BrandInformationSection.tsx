@@ -26,7 +26,7 @@ import {
 } from '@workspace/ui/components/tooltip'
 import { HelpCircle, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@workspace/common/lib'
-import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
+import { SimpleEditor, type SimpleEditorRef } from '@workspace/editor/simple-editor'
 import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 import { GenerateWithAIButton } from './GenerateWithAiButton'

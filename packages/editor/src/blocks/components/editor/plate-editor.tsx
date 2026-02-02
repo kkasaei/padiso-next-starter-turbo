@@ -2,16 +2,16 @@
 
 import * as React from 'react';
 
-import { normalizeNodeId } from 'platejs';
+import { normalizeNodeId, type AnyPluginConfig } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
 
-import { EditorKit } from '@/components/editor/editor-kit';
-import { SettingsDialog } from '@/components/editor/settings-dialog';
-import { Editor, EditorContainer } from '@/components/editor';
+import { EditorKit } from './editor-kit';
+import { SettingsDialog } from '../../../settings-dialog';
+import { Editor, EditorContainer } from '../../../editor';
 
 export function PlateEditor() {
   const editor = usePlateEditor({
-    plugins: EditorKit,
+    plugins: EditorKit as AnyPluginConfig[],
     value,
   });
 

@@ -24,7 +24,7 @@ import type { ContextFilesState } from '@workspace/common/lib/shcmea/types/conte
 
 import { SiteDiscoverySection } from '@/components/brands/create-brand/SiteDiscoverySection'
 import { ContextFilesSection } from '@/components/brands/create-brand/ContextFilesSection'
-import { SimpleEditor, type SimpleEditorRef } from '@/components/editor/simple-editor'
+import { SimpleEditor, type SimpleEditorRef } from '@workspace/editor/simple-editor'
 import { COUNTRIES, getCountryByCode } from '@workspace/common/constants'
 import { useBrandWizardContext } from '@/hooks/use-brand-wizard-context'
 import {

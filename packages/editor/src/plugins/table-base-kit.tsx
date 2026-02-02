@@ -10,7 +10,7 @@ import {
   TableCellHeaderElementStatic,
   TableElementStatic,
   TableRowElementStatic,
-} from '@/components/editor/table-node-static';
+} from '../table-node-static';
 
 export const BaseTableKit = [
   BaseTablePlugin.withComponent(TableElementStatic),

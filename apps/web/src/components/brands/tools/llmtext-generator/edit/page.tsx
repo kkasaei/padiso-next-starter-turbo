@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { MarkdownPlugin } from '@platejs/markdown'
 import { usePlateEditor, Plate } from 'platejs/react'
 import { Button } from '@workspace/ui/components/button'
-import { Editor, EditorContainer } from '@/components/editor/editor'
-import { EditorKit } from '@/components/editor/editor-kit'
+import { Editor, EditorContainer } from '@workspace/editor/editor'
+import { EditorKit } from '@workspace/editor/plugins/editor-kit'
 import {
   ResizablePanelGroup,
   ResizablePanel,

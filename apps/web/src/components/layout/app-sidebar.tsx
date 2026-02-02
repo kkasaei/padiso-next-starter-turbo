@@ -14,7 +14,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import {
   Grid2x2,
   CheckSquare,
@@ -22,15 +21,10 @@ import {
   BarChart3,
   Zap,
   Settings,
-  Map,
-  History,
-  Headphones,
-  Send,
-  ChevronRight,
 } from "lucide-react"
-import { favouriteProjects, footerItems, navItems, type NavItemId, type SidebarFooterItemId } from "@/lib/data/sidebar"
-import { useUser } from "@clerk/nextjs"
-import { SidebarHeaderContent } from "./WorkspaceSwitcher"
+import { favouriteProjects, navItems, type NavItemId } from "@workspace/common"
+import { WorkspaceSwitcher } from "./WorkspaceSwitcher"
+import { UserMenu } from "./UserMenu"
 
 const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }>> = {
   overview: Grid2x2,
@@ -41,17 +35,8 @@ const navItemIcons: Record<NavItemId, React.ComponentType<{ className?: string }
   settings: Settings,
 }
 
-const footerItemIcons: Record<SidebarFooterItemId, React.ComponentType<{ className?: string }>> = {
-  roadmap: Map,
-  changelog: History,
-  support: Headphones,
-  feedbacks: Send,
-}
-
 export function AppSidebar() {
   const pathname = usePathname()
-  const { user } = useUser()
-
 
   const getHrefForNavItem = (id: NavItemId): string => {
     const routes: Record<NavItemId, string> = {
@@ -77,7 +62,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="border-border/40 border-r-0 shadow-none border-none">
-      <SidebarHeaderContent />
+      <WorkspaceSwitcher />
 
       <SidebarContent className="px-0 gap-0">
 
@@ -116,57 +101,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-3 text-xs font-medium text-muted-foreground">
-            Favourite Projects
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {favouriteProjects.map((project) => (
-                <SidebarMenuItem key={project.name}>
-                  <SidebarMenuButton className="h-9 rounded-lg px-3 group">
-                    <span 
-                      className="h-3 w-3 rounded-full shrink-0" 
-                      style={{ backgroundColor: project.color }}
-                    />
-                    <span className="flex-1 truncate text-sm">{project.name}</span>
-                    <span className="opacity-0 group-hover:opacity-100 rounded p-0.5 hover:bg-accent">
-                      <span className="text-muted-foreground text-lg">···</span>
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+        </SidebarContent>
 
       <SidebarFooter className="border-t border-border/40 p-2">
-        <SidebarMenu>
-          {footerItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
-              <SidebarMenuButton className="h-9 rounded-lg px-3 text-muted-foreground">
-                {(() => {
-                  const Icon = footerItemIcons[item.id]
-                  return Icon ? <Icon className="h-[18px] w-[18px]" /> : null
-                })()}
-                <span>{item.label}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-
-        <div className="mt-2 flex items-center gap-3 rounded-lg p-2 hover:bg-accent cursor-pointer">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.imageUrl} />
-            <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-1 flex-col">
-            <span className="text-sm font-medium">{user?.fullName}</span>
-            <span className="text-xs text-muted-foreground">{user?.emailAddresses[0]?.emailAddress ?? "No email"}</span>
-          </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </div>
+        <UserMenu />
       </SidebarFooter>
     </Sidebar>
   )

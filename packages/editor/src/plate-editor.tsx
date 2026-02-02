@@ -8,13 +8,13 @@ import { MarkdownPlugin } from '@platejs/markdown';
 import { createSlateEditor, normalizeNodeId, type Value } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
 
-import { EditorKit } from '@/components/editor/editor-kit';
-import { SettingsDialog } from '@/components/editor/settings-dialog';
+import { EditorKit } from './editor-kit';
+import { SettingsDialog } from './settings-dialog';
 import {
   discussionPlugin,
   type TDiscussion,
   type TDiscussionUser,
-} from '@/components/editor/plugins/discussion-kit';
+} from './plugins/discussion-kit';
 import {
   Editor,
   EditorContainer,

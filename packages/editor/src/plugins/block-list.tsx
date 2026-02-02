@@ -16,7 +16,7 @@ import {
 } from 'platejs/react';
 
 import { Checkbox } from '@workspace/ui/components/checkbox';
-import { cn } from '@workspace/common/lib';
+import { cn } from '@workspace/ui/lib/utils';
 
 const config: Record<
   string,

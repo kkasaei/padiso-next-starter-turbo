@@ -57,10 +57,10 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from '@workspace/ui/components/popover';
-import { cn } from '@workspace/common/lib';
-import { commentPlugin } from '@/components/editor/plugins/comment-kit';
+import { cn } from '@workspace/ui/lib/utils';
+import { commentPlugin } from './plugins/comment-kit';
 
-import { AIChatEditor } from '@/components/editor/ai-chat-editor';
+import { AIChatEditor } from './ai-chat-editor';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);

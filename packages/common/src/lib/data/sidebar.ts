@@ -18,6 +18,7 @@ export type FavouriteProject = {
 export type SidebarFooterItem = {
     id: SidebarFooterItemId
     label: string
+    href?: string
 }
 
 export const navItems: NavItem[] = [
@@ -37,8 +38,8 @@ export const favouriteProjects: FavouriteProject[] = [
 ]
 
 export const footerItems: SidebarFooterItem[] = [
-    { id: "roadmap", label: "Roadmap" },
-    { id: "changelog", label: "Change Log" },
-    { id: "support", label: "Support" },
-    { id: "feedbacks", label: "Feedbacks" },
+    { id: "roadmap", label: "Roadmap", href: "#roadmap" },
+    { id: "changelog", label: "Change Log", href: "#changelog" },
+    { id: "support", label: "Support", href: "#support" },
+    { id: "feedbacks", label: "Feedbacks", href: "#feedbacks" },
 ]

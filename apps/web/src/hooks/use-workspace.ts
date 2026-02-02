@@ -6,6 +6,19 @@ import { trpc } from "@/lib/trpc/client";
  * Hooks for managing workspace with tRPC
  */
 
+export function useCreateWorkspace() {
+  const utils = trpc.useUtils();
+
+  return trpc.workspaces.create.useMutation({
+    onSuccess: (data) => {
+      utils.workspaces.getById.invalidate({ id: data.id });
+      utils.workspaces.getByClerkOrgId.invalidate({
+        clerkOrgId: data.clerkOrgId,
+      });
+    },
+  });
+}
+
 export function useWorkspaceByClerkOrgId(clerkOrgId: string) {
   return trpc.workspaces.getByClerkOrgId.useQuery(
     { clerkOrgId },

@@ -6,7 +6,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Badge } from '@workspace/ui/components/badge'
 import { ArrowLeft, Cloud, CloudOff, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { PlateEditor, type PlateEditorRef } from '@/components/editor/plate-editor'
+import { PlateEditor, type PlateEditorRef } from '@workspace/editor/plate-editor'
 
 // Mock content data - same as detail page
 const mockContentData: Record<string, {

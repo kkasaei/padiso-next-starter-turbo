@@ -3,7 +3,7 @@
 import { SlashInputPlugin, SlashPlugin } from '@platejs/slash-command/react';
 import { KEYS } from 'platejs';
 
-import { SlashInputElement } from '@/components/editor/slash-node';
+import { SlashInputElement } from '../slash-node';
 
 export const SlashKit = [
   SlashPlugin.configure({

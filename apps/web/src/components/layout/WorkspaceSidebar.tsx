@@ -3,16 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@workspace/ui/components/tooltip"
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
-import { useUser } from "@clerk/nextjs"
 import { cn } from "@workspace/common/lib"
 import { isNavItemActive } from "@workspace/common/lib"
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher"
-import { workspaceSidebarNavItems, workspaceSidebarFooterItems } from "@workspace/common"
+import { workspaceSidebarNavItems } from "@workspace/common"
+import { UserMenu } from "./UserMenu"
+import { LifeBuoyIcon, Gift } from "lucide-react"
 
 export function WorkspaceSidebar() {
   const pathname = usePathname()
-  const { user } = useUser()
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -52,49 +51,39 @@ export function WorkspaceSidebar() {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Footer Items */}
-        <nav className="flex flex-col items-center gap-1 p-2">
-          {workspaceSidebarFooterItems.map((item) => {
-            const Icon = item.icon
-
-            return (
-              <Tooltip key={item.id}>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={item.href}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground transition-colors"
-                  >
-                    <Icon className="h-5 w-5" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={12}>
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            )
-          })}
-        </nav>
+        {/* Docs & Referral */}
+        <div className="flex flex-col items-center gap-1 p-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/docs"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground transition-colors"
+              >
+                <LifeBuoyIcon className="h-5 w-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={12}>
+              Docs
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/referral"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground transition-colors"
+              >
+                <Gift className="h-5 w-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={12}>
+              Referral
+            </TooltipContent>
+          </Tooltip>
+        </div>
 
         {/* User Avatar */}
         <div className="flex items-center justify-center p-4">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className="rounded-full ring-2 ring-transparent hover:ring-accent transition-all">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.imageUrl} />
-                  <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
-                </Avatar>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={12}>
-              <div className="flex flex-col">
-                <span className="font-medium">{user?.fullName}</span>
-                <span className="text-xs text-muted-foreground">
-                  {user?.emailAddresses[0]?.emailAddress}
-                </span>
-              </div>
-            </TooltipContent>
-          </Tooltip>
+          <UserMenu variant="compact" />
         </div>
       </div>
     </TooltipProvider>

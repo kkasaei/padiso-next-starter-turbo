@@ -2,7 +2,7 @@
 
 import { CursorOverlayPlugin } from '@platejs/selection/react';
 
-import { CursorOverlay } from '@/components/editor/cursor-overlay';
+import { CursorOverlay } from '../cursor-overlay';
 
 export const CursorOverlayKit = [
   CursorOverlayPlugin.configure({

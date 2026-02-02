@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import { MarkdownPlugin } from '@platejs/markdown';
 import { createSlateEditor } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
-import { EditorKit } from '@/components/editor/editor-kit';
-import { Editor, EditorContainer } from '@/components/editor/editor';
+import { EditorKit } from '@workspace/editor/plugins/editor-kit';
+import { Editor, EditorContainer } from '@workspace/editor/editor';
 import type { PageAuditDto } from './types';
 
 // ============================================================

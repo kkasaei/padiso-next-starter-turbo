@@ -44,10 +44,12 @@
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.29.2",
     "input-otp": "1.4.1",
     "lucide-react": "^0.475.0",
     "motion": "12.23.24",
     "nanoid": "^5.1.6",
+    "next": "^16.1.6",
     "next-themes": "^0.4.6",
     "react": "^19.2.3",
     "react-day-picker": "9.13.0",
@@ -70,9 +72,9 @@
     "@types/node": "^20.19.9",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "@workspace/common": "workspace:*",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "@workspace/common": "workspace:*",
     "eslint": "^9.32.0",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2"
@@ -90,12 +92,24 @@
   },
   "typesVersions": {
     "*": {
-      "components/icons": ["./src/components/icons.tsx"],
-      "components/*": ["./src/components/*.tsx"],
-      "components/fragments": ["./src/components/fragments/index.ts"],
-      "components/fragments/*": ["./src/components/fragments/*.tsx"],
-      "lib/*": ["./src/lib/*.ts"],
-      "hooks/*": ["./src/hooks/*"]
+      "components/icons": [
+        "./src/components/icons.tsx"
+      ],
+      "components/*": [
+        "./src/components/*.tsx"
+      ],
+      "components/fragments": [
+        "./src/components/fragments/index.ts"
+      ],
+      "components/fragments/*": [
+        "./src/components/fragments/*.tsx"
+      ],
+      "lib/*": [
+        "./src/lib/*.ts"
+      ],
+      "hooks/*": [
+        "./src/hooks/*"
+      ]
     }
   }
 }

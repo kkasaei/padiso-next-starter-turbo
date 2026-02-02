@@ -11,10 +11,10 @@ import {
 import { getPluginType, KEYS, PathApi } from 'platejs';
 import { usePluginOption } from 'platejs/react';
 
-import { AILoadingBar, AIMenu } from '@/components/editor/ai-menu';
-import { AIAnchorElement, AILeaf } from '@/components/editor/ai-node';
+import { AILoadingBar, AIMenu } from '../ai-menu';
+import { AIAnchorElement, AILeaf } from '../ai-node';
 
-import { useChat } from '../use-chat';
+import { useChat } from '../hooks/use-chat';
 import { CursorOverlayKit } from './cursor-overlay-kit';
 import { MarkdownKit } from './markdown-kit';
 

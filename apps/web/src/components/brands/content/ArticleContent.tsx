@@ -1,5 +1,5 @@
 import { Calendar, User, Clock } from 'lucide-react'
-import type { ContentData } from '@/app/dashboard/brands/[id]/content/[contentId]/_mockData'
+import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
 
 type ArticleContentProps = {
   content: ContentData

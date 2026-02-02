@@ -3,7 +3,7 @@ import * as React from 'react';
 import { cn } from '@workspace/common/lib';
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
-import { NumberTicker } from '@workspace/ui/components/fragments/NumberTicket';
+import { NumberTicker } from '@workspace/ui/components/fragments/NumberTicker';
 
 const DATA = [
   {
