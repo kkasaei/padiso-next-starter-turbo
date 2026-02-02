@@ -11,19 +11,18 @@ import { router, publicProcedure } from "../trpc";
 
 // Zod schemas for validation
 const integrationTypeSchema = z.enum([
+  "google",
   "wordpress",
   "webflow",
+  "shopify",
   "medium",
   "ghost",
   "custom_api",
-  "google_drive",
   "dropbox",
-  "google_sheets",
-  "google_search_console",
-  "google_analytics",
   "ahrefs",
   "semrush",
   "moz",
+  "webhook",
 ]);
 
 const integrationAuthTypeSchema = z.enum([
@@ -216,6 +215,113 @@ export const integrationsRouter = router({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(integrations).where(eq(integrations.id, input.id));
+      return { success: true };
+    }),
+
+  /**
+   * Connect integration (convenience method)
+   * Creates integration and stores credentials in one call
+   */
+  connect: publicProcedure
+    .input(
+      z.object({
+        brandId: z.string().uuid(),
+        type: integrationTypeSchema,
+        config: z.record(z.unknown()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Determine auth type and name based on integration type
+      const authTypeMap: Record<string, "api_key" | "oauth" | "webhook" | "basic_auth"> = {
+        google: "oauth",
+        wordpress: "api_key",
+        webflow: "api_key",
+        shopify: "api_key",
+        webhook: "webhook",
+        dropbox: "oauth",
+      };
+
+      const nameMap: Record<string, string> = {
+        google: "Google",
+        wordpress: "WordPress",
+        webflow: "Webflow",
+        shopify: "Shopify",
+        webhook: "Webhooks",
+        dropbox: "Dropbox",
+        ahrefs: "Ahrefs",
+        semrush: "SEMrush",
+        moz: "Moz",
+      };
+
+      const authType = authTypeMap[input.type] || "api_key";
+      const name = nameMap[input.type] || input.type;
+
+      // Check if integration already exists for this brand and type
+      const [existing] = await ctx.db
+        .select()
+        .from(integrations)
+        .where(
+          and(
+            eq(integrations.brandId, input.brandId),
+            eq(integrations.type, input.type)
+          )
+        )
+        .limit(1);
+
+      if (existing) {
+        // Update existing integration
+        const [updated] = await ctx.db
+          .update(integrations)
+          .set({
+            config: input.config,
+            status: "active",
+            updatedAt: new Date(),
+          })
+          .where(eq(integrations.id, existing.id))
+          .returning();
+
+        return updated;
+      }
+
+      // Create new integration
+      const [integration] = await ctx.db
+        .insert(integrations)
+        .values({
+          brandId: input.brandId,
+          name,
+          type: input.type,
+          authType,
+          status: "active",
+          config: input.config,
+        })
+        .returning();
+
+      if (!integration) {
+        throw new Error("Failed to create integration");
+      }
+
+      return integration;
+    }),
+
+  /**
+   * Disconnect integration
+   */
+  disconnect: publicProcedure
+    .input(
+      z.object({
+        brandId: z.string().uuid(),
+        type: integrationTypeSchema,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .delete(integrations)
+        .where(
+          and(
+            eq(integrations.brandId, input.brandId),
+            eq(integrations.type, input.type)
+          )
+        );
       return { success: true };
     }),
 

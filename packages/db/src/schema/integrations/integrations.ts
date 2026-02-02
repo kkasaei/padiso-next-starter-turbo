@@ -12,23 +12,23 @@ import { brands } from "../brands/brands";
  * Integration Type Enum
  */
 export const integrationTypeEnum = pgEnum("integration_type", [
-  // Publishing
+  // Google (covers all Google services)
+  "google",
+  // Publishing / CMS
   "wordpress",
   "webflow",
+  "shopify",
   "medium",
   "ghost",
   "custom_api",
-  // Export destinations
-  "google_drive",
+  // Storage
   "dropbox",
-  // Import sources
-  "google_sheets",
-  // Analytics/SEO
-  "google_search_console",
-  "google_analytics",
+  // SEO Tools
   "ahrefs",
   "semrush",
   "moz",
+  // Automation
+  "webhook",
 ]);
 
 /**
@@ -54,34 +54,51 @@ export const integrationStatusEnum = pgEnum("integration_status", [
 /**
  * Integration Config Types
  */
+export type GoogleConfig = {
+  clientId: string;
+  clientSecret: string;
+};
+
 export type WordPressConfig = {
-  siteUrl: string;
-  defaultCategory?: number;
-  defaultAuthor?: number;
-  defaultStatus?: "draft" | "publish" | "pending";
+  webhookUrl: string;
+  accessToken: string;
+  authorId?: string;
+  postStatus?: "draft" | "publish" | "pending" | "private" | "future";
 };
 
 export type WebflowConfig = {
-  siteId: string;
+  apiKey: string;
+  siteId?: string;
   collectionId?: string;
   domain?: string;
 };
 
-export type GoogleDriveConfig = {
-  defaultFolderId?: string;
-  folderName?: string;
+export type ShopifyConfig = {
+  storeName: string;
+  clientId: string;
+  secret: string;
+  blog?: string;
+  author?: string;
+  publishStatus?: "publish" | "draft";
 };
 
-export type GoogleSheetsConfig = {
-  spreadsheetId?: string;
-  sheetName?: string;
+export type WebhookConfig = {
+  webhookUrl: string;
+  secret?: string;
+};
+
+export type DropboxConfig = {
+  accessToken: string;
+  defaultFolderId?: string;
 };
 
 export type IntegrationConfig =
+  | GoogleConfig
   | WordPressConfig
   | WebflowConfig
-  | GoogleDriveConfig
-  | GoogleSheetsConfig
+  | ShopifyConfig
+  | WebhookConfig
+  | DropboxConfig
   | Record<string, unknown>;
 
 /**

@@ -2,3 +2,4 @@
 export * from "./brands";
 export * from "./brand-tags";
 export * from "./brand-members";
+export * from "./brand-locales";

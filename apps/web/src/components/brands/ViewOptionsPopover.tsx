@@ -10,11 +10,12 @@ import {
   Table,
   Columns3,
   ChevronsUpDown,
+  Calendar,
 } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 
 type Options = {
-  viewType: "list" | "table" | "kanban"
+  viewType: "calendar" | "card" | "list" | "table" | "kanban"
   ordering: "alphabetical" | "date"
   showClosedProjects: boolean
 }
@@ -29,14 +30,16 @@ export function ViewOptionsPopover({ options, onChange, allowedViewTypes }: View
   const [orderingOpen, setOrderingOpen] = useState(false)
 
   const allViewTypes = [
-    { id: "list", label: "Card", icon: LayoutGrid },
+    { id: "calendar", label: "Calendar", icon: Calendar },
+    { id: "card", label: "Card", icon: LayoutGrid },
+    { id: "list", label: "Card", icon: LayoutGrid }, // legacy alias for card view
     { id: "table", label: "Table", icon: Table },
     { id: "kanban", label: "Kanban", icon: Columns3 },
   ]
 
   const viewTypes = allowedViewTypes 
     ? allViewTypes.filter(v => allowedViewTypes.includes(v.id))
-    : allViewTypes.filter(v => v.id !== "kanban") // Hide kanban for brands by default
+    : allViewTypes.filter(v => v.id !== "kanban" && v.id !== "calendar") // Hide kanban and calendar for brands by default
 
   const orderingOptions = [
     { id: "alphabetical", label: "Alphabetical" },

@@ -288,7 +288,7 @@ export default function ContentListPage() {
                 </div>
               </>
             )}
-            {viewOptions.viewType !== 'calendar' && (
+            {(viewOptions.viewType === 'card' || viewOptions.viewType === 'kanban') && (
               <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
@@ -306,7 +306,7 @@ export default function ContentListPage() {
             <ViewOptionsPopover 
               options={viewOptions} 
               onChange={setViewOptions}
-              allowedViewTypes={["calendar", "list", "board"]}
+              allowedViewTypes={["calendar", "card", "kanban"]}
             />
           </div>
         </div>
@@ -328,13 +328,13 @@ export default function ContentListPage() {
                 projectId={projectId}
               />
             )}
-            {viewOptions.viewType === 'list' && (
+            {viewOptions.viewType === 'card' && (
               <CardView 
                 content={filteredContent}
                 projectId={projectId}
               />
             )}
-            {viewOptions.viewType === 'board' && (
+            {viewOptions.viewType === 'kanban' && (
               <KanbanView 
                 content={filteredContent}
                 projectId={projectId}

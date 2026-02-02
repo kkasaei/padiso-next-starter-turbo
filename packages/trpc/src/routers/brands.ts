@@ -108,6 +108,7 @@ export const brandsRouter = router({
         businessKeywords: z.array(z.string()).optional(),
         competitors: z.array(z.string()).optional(),
         sitemapUrl: z.string().optional(),
+        iconUrl: z.string().optional().nullable(),
         isFavourite: z.boolean().optional(),
       })
     )

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq, desc, inArray, and } from "drizzle-orm";
+import { eq, desc, inArray, and, isNull, ne, sql } from "drizzle-orm";
 import {
   content,
   contentPublications,
@@ -8,8 +8,10 @@ import {
   contentImportItems,
   brands,
   integrations,
+  brandLocales,
 } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
+import { randomUUID } from "crypto";
 
 // Zod schemas for validation
 const contentStatusSchema = z.enum([
@@ -132,26 +134,24 @@ export const contentRouter = router({
       z.object({
         brandId: z.string().uuid(),
         status: contentStatusSchema.optional(),
+        locale: z.string().optional(), // Filter by locale
       })
     )
     .query(async ({ ctx, input }) => {
+      const conditions = [eq(content.brandId, input.brandId)];
+      
       if (input.status) {
-        return await ctx.db
-          .select()
-          .from(content)
-          .where(
-            and(
-              eq(content.brandId, input.brandId),
-              eq(content.status, input.status)
-            )
-          )
-          .orderBy(desc(content.createdAt));
+        conditions.push(eq(content.status, input.status));
+      }
+      
+      if (input.locale) {
+        conditions.push(eq(content.locale, input.locale));
       }
 
       return await ctx.db
         .select()
         .from(content)
-        .where(eq(content.brandId, input.brandId))
+        .where(and(...conditions))
         .orderBy(desc(content.createdAt));
     }),
 
@@ -184,6 +184,7 @@ export const contentRouter = router({
         type: contentTypeSchema,
         title: z.string().min(1),
         status: contentStatusSchema.optional(),
+        locale: z.string().optional(), // Defaults to "en-US"
         content: z.string().optional(),
         featuredImage: z.string().optional(),
         featuredImageAlt: z.string().optional(),
@@ -210,6 +211,9 @@ export const contentRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Generate translationGroupId for new content (source locale)
+      const translationGroupId = randomUUID();
+      
       const [item] = await ctx.db
         .insert(content)
         .values({
@@ -217,6 +221,9 @@ export const contentRouter = router({
           type: input.type,
           title: input.title,
           status: input.status || "opportunity",
+          locale: input.locale || "en-US",
+          translationGroupId,
+          isSourceLocale: true,
           content: input.content,
           featuredImage: input.featuredImage,
           featuredImageAlt: input.featuredImageAlt,
@@ -635,5 +642,263 @@ export const contentRouter = router({
       }
 
       return item;
+    }),
+
+  // ==================== TRANSLATIONS ====================
+
+  /**
+   * Get all translations of a content piece
+   */
+  getTranslations: publicProcedure
+    .input(z.object({ translationGroupId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(content)
+        .where(eq(content.translationGroupId, input.translationGroupId))
+        .orderBy(content.isSourceLocale, content.locale);
+    }),
+
+  /**
+   * Create a translation of existing content
+   */
+  createTranslation: publicProcedure
+    .input(
+      z.object({
+        sourceContentId: z.string().uuid(), // The content to translate from
+        locale: z.string(), // Target locale (e.g., "de", "fr")
+        title: z.string().min(1),
+        content: z.string().optional(),
+        slug: z.string().optional(),
+        metaDescription: z.string().optional(),
+        targetKeyword: z.string().optional(),
+        searchVolume: z.number().optional(),
+        keywordDifficulty: z.number().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get the source content
+      const [source] = await ctx.db
+        .select()
+        .from(content)
+        .where(eq(content.id, input.sourceContentId))
+        .limit(1);
+
+      if (!source) {
+        throw new Error("Source content not found");
+      }
+
+      // Use existing translationGroupId or create one if source doesn't have it
+      const translationGroupId = source.translationGroupId || randomUUID();
+
+      // If source doesn't have a translationGroupId, update it
+      if (!source.translationGroupId) {
+        await ctx.db
+          .update(content)
+          .set({ translationGroupId, isSourceLocale: true, updatedAt: new Date() })
+          .where(eq(content.id, source.id));
+      }
+
+      // Create the translation
+      const [translation] = await ctx.db
+        .insert(content)
+        .values({
+          brandId: source.brandId,
+          type: source.type,
+          status: "opportunity",
+          locale: input.locale,
+          translationGroupId,
+          isSourceLocale: false,
+          title: input.title,
+          content: input.content,
+          slug: input.slug,
+          metaDescription: input.metaDescription,
+          targetKeyword: input.targetKeyword,
+          searchVolume: input.searchVolume,
+          keywordDifficulty: input.keywordDifficulty,
+          // Copy some fields from source
+          featuredImage: source.featuredImage,
+          featuredImageAlt: source.featuredImageAlt,
+          authorId: source.authorId,
+          authorName: source.authorName,
+          promptInstructions: source.promptInstructions,
+          outline: source.outline,
+          customFields: source.customFields,
+        })
+        .returning();
+
+      if (!translation) {
+        throw new Error("Failed to create translation");
+      }
+
+      return translation;
+    }),
+
+  /**
+   * Get content that is missing a translation for a specific locale
+   */
+  getMissingTranslations: publicProcedure
+    .input(
+      z.object({
+        brandId: z.string().uuid(),
+        targetLocale: z.string(), // The locale we want to find missing translations for
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Get all source content for the brand that doesn't have a translation in targetLocale
+      const sourceContent = await ctx.db
+        .select()
+        .from(content)
+        .where(
+          and(
+            eq(content.brandId, input.brandId),
+            eq(content.isSourceLocale, true)
+          )
+        );
+
+      // For each source, check if translation exists
+      const missingTranslations = [];
+
+      for (const source of sourceContent) {
+        if (!source.translationGroupId) {
+          // Source has no translations at all
+          missingTranslations.push(source);
+          continue;
+        }
+
+        // Check if translation exists for target locale
+        const [existingTranslation] = await ctx.db
+          .select()
+          .from(content)
+          .where(
+            and(
+              eq(content.translationGroupId, source.translationGroupId),
+              eq(content.locale, input.targetLocale)
+            )
+          )
+          .limit(1);
+
+        if (!existingTranslation) {
+          missingTranslations.push(source);
+        }
+      }
+
+      return missingTranslations;
+    }),
+
+  // ==================== BRAND LOCALES ====================
+
+  /**
+   * Get all locales for a brand
+   */
+  getBrandLocales: publicProcedure
+    .input(z.object({ brandId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(brandLocales)
+        .where(eq(brandLocales.brandId, input.brandId))
+        .orderBy(brandLocales.isDefault, brandLocales.locale);
+    }),
+
+  /**
+   * Add a locale to a brand
+   */
+  addBrandLocale: publicProcedure
+    .input(
+      z.object({
+        brandId: z.string().uuid(),
+        locale: z.string(),
+        isDefault: z.boolean().optional(),
+        subdomain: z.string().optional(),
+        pathPrefix: z.string().optional(),
+        publishIntegrationId: z.string().uuid().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // If this is set as default, unset other defaults
+      if (input.isDefault) {
+        await ctx.db
+          .update(brandLocales)
+          .set({ isDefault: false, updatedAt: new Date() })
+          .where(eq(brandLocales.brandId, input.brandId));
+      }
+
+      const [locale] = await ctx.db
+        .insert(brandLocales)
+        .values({
+          brandId: input.brandId,
+          locale: input.locale,
+          isDefault: input.isDefault || false,
+          subdomain: input.subdomain,
+          pathPrefix: input.pathPrefix,
+          publishIntegrationId: input.publishIntegrationId,
+        })
+        .returning();
+
+      if (!locale) {
+        throw new Error("Failed to add brand locale");
+      }
+
+      return locale;
+    }),
+
+  /**
+   * Update a brand locale
+   */
+  updateBrandLocale: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        isDefault: z.boolean().optional(),
+        isActive: z.boolean().optional(),
+        subdomain: z.string().optional(),
+        pathPrefix: z.string().optional(),
+        publishIntegrationId: z.string().uuid().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...updates } = input;
+
+      // If setting as default, get the brandId first and unset other defaults
+      if (updates.isDefault) {
+        const [current] = await ctx.db
+          .select({ brandId: brandLocales.brandId })
+          .from(brandLocales)
+          .where(eq(brandLocales.id, id))
+          .limit(1);
+
+        if (current) {
+          await ctx.db
+            .update(brandLocales)
+            .set({ isDefault: false, updatedAt: new Date() })
+            .where(eq(brandLocales.brandId, current.brandId));
+        }
+      }
+
+      const [locale] = await ctx.db
+        .update(brandLocales)
+        .set({
+          ...updates,
+          updatedAt: new Date(),
+        })
+        .where(eq(brandLocales.id, id))
+        .returning();
+
+      if (!locale) {
+        throw new Error("Brand locale not found");
+      }
+
+      return locale;
+    }),
+
+  /**
+   * Remove a locale from a brand
+   */
+  removeBrandLocale: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(brandLocales).where(eq(brandLocales.id, input.id));
+      return { success: true };
     }),
 });

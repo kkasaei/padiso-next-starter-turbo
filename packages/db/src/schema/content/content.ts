@@ -7,6 +7,7 @@ import {
   json,
   pgEnum,
   numeric,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { brands } from "../brands/brands";
 
@@ -83,6 +84,11 @@ export const content = pgTable("content", {
   brandId: uuid("brand_id")
     .notNull()
     .references(() => brands.id, { onDelete: "cascade" }),
+
+  // Locale / Translation support
+  locale: text("locale").notNull().default("en-US"), // Language code (e.g., "en-US", "de", "fr")
+  translationGroupId: uuid("translation_group_id"), // Links translations together
+  isSourceLocale: boolean("is_source_locale").notNull().default(true), // Is this the original?
 
   // Status and type
   status: contentStatusEnum("status").notNull().default("opportunity"),

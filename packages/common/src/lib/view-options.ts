@@ -1,4 +1,4 @@
-export type ViewType = "list" | "table" | "kanban"
+export type ViewType = "calendar" | "card" | "list" | "table" | "kanban"
 
 export type Ordering = "alphabetical" | "date"
 
