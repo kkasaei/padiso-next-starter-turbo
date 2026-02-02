@@ -45,7 +45,6 @@
     "@workspace/cloudflare": "workspace:*",
     "@workspace/common": "workspace:*",
     "@workspace/db": "workspace:*",
-    "@workspace/editor": "workspace:*",
     "@workspace/email": "workspace:*",
     "@workspace/integrations": "workspace:*",
     "@workspace/notification": "workspace:*",

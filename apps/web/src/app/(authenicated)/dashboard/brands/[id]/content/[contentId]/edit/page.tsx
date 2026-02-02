@@ -6,7 +6,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Badge } from '@workspace/ui/components/badge'
 import { ArrowLeft, Cloud, CloudOff, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { PlateEditor, type PlateEditorRef } from '@workspace/editor/plate-editor'
+import { TiptapEditor, type TiptapEditorRef } from '@/components/common/TiptapEditor'
 
 // Mock content data - same as detail page
 const mockContentData: Record<string, {
@@ -161,7 +161,7 @@ export default function ContentEditPage() {
   const projectId = params.id as string
   const contentId = params.contentId as string
 
-  const editorRef = useRef<PlateEditorRef>(null)
+  const editorRef = useRef<TiptapEditorRef>(null)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [currentContent, setCurrentContent] = useState<string>('')
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -290,15 +290,13 @@ export default function ContentEditPage() {
 
       {/* Editor */}
       <div className="flex-1 min-h-0 overflow-hidden">
-        <PlateEditor
+        <TiptapEditor
           ref={editorRef}
           key={content.id}
           initialValue={content.content}
-          containerVariant="default"
-          variant="fullWidth"
-          showSettings={false}
-          className="h-full"
           onContentChange={handleContentChange}
+          className="h-full border-0 rounded-none"
+          height="100%"
         />
       </div>
     </div>

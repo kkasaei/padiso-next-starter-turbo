@@ -56,6 +56,7 @@ export const brands = pgTable("brands", {
     .references(() => workspaces.id, { onDelete: "cascade" }),
 
   websiteUrl: text("website_url"),
+  description: text("description"),
   languages: json("languages").$type<string[]>(),
   targetAudiences: json("target_audiences").$type<string[]>(),
   businessKeywords: json("business_keywords").$type<string[]>(),

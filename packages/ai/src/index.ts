@@ -50,6 +50,11 @@ export * from './prompt/prompt-generator';
 export * from './image-generation';
 
 // ============================================================
+// Brand Analyzer
+// ============================================================
+export * from './brand-analyzer';
+
+// ============================================================
 // Types (selective exports to avoid conflicts)
 // ============================================================
 export type {

@@ -17,16 +17,17 @@ import {
 } from '@workspace/ui/components/tooltip'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { Badge } from '@workspace/ui/components/badge'
-import { Sparkle, HelpCircle, Loader2 } from 'lucide-react'
+import { Sparkle, HelpCircle, Loader2, Trash2, AlertTriangle } from 'lucide-react'
 import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import type { SiteDiscoveryState } from '@workspace/common/lib/shcmea/types/site-discovery'
 import type { ContextFilesState } from '@workspace/common/lib/shcmea/types/context-files'
 
 import { SiteDiscoverySection } from '@/components/brands/create-brand/SiteDiscoverySection'
 import { ContextFilesSection } from '@/components/brands/create-brand/ContextFilesSection'
-import { SimpleEditor, type SimpleEditorRef } from '@workspace/editor/simple-editor'
+import { TiptapEditor, type TiptapEditorRef } from '@/components/common/TiptapEditor'
 import { COUNTRIES, getCountryByCode } from '@workspace/common/constants'
 import { useBrandWizardContext } from '@/hooks/use-brand-wizard-context'
+import { useDeleteBrand } from '@/hooks/use-brands'
 import {
   Popover,
   PopoverContent,
@@ -40,6 +41,17 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@workspace/ui/components/alert-dialog'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@workspace/common/lib'
 
@@ -313,7 +325,7 @@ function ProjectInformationSection({
               disabled={!canGenerate}
             />
           </div>
-          <SimpleEditor
+          <TiptapEditor
             ref={editorRef}
             initialValue={formData.description}
             onContentChange={(content) => updateFormData('description', content)}
@@ -513,7 +525,7 @@ function AIGuidelinesSection({
   isGeneratingGuidelines: boolean
   canGenerate: boolean
 }) {
-  const editorRef = useRef<SimpleEditorRef>(null)
+  const editorRef = useRef<TiptapEditorRef>(null)
 
   return (
     <FormSection
@@ -555,7 +567,7 @@ function AIGuidelinesSection({
       <div className="flex w-full flex-col gap-y-6">
         <div className="space-y-2 flex flex-col gap-2">
           <Label htmlFor="aiGuidelines">Guidelines for AI Analysis</Label>
-          <SimpleEditor
+          <TiptapEditor
             ref={editorRef}
             initialValue={formData.aiGuidelines}
             onContentChange={(content) => updateFormData('aiGuidelines', content)}
@@ -584,10 +596,102 @@ function AIGuidelinesSection({
   )
 }
 
+function DangerZoneSection({ brandId, brandName }: { brandId: string; brandName: string }) {
+  const router = useRouter()
+  const deleteBrand = useDeleteBrand()
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
+
+  const handleDelete = () => {
+    if (deleteConfirmation !== brandName) {
+      toast.error('Brand name does not match')
+      return
+    }
+
+    deleteBrand.mutate(
+      { id: brandId },
+      {
+        onSuccess: () => {
+          toast.success('Brand deleted successfully')
+          router.push('/dashboard/brands')
+        },
+        onError: (error) => {
+          toast.error(`Failed to delete brand: ${error.message}`)
+        },
+      }
+    )
+  }
+
+  return (
+    <FormSection
+      title="Danger Zone"
+      description="Permanently delete this brand and all associated data"
+    >
+      <div className="rounded-xl border-2 border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 p-6">
+        <div className="flex items-start gap-4">
+          <div className="rounded-full bg-red-100 dark:bg-red-900/30 p-2">
+            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+          </div>
+          <div className="flex-1 space-y-4">
+            <div>
+              <h3 className="font-medium text-red-900 dark:text-red-100">Delete this brand</h3>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
+                Once you delete a brand, there is no going back. This will permanently delete all data including tasks, files, and tracking history.
+              </p>
+            </div>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Delete Brand
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="space-y-4">
+                    <p>
+                      This action cannot be undone. This will permanently delete <strong>{brandName}</strong> and remove all associated data from our servers.
+                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="delete-confirmation">
+                        Type <strong>{brandName}</strong> to confirm
+                      </Label>
+                      <Input
+                        id="delete-confirmation"
+                        value={deleteConfirmation}
+                        onChange={(e) => setDeleteConfirmation(e.target.value)}
+                        placeholder={brandName}
+                        className="font-mono"
+                      />
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmation('')}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={deleteConfirmation !== brandName || deleteBrand.isPending}
+                    className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                  >
+                    {deleteBrand.isPending ? 'Deleting...' : 'Delete Brand'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+      </div>
+    </FormSection>
+  )
+}
+
 export default function Page() {
   const router = useRouter()
   const params = useParams()
-  const projectId = params.projectId as string
+  const projectId = params.id as string
 
   const [isSaving, setIsSaving] = useState(false)
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false)
@@ -761,6 +865,11 @@ export default function Page() {
                     onGenerateDescription={handleGenerateDescription}
                     isGeneratingDescription={isGeneratingDescription}
                     canGenerate={brandContext.context.canGenerateDescription}
+                  />
+
+                  <DangerZoneSection 
+                    brandId={projectId} 
+                    brandName={formData.name || 'this brand'} 
                   />
                 </div>
               </form>

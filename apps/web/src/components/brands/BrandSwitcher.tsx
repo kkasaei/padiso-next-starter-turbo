@@ -13,24 +13,18 @@ import {
   Check,
   Plus,
 } from "lucide-react"
-import { useBrands, useCreateBrand } from "@/hooks/use-brands"
-import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace"
+import { useBrands } from "@/hooks/use-brands"
 import { cn } from "@workspace/common/lib"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
-import type { BusinessData } from "./brand-wizard/types"
 
 export function BrandSwitcher() {
   const params = useParams()
   const router = useRouter()
-  const { organization } = useOrganization()
-  const { user } = useUser()
   const [switcherOpen, setSwitcherOpen] = useState(false)
   const [wizardOpen, setWizardOpen] = useState(false)
   const [search, setSearch] = useState("")
 
-  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "")
   const { data: projects = [] } = useBrands()
-  const createBrand = useCreateBrand()
   const currentProjectId = params.id as string
   const currentProject = projects.find((p) => p.id === currentProjectId)
 
@@ -46,37 +40,6 @@ export function BrandSwitcher() {
   const handleOpenWizard = () => {
     setSwitcherOpen(false)
     setWizardOpen(true)
-  }
-
-  const handleBrandCreated = async (data: BusinessData) => {
-    if (!workspace?.id) {
-      toast.error("No workspace found. Please create or select an organization first.")
-      return
-    }
-
-    try {
-      const result = await createBrand.mutateAsync({
-        workspaceId: workspace.id,
-        brandName: data.brandName || "Untitled Brand",
-        websiteUrl: data.websiteUrl || undefined,
-        brandColor: data.brandColor || undefined,
-        languages: data.languages?.length ? data.languages : undefined,
-        targetAudiences: data.targetAudiences?.length ? data.targetAudiences : undefined,
-        businessKeywords: data.businessKeywords?.length ? data.businessKeywords : undefined,
-        competitors: data.competitors?.length ? data.competitors : undefined,
-        status: "active",
-        createdByUserId: user?.id,
-      })
-
-      toast.success("Brand created successfully!")
-      setWizardOpen(false)
-      
-      // Navigate to the new brand
-      router.push(`/dashboard/brands/${result.id}`)
-    } catch (error) {
-      toast.error("Failed to create brand")
-      console.error(error)
-    }
   }
 
   return (
@@ -179,7 +142,6 @@ export function BrandSwitcher() {
       {wizardOpen && (
         <BrandWizard 
           onClose={() => setWizardOpen(false)}
-          onCreate={handleBrandCreated}
         />
       )}
     </div>

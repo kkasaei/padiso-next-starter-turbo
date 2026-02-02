@@ -8,41 +8,44 @@ import { Badge } from "@workspace/ui/components/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@workspace/ui/components/tooltip";
 import { cn } from "@workspace/ui/lib/utils";
 import { BusinessData } from "../types";
+import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
 
 interface StepBusinessDescriptionProps {
   data: BusinessData;
   updateData: (updates: Partial<BusinessData>) => void;
+  websiteUrl?: string;
 }
 
-export function StepBusinessDescription({ data, updateData }: StepBusinessDescriptionProps) {
+export function StepBusinessDescription({ data, updateData, websiteUrl }: StepBusinessDescriptionProps) {
   const [audienceInput, setAudienceInput] = useState("");
   const [keywordInput, setKeywordInput] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+
+  const analyzeWebsite = trpc.brands.analyzeWebsite.useMutation({
+    onSuccess: (result) => {
+      updateData({
+        description: result.description,
+        targetAudiences: result.targetAudiences,
+        businessKeywords: result.businessKeywords,
+        competitors: result.competitors,
+      });
+      toast.success("AI analysis complete!");
+    },
+    onError: (error) => {
+      toast.error(`Failed to analyze website: ${error.message}`);
+    },
+  });
 
   const handleGenerateWithAI = () => {
-    setIsGenerating(true);
-    
-    // Simulate AI generation with a delay
-    setTimeout(() => {
-      updateData({
-        description: "We are a leading provider of SEO and content optimization solutions, helping businesses improve their online visibility and organic search rankings. Our platform uses AI-powered tools to analyze content, identify optimization opportunities, and track performance across search engines.",
-        targetAudiences: [
-          "Marketing managers",
-          "SEO specialists", 
-          "Content creators",
-          "Small business owners",
-          "E-commerce brands"
-        ],
-        businessKeywords: [
-          "SEO",
-          "content optimization",
-          "search rankings",
-          "organic traffic",
-          "AI-powered analytics"
-        ]
-      });
-      setIsGenerating(false);
-    }, 800);
+    if (!websiteUrl) {
+      toast.error("Website URL is required for AI analysis");
+      return;
+    }
+
+    analyzeWebsite.mutate({
+      websiteUrl,
+      brandName: data.brandName,
+    });
   };
 
   const audiences = data.targetAudiences || [];
@@ -124,18 +127,28 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
               size="sm" 
               className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
               onClick={handleGenerateWithAI}
-              disabled={isGenerating}
+              disabled={analyzeWebsite.isPending || !websiteUrl}
             >
-              <Sparkles className={cn("size-3", isGenerating && "animate-spin")} />
-              {isGenerating ? "Generating..." : "Generate with AI"}
+              <Sparkles className={cn("size-3", analyzeWebsite.isPending && "animate-spin")} />
+              {analyzeWebsite.isPending ? "Analyzing..." : "Generate with AI"}
             </Button>
           </div>
-          <Textarea
-            value={data.description || ""}
-            onChange={(e) => updateData({ description: e.target.value })}
-            placeholder="Give us a brief description of your business..."
-            className="min-h-[120px] resize-none bg-background border-border rounded-xl"
-          />
+          
+          {analyzeWebsite.isPending ? (
+            <div className="min-h-[120px] flex items-center justify-center bg-background border border-border rounded-xl">
+              <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                <Sparkles className="size-6 animate-spin" />
+                <p className="text-sm">Analyzing your website...</p>
+              </div>
+            </div>
+          ) : (
+            <Textarea
+              value={data.description || ""}
+              onChange={(e) => updateData({ description: e.target.value })}
+              placeholder="Give us a brief description of your business..."
+              className="min-h-[120px] resize-none bg-background border-border rounded-xl"
+            />
+          )}
         </div>
 
         {/* Target Audiences */}
@@ -159,44 +172,55 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
             </TooltipProvider>
           </div>
           
-          <div className="flex gap-2">
-            <Input
-              value={audienceInput}
-              onChange={(e) => setAudienceInput(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, addAudience)}
-              placeholder="e.g. lawyers in Florida"
-              className="flex-1 h-10 bg-background border-border rounded-xl"
-            />
-            <Button 
-              type="button"
-              variant="outline" 
-              size="icon"
-              onClick={addAudience}
-              className="h-10 w-10 rounded-xl"
-            >
-              <Plus className="size-4" />
-            </Button>
-          </div>
-
-          {audiences.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {audiences.map((audience, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="gap-1 pl-3 pr-1 py-1 bg-background"
-                >
-                  {audience}
-                  <button
-                    type="button"
-                    onClick={() => removeAudience(index)}
-                    className="ml-1 rounded-full hover:bg-muted p-0.5"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </Badge>
-              ))}
+          {analyzeWebsite.isPending ? (
+            <div className="h-20 flex items-center justify-center bg-background border border-border rounded-xl">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Sparkles className="size-4 animate-spin" />
+                <p className="text-sm">Loading audiences...</p>
+              </div>
             </div>
+          ) : (
+            <>
+              <div className="flex gap-2">
+                <Input
+                  value={audienceInput}
+                  onChange={(e) => setAudienceInput(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, addAudience)}
+                  placeholder="e.g. lawyers in Florida"
+                  className="flex-1 h-10 bg-background border-border rounded-xl"
+                />
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="icon"
+                  onClick={addAudience}
+                  className="h-10 w-10 rounded-xl"
+                >
+                  <Plus className="size-4" />
+                </Button>
+              </div>
+
+              {audiences.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {audiences.map((audience, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="gap-1 pl-3 pr-1 py-1 bg-background"
+                    >
+                      {audience}
+                      <button
+                        type="button"
+                        onClick={() => removeAudience(index)}
+                        className="ml-1 rounded-full hover:bg-muted p-0.5"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -221,67 +245,78 @@ export function StepBusinessDescription({ data, updateData }: StepBusinessDescri
             </TooltipProvider>
           </div>
           
-          <div className="flex gap-2">
-            <Input
-              value={keywordInput}
-              onChange={(e) => setKeywordInput(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, addKeyword)}
-              placeholder="Add a keyword..."
-              className="flex-1 h-10 bg-background border-border rounded-xl"
-            />
-            <Button 
-              type="button"
-              variant="outline" 
-              size="icon"
-              onClick={addKeyword}
-              className="h-10 w-10 rounded-xl"
-            >
-              <Plus className="size-4" />
-            </Button>
-          </div>
-
-          {keywords.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="gap-1 pl-3 pr-1 py-1 bg-background"
-                >
-                  {keyword}
-                  <button
-                    type="button"
-                    onClick={() => removeKeyword(index)}
-                    className="ml-1 rounded-full hover:bg-muted p-0.5"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </Badge>
-              ))}
+          {analyzeWebsite.isPending ? (
+            <div className="h-20 flex items-center justify-center bg-background border border-border rounded-xl">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Sparkles className="size-4 animate-spin" />
+                <p className="text-sm">Loading keywords...</p>
+              </div>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="flex gap-2">
+                <Input
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, addKeyword)}
+                  placeholder="Add a keyword..."
+                  className="flex-1 h-10 bg-background border-border rounded-xl"
+                />
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="icon"
+                  onClick={addKeyword}
+                  className="h-10 w-10 rounded-xl"
+                >
+                  <Plus className="size-4" />
+                </Button>
+              </div>
 
-          {/* Suggested Keywords */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {["businessowners", "digitalmarketers", "seospecialists", "contentcreators"].map((keyword) => (
-              <button
-                key={keyword}
-                type="button"
-                onClick={() => {
-                  if (!keywords.includes(keyword)) {
-                    updateData({ businessKeywords: [...keywords, keyword] });
-                  }
-                }}
-                className={cn(
-                  "text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:bg-muted transition-colors",
-                  keywords.includes(keyword) && "opacity-50 cursor-not-allowed"
-                )}
-                disabled={keywords.includes(keyword)}
-              >
-                + {keyword}
-              </button>
-            ))}
-          </div>
+              {keywords.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {keywords.map((keyword, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="gap-1 pl-3 pr-1 py-1 bg-background"
+                    >
+                      {keyword}
+                      <button
+                        type="button"
+                        onClick={() => removeKeyword(index)}
+                        className="ml-1 rounded-full hover:bg-muted p-0.5"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Suggested Keywords - hidden during loading */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {["businessowners", "digitalmarketers", "seospecialists", "contentcreators"].map((keyword) => (
+                  <button
+                    key={keyword}
+                    type="button"
+                    onClick={() => {
+                      if (!keywords.includes(keyword)) {
+                        updateData({ businessKeywords: [...keywords, keyword] });
+                      }
+                    }}
+                    className={cn(
+                      "text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:bg-muted transition-colors",
+                      keywords.includes(keyword) && "opacity-50 cursor-not-allowed"
+                    )}
+                    disabled={keywords.includes(keyword)}
+                  >
+                    + {keyword}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

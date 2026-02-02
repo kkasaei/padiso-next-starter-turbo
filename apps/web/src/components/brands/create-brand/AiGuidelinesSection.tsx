@@ -3,7 +3,7 @@
 import { useRef, useCallback } from 'react'
 import { Label } from '@workspace/ui/components/label'
 import { TooltipContent } from '@workspace/ui/components/tooltip'
-import { SimpleEditor, type SimpleEditorRef } from '@workspace/editor/simple-editor'
+import { TiptapEditor, type TiptapEditorRef } from '@/components/common/TiptapEditor'
 import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 import { GenerateWithAIButton } from './GenerateWithAiButton'
@@ -48,9 +48,9 @@ export function AIGuidelinesSection({
   isGeneratingGuidelines,
   canGenerate,
 }: AIGuidelinesSectionProps) {
-  const editorRef = useRef<SimpleEditorRef>(null)
+  const editorRef = useRef<TiptapEditorRef>(null)
   
-  // Handle guidelines changes from SimpleEditor
+  // Handle guidelines changes from TiptapEditor
   const handleGuidelinesChange = useCallback(
     (markdown: string) => {
       updateFormData('aiGuidelines', markdown)
@@ -74,7 +74,7 @@ export function AIGuidelinesSection({
       <div className="flex w-full flex-col gap-y-6">
         <div className="flex flex-col gap-2 space-y-2">
           <Label htmlFor="aiGuidelines">Guidelines for AI Analysis</Label>
-          <SimpleEditor
+          <TiptapEditor
             ref={editorRef}
             initialValue={formData.aiGuidelines || GUIDELINES_PLACEHOLDER}
             onContentChange={handleGuidelinesChange}

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
+import { useOrganization, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
 import { Stepper } from "./Stepper";
 import { BusinessData } from "./types";
@@ -14,13 +16,20 @@ import { StepBrand } from "./steps/StepBrand";
 import { StepSurvey } from "./steps/StepSurvey";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
+import { trpc } from "@/lib/trpc/client";
+import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace";
 
 interface BrandWizardProps {
   onClose: () => void;
-  onCreate?: (data: BusinessData) => void;
 }
 
-export function BrandWizard({ onClose, onCreate }: BrandWizardProps) {
+export function BrandWizard({ onClose }: BrandWizardProps) {
+  const router = useRouter();
+  const { organization } = useOrganization();
+  const { user } = useUser();
+  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "");
+  const utils = trpc.useUtils();
+
   const [step, setStep] = useState(0);
   const [maxStepReached, setMaxStepReached] = useState(0);
   const [data, setData] = useState<BusinessData>({
@@ -34,6 +43,19 @@ export function BrandWizard({ onClose, onCreate }: BrandWizardProps) {
     brandColor: undefined,
     sitemapUrl: '',
     referralSource: undefined,
+  });
+
+  const createBrand = trpc.brands.create.useMutation({
+    onSuccess: (brand) => {
+      utils.brands.getAll.invalidate();
+      toast.success("Brand created successfully!");
+      onClose();
+      // Navigate to the brand page
+      router.push(`/dashboard/brands/${brand.id}`);
+    },
+    onError: (error) => {
+      toast.error(`Failed to create brand: ${error.message}`);
+    },
   });
 
   // Step 0: Website URL (full-width card like StepMode)
@@ -82,9 +104,31 @@ export function BrandWizard({ onClose, onCreate }: BrandWizardProps) {
   };
 
   const handleCreate = () => {
-    onCreate?.(data);
-    toast.success("Business profile created successfully");
-    onClose();
+    if (!workspace?.id) {
+      toast.error("No workspace found. Please try again.");
+      return;
+    }
+
+    if (!data.brandName) {
+      toast.error("Brand name is required");
+      return;
+    }
+
+    createBrand.mutate({
+      workspaceId: workspace.id,
+      brandName: data.brandName,
+      websiteUrl: data.websiteUrl,
+      description: data.description,
+      brandColor: data.brandColor,
+      languages: data.languages,
+      targetAudiences: data.targetAudiences,
+      businessKeywords: data.businessKeywords,
+      competitors: data.competitors,
+      sitemapUrl: data.sitemapUrl,
+      referralSource: data.referralSource,
+      status: "active",
+      createdByUserId: user?.id,
+    });
   };
 
   // Define steps for the stepper (excluding Website URL entry)
@@ -172,7 +216,8 @@ export function BrandWizard({ onClose, onCreate }: BrandWizardProps) {
                     {step === 2 && (
                       <StepBusinessDescription 
                         data={data} 
-                        updateData={updateData} 
+                        updateData={updateData}
+                        websiteUrl={data.websiteUrl}
                       />
                     )}
                     {step === 3 && (
@@ -217,13 +262,16 @@ export function BrandWizard({ onClose, onCreate }: BrandWizardProps) {
                     </Button>
                   )}
                   {isLastStep ? (
-                    <Button onClick={handleCreate}>
-                      Create business
+                    <Button 
+                      onClick={handleCreate}
+                      disabled={createBrand.isPending}
+                    >
+                      {createBrand.isPending ? "Creating..." : "Create business"}
                     </Button>
                   ) : (
                     <Button 
                       onClick={nextStep} 
-                      disabled={isNextDisabled()}
+                      disabled={isNextDisabled() || createBrand.isPending}
                     >
                       {isOptionalStep ? "Continue" : "Next"}
                       <ChevronRight className="h-4 w-4" />

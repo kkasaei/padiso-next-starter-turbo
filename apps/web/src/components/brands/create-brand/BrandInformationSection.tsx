@@ -26,7 +26,7 @@ import {
 } from '@workspace/ui/components/tooltip'
 import { HelpCircle, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@workspace/common/lib'
-import { SimpleEditor, type SimpleEditorRef } from '@workspace/editor/simple-editor'
+import { TiptapEditor, type TiptapEditorRef } from '@/components/common/TiptapEditor'
 import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
 import { FormSection } from './FormSection'
 import { GenerateWithAIButton } from './GenerateWithAiButton'
@@ -112,9 +112,9 @@ export function ProjectInformationSection({
   isGeneratingDescription,
   canGenerate,
 }: ProjectInformationSectionProps) {
-  const editorRef = useRef<SimpleEditorRef>(null)
+  const editorRef = useRef<TiptapEditorRef>(null)
   
-  // Handle description changes from SimpleEditor
+  // Handle description changes from TiptapEditor
   const handleDescriptionChange = useCallback(
     (markdown: string) => {
       updateFormData('description', markdown)
@@ -190,7 +190,7 @@ export function ProjectInformationSection({
               disabled={!canGenerate}
             />
           </div>
-          <SimpleEditor
+          <TiptapEditor
             ref={editorRef}
             initialValue={formData.description || ''}
             onContentChange={handleDescriptionChange}

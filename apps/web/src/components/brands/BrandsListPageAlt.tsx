@@ -11,22 +11,14 @@ import { BrandBoardView } from "./BrandBoardView"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
 import { DEFAULT_VIEW_OPTIONS, type FilterChip, type ViewOptions } from "@workspace/common/lib"
 import { chipsToParams, paramsToChips } from "@/lib/url/filters"
-import { useBrands, useCreateBrand } from "@/hooks/use-brands"
-import { useWorkspaceByClerkOrgId } from "@/hooks/use-workspace"
-import type { BusinessData } from "./BrandWizard/types"
+import { useBrands } from "@/hooks/use-brands"
 
 export function BrandsListPage() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Get organization and workspace
-  const { organization } = useOrganization()
-  const { user } = useUser()
-  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "")
-
   const { data: brandsData = [], isLoading } = useBrands()
-  const createBrand = useCreateBrand()
   
   // Cast to proper Brand type (tRPC serializes dates as strings)
   const brands = brandsData as unknown as Brand[]
@@ -46,34 +38,6 @@ export function BrandsListPage() {
 
   const closeWizard = () => {
     setIsWizardOpen(false)
-  }
-
-  const handleBrandCreated = async (data: BusinessData) => {
-    if (!workspace?.id) {
-      toast.error("No workspace found. Please create or select an organization first.")
-      return
-    }
-
-    try {
-      await createBrand.mutateAsync({
-        workspaceId: workspace.id,
-        brandName: data.brandName || "Untitled Brand",
-        websiteUrl: data.websiteUrl || undefined,
-        brandColor: data.brandColor || undefined,
-        languages: data.languages?.length ? data.languages : undefined,
-        targetAudiences: data.targetAudiences?.length ? data.targetAudiences : undefined,
-        businessKeywords: data.businessKeywords?.length ? data.businessKeywords : undefined,
-        competitors: data.competitors?.length ? data.competitors : undefined,
-        status: "active",
-        createdByUserId: user?.id,
-      })
-
-      toast.success("Brand created successfully!")
-      setIsWizardOpen(false)
-    } catch (error) {
-      console.error("Failed to create brand:", error)
-      toast.error("Failed to create brand. Please try again.")
-    }
   }
 
   const removeFilter = (key: string, value: string) => {
@@ -189,8 +153,7 @@ export function BrandsListPage() {
       )}
       {isWizardOpen && (
         <BrandWizard 
-          onClose={closeWizard} 
-          onCreate={handleBrandCreated} 
+          onClose={closeWizard}
         />
       )}
     </div>

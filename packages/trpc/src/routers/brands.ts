@@ -2,6 +2,7 @@ import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
 import { brands } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
+import { analyzeBrandWebsite } from "@workspace/ai";
 
 export const brandsRouter = router({
   /**
@@ -48,12 +49,15 @@ export const brandsRouter = router({
       z.object({
         workspaceId: z.string().uuid(),
         brandName: z.string().min(1),
-        websiteUrl: z.string().url().optional(),
+        websiteUrl: z.string().optional(),
+        description: z.string().optional(),
         brandColor: z.string().optional(),
         languages: z.array(z.string()).optional(),
         targetAudiences: z.array(z.string()).optional(),
         businessKeywords: z.array(z.string()).optional(),
         competitors: z.array(z.string()).optional(),
+        sitemapUrl: z.string().optional(),
+        referralSource: z.enum(["facebook", "instagram", "google", "email", "reddit", "linkedin", "other"]).optional(),
         status: z.enum(["backlog", "planned", "active", "cancelled", "completed"]),
         createdByUserId: z.string().optional(),
       })
@@ -65,11 +69,14 @@ export const brandsRouter = router({
           workspaceId: input.workspaceId,
           brandName: input.brandName,
           websiteUrl: input.websiteUrl,
+          description: input.description,
           brandColor: input.brandColor,
           languages: input.languages,
           targetAudiences: input.targetAudiences,
           businessKeywords: input.businessKeywords,
           competitors: input.competitors,
+          sitemapUrl: input.sitemapUrl,
+          referralSource: input.referralSource,
           status: input.status,
           createdByUserId: input.createdByUserId,
         })
@@ -90,7 +97,8 @@ export const brandsRouter = router({
       z.object({
         id: z.string().uuid(),
         brandName: z.string().min(1).optional(),
-        websiteUrl: z.string().url().optional(),
+        websiteUrl: z.string().optional(),
+        description: z.string().optional(),
         brandColor: z.string().optional(),
         status: z
           .enum(["backlog", "planned", "active", "cancelled", "completed"])
@@ -99,6 +107,7 @@ export const brandsRouter = router({
         targetAudiences: z.array(z.string()).optional(),
         businessKeywords: z.array(z.string()).optional(),
         competitors: z.array(z.string()).optional(),
+        sitemapUrl: z.string().optional(),
         isFavourite: z.boolean().optional(),
       })
     )
@@ -129,5 +138,30 @@ export const brandsRouter = router({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(brands).where(eq(brands.id, input.id));
       return { success: true };
+    }),
+
+  /**
+   * Analyze a website using AI to extract brand information
+   */
+  analyzeWebsite: publicProcedure
+    .input(
+      z.object({
+        websiteUrl: z.string().min(1), // Allow URLs without protocol
+        brandName: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const result = await analyzeBrandWebsite({
+          websiteUrl: input.websiteUrl,
+          brandName: input.brandName,
+        });
+        
+        return result;
+      } catch (error) {
+        throw new Error(
+          `Failed to analyze website: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
     }),
 });

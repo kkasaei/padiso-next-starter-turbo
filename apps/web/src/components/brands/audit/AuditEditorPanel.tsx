@@ -2,11 +2,7 @@
 
 import * as React from 'react';
 import { useMemo } from 'react';
-import { MarkdownPlugin } from '@platejs/markdown';
-import { createSlateEditor } from 'platejs';
-import { Plate, usePlateEditor } from 'platejs/react';
-import { EditorKit } from '@workspace/editor/plugins/editor-kit';
-import { Editor, EditorContainer } from '@workspace/editor/editor';
+import { TiptapEditor } from '@/components/common/TiptapEditor';
 import type { PageAuditDto } from './types';
 
 // ============================================================
@@ -14,21 +10,6 @@ import type { PageAuditDto } from './types';
 // ============================================================
 interface AuditEditorPanelProps {
   pageAudit: PageAuditDto;
-}
-
-// ============================================================
-// HELPER: Deserialize markdown to Plate value
-// ============================================================
-function deserializeMarkdown(markdown: string) {
-  try {
-    const tempEditor = createSlateEditor({
-      plugins: [...EditorKit],
-    });
-    const value = tempEditor.getApi(MarkdownPlugin).markdown.deserialize(markdown);
-    return value;
-  } catch {
-    return [{ type: 'p', children: [{ text: markdown }] }];
-  }
 }
 
 // ============================================================
@@ -103,30 +84,26 @@ function buildContentFromMetadata(pageAudit: PageAuditDto): string {
 // ============================================================
 export function AuditEditorPanel({ pageAudit }: AuditEditorPanelProps) {
   // Build editor content from actual page content or metadata
-  const editorValue = useMemo(() => {
+  const editorContent = useMemo(() => {
     // Use actual content if available
     if (pageAudit.content) {
-      return deserializeMarkdown(pageAudit.content);
+      return pageAudit.content;
     }
 
     // Build content from metadata as fallback
-    const generatedContent = buildContentFromMetadata(pageAudit);
-    return deserializeMarkdown(generatedContent);
+    return buildContentFromMetadata(pageAudit);
   }, [pageAudit]);
-
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value: editorValue,
-    id: `audit-content-${pageAudit.id}`,
-  });
 
   return (
     <div className="h-full w-full overflow-y-auto">
-      <Plate editor={editor}>
-        <EditorContainer variant="default" className="min-h-full">
-          <Editor variant="fullWidth" className="px-8 py-6" readOnly />
-        </EditorContainer>
-      </Plate>
+      <TiptapEditor
+        key={pageAudit.id}
+        initialValue={editorContent}
+        readOnly={true}
+        showToolbar={false}
+        className="h-full border-0 rounded-none"
+        height="100%"
+      />
     </div>
   );
 }

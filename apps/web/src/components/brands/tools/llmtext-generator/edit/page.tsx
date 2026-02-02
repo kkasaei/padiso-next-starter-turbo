@@ -2,11 +2,8 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { MarkdownPlugin } from '@platejs/markdown'
-import { usePlateEditor, Plate } from 'platejs/react'
 import { Button } from '@workspace/ui/components/button'
-import { Editor, EditorContainer } from '@workspace/editor/editor'
-import { EditorKit } from '@workspace/editor/plugins/editor-kit'
+import { TiptapEditor, type TiptapEditorRef } from '@/components/common/TiptapEditor'
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -90,6 +87,7 @@ export default function EditLLMTextPage() {
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
   const [currentEditorContent, setCurrentEditorContent] = useState('')
   const aiPanelRef = useRef<ImperativePanelHandle>(null)
+  const editorRef = useRef<TiptapEditorRef>(null)
 
   // Auto-save state
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
@@ -150,19 +148,13 @@ export default function EditLLMTextPage() {
     }
   }, [])
 
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value: editor => editor.getApi(MarkdownPlugin).markdown.deserialize(initialContent || DEFAULT_MARKDOWN),
-  })
-
   // Update editor value when initial content loads
   useEffect(() => {
-    if (initialContent && editor) {
-      const api = editor.getApi(MarkdownPlugin)
-      const newValue = api.markdown.deserialize(initialContent)
-      editor.tf.setValue(newValue)
+    if (initialContent && editorRef.current) {
+      editorRef.current.setContent(initialContent)
+      setCurrentEditorContent(initialContent)
     }
-  }, [initialContent, editor])
+  }, [initialContent])
 
   // Auto-save handler
   const handleAutoSave = useCallback(
@@ -188,11 +180,10 @@ export default function EditLLMTextPage() {
   )
 
   // Track editor content changes for AI assistant and auto-save
-  const handleEditorChange = useCallback(() => {
-    const markdown = editor.getApi(MarkdownPlugin).markdown.serialize()
-    setCurrentEditorContent(markdown)
-    handleAutoSave(markdown)
-  }, [editor, handleAutoSave])
+  const handleEditorChange = useCallback((content: string) => {
+    setCurrentEditorContent(content)
+    handleAutoSave(content)
+  }, [handleAutoSave])
 
   // Toggle AI panel
   const toggleAIPanel = useCallback(() => {
@@ -207,54 +198,49 @@ export default function EditLLMTextPage() {
   // Handle AI content update
   const handleUpdateEditorContent = useCallback(
     (content: string, mode: 'replace' | 'append' | 'prepend' | 'update-section', originalText?: string) => {
-      const api = editor.getApi(MarkdownPlugin)
+      if (!editorRef.current) return
       
       if (mode === 'replace') {
-        const newValue = api.markdown.deserialize(content)
-        editor.tf.setValue(newValue)
+        editorRef.current.setContent(content)
       } else if (mode === 'append') {
-        const currentMarkdown = api.markdown.serialize()
-        const newContent = currentMarkdown + '\n\n' + content
-        const newValue = api.markdown.deserialize(newContent)
-        editor.tf.setValue(newValue)
+        const currentContent = editorRef.current.getContent()
+        editorRef.current.setContent(currentContent + '\n\n' + content)
       } else if (mode === 'prepend') {
-        const currentMarkdown = api.markdown.serialize()
-        const newContent = content + '\n\n' + currentMarkdown
-        const newValue = api.markdown.deserialize(newContent)
-        editor.tf.setValue(newValue)
+        const currentContent = editorRef.current.getContent()
+        editorRef.current.setContent(content + '\n\n' + currentContent)
       } else if (mode === 'update-section' && originalText) {
-        const currentMarkdown = api.markdown.serialize()
-        const newContent = currentMarkdown.replace(originalText, content)
-        const newValue = api.markdown.deserialize(newContent)
-        editor.tf.setValue(newValue)
+        const currentContent = editorRef.current.getContent()
+        editorRef.current.setContent(currentContent.replace(originalText, content))
       }
       
       // Trigger auto-save
-      const updatedMarkdown = api.markdown.serialize()
-      setCurrentEditorContent(updatedMarkdown)
-      handleAutoSave(updatedMarkdown)
+      const updatedContent = editorRef.current.getContent()
+      setCurrentEditorContent(updatedContent)
+      handleAutoSave(updatedContent)
     },
-    [editor, handleAutoSave]
+    [handleAutoSave]
   )
 
   const handleDownload = () => {
-    const markdown = editor.getApi(MarkdownPlugin).markdown.serialize()
+    if (!editorRef.current) return
     
-    if (!markdown.trim()) {
+    const content = editorRef.current.getContent()
+    
+    if (!content.trim()) {
       toast.error('No content to download')
       return
     }
 
-    const blob = new Blob([markdown], { type: 'text/markdown' })
+    const blob = new Blob([content], { type: 'text/html' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'llm-text.md'
+    a.download = 'llm-text.html'
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    toast.success('Downloaded as Markdown!')
+    toast.success('Downloaded!')
   }
 
   // Show loading state
@@ -333,12 +319,14 @@ export default function EditLLMTextPage() {
             </div>
 
             {/* Editor */}
-            <div className="flex-1 overflow-auto" onClick={handleEditorChange} onKeyUp={handleEditorChange}>
-              <Plate editor={editor}>
-                <EditorContainer variant="demo" className="h-full border-0">
-                  <Editor variant="demo" />
-                </EditorContainer>
-              </Plate>
+            <div className="flex-1 overflow-auto">
+              <TiptapEditor
+                ref={editorRef}
+                initialValue={initialContent || DEFAULT_MARKDOWN}
+                onContentChange={handleEditorChange}
+                className="h-full border-0 rounded-none"
+                height="100%"
+              />
             </div>
           </div>
         </ResizablePanel>

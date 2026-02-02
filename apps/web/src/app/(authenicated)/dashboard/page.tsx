@@ -377,9 +377,6 @@ export default function DashboardPage() {
       {showWizard && (
         <BrandWizard 
           onClose={() => setShowWizard(false)}
-          onCreate={(data) => {
-            // Here you would typically save the data to your backend
-          }}
         />
       )}
     </div>

@@ -56,7 +56,7 @@ import {
 } from '@workspace/ui/components/command'
 import { cn } from '@workspace/common/lib'
 import type { WorkflowNode, WorkflowNodeType } from './workflow-types'
-import { PromptEditor } from '@workspace/editor/prompt-editor'
+import { TiptapPromptEditor } from '@/components/common/TiptapPromptEditor'
 
 // ============================================================
 // TYPES
@@ -792,7 +792,7 @@ function AgentNodeConfig({ node, onUpdate, projectId }: NodeConfigProps & { proj
         label="User Prompt"
         description="The task or question. Use {{variable}} for dynamic values"
       >
-        <PromptEditor
+        <TiptapPromptEditor
           value={data.userPrompt || ''}
           onChange={(value) => onUpdate({ userPrompt: value })}
           placeholder="Write a blog post about {{topic}} targeting {{audience}}. Include key points about {{keywords}}."
