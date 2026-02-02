@@ -15,7 +15,7 @@ export { FlickeringGrid } from './FlickeringGrid';
 
 export { GridSection } from './GridSection';
 
-export { Marquee } from './Marquee';
+export { Marquee } from './marquee';
 
 export { NumberTicker } from './NumberTicker';
 

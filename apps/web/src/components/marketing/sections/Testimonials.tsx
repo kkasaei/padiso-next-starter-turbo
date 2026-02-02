@@ -9,7 +9,7 @@ import { APP_NAME } from '@workspace/common/constants';
 import { cn } from '@workspace/common/lib';
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
-import { Marquee } from '@workspace/ui/components/fragments/Marquee';
+import { Marquee } from '@workspace/ui/components/fragments/marquee';
 
 const DATA = [
   {
