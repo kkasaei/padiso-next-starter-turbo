@@ -24,6 +24,8 @@ export default function SignUpPage() {
       routing="path"
       path="/auth/sign-up"
       signInUrl="/auth/sign-in"
+      fallbackRedirectUrl="/workspace-setup"
+      forceRedirectUrl="/workspace-setup"
     />
   );
 }

@@ -23,8 +23,8 @@ export default function SignInPage() {
       routing="path"
       path="/auth/sign-in"
       signUpUrl="/auth/sign-up"
-/*       fallbackRedirectUrl="/onboarding"
-      forceRedirectUrl="/onboarding" */
+      fallbackRedirectUrl="/workspace-setup"
+      forceRedirectUrl="/workspace-setup"
     />
   );
 }

@@ -14,6 +14,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Logo } from "@workspace/ui/components/logo";
 import { Loader2, Check, ArrowRight, LogOut } from "lucide-react";
 import { useCreateWorkspace } from "@/hooks/use-workspace";
+import { useSyncSubscription } from "@/hooks/use-subscription";
 import { routes } from "@workspace/common";
 import { cn } from "@workspace/ui/lib/utils";
 import { PLANS, type PlanId } from "@workspace/billing";
@@ -48,24 +49,34 @@ export function WorkspaceSetup() {
   const { setActive } = useOrganizationList();
   const { signOut } = useClerk();
   const createWorkspace = useCreateWorkspace();
+  const syncSubscription = useSyncSubscription();
 
   // Check for return from Stripe checkout on mount
   useEffect(() => {
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
     const workspaceIdParam = searchParams.get("workspace_id");
+    const sessionId = searchParams.get("session_id");
 
     if (success === "true" && workspaceIdParam) {
       // User returned from successful Stripe checkout
       setWorkspaceId(workspaceIdParam);
       setStep(4);
+      
+      // Sync subscription from Stripe (only once per session)
+      const syncKey = `synced_${sessionId || workspaceIdParam}`;
+      if (!sessionStorage.getItem(syncKey)) {
+        sessionStorage.setItem(syncKey, "true");
+        syncSubscription.mutate({ workspaceId: workspaceIdParam });
+      }
     } else if (canceled === "true" && workspaceIdParam) {
       // User canceled Stripe checkout - return to plan selection
       setWorkspaceId(workspaceIdParam);
       setStep(3);
       setError("Checkout was canceled. Please select a plan to continue.");
     }
-  }, [searchParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (initialOrgIdRef.current === undefined) {

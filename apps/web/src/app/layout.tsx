@@ -1,11 +1,9 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Suspense } from "react"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { Providers } from "@/components/layout/providers"
 import { ClerkProvider } from '@clerk/nextjs';
-import { PostHogPageView, PostHogIdentifier } from "@workspace/analytics/posthog"
 import "./globals.css"
 
 
@@ -28,15 +26,13 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInUrl="/auth/sign-in"
       signUpUrl="/auth/sign-up"
+      afterSignInUrl="/workspace-setup"
+      afterSignUpUrl="/workspace-setup"
       afterSignOutUrl="/"
     >
       <html lang="en" suppressHydrationWarning>
         <body className={`font-sans antialiased`} suppressHydrationWarning>
           <Providers>
-            <Suspense fallback={null}>
-              <PostHogPageView />
-            </Suspense>
-            <PostHogIdentifier />
             {children}
             <Analytics />
             <Toaster richColors closeButton />

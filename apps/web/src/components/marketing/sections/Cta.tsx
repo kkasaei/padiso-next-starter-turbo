@@ -11,7 +11,7 @@ import { TextGenerateEffect } from '@workspace/ui/components/fragments/TextGener
 
 export function CTA(): React.JSX.Element {
   const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/signup';
+  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
   const ctaText = isWaitlist ? 'Join Waitlist' : 'Get started';
 
   return (

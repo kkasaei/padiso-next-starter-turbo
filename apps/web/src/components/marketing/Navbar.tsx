@@ -232,7 +232,7 @@ export function Navbar(): React.JSX.Element {
                   Sign in
                 </Link>
                 <Link
-                  href={FEATURE_FLAGS.IS_WAITLIST ? '/waitlist' : '/signup'}
+                  href={FEATURE_FLAGS.IS_WAITLIST ? '/waitlist' : '/auth/sign-up'}
                   className={cn(
                     buttonVariants({
                       variant: 'default'

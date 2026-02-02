@@ -378,7 +378,6 @@ export default function DashboardPage() {
         <BrandWizard 
           onClose={() => setShowWizard(false)}
           onCreate={(data) => {
-            console.log("Business created:", data)
             // Here you would typically save the data to your backend
           }}
         />

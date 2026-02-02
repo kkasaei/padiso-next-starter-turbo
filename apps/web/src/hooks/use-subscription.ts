@@ -33,3 +33,7 @@ export function useCheckLimit(
     { enabled: !!workspaceId }
   );
 }
+
+export function useSyncSubscription() {
+  return trpc.subscriptions.syncFromStripe.useMutation();
+}

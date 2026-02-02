@@ -90,6 +90,7 @@ export const PLANS = {
     name: 'Custom',
     description: 'For agencies and large brands with custom needs and unlimited scale.',
     isEnterprise: true,
+    trialDays: 7,
     prices: {
       month: {
         id: env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID || 'price_custom_month',
