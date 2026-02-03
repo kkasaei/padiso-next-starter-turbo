@@ -49,7 +49,7 @@ export interface BusinessData {
   brandColor?: string;
   sitemapUrl?: string;
   
-  // Step 6: Survey (Optional)
+  // Referral source (optional)
   referralSource?: ReferralSource;
 }
 

@@ -13,7 +13,6 @@ import { StepLanguage } from "./steps/StepLanguage";
 import { StepBusinessDescription } from "./steps/StepBusinessDescription";
 import { StepCompetitors } from "./steps/StepCompetitors";
 import { StepBrand } from "./steps/StepBrand";
-import { StepSurvey } from "./steps/StepSurvey";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
 import { trpc } from "@/lib/trpc/client";
@@ -59,12 +58,11 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
   });
 
   // Step 0: Website URL (full-width card like StepMode)
-  // Steps 1-5: Guided steps with stepper sidebar
+  // Steps 1-4: Guided steps with stepper sidebar
   // 1: Language
   // 2: Business Description
   // 3: Competitors (Optional)
   // 4: Brand
-  // 5: Survey (Optional)
 
   const updateData = (updates: Partial<BusinessData>) => {
     setData(prev => ({ ...prev, ...updates }));
@@ -137,11 +135,10 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
     "Business details",
     "Competitors",
     "Brand",
-    "Survey"
   ];
 
-  const isLastStep = step === 5;
-  const isOptionalStep = step === 3 || step === 5;
+  const isLastStep = step === 4;
+  const isOptionalStep = step === 3;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
@@ -230,13 +227,6 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
                       <StepBrand 
                         data={data} 
                         updateData={updateData} 
-                      />
-                    )}
-                    {step === 5 && (
-                      <StepSurvey 
-                        value={data.referralSource}
-                        onChange={(source) => updateData({ referralSource: source })}
-                        brandName={data.brandName}
                       />
                     )}
                   </motion.div>
