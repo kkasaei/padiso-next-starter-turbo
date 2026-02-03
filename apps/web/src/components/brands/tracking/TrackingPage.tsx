@@ -62,7 +62,6 @@ import {
   Download,
   Upload,
   Users,
-  MessageSquare,
 } from 'lucide-react'
 import { cn } from '@workspace/common/lib'
 import {
@@ -141,7 +140,7 @@ type SortDirection = 'asc' | 'desc'
 // ============================================================
 // TAB TYPE
 // ============================================================
-type TrackingTab = 'prompts' | 'keywords' | 'competitors' | 'communities'
+type TrackingTab = 'prompts' | 'keywords' | 'competitors'
 
 // ============================================================
 // MAIN PAGE COMPONENT
@@ -153,7 +152,7 @@ export default function TrackingPage() {
 
   // Get tab from URL query param, default to 'prompts'
   const tabFromUrl = searchParams.get('tab') as TrackingTab | null
-  const initialTab: TrackingTab = tabFromUrl && ['prompts', 'keywords', 'competitors', 'communities'].includes(tabFromUrl)
+  const initialTab: TrackingTab = tabFromUrl && ['prompts', 'keywords', 'competitors'].includes(tabFromUrl)
     ? tabFromUrl
     : 'prompts'
 
@@ -723,13 +722,6 @@ export default function TrackingPage() {
                 Competitors
                 <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
               </TabsTrigger>
-              <TabsTrigger
-                value="communities"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Communities
-                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
-              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -788,14 +780,7 @@ export default function TrackingPage() {
             />
           </TabsContent>
 
-          {/* Communities Tab */}
-          <TabsContent value="communities" className="mt-0">
-            <ComingSoonContent
-              title="Communities Tracking"
-              description="Track your brand mentions across Reddit, Twitter, LinkedIn, and other community platforms."
-              icon={<MessageSquare className="h-12 w-12" />}
-            />
-          </TabsContent>
+
         </Tabs>
       </div>
 
