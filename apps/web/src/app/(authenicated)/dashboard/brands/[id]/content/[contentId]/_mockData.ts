@@ -1,3 +1,10 @@
+export interface LocaleInfo {
+  code: string
+  name: string
+  flag: string
+  status: 'draft' | 'published' | 'scheduled'
+}
+
 export interface ContentData {
   id: string
   title: string
@@ -24,6 +31,9 @@ export interface ContentData {
   slug: string
   metaDescription: string
   featuredImage?: string | null
+  // Localization
+  primaryLocale?: LocaleInfo
+  locales?: LocaleInfo[]
 }
 
 export const mockContentData: Record<string, ContentData> = {
@@ -51,6 +61,33 @@ export const mockContentData: Record<string, ContentData> = {
     slug: 'complete-guide-ai-visibility-chatgpt-perplexity-gemini',
     metaDescription: 'Learn how to improve your brand\'s visibility in AI-powered search engines like ChatGPT, Perplexity, and Google Gemini. Complete guide with actionable strategies.',
     featuredImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=675&fit=crop',
+    primaryLocale: { code: 'en', name: 'English', flag: '🇺🇸', status: 'published' },
+    locales: [
+      { code: 'es', name: 'Spanish', flag: '🇪🇸', status: 'published' },
+      { code: 'fr', name: 'French', flag: '🇫🇷', status: 'published' },
+      { code: 'de', name: 'German', flag: '🇩🇪', status: 'published' },
+      { code: 'it', name: 'Italian', flag: '🇮🇹', status: 'draft' },
+      { code: 'pt', name: 'Portuguese', flag: '🇵🇹', status: 'published' },
+      { code: 'nl', name: 'Dutch', flag: '🇳🇱', status: 'scheduled' },
+      { code: 'pl', name: 'Polish', flag: '🇵🇱', status: 'draft' },
+      { code: 'ja', name: 'Japanese', flag: '🇯🇵', status: 'published' },
+      { code: 'ko', name: 'Korean', flag: '🇰🇷', status: 'published' },
+      { code: 'zh', name: 'Chinese', flag: '🇨🇳', status: 'published' },
+      { code: 'ar', name: 'Arabic', flag: '🇸🇦', status: 'draft' },
+      { code: 'ru', name: 'Russian', flag: '🇷🇺', status: 'published' },
+      { code: 'hi', name: 'Hindi', flag: '🇮🇳', status: 'draft' },
+      { code: 'tr', name: 'Turkish', flag: '🇹🇷', status: 'published' },
+      { code: 'vi', name: 'Vietnamese', flag: '🇻🇳', status: 'scheduled' },
+      { code: 'th', name: 'Thai', flag: '🇹🇭', status: 'draft' },
+      { code: 'id', name: 'Indonesian', flag: '🇮🇩', status: 'published' },
+      { code: 'sv', name: 'Swedish', flag: '🇸🇪', status: 'published' },
+      { code: 'da', name: 'Danish', flag: '🇩🇰', status: 'draft' },
+      { code: 'no', name: 'Norwegian', flag: '🇳🇴', status: 'published' },
+      { code: 'fi', name: 'Finnish', flag: '🇫🇮', status: 'scheduled' },
+      { code: 'cs', name: 'Czech', flag: '🇨🇿', status: 'draft' },
+      { code: 'el', name: 'Greek', flag: '🇬🇷', status: 'published' },
+      { code: 'he', name: 'Hebrew', flag: '🇮🇱', status: 'draft' },
+    ],
     content: `
 ## Introduction
 

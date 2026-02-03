@@ -67,6 +67,7 @@ import { cn } from '@workspace/common/lib'
 import {
   MOCK_KEYWORDS,
   MOCK_COMPETITORS,
+  MOCK_PROMPTS,
   SUGGESTED_KEYWORDS,
   INTENT_LABELS,
   type TrackedKeyword,
@@ -220,9 +221,25 @@ export default function TrackingPage() {
   // LOAD DATA
   // ============================================================
   useEffect(() => {
-    // Load mock prompts - initialize with empty array
+    // Load mock prompts for PADISO.co demo
     const promptTimer = setTimeout(() => {
-      setPrompts([])
+      // Convert mock prompts to TrackedPrompt format
+      const loadedPrompts: TrackedPrompt[] = MOCK_PROMPTS.map((p) => ({
+        id: p.id,
+        brandId: p.brandId,
+        prompt: p.prompt,
+        notes: p.notes,
+        lastVisibilityScore: p.lastVisibilityScore,
+        lastMentionPosition: p.lastMentionPosition,
+        lastScanDate: p.lastScanDate,
+        isActive: p.isActive,
+        scanStatus: p.scanStatus,
+        targetLocation: p.targetLocation,
+        targetLanguage: p.targetLanguage,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+      }))
+      setPrompts(loadedPrompts)
       setPromptsLoading(false)
     }, 500)
     // Load mock keywords
@@ -277,7 +294,7 @@ export default function TrackingPage() {
       // Create new prompt in local state
       const newPrompt: TrackedPrompt = {
         id: crypto.randomUUID(),
-        projectId,
+        brandId: projectId,
         prompt: promptFormData.promptText,
         targetLocation: promptFormData.location || null,
         targetLanguage: null,
@@ -442,7 +459,7 @@ export default function TrackingPage() {
     // Create a new prompt from the suggestion
     const newPrompt: TrackedPrompt = {
       id: crypto.randomUUID(),
-      projectId,
+      brandId: projectId,
       prompt: suggestion.prompt,
       targetLocation: null,
       targetLanguage: null,

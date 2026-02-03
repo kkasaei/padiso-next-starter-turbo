@@ -17,13 +17,16 @@ import {
   Sparkles,
   Upload,
   Trash2,
-  Loader2
+  Loader2,
+  Globe,
+  Languages
 } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@workspace/ui/lib/utils'
 import { StatRow } from '@/components/brands/StatRow'
 import { PublishModal } from '@/components/brands/content/PublishModal'
 import { toast } from 'sonner'
-import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
+import type { ContentData, LocaleInfo } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
 
 // Sample AI-generated images (placeholders) - 16:9 aspect ratio
 const AI_GENERATED_IMAGES = [
@@ -75,6 +78,11 @@ type MetaDescriptionCardProps = {
 type FeaturedImageCardProps = {
   featuredImage: string | null
   onImageChange: (image: string | null) => void
+}
+
+type LanguagesCardProps = {
+  primaryLocale?: LocaleInfo
+  locales?: LocaleInfo[]
 }
 
 const getScoreColor = (score: number) => {
@@ -459,6 +467,124 @@ function FeaturedImageCard({ featuredImage, onImageChange }: FeaturedImageCardPr
   )
 }
 
+function LanguagesCard({ primaryLocale, locales }: LanguagesCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  if (!primaryLocale) return null
+  
+  const totalLocales = (locales?.length || 0) + 1 // +1 for primary
+  const hasMultipleLocales = locales && locales.length > 0
+  
+  // Group locales by status
+  const publishedLocales = locales?.filter(l => l.status === 'published') || []
+  const draftLocales = locales?.filter(l => l.status === 'draft') || []
+  const scheduledLocales = locales?.filter(l => l.status === 'scheduled') || []
+  
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'published':
+        return <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-emerald-200/60 text-emerald-600 dark:border-emerald-900/40 dark:text-emerald-400">Published</Badge>
+      case 'draft':
+        return <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-gray-200/60 text-gray-600 dark:border-gray-700 dark:text-gray-400">Draft</Badge>
+      case 'scheduled':
+        return <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-blue-200/60 text-blue-600 dark:border-blue-900/40 dark:text-blue-400">Scheduled</Badge>
+      default:
+        return null
+    }
+  }
+  
+  // Show first 5 locales when collapsed
+  const visibleLocales = isExpanded ? locales : locales?.slice(0, 5)
+  const hiddenCount = (locales?.length || 0) - 5
+
+  return (
+    <div>
+      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.16em] mb-2">
+        Languages
+      </div>
+      <p className="text-xs text-muted-foreground mb-3">
+        {totalLocales} {totalLocales === 1 ? 'language' : 'languages'} available
+      </p>
+      
+      {/* Primary Language */}
+      <div className="mb-3">
+        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+          Primary
+        </div>
+        <div className="flex items-center justify-between p-2.5 rounded-xl border border-border/60 bg-background">
+          <div className="flex items-center gap-2">
+            <span className="text-base">{primaryLocale.flag}</span>
+            <span className="text-sm font-medium">{primaryLocale.name}</span>
+          </div>
+          {getStatusBadge(primaryLocale.status)}
+        </div>
+      </div>
+      
+      {/* Other Locales */}
+      {hasMultipleLocales && (
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              Translations ({locales.length})
+            </div>
+            <div className="flex gap-1.5 text-[10px] text-muted-foreground">
+              <span className="text-emerald-600 dark:text-emerald-400">{publishedLocales.length} published</span>
+              <span>•</span>
+              <span>{draftLocales.length} draft</span>
+              {scheduledLocales.length > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="text-blue-600 dark:text-blue-400">{scheduledLocales.length} scheduled</span>
+                </>
+              )}
+            </div>
+          </div>
+          
+          <div className="rounded-xl border border-border/60 bg-background overflow-hidden">
+            <div className="max-h-[200px] overflow-y-auto">
+              {visibleLocales?.map((locale, index) => (
+                <div 
+                  key={locale.code}
+                  className={cn(
+                    "flex items-center justify-between px-2.5 py-2 hover:bg-muted/50 transition-colors cursor-pointer",
+                    index !== 0 && "border-t border-border/40"
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{locale.flag}</span>
+                    <span className="text-xs font-medium">{locale.name}</span>
+                  </div>
+                  {getStatusBadge(locale.status)}
+                </div>
+              ))}
+            </div>
+            
+            {/* Show more / Show less button */}
+            {locales && locales.length > 5 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="w-full flex items-center justify-center gap-1 py-2 text-xs text-muted-foreground hover:text-foreground border-t border-border/40 hover:bg-muted/30 transition-colors"
+              >
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="h-3 w-3" />
+                    Show less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-3 w-3" />
+                    Show {hiddenCount} more
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
@@ -519,6 +645,10 @@ export function ContentDetailSidebar({ content, brandId }: ContentDetailSidebarP
         <FeaturedImageCard 
           featuredImage={featuredImage} 
           onImageChange={setFeaturedImage} 
+        />
+        <LanguagesCard 
+          primaryLocale={(content as { primaryLocale?: LocaleInfo }).primaryLocale}
+          locales={(content as { locales?: LocaleInfo[] }).locales}
         />
       </div>
 

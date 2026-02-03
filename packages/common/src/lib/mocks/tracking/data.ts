@@ -2,6 +2,102 @@
 // TRACKING MOCK DATA
 // ============================================================
 
+// Prompts Types
+export interface TrackedPromptMock {
+  id: string
+  brandId: string
+  prompt: string
+  notes: string | null
+  lastVisibilityScore: number | null
+  lastMentionPosition: number | null
+  lastScanDate: Date | null
+  isActive: boolean
+  scanStatus: 'IDLE' | 'SCANNING' | 'COMPLETED' | 'FAILED' | null
+  targetLocation: string | null
+  targetLanguage: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Mock prompts data for PADISO.co - a sustainable fashion accessory brand
+export const MOCK_PROMPTS: TrackedPromptMock[] = [
+  {
+    id: 'prompt-1',
+    brandId: '3cb22dd3-7cb4-40a9-b6c9-3a29323f1e82',
+    prompt: 'What are the best sustainable fashion accessories brands in 2025?',
+    notes: 'High-priority prompt - tracking sustainable fashion positioning',
+    lastVisibilityScore: 78,
+    lastMentionPosition: 3,
+    lastScanDate: new Date('2025-01-28T14:30:00Z'),
+    isActive: true,
+    scanStatus: 'IDLE',
+    targetLocation: 'United States',
+    targetLanguage: 'en',
+    createdAt: new Date('2025-01-10T09:00:00Z'),
+    updatedAt: new Date('2025-01-28T14:30:00Z'),
+  },
+  {
+    id: 'prompt-2',
+    brandId: '3cb22dd3-7cb4-40a9-b6c9-3a29323f1e82',
+    prompt: 'Where can I buy eco-friendly handbags and accessories online?',
+    notes: 'E-commerce discovery query - important for conversion',
+    lastVisibilityScore: 65,
+    lastMentionPosition: 5,
+    lastScanDate: new Date('2025-01-27T10:15:00Z'),
+    isActive: true,
+    scanStatus: 'IDLE',
+    targetLocation: 'United States',
+    targetLanguage: 'en',
+    createdAt: new Date('2025-01-12T11:20:00Z'),
+    updatedAt: new Date('2025-01-27T10:15:00Z'),
+  },
+  {
+    id: 'prompt-3',
+    brandId: '3cb22dd3-7cb4-40a9-b6c9-3a29323f1e82',
+    prompt: 'What is PADISO and what products do they sell?',
+    notes: 'Brand awareness query - monitoring direct brand mentions',
+    lastVisibilityScore: 92,
+    lastMentionPosition: 1,
+    lastScanDate: new Date('2025-01-29T08:45:00Z'),
+    isActive: true,
+    scanStatus: 'IDLE',
+    targetLocation: null,
+    targetLanguage: 'en',
+    createdAt: new Date('2025-01-08T14:00:00Z'),
+    updatedAt: new Date('2025-01-29T08:45:00Z'),
+  },
+  {
+    id: 'prompt-4',
+    brandId: '3cb22dd3-7cb4-40a9-b6c9-3a29323f1e82',
+    prompt: 'Best alternatives to expensive designer bags that are still high quality?',
+    notes: 'Competitor comparison - affordable luxury positioning',
+    lastVisibilityScore: 54,
+    lastMentionPosition: 7,
+    lastScanDate: new Date('2025-01-26T16:20:00Z'),
+    isActive: true,
+    scanStatus: 'IDLE',
+    targetLocation: 'United States',
+    targetLanguage: 'en',
+    createdAt: new Date('2025-01-15T10:30:00Z'),
+    updatedAt: new Date('2025-01-26T16:20:00Z'),
+  },
+  {
+    id: 'prompt-5',
+    brandId: '3cb22dd3-7cb4-40a9-b6c9-3a29323f1e82',
+    prompt: 'How do I style minimalist accessories for a professional look?',
+    notes: 'Content opportunity - styling advice queries',
+    lastVisibilityScore: 41,
+    lastMentionPosition: null,
+    lastScanDate: new Date('2025-01-25T12:00:00Z'),
+    isActive: false,
+    scanStatus: 'IDLE',
+    targetLocation: null,
+    targetLanguage: 'en',
+    createdAt: new Date('2025-01-18T09:15:00Z'),
+    updatedAt: new Date('2025-01-25T12:00:00Z'),
+  },
+]
+
 // Keywords Types
 export type KeywordIntent = 'informational' | 'transactional' | 'navigational' | 'commercial'
 export type KeywordTrend = 'up' | 'down' | 'stable'
