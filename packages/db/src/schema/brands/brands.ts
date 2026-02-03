@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, uuid, boolean, pgEnum, json, integer } from "
 import { workspaces } from "../workspace/workspaces";
 
 export const brandStatusEnum = pgEnum("brand_status", [
+  "initializing", // Brand is being set up by the worker (10-15 mins)
   "backlog",
   "planned",
   "active",

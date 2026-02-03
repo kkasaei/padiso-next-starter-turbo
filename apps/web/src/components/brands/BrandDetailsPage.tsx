@@ -22,6 +22,7 @@ import { ActiveBrandProvider, useActiveBrand } from '@workspace/react-providers/
 import { useBrand } from '@/hooks/use-brands'
 import { cn } from '@workspace/ui/lib/utils'
 import { Skeleton } from '@workspace/ui/components/skeleton'
+import { BrandSetupLoading } from './BrandSetupLoading'
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -822,6 +823,15 @@ function PageContent() {
 // ============================================================
 export function BrandDetailsPage({ brandId }: { brandId: string }) {
   const { data: brand, isLoading, error } = useBrand(brandId)
+  
+  // Debug: Add ?debug=initializing to URL to test the setup loading state
+  const [debugInitializing, setDebugInitializing] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      setDebugInitializing(params.get('debug') === 'initializing')
+    }
+  }, [])
 
   if (isLoading) {
     return (
@@ -856,6 +866,11 @@ export function BrandDetailsPage({ brandId }: { brandId: string }) {
         </div>
       </div>
     )
+  }
+
+  // Show setup loading state when brand is initializing (or debug mode)
+  if (brand.status === 'initializing' || debugInitializing) {
+    return <BrandSetupLoading />
   }
 
   // Convert date strings to Date objects if needed

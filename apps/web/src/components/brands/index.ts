@@ -18,6 +18,7 @@ export * from './BrandSidebar';
 export * from './BrandCardsView';
 export * from './BrandTableView';
 export * from './BrandBoardView';
+export * from './BrandSetupLoading';
 
 // Wizard
 export * from './brand-wizard/BrandWizard';

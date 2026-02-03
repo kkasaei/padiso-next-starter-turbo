@@ -10,6 +10,7 @@ import {
   Search,
   Check,
   Plus,
+  Loader2,
 } from "lucide-react"
 import { useBrands } from "@/hooks/use-brands"
 import { cn } from "@workspace/common/lib"
@@ -123,8 +124,15 @@ export function BrandSwitcher() {
                 <span className="text-sm font-medium truncate w-full">
                   {currentProject?.brandName ?? "Select Brand"}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  {currentProject?.status ?? "Brand"}
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  {currentProject?.status === 'initializing' ? (
+                    <>
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <span>Setting up...</span>
+                    </>
+                  ) : (
+                    currentProject?.status ?? "Brand"
+                  )}
                 </span>
               </div>
             </div>
@@ -162,6 +170,7 @@ export function BrandSwitcher() {
             ) : (
               filteredProjects.map((project) => {
                 const isActive = project.id === currentProjectId
+                const isInitializing = project.status === 'initializing'
 
                 return (
                   <button
@@ -172,16 +181,28 @@ export function BrandSwitcher() {
                       isActive && "bg-accent/50"
                     )}
                   >
-                    <BrandIcon
-                      iconUrl={project.iconUrl}
-                      websiteUrl={project.websiteUrl}
-                      brandName={project.brandName}
-                      brandColor={project.brandColor}
-                      size="sm"
-                    />
-                    <span className="flex-1 text-left truncate">{project.brandName || "Untitled Brand"}</span>
+                    <div className="relative">
+                      <BrandIcon
+                        iconUrl={project.iconUrl}
+                        websiteUrl={project.websiteUrl}
+                        brandName={project.brandName}
+                        brandColor={project.brandColor}
+                        size="sm"
+                      />
+                      {isInitializing && (
+                        <div className="absolute -right-1 -bottom-1 h-3 w-3 rounded-full bg-blue-500 flex items-center justify-center">
+                          <Loader2 className="h-2 w-2 text-white animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <span className="truncate block">{project.brandName || "Untitled Brand"}</span>
+                      {isInitializing && (
+                        <span className="text-xs text-blue-600 dark:text-blue-400">Setting up...</span>
+                      )}
+                    </div>
                     {isActive && (
-                      <Check className="h-4 w-4 text-primary" strokeWidth={3} />
+                      <Check className="h-4 w-4 text-primary shrink-0" strokeWidth={3} />
                     )}
                   </button>
                 )

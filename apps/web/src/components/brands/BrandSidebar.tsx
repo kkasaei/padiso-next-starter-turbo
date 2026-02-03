@@ -1,14 +1,16 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
-import { useParams, usePathname } from "next/navigation"
+import { createContext, useContext, useState, useEffect } from "react"
+import { useParams, usePathname, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Separator } from "@workspace/ui/components/separator"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 import {
   PanelLeftClose,
   PanelLeftOpen,
+  Loader2,
 } from "lucide-react"
-import { useBrands } from "@/hooks/use-brands"
+import { useBrands, useBrand } from "@/hooks/use-brands"
 import { cn } from "@workspace/common/lib"
 import { brandNavItems } from "@workspace/common"
 import { FavouriteBrands } from "./FavouriteBrands"
@@ -100,9 +102,17 @@ export function BrandSidebar() {
   const { isOpen } = useBrandSidebar()
   const params = useParams()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const { data: projects = [] } = useBrands()
   const currentProjectId = params.id as string
+  
+  // Get current brand to check if it's initializing
+  const { data: currentBrand } = useBrand(currentProjectId)
+  
+  // Debug: Add ?debug=initializing to URL to test the setup loading state
+  const debugInitializing = searchParams.get('debug') === 'initializing'
+  const isInitializing = currentBrand?.status === 'initializing' || debugInitializing
 
   const favouriteBrands = projects.filter((project) => project.isFavourite)
 
@@ -125,10 +135,20 @@ export function BrandSidebar() {
         )}
       >
       <div className="flex flex-col flex-1 min-w-64">
-        {/* Brand Switcher */}
+        {/* Brand Switcher - Always enabled so users can switch to other brands */}
         <BrandSwitcher />
 
         <Separator className="mx-3" />
+
+        {/* Initializing indicator */}
+        {isInitializing && (
+          <div className="px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/50 px-3 py-2 text-xs text-blue-700 dark:text-blue-300">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              <span>Setting up...</span>
+            </div>
+          </div>
+        )}
 
         {/* Navigation Items */}
         <nav className="p-2">
@@ -142,6 +162,32 @@ export function BrandSidebar() {
               const Icon = item.icon
               const isActive = isNavItemActive(item.path)
               const href = `/dashboard/brands/${currentProjectId}${item.path}`
+              
+              // Disable navigation when brand is initializing (except Overview)
+              const isDisabled = isInitializing && item.path !== ""
+
+              if (isDisabled) {
+                return (
+                  <li key={item.id}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={cn(
+                            "flex w-full items-center gap-3 h-9 rounded-lg px-3 text-sm",
+                            "text-muted-foreground/50 cursor-not-allowed"
+                          )}
+                        >
+                          {Icon && <Icon className="h-[18px] w-[18px]" />}
+                          <span>{item.label}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p className="text-sm">Available after setup completes</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </li>
+                )
+              }
 
               return (
                 <li key={item.id}>
