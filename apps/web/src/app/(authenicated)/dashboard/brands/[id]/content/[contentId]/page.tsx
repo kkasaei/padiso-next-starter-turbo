@@ -1,20 +1,29 @@
 'use client'
 
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { Button } from '@workspace/ui/components/button'
-import { Badge } from '@workspace/ui/components/badge'
-import { ArrowLeft, Pencil, Send } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu'
+import { ArrowLeft, Pencil, Send, Copy, Trash2, MoreHorizontal } from 'lucide-react'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@workspace/ui/components/resizable'
+import { toast } from 'sonner'
 import { ContentDetailSidebar } from '@/components/brands/content/ContentDetailSidebar'
 import { ArticleContent } from '@/components/brands/content/ArticleContent'
-import { mockContentData, type ContentData } from './_mockData'
+import { PublishModal } from '@/components/brands/content/PublishModal'
+import { mockContentData } from './_mockData'
 
 export default function ContentDetailPage() {
   const params = useParams()
   const router = useRouter()
   const projectId = params.id as string
   const contentId = params.contentId as string
+  const [showPublishModal, setShowPublishModal] = useState(false)
 
   const content = mockContentData[contentId]
 
@@ -30,58 +39,79 @@ export default function ContentDetailPage() {
     )
   }
 
-  const getStatusBadge = (status: ContentData['status']) => {
-    const variants = {
-      draft: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
-      published: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-      scheduled: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      archived: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-    }
-    return variants[status]
+  const handleCopy = () => {
+    toast('Content duplicated')
   }
 
-  const getTypeBadge = (type: ContentData['type']) => {
-    const variants = {
-      blog: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-      article: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      landing_page: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-      social: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-    }
-    return variants[type]
+  const handleDelete = () => {
+    toast('Content deleted')
+    router.back()
   }
 
   return (
     <div className="flex flex-1 flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border h-[82px]">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => router.back()}>
+            <ArrowLeft className="h-3.5 w-3.5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <Badge className={getTypeBadge(content.type)}>
-              {content.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            </Badge>
-            <Badge className={getStatusBadge(content.status)}>
-              {content.status.charAt(0).toUpperCase() + content.status.slice(1)}
-            </Badge>
-          </div>
+          <h1 className="text-lg font-medium">Content Details</h1>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" asChild className='rounded-2xl'>
-            <Link href={`/dashboard/brands/${projectId}/content/${contentId}/edit`}>
-              <Pencil className="h-4 w-4 mr-2" />
-              Edit
-            </Link>
-          </Button>
-          {content.status === 'draft' && (
-            <Button size="sm" className='rounded-2xl'>
+        
+        {/* Action Button Group */}
+        <div className="flex items-center">
+          <div className="flex items-center border border-border rounded-full overflow-hidden">
+            {/* Publish - Primary action */}
+            <Button 
+              size="sm" 
+              className="rounded-none border-0 bg-foreground text-background hover:bg-foreground/90 px-4"
+              onClick={() => setShowPublishModal(true)}
+            >
               <Send className="h-4 w-4 mr-2" />
               Publish
             </Button>
-          )}
+            
+            {/* Divider */}
+            <div className="w-px h-6 bg-border" />
+            
+            {/* Edit */}
+            <Button variant="ghost" size="sm" className="rounded-none border-0 px-3">
+              <Pencil className="h-4 w-4" />
+            </Button>
+            
+            {/* Divider */}
+            <div className="w-px h-6 bg-border" />
+            
+            {/* More actions dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="rounded-none border-0 px-3">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleCopy}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
+      
+      {/* Publish Modal */}
+      <PublishModal
+        open={showPublishModal}
+        onOpenChange={setShowPublishModal}
+        brandId={projectId}
+      />
 
       {/* Content with Sidebar */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
@@ -97,7 +127,7 @@ export default function ContentDetailPage() {
 
         {/* Sidebar Panel - 30% */}
         <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
-          <ContentDetailSidebar content={content} />
+          <ContentDetailSidebar content={content} brandId={projectId} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

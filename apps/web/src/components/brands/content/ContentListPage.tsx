@@ -4,9 +4,16 @@ import { useState, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import Image from 'next/image'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Badge } from '@workspace/ui/components/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Plus,
   Search,
@@ -14,8 +21,11 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  Download,
+  Sparkles,
+  FileSpreadsheet,
+  FileCode,
 } from 'lucide-react'
-import { Sparkles } from 'lucide-react'
 import { ViewOptionsPopover } from '@/components/brands/ViewOptionsPopover'
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@workspace/common/lib'
 import { cn } from '@workspace/common/lib'
@@ -305,18 +315,48 @@ export default function ContentListPage() {
           <div className="flex items-center gap-2 px-4">
             <h1 className="text-2xl font-semibold tracking-tight">Content</h1>
           </div>
-          <div className="flex items-center gap-4">
-            {/* Legend */}
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="text-muted-foreground">Scheduled</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-muted-foreground">Published</span>
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
+                >
+                  <Download className="h-3.5 w-3.5 mr-1.5" />
+                  Import
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => toast.info('Google Drive import coming soon')}>
+                  <Image 
+                    src="/icons/google-drive.svg" 
+                    alt="Google Drive" 
+                    width={16} 
+                    height={16} 
+                    className="mr-2"
+                  />
+                  From Google Drive
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info('CSV import coming soon')}>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Bulk Import (CSV)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info('Markdown import coming soon')}>
+                  <FileCode className="h-4 w-4 mr-2" />
+                  From Markdown
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button 
+              size="sm"
+              variant="ghost"
+              className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
+              onClick={() => toast.info('Create content coming soon')}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              Create
+            </Button>
           </div>
         </div>
 
@@ -801,7 +841,7 @@ function KanbanView({ content, projectId }: KanbanViewProps) {
             <div 
               key={column.id} 
               className={cn(
-                "flex-shrink-0 w-80 bg-muted/30 rounded-2xl border-t-4",
+                "shrink-0 w-80 bg-muted/30 rounded-2xl border-t-4",
                 column.color
               )}
             >

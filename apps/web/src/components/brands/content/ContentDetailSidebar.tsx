@@ -17,14 +17,16 @@ import {
 } from 'lucide-react'
 import { cn } from '@workspace/ui/lib/utils'
 import { StatRow } from '@/components/brands/StatRow'
+import { PublishModal } from '@/components/brands/content/PublishModal'
 import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
 
 type ContentDetailSidebarProps = {
   content: ContentData
+  brandId: string
 }
 
 type ContentFooterActionsProps = {
-  status: ContentData['status']
+  brandId: string
 }
 
 type ArticleScoreCardProps = {
@@ -316,27 +318,35 @@ function MetaDescriptionCard({ metaDescription }: MetaDescriptionCardProps) {
   )
 }
 
-function ContentFooterActions({ status }: ContentFooterActionsProps) {
+function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
+  const [showPublishModal, setShowPublishModal] = useState(false)
+
   return (
-    <div className="sticky bottom-0 border-t border-border/60 bg-background/95 p-4 backdrop-blur">
-      <div className="space-y-2">
-        {status === 'draft' ? (
-          <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" size="lg">
+    <>
+      <div className="sticky bottom-0 border-t border-border/60 bg-background/95 p-4 backdrop-blur">
+        <div className="space-y-2">
+          <Button 
+            className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" 
+            size="lg"
+            onClick={() => setShowPublishModal(true)}
+          >
             <Send className="h-4 w-4 mr-2" />
             Publish Article
           </Button>
-        ) : (
-          <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" size="lg">
-            <Send className="h-4 w-4 mr-2" />
-            Publish Article
-          </Button>
-        )}
+        </div>
       </div>
-    </div>
+      
+      {/* Publish Modal */}
+      <PublishModal
+        open={showPublishModal}
+        onOpenChange={setShowPublishModal}
+        brandId={brandId}
+      />
+    </>
   )
 }
 
-export function ContentDetailSidebar({ content }: ContentDetailSidebarProps) {
+export function ContentDetailSidebar({ content, brandId }: ContentDetailSidebarProps) {
   const [showScoreFactors, setShowScoreFactors] = useState(false)
 
   return (
@@ -366,7 +376,7 @@ export function ContentDetailSidebar({ content }: ContentDetailSidebarProps) {
           <MetaDescriptionCard metaDescription={content.metaDescription} />
         </div>
 
-        <ContentFooterActions status={content.status} />
+        <ContentFooterActions brandId={brandId} />
       </div>
     </aside>
   )

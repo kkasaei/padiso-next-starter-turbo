@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Plus } from "lucide-react"
+import Image from "next/image"
+import { Plus, Download, FileSpreadsheet } from "lucide-react"
 import {
   DndContext,
   type DragEndEvent,
@@ -25,6 +26,13 @@ import {
 import { TaskTableView } from "./TaskTableView"
 import { TaskKanbanView } from "./TaskKanbanView"
 import { Button } from "@workspace/ui/components/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
+import { toast } from "sonner"
 import { FilterPopover } from "./FilterPopover"
 import { ChipOverflow } from "./ChipOverflow"
 import { ViewOptionsPopover } from "./ViewOptionsPopover"
@@ -199,13 +207,44 @@ export function WorkspaceTasksPage({ brandId }: WorkspaceTasksPageProps) {
                 {`Manage tasks for your workspace`}
               </p>
             </div>
-            <Button
-              size="sm"
-              onClick={() => openCreateTask()}
-            >
-              <Plus className="mr-1.5 h-4 w-4" />
-              New Task
-            </Button>
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
+                  >
+                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                    Import
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => toast.info('Google Sheet import coming soon')}>
+                    <Image 
+                      src="/icons/google-sheet.svg" 
+                      alt="Google Sheet" 
+                      width={16} 
+                      height={16} 
+                      className="mr-2"
+                    />
+                    From Google Sheet
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => toast.info('CSV import coming soon')}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Bulk Import (CSV)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                size="sm"
+                className="rounded-full h-8 px-4"
+                onClick={() => openCreateTask()}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
+                New Task
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -249,12 +288,41 @@ export function WorkspaceTasksPage({ brandId }: WorkspaceTasksPageProps) {
             <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
           </div>
           <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
+                >
+                  <Download className="h-3.5 w-3.5 mr-1.5" />
+                  Import
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => toast.info('Google Sheet import coming soon')}>
+                  <Image 
+                    src="/icons/google-sheet.svg" 
+                    alt="Google Sheet" 
+                    width={16} 
+                    height={16} 
+                    className="mr-2"
+                  />
+                  From Google Sheet
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info('CSV import coming soon')}>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Bulk Import (CSV)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               size="sm"
               variant="ghost"
+              className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
               onClick={() => openCreateTask()}
             >
-              <Plus className="mr-1.5 h-4 w-4" />
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
               New Task
             </Button>
           </div>

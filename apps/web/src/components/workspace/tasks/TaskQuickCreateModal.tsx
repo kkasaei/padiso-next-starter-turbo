@@ -143,12 +143,13 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
   const [priority, setPriority] = useState<PriorityOption | undefined>(PRIORITY_OPTIONS[0])
   const [selectedTag, setSelectedTag] = useState<TagOption | undefined>(undefined)
 
-  // Set default assignee when options load
+  // Set default assignee when options load (only on initial mount)
   useEffect(() => {
     if (assigneeOptions.length > 0 && !assignee) {
       setAssignee(assigneeOptions[0])
     }
-  }, [assigneeOptions, assignee])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assigneeOptions.length])
 
   useEffect(() => {
     if (!open) return
@@ -195,7 +196,8 @@ export function TaskQuickCreateModal({ open, onClose, context, onTaskCreated, ed
     setTargetDate(undefined)
     setPriority(PRIORITY_OPTIONS[0])
     setSelectedTag(undefined)
-  }, [open, context?.brandId, editingTask, assigneeOptions, tagOptions])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, context?.brandId, editingTask?.id])
 
   const brandOptions = useMemo(
     () => brands.map((b: any) => ({ id: b.id, label: b.brandName || 'Untitled Brand' })),

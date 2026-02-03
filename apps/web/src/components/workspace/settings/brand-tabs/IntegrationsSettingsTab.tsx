@@ -74,11 +74,13 @@ const AVAILABLE_INTEGRATIONS: AvailableIntegration[] = [
   
   // E-Commerce
   { id: "shopify", name: "Shopify", description: "Product SEO and store data", icon: "/icons/shopify_glyph_black.svg", category: "E-Commerce", comingSoon: false },
+  { id: "bigcommerce", name: "BigCommerce", description: "E-commerce platform integration", icon: "/icons/bigcommerce.svg", category: "E-Commerce", comingSoon: true },
   
   // Advertising
   { id: "meta-ads", name: "Meta Ads", description: "Facebook/Instagram ad data", icon: "/icons/meta-ads.svg", category: "Advertising", comingSoon: true },
   
   // Automation & Developer
+  { id: "searchfit-extension", name: "SearchFit Browser Extension", description: "Capture and analyze content from any webpage", icon: "/icons/searchfit.svg", category: "Automation & Developer", comingSoon: true },
   { id: "api", name: "API", description: "Generate API keys for programmatic access", icon: "/icons/api.svg", category: "Automation & Developer", comingSoon: true },
   { id: "mcp", name: "MCP", description: "Connect to Claude as a remote MCP server", icon: "/icons/mcp.svg", category: "Automation & Developer", comingSoon: true },
   { id: "webhook", name: "Webhooks", description: "Send data to custom endpoints", icon: "/icons/webhook.svg", category: "Automation & Developer", comingSoon: true },
@@ -90,6 +92,11 @@ const AVAILABLE_INTEGRATIONS: AvailableIntegration[] = [
   { id: "openai", name: "OpenAI", description: "Monitor ChatGPT mentions", icon: "/icons/openai.svg", category: "AI Platforms", comingSoon: true },
   { id: "anthropic", name: "Anthropic", description: "Monitor Claude mentions", icon: "/icons/anthropic.svg", category: "AI Platforms", comingSoon: true },
   { id: "perplexity", name: "Perplexity", description: "Monitor Perplexity citations", icon: "/icons/perplexity.svg", category: "AI Platforms", comingSoon: true },
+  { id: "open-router", name: "OpenRouter", description: "Unified API for AI models", icon: "/icons/open-router.svg", category: "AI Platforms", comingSoon: true },
+  { id: "vercel-ai", name: "Vercel AI Gateway", description: "AI gateway for model routing", icon: "/icons/vercel.svg", category: "AI Platforms", comingSoon: true },
+  { id: "deepseek", name: "DeepSeek", description: "Monitor DeepSeek AI mentions", icon: "/icons/deepseek.svg", category: "AI Platforms", comingSoon: true },
+  { id: "grok", name: "Grok", description: "Monitor xAI Grok mentions", icon: "/icons/grok.svg", category: "AI Platforms", comingSoon: true },
+  { id: "aws-bedrock", name: "AWS Bedrock", description: "Amazon's AI foundation models", icon: "/icons/bedrock-color.svg", category: "AI Platforms", comingSoon: true },
 ];
 
 const CATEGORIES = [
