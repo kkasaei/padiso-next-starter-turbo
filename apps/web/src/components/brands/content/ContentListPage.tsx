@@ -327,6 +327,29 @@ export default function ContentListPage() {
         : item
     ))
   }
+
+  // Reorder content within a day (for day view drag and drop)
+  const reorderContent = (contentId: string, newIndex: number) => {
+    const dayContent = filteredContent.filter(c => isSameDay(c.scheduledDate, currentDate))
+    const itemIndex = dayContent.findIndex(c => c.id === contentId)
+    if (itemIndex === -1 || itemIndex === newIndex) return
+
+    // Create new order by updating a virtual "order" field or just rearranging in state
+    const newDayContent = [...dayContent]
+    const [movedItem] = newDayContent.splice(itemIndex, 1)
+    newDayContent.splice(newIndex, 0, movedItem)
+
+    // Update the content array with new order (using updatedAt as a proxy for order)
+    const baseTime = new Date().getTime()
+    setContent(prev => {
+      const otherContent = prev.filter(c => !isSameDay(c.scheduledDate, currentDate))
+      const reorderedDayContent = newDayContent.map((item, idx) => ({
+        ...item,
+        updatedAt: new Date(baseTime + idx) // Use timestamp to preserve order
+      }))
+      return [...otherContent, ...reorderedDayContent]
+    })
+  }
   
   // View options - default to calendar view for content
   const [viewOptions, setViewOptions] = useState<ViewOptions>({
@@ -639,13 +662,21 @@ export default function ContentListPage() {
                 days={weekDays}
                 getContentForDate={getContentForDate}
                 projectId={projectId}
+                onContentDateChange={updateContentDate}
+                onDeleteContent={handleOpenDelete}
+                onAddInstructions={handleOpenInstructions}
+                onChangeTopic={handleOpenChangeTopic}
               />
             )}
             {viewOptions.viewType === 'calendar' && calendarPeriod === 'day' && (
               <DayCalendarView 
                 currentDate={currentDate}
-                content={filteredContent.filter(c => isSameDay(c.scheduledDate, currentDate))}
+                content={filteredContent.filter(c => isSameDay(c.scheduledDate, currentDate)).sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime())}
                 projectId={projectId}
+                onReorderContent={reorderContent}
+                onDeleteContent={handleOpenDelete}
+                onAddInstructions={handleOpenInstructions}
+                onChangeTopic={handleOpenChangeTopic}
               />
             )}
             {viewOptions.viewType === 'card' && (
@@ -1018,24 +1049,70 @@ interface WeekCalendarViewProps {
   days: Date[]
   getContentForDate: (date: Date) => ContentItem[]
   projectId: string
+  onContentDateChange: (contentId: string, newDate: Date) => void
+  onDeleteContent: (contentId: string) => void
+  onAddInstructions: (contentId: string) => void
+  onChangeTopic: (contentId: string) => void
 }
 
-function WeekCalendarView({ days, getContentForDate, projectId }: WeekCalendarViewProps) {
+function WeekCalendarView({ days, getContentForDate, projectId, onContentDateChange, onDeleteContent, onAddInstructions, onChangeTopic }: WeekCalendarViewProps) {
   const today = new Date()
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null)
+  const [draggedContentId, setDraggedContentId] = useState<string | null>(null)
+  const [dropTargetDay, setDropTargetDay] = useState<number | null>(null)
+
+  const handleAddContent = (date: Date) => {
+    toast.info(`Create content for ${formatDate(date)} coming soon`)
+  }
+
+  const handleDragStart = (contentId: string) => {
+    setDraggedContentId(contentId)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedContentId(null)
+    setDropTargetDay(null)
+  }
+
+  const handleDragOver = (e: React.DragEvent, dayIdx: number) => {
+    e.preventDefault()
+    setDropTargetDay(dayIdx)
+  }
+
+  const handleDragLeave = () => {
+    setDropTargetDay(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, targetDate: Date, dayIdx: number) => {
+    e.preventDefault()
+    if (draggedContentId) {
+      onContentDateChange(draggedContentId, targetDate)
+      toast.success(`Moved content to ${formatDate(targetDate)}`)
+    }
+    setDraggedContentId(null)
+    setDropTargetDay(null)
+  }
 
   return (
     <div className="p-4">
-      <div className="grid grid-cols-7 gap-4">
+      <div className="grid grid-cols-7 gap-3">
         {days.map((day, idx) => {
           const dayContent = getContentForDate(day)
           const isToday = isSameDay(day, today)
           const dayName = day.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+          const isHovered = hoveredDay === idx
+          const isDropTarget = dropTargetDay === idx && draggedContentId !== null
 
           return (
-            <div key={idx} className="flex flex-col">
+            <div 
+              key={idx} 
+              className="flex flex-col"
+              onMouseEnter={() => setHoveredDay(idx)}
+              onMouseLeave={() => setHoveredDay(null)}
+            >
               {/* Day header */}
               <div className={cn(
-                "text-center py-3 rounded-t-lg border border-b-0 border-border/40",
+                "text-center py-3 rounded-t-xl border border-b-0 border-border/40",
                 isToday ? "bg-primary/10" : "bg-muted/30"
               )}>
                 <div className="text-xs font-medium text-muted-foreground">{dayName}</div>
@@ -1048,12 +1125,46 @@ function WeekCalendarView({ days, getContentForDate, projectId }: WeekCalendarVi
               </div>
 
               {/* Content area */}
-              <div className="flex-1 min-h-[400px] border border-border/40 rounded-b-lg p-2 space-y-2">
-                {dayContent.map(item => (
-                  <WeekContentCard key={item.id} content={item} projectId={projectId} />
-                ))}
-                {dayContent.length === 0 && (
-                  <div className="text-xs text-muted-foreground text-center py-4">
+              <div 
+                className={cn(
+                  "flex-1 min-h-[400px] border border-border/40 rounded-b-xl p-2 bg-muted/40 transition-all",
+                  isDropTarget && "bg-primary/10 ring-2 ring-primary/30 ring-inset"
+                )}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, day, idx)}
+              >
+                {/* Add button */}
+                {isHovered && !draggedContentId && (
+                  <button
+                    onClick={() => handleAddContent(day)}
+                    className="w-full mb-2 p-1.5 rounded-lg border border-dashed border-border hover:border-primary/50 hover:bg-background/50 transition-colors flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add
+                  </button>
+                )}
+
+                {/* Content cards */}
+                <div className="space-y-2">
+                  {dayContent.map((item) => (
+                    <ContentCalendarItem
+                      key={item.id}
+                      content={item}
+                      projectId={projectId}
+                      isFirst={false}
+                      onDragStart={() => handleDragStart(item.id)}
+                      onDragEnd={handleDragEnd}
+                      isDragging={draggedContentId === item.id}
+                      onDelete={() => onDeleteContent(item.id)}
+                      onAddInstructions={() => onAddInstructions(item.id)}
+                      onChangeTopic={() => onChangeTopic(item.id)}
+                    />
+                  ))}
+                </div>
+
+                {dayContent.length === 0 && !isHovered && (
+                  <div className="text-xs text-muted-foreground text-center py-8">
                     No content
                   </div>
                 )}
@@ -1066,55 +1177,6 @@ function WeekCalendarView({ days, getContentForDate, projectId }: WeekCalendarVi
   )
 }
 
-// Week view content card (compact version)
-function WeekContentCard({ content, projectId }: { content: ContentItem; projectId: string }) {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const getTypeBadgeColor = (type: ContentType) => {
-    switch (type) {
-      case 'Listicle': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
-      case 'How To': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'Explainer': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-      case 'Product Listicle': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-      case 'Guide': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-      case 'Tutorial': return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
-      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
-    }
-  }
-
-  return (
-    <div
-      className="p-2 rounded-lg border border-border/60 bg-background hover:border-border transition-colors"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex items-center justify-between mb-1">
-        <span className={cn(
-          "inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap",
-          getTypeBadgeColor(content.type)
-        )}>
-          {content.type}
-        </span>
-      </div>
-      <Link
-        href={`/dashboard/brands/${projectId}/content/${content.id}`}
-        className={cn(
-          "block text-xs font-medium line-clamp-2 mb-1.5",
-          isHovered && "underline"
-        )}
-      >
-        {content.title}
-      </Link>
-      {(content.keywordDifficulty || content.searchVolume) && (
-        <div className="flex gap-2 text-[10px] text-muted-foreground">
-          {content.keywordDifficulty && <span>KD: {content.keywordDifficulty}</span>}
-          {content.searchVolume && <span>Vol: {content.searchVolume}</span>}
-        </div>
-      )}
-    </div>
-  )
-}
-
 // ============================================================
 // DAY CALENDAR VIEW
 // ============================================================
@@ -1122,17 +1184,56 @@ interface DayCalendarViewProps {
   currentDate: Date
   content: ContentItem[]
   projectId: string
+  onReorderContent: (contentId: string, newIndex: number) => void
+  onDeleteContent: (contentId: string) => void
+  onAddInstructions: (contentId: string) => void
+  onChangeTopic: (contentId: string) => void
 }
 
-function DayCalendarView({ currentDate, content, projectId }: DayCalendarViewProps) {
+function DayCalendarView({ currentDate, content, projectId, onReorderContent, onDeleteContent, onAddInstructions, onChangeTopic }: DayCalendarViewProps) {
   const today = new Date()
   const isToday = isSameDay(currentDate, today)
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null)
+
+  const handleAddContent = () => {
+    toast.info(`Create content for ${formatDate(currentDate)} coming soon`)
+  }
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDropTargetIndex(null)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDropTargetIndex(index)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault()
+    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+      const draggedItem = content[draggedIndex]
+      if (draggedItem) {
+        onReorderContent(draggedItem.id, targetIndex)
+        toast.success('Content order updated')
+      }
+    }
+    setDraggedIndex(null)
+    setDropTargetIndex(null)
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Day header */}
       <div className={cn(
-        "text-center py-6 rounded-xl border border-border/40 mb-6",
+        "text-center py-6 rounded-2xl border border-border/40 mb-6",
         isToday ? "bg-primary/10" : "bg-muted/30"
       )}>
         <div className="text-sm font-medium text-muted-foreground">
@@ -1149,18 +1250,205 @@ function DayCalendarView({ currentDate, content, projectId }: DayCalendarViewPro
         </div>
       </div>
 
+      {/* Add content button */}
+      <button
+        onClick={handleAddContent}
+        className="w-full mb-4 p-3 rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/30 transition-colors flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <Plus className="h-4 w-4" />
+        Add Content
+      </button>
+
+      {/* Execution order hint */}
+      {content.length > 1 && (
+        <p className="text-xs text-muted-foreground mb-4 text-center">
+          Drag cards to reorder. Content is executed from top to bottom.
+        </p>
+      )}
+
       {/* Content list */}
       <div className="space-y-3">
         {content.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-12 text-muted-foreground bg-muted/40 rounded-2xl">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg font-medium">No content scheduled for this day</p>
-            <p className="text-sm mt-1">Content scheduled for this date will appear here</p>
+            <p className="text-sm mt-1">Click "Add Content" above to schedule content</p>
           </div>
         ) : (
-          content.map(item => (
-            <ContentCard key={item.id} content={item} projectId={projectId} />
+          content.map((item, index) => (
+            <div
+              key={item.id}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              className={cn(
+                "transition-all",
+                dropTargetIndex === index && "pt-16"
+              )}
+            >
+              <DayContentCard
+                content={item}
+                projectId={projectId}
+                index={index}
+                onDragStart={() => handleDragStart(index)}
+                onDragEnd={handleDragEnd}
+                isDragging={draggedIndex === index}
+                onDelete={() => onDeleteContent(item.id)}
+                onAddInstructions={() => onAddInstructions(item.id)}
+                onChangeTopic={() => onChangeTopic(item.id)}
+              />
+            </div>
           ))
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Day view content card (larger, horizontal layout)
+interface DayContentCardProps {
+  content: ContentItem
+  projectId: string
+  index: number
+  onDragStart: () => void
+  onDragEnd: () => void
+  isDragging: boolean
+  onDelete: () => void
+  onAddInstructions: () => void
+  onChangeTopic: () => void
+}
+
+function DayContentCard({ content, projectId, index, onDragStart, onDragEnd, isDragging, onDelete, onAddInstructions, onChangeTopic }: DayContentCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
+
+  const getTypeBadgeColor = (type: ContentType) => {
+    switch (type) {
+      case 'Listicle': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+      case 'How To': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'Explainer': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+      case 'Product Listicle': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'Guide': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+      case 'Tutorial': return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+    }
+  }
+
+  const handleChangeTopic = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onChangeTopic()
+  }
+
+  const handleAddInstructions = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onAddInstructions()
+  }
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onDelete()
+  }
+
+  const handleDragStartEvent = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', content.id)
+    e.dataTransfer.effectAllowed = 'move'
+    onDragStart()
+  }
+
+  return (
+    <div
+      draggable
+      onDragStart={handleDragStartEvent}
+      onDragEnd={onDragEnd}
+      className={cn(
+        "rounded-2xl border border-border/60 bg-background p-4 transition-all cursor-grab active:cursor-grabbing",
+        isHovered && "shadow-md border-border",
+        isDragging && "opacity-50 scale-[0.98]"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="flex items-start gap-4">
+        {/* Order number and drag handle */}
+        <div className="flex flex-col items-center gap-1 pt-1">
+          <span className="text-2xl font-bold text-muted-foreground/50">{index + 1}</span>
+          {isHovered && (
+            <div className="p-1 text-muted-foreground">
+              <GripVertical className="h-4 w-4" />
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            <span className={cn(
+              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+              getTypeBadgeColor(content.type)
+            )}>
+              {content.type}
+            </span>
+            {(content.keywordDifficulty || content.searchVolume) && (
+              <div className="flex gap-3 text-xs text-muted-foreground">
+                {content.keywordDifficulty && <span>KD: {content.keywordDifficulty}</span>}
+                {content.searchVolume && <span>Vol: {content.searchVolume.toLocaleString()}</span>}
+              </div>
+            )}
+          </div>
+          
+          <Link
+            href={`/dashboard/brands/${projectId}/content/${content.id}`}
+            className={cn(
+              "block text-base font-medium",
+              isHovered && "underline"
+            )}
+          >
+            {content.title}
+          </Link>
+        </div>
+
+        {/* Actions */}
+        {isHovered && (
+          <div className="flex items-center gap-1">
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={handleChangeTopic}
+                    className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ArrowLeftRight className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Change topic</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={handleAddInstructions}
+                    className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Lightbulb className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Add instructions</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={handleDelete}
+                    className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Delete</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         )}
       </div>
     </div>
