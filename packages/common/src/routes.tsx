@@ -40,6 +40,7 @@ export const routes = {
     Prompts: '/dashboard/prompts',
     Analytics: '/dashboard/analytics',
     Settings: '/dashboard/settings',
+    Workspaces: '/workspaces',
     WorkspaceSetup: '/workspace-setup',
     auth: {
       SignIn: '/auth/sign-in',

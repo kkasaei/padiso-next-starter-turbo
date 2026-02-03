@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  CreateOrganization,
   useOrganization,
   useOrganizationList,
   useClerk,
 } from "@clerk/nextjs";
 import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
 import { Logo } from "@workspace/ui/components/logo";
-import { Loader2, Check, ArrowRight, LogOut, ChevronDown } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Loader2, Check, ArrowRight, LogOut, ChevronDown, Upload, X } from "lucide-react";
 import { useCreateWorkspace } from "@/hooks/use-workspace";
 import { useSyncSubscription } from "@/hooks/use-subscription";
 import { routes } from "@workspace/common";
@@ -23,13 +25,26 @@ type SetupStep = 1 | 2 | 3 | 4;
 
 const STEPS = [
   { number: 1, title: "Create Workspace" },
-  { number: 2, title: "Setup" },
-  { number: 3, title: "Select Plan" },
-  { number: 4, title: "Complete" },
+  { number: 2, title: "Select Plan" },
+  { number: 3, title: "Complete" },
+  { number: 4, title: "Survey" },
 ];
 
 // Get features from actual PLANS configuration
 const GROWTH_FEATURES = PLANS.growth.features.slice(0, 11) as readonly string[];
+
+// How did you hear about us options
+const REFERRAL_SOURCES = [
+  { id: "google", label: "Google", icon: "G" },
+  { id: "facebook", label: "Facebook", icon: "f" },
+  { id: "instagram", label: "Instagram", icon: "📷" },
+  { id: "linkedin", label: "LinkedIn", icon: "in" },
+  { id: "twitter", label: "Twitter / X", icon: "𝕏" },
+  { id: "reddit", label: "Reddit", icon: "r" },
+  { id: "email", label: "Email", icon: "✉" },
+  { id: "friend", label: "Friend", icon: "👥" },
+  { id: "other", label: "Other", icon: "?" },
+];
 
 export function WorkspaceSetup() {
   const router = useRouter();
@@ -41,11 +56,22 @@ export function WorkspaceSetup() {
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [featuresExpanded, setFeaturesExpanded] = useState(false);
   
+  // Form state for workspace creation
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [workspaceSlug, setWorkspaceSlug] = useState("");
+  const [workspaceLogo, setWorkspaceLogo] = useState<File | null>(null);
+  const [workspaceLogoPreview, setWorkspaceLogoPreview] = useState<string | null>(null);
+  const [isCreatingOrg, setIsCreatingOrg] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Survey state
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [isSubmittingSurvey, setIsSubmittingSurvey] = useState(false);
+  
   const initialOrgIdRef = useRef<string | null | undefined>(undefined);
-  const isSettingUpRef = useRef(false);
 
   const { organization } = useOrganization();
-  const { setActive } = useOrganizationList();
+  const { setActive, createOrganization } = useOrganizationList();
   const { signOut } = useClerk();
   const createWorkspace = useCreateWorkspace();
   const syncSubscription = useSyncSubscription();
@@ -60,7 +86,7 @@ export function WorkspaceSetup() {
     if (success === "true" && workspaceIdParam) {
       // User returned from successful Stripe checkout
       setWorkspaceId(workspaceIdParam);
-      setStep(4);
+      setStep(3); // Go to confirmation step
       
       // Sync subscription from Stripe (only once per session)
       const syncKey = `synced_${sessionId || workspaceIdParam}`;
@@ -71,7 +97,7 @@ export function WorkspaceSetup() {
     } else if (canceled === "true" && workspaceIdParam) {
       // User canceled Stripe checkout - return to plan selection
       setWorkspaceId(workspaceIdParam);
-      setStep(3);
+      setStep(2);
       setError("Checkout was canceled. Please select a plan to continue.");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,52 +109,95 @@ export function WorkspaceSetup() {
     }
   }, [organization]);
 
-  // Step 2: Create workspace in DB after Clerk org is created
-  const handleCreateWorkspaceInDB = useCallback(async (orgId: string) => {
-    if (isSettingUpRef.current) return;
-    isSettingUpRef.current = true;
+  // Generate slug from name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, 48);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    setWorkspaceName(name);
+    setWorkspaceSlug(generateSlug(name));
+  };
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setWorkspaceLogo(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setWorkspaceLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setWorkspaceLogo(null);
+    setWorkspaceLogoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Combined: Create Clerk org + DB workspace in one step
+  const handleCreateOrganization = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    setStep(2);
+    if (!workspaceName.trim()) {
+      setError("Please enter a workspace name");
+      return;
+    }
+
+    setIsCreatingOrg(true);
     setError(null);
 
     try {
+      // Step 1: Create Clerk organization
+      const org = await createOrganization?.({ name: workspaceName, slug: workspaceSlug || undefined });
+      
+      if (!org) {
+        throw new Error("Failed to create organization");
+      }
+
+      // Upload logo if provided
+      if (workspaceLogo && org) {
+        try {
+          await org.setLogo({ file: workspaceLogo });
+        } catch (logoError) {
+          console.error("Failed to set logo:", logoError);
+          // Continue even if logo upload fails
+        }
+      }
+
+      // Step 2: Create workspace in DB
       const workspace = await createWorkspace.mutateAsync({
-        clerkOrgId: orgId,
+        clerkOrgId: org.id,
         status: "active",
       });
 
-      // Store workspace ID for later use
       if (!workspace?.id) {
         throw new Error("Workspace creation failed - no ID returned");
       }
       setWorkspaceId(workspace.id);
 
-      await setActive?.({ organization: orgId });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Set active organization
+      await setActive?.({ organization: org.id });
 
       // Move to plan selection
-      setStep(3);
-      isSettingUpRef.current = false;
+      setStep(2);
+      setIsCreatingOrg(false);
     } catch (err) {
-      console.error("Failed to setup workspace:", err);
-      setError("Failed to setup workspace. Please try again.");
-      setStep(1);
-      isSettingUpRef.current = false;
+      console.error("Failed to create workspace:", err);
+      setError(err instanceof Error ? err.message : "Failed to create workspace. Please try again.");
+      setIsCreatingOrg(false);
     }
-  }, [createWorkspace, setActive]);
-
-  // When Clerk org is created, move to step 2 (create workspace in DB)
-  useEffect(() => {
-    if (
-      initialOrgIdRef.current !== undefined &&
-      organization?.id &&
-      organization.id !== initialOrgIdRef.current &&
-      step === 1 &&
-      !isSettingUpRef.current
-    ) {
-      handleCreateWorkspaceInDB(organization.id);
-    }
-  }, [organization?.id, step, handleCreateWorkspaceInDB]);
+  };
 
   const handleSelectBilling = (interval: "month" | "year") => {
     setSelectedBilling(interval);
@@ -169,7 +238,28 @@ export function WorkspaceSetup() {
     }
   };
 
-  const handleGoToDashboard = () => {
+  const handleContinueToSurvey = () => {
+    setStep(4);
+  };
+
+  const handleSubmitSurvey = async () => {
+    setIsSubmittingSurvey(true);
+    
+    // TODO: Save survey response to DB
+    if (selectedSource && workspaceId) {
+      try {
+        // You can add an API call here to save the survey response
+        console.log("Survey response:", { workspaceId, source: selectedSource });
+      } catch (err) {
+        console.error("Failed to save survey:", err);
+      }
+    }
+    
+    // Navigate to dashboard regardless of survey submission
+    router.push(routes.dashboard.Home);
+  };
+
+  const handleSkipSurvey = () => {
     router.push(routes.dashboard.Home);
   };
 
@@ -207,7 +297,7 @@ export function WorkspaceSetup() {
 
         {/* Content - Centered */}
         <div className="flex-1 flex items-center justify-center px-6 lg:px-10 pb-6 lg:pb-10">
-          <div className={cn("w-full", step === 3 ? "max-w-xl" : "max-w-md")}>
+          <div className={cn("w-full", step === 2 ? "max-w-xl" : "max-w-md")}>
             {/* Step Indicator */}
             <div className="flex items-center gap-1 mb-2">
               <span className="text-sm font-medium text-foreground">
@@ -219,7 +309,7 @@ export function WorkspaceSetup() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 1: Create Organization in Clerk */}
+              {/* Step 1: Create Workspace (Clerk org + DB) */}
               {step === 1 && (
                 <motion.div
                   key="step-1"
@@ -236,56 +326,116 @@ export function WorkspaceSetup() {
                   </p>
 
                   {error && (
-                    <div className="mb-4 p-3 rounded-lg bg-muted border border-border text-sm text-muted-foreground">
+                    <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
                       {error}
                     </div>
                   )}
 
-                  <CreateOrganization
-                    appearance={{
-                      elements: {
-                        rootBox: "w-full",
-                        card: "shadow-none border-0 w-full",
-                        headerTitle: "text-foreground text-base font-medium",
-                        headerSubtitle: "text-muted-foreground text-sm",
-                        formButtonPrimary:
-                          "bg-primary text-primary-foreground hover:bg-primary/90",
-                        formFieldInput:
-                          "border-input bg-background text-foreground",
-                        footerActionLink: "text-primary hover:text-primary/90",
-                      },
-                    }}
-                    skipInvitationScreen={false}
-                  />
+                  <form onSubmit={handleCreateOrganization} className="space-y-5">
+                    {/* Logo Upload */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Logo</Label>
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <Avatar className="h-16 w-16 rounded-xl">
+                            {workspaceLogoPreview ? (
+                              <AvatarImage src={workspaceLogoPreview} alt="Logo preview" className="rounded-xl object-cover" />
+                            ) : (
+                              <AvatarFallback className="rounded-xl bg-muted text-muted-foreground">
+                                <Upload className="h-5 w-5" />
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
+                          {workspaceLogoPreview && (
+                            <button
+                              type="button"
+                              onClick={handleRemoveLogo}
+                              className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          )}
+                        </div>
+                        <div>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoChange}
+                            className="hidden"
+                            id="logo-upload"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            Upload
+                          </Button>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Recommended: 1:1, up to 10MB
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="workspace-name" className="text-sm font-medium">
+                        Name
+                      </Label>
+                      <Input
+                        id="workspace-name"
+                        value={workspaceName}
+                        onChange={handleNameChange}
+                        placeholder="My Workspace"
+                        className="h-10"
+                        autoFocus
+                        disabled={isCreatingOrg}
+                      />
+                    </div>
+
+                    {/* Slug */}
+                    <div className="space-y-2">
+                      <Label htmlFor="workspace-slug" className="text-sm font-medium">
+                        Slug
+                      </Label>
+                      <Input
+                        id="workspace-slug"
+                        value={workspaceSlug}
+                        onChange={(e) => setWorkspaceSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                        placeholder="my-workspace"
+                        className="h-10"
+                        disabled={isCreatingOrg}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Used in URLs and mentions
+                      </p>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={!workspaceName.trim() || isCreatingOrg}
+                    >
+                      {isCreatingOrg ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Creating workspace...
+                        </>
+                      ) : (
+                        "Create workspace"
+                      )}
+                    </Button>
+                  </form>
                 </motion.div>
               )}
 
-              {/* Step 2: Setting Up Workspace in DB */}
+              {/* Step 2: Select Plan */}
               {step === 2 && (
                 <motion.div
                   key="step-2"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <h1 className="text-2xl font-semibold text-foreground mb-1">
-                    Setting up your workspace
-                  </h1>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    This will only take a moment
-                  </p>
-
-                  <div className="rounded-2xl border border-border bg-card p-8 flex items-center justify-center">
-                    <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 3: Select Plan */}
-              {step === 3 && (
-                <motion.div
-                  key="step-3"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
@@ -457,20 +607,20 @@ export function WorkspaceSetup() {
                 </motion.div>
               )}
 
-              {/* Step 4: Complete */}
-              {step === 4 && (
+              {/* Step 3: Confirmation */}
+              {step === 3 && (
                 <motion.div
-                  key="step-4"
+                  key="step-3"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.2 }}
                 >
                   <h1 className="text-2xl font-semibold text-foreground mb-1">
-                    Workspace setup complete
+                    You&apos;re all set!
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Your {growthPlan.trialDays}-day free trial has started. Let&apos;s get started.
+                    Your {growthPlan.trialDays}-day free trial has started.
                   </p>
 
                   <div className="rounded-2xl border border-border bg-card p-6 mb-6 space-y-4">
@@ -496,10 +646,73 @@ export function WorkspaceSetup() {
                     </div>
                   </div>
 
-                  <Button onClick={handleGoToDashboard} className="w-full">
-                    Go to Dashboard
+                  <Button onClick={handleContinueToSurvey} className="w-full">
+                    Continue
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
+                </motion.div>
+              )}
+
+              {/* Step 4: How did you hear about us? */}
+              {step === 4 && (
+                <motion.div
+                  key="step-4"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h1 className="text-2xl font-semibold text-foreground mb-1">
+                    How did you hear about us?
+                  </h1>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    This helps us improve our marketing and reach more people like you.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {REFERRAL_SOURCES.map((source) => (
+                      <button
+                        key={source.id}
+                        onClick={() => setSelectedSource(source.id)}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-xl border text-left transition-colors",
+                          selectedSource === source.id
+                            ? "border-foreground bg-muted/50"
+                            : "border-border hover:border-muted-foreground/50"
+                        )}
+                      >
+                        <span className="text-lg w-6 text-center">{source.icon}</span>
+                        <span className="text-sm font-medium text-foreground">{source.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleSubmitSurvey}
+                      disabled={!selectedSource || isSubmittingSurvey}
+                      className="w-full"
+                    >
+                      {isSubmittingSurvey ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          Go to Dashboard
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={handleSkipSurvey}
+                      className="w-full text-muted-foreground"
+                    >
+                      Skip for now
+                    </Button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

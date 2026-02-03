@@ -57,7 +57,12 @@ export function WorkspaceSwitcher() {
     <div className="flex items-center justify-center p-4">
       <Popover open={orgSwitcherOpen} onOpenChange={setOrgSwitcherOpen}>
         <PopoverTrigger asChild>
-          <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)] hover:opacity-90 transition-opacity">
+          <button 
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity overflow-hidden",
+              !activeOrg?.imageUrl && "bg-primary text-primary-foreground shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)]"
+            )}
+          >
             {activeOrg?.imageUrl ? (
               <img
                 src={activeOrg.imageUrl}
@@ -115,7 +120,12 @@ export function WorkspaceSwitcher() {
                       isActive && "bg-accent/50"
                     )}
                   >
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-semibold">
+                    <div 
+                      className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-md text-xs font-semibold overflow-hidden",
+                        !org.imageUrl && "bg-primary text-primary-foreground"
+                      )}
+                    >
                       {org.imageUrl ? (
                         <img
                           src={org.imageUrl}
@@ -137,7 +147,10 @@ export function WorkspaceSwitcher() {
 
             {/* All Workspaces */}
             <button
-              onClick={() => setOrgSwitcherOpen(false)}
+              onClick={() => {
+                setOrgSwitcherOpen(false)
+                router.push(routes.dashboard.Workspaces)
+              }}
               className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-accent"
             >
               <MoreHorizontal className="h-6 w-6 text-muted-foreground" strokeWidth={3} />
