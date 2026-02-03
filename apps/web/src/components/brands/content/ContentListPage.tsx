@@ -68,6 +68,7 @@ import {
 import { ViewOptionsPopover } from '@/components/brands/ViewOptionsPopover'
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from '@workspace/common/lib'
 import { cn } from '@workspace/common/lib'
+import { ContentQuickCreateModal, type CreateContentContext } from './ContentQuickCreateModal'
 
 // ============================================================
 // TYPES
@@ -298,6 +299,10 @@ export default function ContentListPage() {
   }>>([])
   const [isImporting, setIsImporting] = useState(false)
 
+  // Create content modal state
+  const [isCreateContentOpen, setIsCreateContentOpen] = useState(false)
+  const [createContentContext, setCreateContentContext] = useState<CreateContentContext | undefined>()
+
   // Get selected content item
   const selectedContent = useMemo(() => {
     return content.find(c => c.id === selectedContentId) || null
@@ -381,6 +386,77 @@ export default function ContentListPage() {
     setImportModalOpen(false)
     setImportedArticles([])
     toast.success(`Imported ${newContent.length} articles to your calendar`)
+  }
+
+  // Open create content modal
+  const openCreateContent = (context?: CreateContentContext) => {
+    setCreateContentContext(context)
+    setIsCreateContentOpen(true)
+  }
+
+  // Handle content creation from the wizard
+  const handleContentCreated = (data: { prompt: string; scheduledDate: Date; contentType: string; locales: string[]; featuredImage?: string | null }) => {
+    // Map content type ID to display name
+    const typeMap: Record<string, ContentType> = {
+      'product-listicle': 'Product Listicle',
+      'how-to': 'How To',
+      'guide': 'Guide',
+      'explainer': 'Explainer',
+      'listicle': 'Listicle',
+      'tutorial': 'Tutorial',
+    }
+    
+    const localeNames: Record<string, string> = {
+      'en': 'English',
+      'es': 'Spanish',
+      'fr': 'French',
+      'de': 'German',
+      'it': 'Italian',
+      'pt': 'Portuguese',
+      'nl': 'Dutch',
+      'pl': 'Polish',
+      'ja': 'Japanese',
+      'ko': 'Korean',
+      'zh': 'Chinese',
+      'ar': 'Arabic',
+    }
+
+    const contentType = typeMap[data.contentType] || 'Product Listicle'
+    const randomKD = Math.floor(Math.random() * 7) + 2 // 2-8
+    const randomVolume = Math.floor(Math.random() * 500) + 50 // 50-550
+
+    // Create a title from the prompt (simplified - in real app, AI would generate this)
+    const baseTitle = data.prompt.length > 80 
+      ? data.prompt.substring(0, 77) + '...' 
+      : data.prompt
+
+    // Create content for each locale
+    const newContentItems: ContentItem[] = data.locales.map((locale, index) => {
+      const isMultiLocale = data.locales.length > 1
+      const title = isMultiLocale 
+        ? `[${localeNames[locale] || locale}] ${baseTitle}`
+        : baseTitle
+
+      return {
+        id: `content-${Date.now()}-${locale}`,
+        title,
+        type: contentType,
+        status: 'draft' as const,
+        scheduledDate: data.scheduledDate,
+        createdAt: new Date(),
+        updatedAt: new Date(Date.now() + index), // Ensure unique timestamps for ordering
+        keywordDifficulty: randomKD,
+        searchVolume: randomVolume,
+      }
+    })
+
+    setContent(prev => [...prev, ...newContentItems])
+    
+    if (data.locales.length > 1) {
+      toast.success(`Created ${data.locales.length} language variants!`)
+    } else {
+      toast.success('Content created and scheduled!')
+    }
   }
 
   // Update content scheduled date (for drag and drop)
@@ -575,7 +651,7 @@ export default function ContentListPage() {
               size="sm"
               variant="ghost"
               className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground"
-              onClick={() => toast.info('Create content coming soon')}
+              onClick={() => openCreateContent()}
             >
               <Plus className="h-3.5 w-3.5 mr-1.5" />
               Create
@@ -728,6 +804,7 @@ export default function ContentListPage() {
                 onDeleteContent={handleOpenDelete}
                 onAddInstructions={handleOpenInstructions}
                 onChangeTopic={handleOpenChangeTopic}
+                onAddContent={(date) => openCreateContent({ scheduledDate: date })}
               />
             )}
             {viewOptions.viewType === 'calendar' && calendarPeriod === 'week' && (
@@ -739,6 +816,7 @@ export default function ContentListPage() {
                 onDeleteContent={handleOpenDelete}
                 onAddInstructions={handleOpenInstructions}
                 onChangeTopic={handleOpenChangeTopic}
+                onAddContent={(date) => openCreateContent({ scheduledDate: date })}
               />
             )}
             {viewOptions.viewType === 'calendar' && calendarPeriod === 'day' && (
@@ -750,6 +828,7 @@ export default function ContentListPage() {
                 onDeleteContent={handleOpenDelete}
                 onAddInstructions={handleOpenInstructions}
                 onChangeTopic={handleOpenChangeTopic}
+                onAddContent={() => openCreateContent({ scheduledDate: currentDate })}
               />
             )}
             {viewOptions.viewType === 'card' && (
@@ -835,6 +914,14 @@ export default function ContentListPage() {
         currentDate={currentDate}
         onImport={handleImportArticles}
       />
+
+      {/* Create Content Modal */}
+      <ContentQuickCreateModal
+        open={isCreateContentOpen}
+        onClose={() => setIsCreateContentOpen(false)}
+        context={createContentContext}
+        onContentCreated={handleContentCreated}
+      />
     </div>
   )
 }
@@ -851,18 +938,15 @@ interface MonthCalendarViewProps {
   onDeleteContent: (contentId: string) => void
   onAddInstructions: (contentId: string) => void
   onChangeTopic: (contentId: string) => void
+  onAddContent: (date: Date) => void
 }
 
-function MonthCalendarView({ days, currentDate, getContentForDate, projectId, onContentDateChange, onDeleteContent, onAddInstructions, onChangeTopic }: MonthCalendarViewProps) {
+function MonthCalendarView({ days, currentDate, getContentForDate, projectId, onContentDateChange, onDeleteContent, onAddInstructions, onChangeTopic, onAddContent }: MonthCalendarViewProps) {
   const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
   const today = new Date()
   const [hoveredDay, setHoveredDay] = useState<number | null>(null)
   const [draggedContentId, setDraggedContentId] = useState<string | null>(null)
   const [dropTargetDay, setDropTargetDay] = useState<number | null>(null)
-
-  const handleAddContent = (date: Date) => {
-    toast.info(`Create content for ${formatDate(date)} coming soon`)
-  }
 
   const handleDragStart = (contentId: string) => {
     setDraggedContentId(contentId)
@@ -941,7 +1025,7 @@ function MonthCalendarView({ days, currentDate, getContentForDate, projectId, on
                 {/* Add button on hover */}
                 {isHovered && isCurrentMonth && !draggedContentId && (
                   <button
-                    onClick={() => handleAddContent(day)}
+                    onClick={() => onAddContent(day)}
                     className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
                   >
                     <Plus className="h-3 w-3" />
@@ -1135,17 +1219,14 @@ interface WeekCalendarViewProps {
   onDeleteContent: (contentId: string) => void
   onAddInstructions: (contentId: string) => void
   onChangeTopic: (contentId: string) => void
+  onAddContent: (date: Date) => void
 }
 
-function WeekCalendarView({ days, getContentForDate, projectId, onContentDateChange, onDeleteContent, onAddInstructions, onChangeTopic }: WeekCalendarViewProps) {
+function WeekCalendarView({ days, getContentForDate, projectId, onContentDateChange, onDeleteContent, onAddInstructions, onChangeTopic, onAddContent }: WeekCalendarViewProps) {
   const today = new Date()
   const [hoveredDay, setHoveredDay] = useState<number | null>(null)
   const [draggedContentId, setDraggedContentId] = useState<string | null>(null)
   const [dropTargetDay, setDropTargetDay] = useState<number | null>(null)
-
-  const handleAddContent = (date: Date) => {
-    toast.info(`Create content for ${formatDate(date)} coming soon`)
-  }
 
   const handleDragStart = (contentId: string) => {
     setDraggedContentId(contentId)
@@ -1219,7 +1300,7 @@ function WeekCalendarView({ days, getContentForDate, projectId, onContentDateCha
                 {/* Add button */}
                 {isHovered && !draggedContentId && (
                   <button
-                    onClick={() => handleAddContent(day)}
+                    onClick={() => onAddContent(day)}
                     className="w-full mb-2 p-1.5 rounded-lg border border-dashed border-border hover:border-primary/50 hover:bg-background/50 transition-colors flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                   >
                     <Plus className="h-3 w-3" />
@@ -1270,17 +1351,14 @@ interface DayCalendarViewProps {
   onDeleteContent: (contentId: string) => void
   onAddInstructions: (contentId: string) => void
   onChangeTopic: (contentId: string) => void
+  onAddContent: () => void
 }
 
-function DayCalendarView({ currentDate, content, projectId, onReorderContent, onDeleteContent, onAddInstructions, onChangeTopic }: DayCalendarViewProps) {
+function DayCalendarView({ currentDate, content, projectId, onReorderContent, onDeleteContent, onAddInstructions, onChangeTopic, onAddContent }: DayCalendarViewProps) {
   const today = new Date()
   const isToday = isSameDay(currentDate, today)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null)
-
-  const handleAddContent = () => {
-    toast.info(`Create content for ${formatDate(currentDate)} coming soon`)
-  }
 
   const handleDragStart = (index: number) => {
     setDraggedIndex(index)
@@ -1334,7 +1412,7 @@ function DayCalendarView({ currentDate, content, projectId, onReorderContent, on
 
       {/* Add content button */}
       <button
-        onClick={handleAddContent}
+        onClick={onAddContent}
         className="w-full mb-4 p-3 rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/30 transition-colors flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
       >
         <Plus className="h-4 w-4" />

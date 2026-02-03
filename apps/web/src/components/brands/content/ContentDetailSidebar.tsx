@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from '@workspace/ui/components/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
 import { 
@@ -13,12 +13,25 @@ import {
   ChevronUp,
   CheckCircle2,
   Send,
-  HelpCircle
+  HelpCircle,
+  Sparkles,
+  Upload,
+  Trash2,
+  Loader2
 } from 'lucide-react'
 import { cn } from '@workspace/ui/lib/utils'
 import { StatRow } from '@/components/brands/StatRow'
 import { PublishModal } from '@/components/brands/content/PublishModal'
+import { toast } from 'sonner'
 import type { ContentData } from '@/app/(authenicated)/dashboard/brands/[id]/content/[contentId]/_mockData'
+
+// Sample AI-generated images (placeholders) - 16:9 aspect ratio
+const AI_GENERATED_IMAGES = [
+  'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=675&fit=crop',
+  'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=675&fit=crop',
+  'https://images.unsplash.com/photo-1555255707-c07966088b7b?w=1200&h=675&fit=crop',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=675&fit=crop',
+]
 
 type ContentDetailSidebarProps = {
   content: ContentData
@@ -57,6 +70,11 @@ type SlugCardProps = {
 
 type MetaDescriptionCardProps = {
   metaDescription: string
+}
+
+type FeaturedImageCardProps = {
+  featuredImage: string | null
+  onImageChange: (image: string | null) => void
 }
 
 const getScoreColor = (score: number) => {
@@ -318,12 +336,135 @@ function MetaDescriptionCard({ metaDescription }: MetaDescriptionCardProps) {
   )
 }
 
+function FeaturedImageCard({ featuredImage, onImageChange }: FeaturedImageCardProps) {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleGenerateImage = async () => {
+    setIsGenerating(true)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    const randomImage = AI_GENERATED_IMAGES[Math.floor(Math.random() * AI_GENERATED_IMAGES.length)] as string
+    onImageChange(randomImage)
+    setIsGenerating(false)
+    toast.success('Image generated')
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file')
+        return
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image must be less than 5MB')
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        onImageChange(event.target?.result as string)
+        toast.success('Image uploaded')
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    onImageChange(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  return (
+    <div>
+      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.16em] mb-2">
+        Featured Image
+      </div>
+      <p className="text-xs text-muted-foreground mb-2">1200×675px (16:9 aspect ratio)</p>
+      
+      {featuredImage ? (
+        <div className="relative group aspect-video w-full rounded-2xl overflow-hidden border border-border/60 shadow-sm">
+          <img 
+            src={featuredImage} 
+            alt="Featured" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleGenerateImage}
+              disabled={isGenerating}
+              className="h-7 text-xs"
+            >
+              {isGenerating ? (
+                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              ) : (
+                <Sparkles className="h-3 w-3 mr-1" />
+              )}
+              Regenerate
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              className="h-7 text-xs"
+            >
+              <Upload className="h-3 w-3 mr-1" />
+              Replace
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleRemoveImage}
+              className="h-7 text-xs px-2"
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex gap-2 aspect-video w-full">
+          <button
+            onClick={handleGenerateImage}
+            disabled={isGenerating}
+            className="flex-1 flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border hover:border-primary/50 hover:bg-muted/50 transition-colors"
+          >
+            {isGenerating ? (
+              <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
+            ) : (
+              <Sparkles className="h-5 w-5 text-muted-foreground" />
+            )}
+            <span className="text-xs text-muted-foreground">Generate with AI</span>
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border hover:border-primary/50 hover:bg-muted/50 transition-colors"
+          >
+            <Upload className="h-5 w-5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Upload image</span>
+          </button>
+        </div>
+      )}
+      
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className="hidden"
+      />
+    </div>
+  )
+}
+
 function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
   return (
     <>
-      <div className="sticky bottom-0 border-t border-border/60 bg-background/95 p-4 backdrop-blur">
+      <div className="shrink-0 border-t border-border/60 bg-background p-4">
         <div className="space-y-2">
           <Button 
             className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" 
@@ -348,34 +489,41 @@ function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
 
 export function ContentDetailSidebar({ content, brandId }: ContentDetailSidebarProps) {
   const [showScoreFactors, setShowScoreFactors] = useState(false)
+  const [featuredImage, setFeaturedImage] = useState<string | null>((content as { featuredImage?: string | null }).featuredImage ?? null)
 
   return (
-    <aside className="h-full border-l border-border bg-muted/20">
-      <div className="flex h-full flex-col">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <ArticleScoreCard
-            score={content.articleScore}
-            showScoreFactors={showScoreFactors}
-            onToggleScoreFactors={() => setShowScoreFactors(!showScoreFactors)}
-          />
-          <OptimizationSuggestionsCard
-            isOptimized={content.isOptimized}
-            optimizationMessage={content.optimizationMessage}
-          />
-          <ArticleDataCard
-            targetKeyword={content.targetKeyword}
-            searchVolume={content.searchVolume}
-            difficulty={content.difficulty}
-            wordCount={content.wordCount}
-            keywordCount={content.keywordCount}
-            imageCount={content.imageCount}
-            internalLinks={content.internalLinks}
-            externalLinks={content.externalLinks}
-          />
-          <SlugCard slug={content.slug} />
-          <MetaDescriptionCard metaDescription={content.metaDescription} />
-        </div>
+    <aside className="relative h-full border-l border-border bg-muted/20">
+      {/* Scrollable content area - takes full height minus footer */}
+      <div className="absolute inset-0 bottom-[73px] overflow-y-auto p-4 space-y-4">
+        <ArticleScoreCard
+          score={content.articleScore}
+          showScoreFactors={showScoreFactors}
+          onToggleScoreFactors={() => setShowScoreFactors(!showScoreFactors)}
+        />
+        <OptimizationSuggestionsCard
+          isOptimized={content.isOptimized}
+          optimizationMessage={content.optimizationMessage}
+        />
+        <ArticleDataCard
+          targetKeyword={content.targetKeyword}
+          searchVolume={content.searchVolume}
+          difficulty={content.difficulty}
+          wordCount={content.wordCount}
+          keywordCount={content.keywordCount}
+          imageCount={content.imageCount}
+          internalLinks={content.internalLinks}
+          externalLinks={content.externalLinks}
+        />
+        <SlugCard slug={content.slug} />
+        <MetaDescriptionCard metaDescription={content.metaDescription} />
+        <FeaturedImageCard 
+          featuredImage={featuredImage} 
+          onImageChange={setFeaturedImage} 
+        />
+      </div>
 
+      {/* Fixed footer */}
+      <div className="absolute bottom-0 left-0 right-0">
         <ContentFooterActions brandId={brandId} />
       </div>
     </aside>

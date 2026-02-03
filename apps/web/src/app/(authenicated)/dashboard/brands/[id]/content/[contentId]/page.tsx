@@ -49,7 +49,7 @@ export default function ContentDetailPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border h-[82px]">
         <div className="flex items-center gap-3">
@@ -114,7 +114,7 @@ export default function ContentDetailPage() {
       />
 
       {/* Content with Sidebar */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
+      <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
         {/* Main Content Panel - 70% */}
         <ResizablePanel defaultSize={70} minSize={50}>
           <div className="h-full overflow-auto">
@@ -127,7 +127,9 @@ export default function ContentDetailPage() {
 
         {/* Sidebar Panel - 30% */}
         <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
-          <ContentDetailSidebar content={content} brandId={projectId} />
+          <div className="h-full">
+            <ContentDetailSidebar content={content} brandId={projectId} />
+          </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

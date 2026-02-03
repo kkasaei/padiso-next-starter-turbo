@@ -23,6 +23,7 @@ export interface ContentData {
   externalLinks: number
   slug: string
   metaDescription: string
+  featuredImage?: string | null
 }
 
 export const mockContentData: Record<string, ContentData> = {
@@ -49,6 +50,7 @@ export const mockContentData: Record<string, ContentData> = {
     externalLinks: 10,
     slug: 'complete-guide-ai-visibility-chatgpt-perplexity-gemini',
     metaDescription: 'Learn how to improve your brand\'s visibility in AI-powered search engines like ChatGPT, Perplexity, and Google Gemini. Complete guide with actionable strategies.',
+    featuredImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=675&fit=crop',
     content: `
 ## Introduction
 
