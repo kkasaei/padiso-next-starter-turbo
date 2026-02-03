@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useOrganization, useUser } from "@clerk/nextjs"
-import { toast } from "sonner"
 import type { Brand } from "@workspace/db/schema"
 import { BrandHeader } from "./BrandHeaderAlt"
 import { BrandCardsView } from "./BrandCardsView"
@@ -10,17 +8,25 @@ import { BrandTableView } from "./BrandTableView"
 import { BrandWizard } from "./brand-wizard/BrandWizard"
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from "@workspace/common/lib"
 import { useBrands } from "@/hooks/use-brands"
+import { useBrandLimit } from "@/hooks/use-billing-guard"
+import { UpgradePlanModal } from "@/components/shared/UpgradePlanModal"
 
 export function BrandsListPage() {
   const { data: brandsData = [], isLoading } = useBrands()
+  const { canCreateBrand, currentBrands, maxBrands, hasReachedLimit } = useBrandLimit()
   
   // Cast to proper Brand type (tRPC serializes dates as strings)
   const brands = brandsData as unknown as Brand[]
 
   const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
   const [isWizardOpen, setIsWizardOpen] = useState(false)
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
 
   const openWizard = () => {
+    if (!canCreateBrand) {
+      setIsUpgradeModalOpen(true)
+      return
+    }
     setIsWizardOpen(true)
   }
 
@@ -64,6 +70,8 @@ export function BrandsListPage() {
         viewOptions={viewOptions}
         onViewOptionsChange={setViewOptions}
         onAddBrand={openWizard}
+        currentBrands={currentBrands}
+        maxBrands={maxBrands}
       />
       {viewOptions.viewType === "list" && (
         <BrandCardsView 
@@ -83,6 +91,13 @@ export function BrandsListPage() {
           onClose={closeWizard}
         />
       )}
+      <UpgradePlanModal
+        open={isUpgradeModalOpen}
+        onOpenChange={setIsUpgradeModalOpen}
+        resourceType="brand"
+        current={currentBrands}
+        limit={maxBrands}
+      />
     </div>
   )
 }

@@ -17,3 +17,7 @@ export * from '@workspace/ui/components/quick-create-modal-layout';
 
 // Web-specific components that remain here
 export * from '../brands/ViewOptionsPopover';
+
+// Billing guard components
+export * from './BillingLimitBanner';
+export * from './UpgradePlanModal';

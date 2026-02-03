@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { workspaces } from "@workspace/db/schema";
+import { eq, count } from "drizzle-orm";
+import { workspaces, brands } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 import {
   createBillingPortalSession,
@@ -87,6 +87,8 @@ export const subscriptionsRouter = router({
 
   /**
    * Get usage limits and current usage for a workspace
+   * Always uses limits.json as source of truth for limits
+   * Counts actual resources from database for usage
    */
   getUsage: publicProcedure
     .input(z.object({ workspaceId: z.string().uuid() }))
@@ -94,15 +96,10 @@ export const subscriptionsRouter = router({
       const [workspace] = await ctx.db
         .select({
           planId: workspaces.planId,
-          // Usage counts
-          usageBrandsCount: workspaces.usageBrandsCount,
+          // Usage counts (for non-countable resources)
           usageApiCallsCount: workspaces.usageApiCallsCount,
           usageAiCreditsUsed: workspaces.usageAiCreditsUsed,
           usageResetAt: workspaces.usageResetAt,
-          // Limits
-          limitBrands: workspaces.limitBrands,
-          limitApiCallsPerMonth: workspaces.limitApiCallsPerMonth,
-          limitAiCreditsPerMonth: workspaces.limitAiCreditsPerMonth,
         })
         .from(workspaces)
         .where(eq(workspaces.id, input.workspaceId))
@@ -112,21 +109,27 @@ export const subscriptionsRouter = router({
         throw new Error("Workspace not found");
       }
 
+      // Count actual brands from the brands table
+      const [brandCount] = await ctx.db
+        .select({ count: count() })
+        .from(brands)
+        .where(eq(brands.workspaceId, input.workspaceId));
+
       const planId = (workspace.planId as PlanId) || "growth";
       const planLimits = PLAN_LIMITS[planId] || PLAN_LIMITS.growth;
 
       return {
         planId,
         usage: {
-          brands: workspace.usageBrandsCount ?? 0,
+          brands: brandCount?.count ?? 0,
           apiCalls: workspace.usageApiCallsCount ?? 0,
           aiCredits: workspace.usageAiCreditsUsed ?? 0,
         },
         limits: {
-          brands: workspace.limitBrands ?? planLimits.maxBrands,
-          apiCalls: workspace.limitApiCallsPerMonth ?? planLimits.maxApiCalls,
-          aiCredits:
-            workspace.limitAiCreditsPerMonth ?? planLimits.maxInsightsQueries,
+          // Always use limits.json as source of truth
+          brands: planLimits.brands.max,
+          apiCalls: planLimits.api.maxCalls,
+          aiCredits: planLimits.visibility.maxInsightsQueries,
         },
         usageResetAt: workspace.usageResetAt,
       };
@@ -169,6 +172,7 @@ export const subscriptionsRouter = router({
 
   /**
    * Check if a specific limit has been reached
+   * Counts actual resources and compares against limits.json
    */
   checkLimit: publicProcedure
     .input(
@@ -178,15 +182,10 @@ export const subscriptionsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
+      // Get workspace plan
       const [workspace] = await ctx.db
         .select({
           planId: workspaces.planId,
-          usageBrandsCount: workspaces.usageBrandsCount,
-          usageApiCallsCount: workspaces.usageApiCallsCount,
-          usageAiCreditsUsed: workspaces.usageAiCreditsUsed,
-          limitBrands: workspaces.limitBrands,
-          limitApiCallsPerMonth: workspaces.limitApiCallsPerMonth,
-          limitAiCreditsPerMonth: workspaces.limitAiCreditsPerMonth,
         })
         .from(workspaces)
         .where(eq(workspaces.id, input.workspaceId))
@@ -204,17 +203,23 @@ export const subscriptionsRouter = router({
 
       switch (input.limitType) {
         case "brands":
-          current = workspace.usageBrandsCount ?? 0;
-          limit = workspace.limitBrands ?? planLimits.maxBrands;
+          // Count actual brands from the brands table
+          const [brandCount] = await ctx.db
+            .select({ count: count() })
+            .from(brands)
+            .where(eq(brands.workspaceId, input.workspaceId));
+          current = brandCount?.count ?? 0;
+          limit = planLimits.brands.max;
           break;
         case "apiCalls":
-          current = workspace.usageApiCallsCount ?? 0;
-          limit = workspace.limitApiCallsPerMonth ?? planLimits.maxApiCalls;
+          // TODO: Count from API calls table when implemented
+          current = 0;
+          limit = planLimits.api.maxCalls;
           break;
         case "aiCredits":
-          current = workspace.usageAiCreditsUsed ?? 0;
-          limit =
-            workspace.limitAiCreditsPerMonth ?? planLimits.maxInsightsQueries;
+          // TODO: Count from AI usage table when implemented
+          current = 0;
+          limit = planLimits.visibility.maxInsightsQueries;
           break;
       }
 
@@ -314,11 +319,11 @@ export const subscriptionsRouter = router({
             (firstItem.current_period_end ?? 0) * 1000
           ),
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          limitBrands: limits.maxBrands === -1 ? null : limits.maxBrands,
+          limitBrands: limits.brands.max === -1 ? null : limits.brands.max,
           limitApiCallsPerMonth:
-            limits.maxApiCalls === -1 ? null : limits.maxApiCalls,
+            limits.api.maxCalls === -1 ? null : limits.api.maxCalls,
           limitAiCreditsPerMonth:
-            limits.maxInsightsQueries === -1 ? null : limits.maxInsightsQueries,
+            limits.visibility.maxInsightsQueries === -1 ? null : limits.visibility.maxInsightsQueries,
           updatedAt: new Date(),
         })
         .where(eq(workspaces.id, input.workspaceId))

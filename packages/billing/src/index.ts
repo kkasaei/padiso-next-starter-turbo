@@ -18,7 +18,32 @@ export {
   getPlanIdFromPriceId,
   getIntervalFromPriceId,
 } from './plans';
-export type { PlanFeature, PlanId } from './plans';
+export type {
+  PlanFeature,
+  PlanId,
+  PlanLimits,
+  RefreshRate,
+  // Functional area types
+  WorkspacesLimits,
+  TeamLimits,
+  BrandsLimits,
+  PromptsLimits,
+  CompetitorsLimits,
+  KeywordsLimits,
+  IntegrationsLimits,
+  ExtensionsLimits,
+  TasksLimits,
+  VisibilityLimits,
+  ContentLimits,
+  MediaLimits,
+  TechnicalAuditLimits,
+  BacklinksLimits,
+  RedditLimits,
+  StorageLimits,
+  WebhooksLimits,
+  HistoryLimits,
+  ApiLimits,
+} from './plans';
 
 // Re-export types only from stripe (types are client-safe)
 export type {

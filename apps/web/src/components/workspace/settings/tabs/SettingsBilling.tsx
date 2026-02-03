@@ -1,20 +1,112 @@
 "use client";
 
 import { useOrganization } from "@clerk/nextjs";
+import { Check, ChevronRight, Zap, HelpCircle, CreditCard, FileText, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+
 import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { Card, CardContent } from "@workspace/ui/components/card";
+import { Badge } from "@workspace/ui/components/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@workspace/ui/components/accordion";
 import { Skeleton } from "@workspace/ui/components/skeleton";
-import { CreditCard, AlertCircle, FileText, ArrowUpRight } from "lucide-react";
-import { useSubscriptionStatus, useBillingPortal } from "@/hooks/use-subscription";
+import { cn } from "@workspace/ui/lib/utils";
+import { APP_NAME } from "@workspace/common/constants";
+import { routes } from "@workspace/common";
+
+import { useSubscriptionStatus, useSubscriptionUsage, useBillingPortal } from "@/hooks/use-subscription";
+
+// Plan data
+const PLANS = [
+  {
+    id: "growth",
+    name: "Growth Engine",
+    tagline: "For Smart Entrepreneurs",
+    price: "$99",
+    interval: "month",
+    yearlyPrice: "$79/mo billed annually",
+    recommended: true,
+    trialDays: 7,
+  },
+  {
+    id: "scale",
+    name: "Scale Partner",
+    tagline: "For Agencies & Enterprises",
+    price: "Custom",
+    isEnterprise: true,
+    href: routes.marketing.Contact,
+  },
+];
+
+// Features for the detailed comparison
+const PLAN_FEATURES = [
+  { category: "Brands & Tracking", features: [
+    { name: "Brands", growth: "2", scale: "Unlimited" },
+    { name: "Prompts tracked", growth: "50 (25/brand)", scale: "Unlimited" },
+    { name: "Competitors", growth: "50 (10/brand)", scale: "Unlimited" },
+    { name: "Keywords", growth: "200 (50/brand)", scale: "Unlimited" },
+  ]},
+  { category: "Content & Media", features: [
+    { name: "Content pieces/month", growth: "180 (30/brand)", scale: "Unlimited" },
+    { name: "AI images/month", growth: "10", scale: "Unlimited" },
+    { name: "Audio minutes/month", growth: "30", scale: "Unlimited" },
+    { name: "Content refresh", growth: "Weekly", scale: "Daily" },
+  ]},
+  { category: "AI Visibility", features: [
+    { name: "Visibility queries", growth: "30", scale: "Unlimited" },
+    { name: "Visibility refresh", growth: "Weekly", scale: "Daily" },
+    { name: "Technical audit pages", growth: "25", scale: "Unlimited" },
+  ]},
+  { category: "Reddit & Social", features: [
+    { name: "Reddit keywords/brand", growth: "5", scale: "Unlimited" },
+    { name: "Reddit scans/brand", growth: "30", scale: "Unlimited" },
+    { name: "Total Reddit scans", growth: "60", scale: "Unlimited" },
+  ]},
+  { category: "Team & Integrations", features: [
+    { name: "Team members", growth: "2", scale: "Unlimited" },
+    { name: "Integrations", growth: "5", scale: "Unlimited" },
+    { name: "Webhooks/brand", growth: "1", scale: "Unlimited" },
+    { name: "API calls/month", growth: "1,000", scale: "Unlimited" },
+  ]},
+  { category: "Storage & History", features: [
+    { name: "Storage/brand", growth: "1 GB", scale: "Unlimited" },
+    { name: "History retention", growth: "16 months", scale: "Unlimited" },
+    { name: "Extensions", growth: "Unlimited", scale: "Unlimited" },
+    { name: "Tasks", growth: "Unlimited", scale: "Unlimited" },
+  ]},
+];
+
+// FAQ data
+const FAQ_DATA = [
+  {
+    question: `What pricing plans does ${APP_NAME} offer?`,
+    answer: `We offer two plans: Growth Engine ($99/mo) for growing businesses with all essential features, and Scale Partner (custom pricing) for agencies and enterprises with unlimited resources and dedicated support.`
+  },
+  {
+    question: "What's included in the free trial?",
+    answer: "The 7-day free trial gives you full access to all Growth Engine features. No credit card required to start. Your subscription begins automatically after the trial unless you cancel."
+  },
+  {
+    question: "Can I upgrade or downgrade at any time?",
+    answer: "Yes! You can upgrade to Scale Partner anytime. Changes take effect immediately, and we'll prorate your billing accordingly."
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover) through Stripe. Scale Partner customers can request invoice-based billing."
+  },
+  {
+    question: "Can I cancel anytime?",
+    answer: "Yes! No long-term contracts. Cancel anytime from your account settings. You'll keep access until the end of your current billing cycle."
+  },
+  {
+    question: "Do you offer annual billing?",
+    answer: "Yes! Save 20% with annual billing on Growth Engine ($79/mo billed annually). Contact us for annual pricing on Scale Partner."
+  },
+];
 
 function formatDate(date: Date | string | null | undefined): string {
   if (!date) return "—";
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
 function getDaysRemaining(endDate: Date | string | null | undefined): number {
@@ -25,20 +117,56 @@ function getDaysRemaining(endDate: Date | string | null | undefined): number {
   return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 }
 
+// Simple usage row
+function UsageRow({ 
+  label, 
+  used, 
+  limit, 
+}: { 
+  label: string; 
+  used: number; 
+  limit: number; 
+}) {
+  const isUnlimited = limit === -1;
+  const percentage = isUnlimited ? 0 : Math.min((used / limit) * 100, 100);
+  const isNearLimit = percentage >= 80;
+  const isAtLimit = percentage >= 100;
+
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-3">
+        {!isUnlimited && (
+          <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
+            <div 
+              className={cn(
+                "h-full rounded-full transition-all",
+                isAtLimit ? "bg-destructive" : isNearLimit ? "bg-amber-500" : "bg-primary"
+              )}
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+        )}
+        <span className={cn(
+          "text-sm font-medium tabular-nums",
+          isAtLimit && "text-destructive",
+          isNearLimit && !isAtLimit && "text-amber-500"
+        )}>
+          {isUnlimited ? `${used}` : `${used}/${limit}`}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function SettingsBilling() {
   const { organization } = useOrganization();
-  
-  // Fetch subscription status
-  const { data: subscription, isLoading } = useSubscriptionStatus(
-    organization?.id
-  );
-  
-  // Billing portal mutation
+  const { data: subscription, isLoading } = useSubscriptionStatus(organization?.id);
+  const { data: usage } = useSubscriptionUsage(subscription?.id);
   const billingPortal = useBillingPortal();
 
   const handleManagePlan = async () => {
     if (!subscription?.id) return;
-    
     try {
       const { url } = await billingPortal.mutateAsync({
         workspaceId: subscription.id,
@@ -50,201 +178,274 @@ export function SettingsBilling() {
     }
   };
 
-  const handleCancelPlan = async () => {
-    // Open Stripe portal to cancel section
-    await handleManagePlan();
-  };
+  const planName = subscription?.planName || subscription?.plan?.name || "Growth";
+  const isTrialing = subscription?.isTrialing;
+  const trialEndsAt = subscription?.trialEndsAt;
+  const trialDaysRemaining = getDaysRemaining(trialEndsAt);
+  const cancelAtPeriodEnd = subscription?.cancelAtPeriodEnd;
 
-  // No subscription state OR no plan selected
-  const hasNoPlan = !subscription || !subscription.planId || !subscription.stripeSubscriptionId;
-  
-  if (!isLoading && !subscription) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">No Active Subscription</CardTitle>
-            </div>
-            <CardDescription>
-              You don&apos;t have an active subscription. Choose a plan to get started.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => window.location.href = "/workspace-setup"}>
-              Choose a Plan
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Workspace exists but no plan/subscription set up yet
-  if (!isLoading && hasNoPlan) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-amber-500" />
-              <CardTitle className="text-lg">No Plan Selected</CardTitle>
-            </div>
-            <CardDescription>
-              Your workspace is set up, but you haven&apos;t selected a plan yet. Choose a plan to unlock all features.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">
-                Start your free trial today and get access to:
-              </p>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• AI visibility tracking</li>
-                <li>• Competitor monitoring</li>
-                <li>• Content optimization</li>
-                <li>• Weekly reports</li>
-              </ul>
-            </div>
-            <Button onClick={() => window.location.href = "/workspace-setup?step=plan"} className="w-full">
-              Start Free Trial
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Loading skeleton
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader className="pb-4">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-64 mt-2" />
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center justify-between py-3 border-b border-border">
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-3 w-24" />
+  return (
+    <div className="space-y-10">
+      
+      {/* Section 1: Current Subscription Status */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">Current Subscription</h2>
+          <p className="text-sm text-muted-foreground">Manage your plan and billing details</p>
+        </div>
+        
+        {isLoading ? (
+          <Card>
+            <CardContent className="py-6">
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-10 w-32" />
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="py-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Zap className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-lg">{planName}</p>
+                      {isTrialing && (
+                        <Badge variant="secondary" className="text-xs">
+                          Trial · {trialDaysRemaining} days left
+                        </Badge>
+                      )}
+                      {cancelAtPeriodEnd && (
+                        <Badge variant="outline" className="text-xs border-destructive text-destructive">
+                          Canceling
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {isTrialing 
+                        ? `Trial ends ${formatDate(trialEndsAt)}`
+                        : `Renews ${formatDate(subscription?.subscriptionPeriodEndsAt)}`
+                      }
+                    </p>
+                  </div>
                 </div>
-                <Skeleton className="h-8 w-24" />
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleManagePlan}
+                    disabled={billingPortal.isPending || !subscription?.stripeCustomerId}
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Invoices
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleManagePlan}
+                    disabled={billingPortal.isPending || !subscription?.stripeCustomerId}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Manage
+                    <ArrowUpRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Usage Section - Accordion */}
+              <div className="mt-6 pt-5 border-t border-border">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="usage" className="border-b-0">
+                    <AccordionTrigger className="py-0 hover:no-underline">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Current Usage
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-0 pt-4">
+                      <div className="space-y-3">
+                        <UsageRow 
+                          label="Brands" 
+                          used={usage?.usage.brands ?? 0} 
+                          limit={usage?.limits.brands ?? 2} 
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </section>
+
+      {/* Section 2: Simple Plan Cards */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">Available Plans</h2>
+          <p className="text-sm text-muted-foreground">Choose the plan that fits your needs</p>
+        </div>
+        
+        <div className="grid gap-4 md:grid-cols-2">
+          {PLANS.map((plan) => {
+            const isOnGrowth = subscription?.planId?.includes("growth");
+            const isCurrent = plan.id === "growth" && isOnGrowth;
+            // Recommend Scale if user is on Growth, otherwise recommend Growth
+            const isRecommended = isOnGrowth ? plan.id === "scale" : plan.id === "growth";
+            
+            return (
+              <Card 
+                key={plan.id} 
+                className={cn(
+                  "relative",
+                  isRecommended && "border-primary"
+                )}
+              >
+                {isRecommended && (
+                  <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                    Recommended
+                  </Badge>
+                )}
+                <CardContent className="pt-6 pb-4">
+                  <div className="space-y-4">
+                    {/* Plan Header */}
+                    <div className="text-center space-y-1">
+                      <Badge variant="outline" className="text-xs font-medium uppercase tracking-wider">
+                        {plan.tagline}
+                      </Badge>
+                      <h3 className={cn(
+                        "text-xl font-semibold",
+                        isRecommended && "text-primary"
+                      )}>
+                        {plan.name}
+                      </h3>
+                    </div>
+                    
+                    {/* Price */}
+                    <div className="text-center py-2">
+                      <span className="text-4xl font-bold">{plan.price}</span>
+                      {plan.interval && (
+                        <span className="text-muted-foreground">/{plan.interval}</span>
+                      )}
+                      {plan.yearlyPrice && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {plan.yearlyPrice}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* CTA */}
+                    {plan.isEnterprise ? (
+                      <Button asChild variant="outline" className="w-full">
+                        <Link href={plan.href || "#"}>
+                          Talk to Us
+                          <ChevronRight className="ml-1 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    ) : isCurrent ? (
+                      <Button variant="outline" className="w-full" disabled>
+                        Current Plan
+                      </Button>
+                    ) : (
+                      <Button 
+                        className="w-full" 
+                        onClick={handleManagePlan}
+                        disabled={billingPortal.isPending}
+                      >
+                        {isTrialing ? "Upgrade Now" : `Start ${plan.trialDays}-Day Trial`}
+                        <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Section 3: Plan Details Comparison */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">Plan Details</h2>
+          <p className="text-sm text-muted-foreground">Compare features across plans</p>
+        </div>
+        
+        <Card>
+          <CardContent className="p-0">
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-4 px-4 py-3 border-b border-border bg-muted/30">
+              <div className="text-sm font-medium">Feature</div>
+              <div className="text-sm font-medium text-center">Growth Engine</div>
+              <div className="text-sm font-medium text-center">Scale Partner</div>
+            </div>
+            
+            {/* Feature Groups */}
+            {PLAN_FEATURES.map((group) => (
+              <div key={group.category}>
+                {/* Category Header */}
+                <div className="px-4 py-2 bg-muted/50 border-b border-border">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {group.category}
+                  </span>
+                </div>
+                
+                {/* Features */}
+                {group.features.map((feature, featureIndex) => (
+                  <div 
+                    key={feature.name}
+                    className={cn(
+                      "grid grid-cols-3 gap-4 px-4 py-2.5 text-sm",
+                      featureIndex !== group.features.length - 1 && "border-b border-border/50"
+                    )}
+                  >
+                    <div className="text-muted-foreground">{feature.name}</div>
+                    <div className="text-center font-medium">{feature.growth}</div>
+                    <div className="text-center font-medium text-primary">{feature.scale}</div>
+                  </div>
+                ))}
               </div>
             ))}
           </CardContent>
         </Card>
-      </div>
-    );
-  }
+      </section>
 
-  // Calculate billing info from subscription
-  const planName = subscription?.planName || subscription?.plan?.name || "Growth";
-  const interval = subscription?.billingInterval || "month";
-  const price = subscription?.plan?.prices?.[interval as "month" | "year"]?.amount || 0;
-  const daysRemaining = getDaysRemaining(subscription?.subscriptionPeriodEndsAt);
-  const nextBillingDate = formatDate(subscription?.subscriptionPeriodEndsAt);
-  const trialEndsAt = subscription?.trialEndsAt;
-  const trialEndsAtFormatted = formatDate(trialEndsAt);
-  const trialDaysRemaining = getDaysRemaining(trialEndsAt);
-  const isTrialing = subscription?.isTrialing || (trialEndsAt && trialDaysRemaining > 0);
-  const cancelAtPeriodEnd = subscription?.cancelAtPeriodEnd;
-
-  return (
-    <div className="space-y-6">
-      {/* Subscription Card */}
-      <Card>
-        <CardHeader className="pb-4">
+      {/* Section 4: FAQ */}
+      <section className="space-y-4">
+        <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-muted-foreground" />
-            <CardTitle className="text-lg">Billing & Subscription</CardTitle>
+            <HelpCircle className="h-5 w-5 text-muted-foreground" />
+            <h2 className="text-lg font-semibold">Frequently Asked Questions</h2>
           </div>
-          <CardDescription>Manage your subscription, credits, and payment settings</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Current Plan */}
-          <div className="flex items-center justify-between py-3 border-b border-border">
-            <div>
-              <span className="text-sm font-medium">Current Plan</span>
-              <p className="text-sm text-muted-foreground">
-                {planName} - ${price} USD / {interval}
-                {isTrialing && (
-                  <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                    Trial
-                  </span>
-                )}
-                {cancelAtPeriodEnd && (
-                  <span className="ml-2 text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">
-                    Canceling
-                  </span>
-                )}
-              </p>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleManagePlan}
-              disabled={billingPortal.isPending || !subscription?.stripeCustomerId}
-            >
-              Change Plan
-            </Button>
-          </div>
-
-          {/* Billing Status */}
-          <div className="flex items-center justify-between py-3 border-b border-border">
-            <div>
-              <span className="text-sm font-medium">
-                {isTrialing ? `Trial ends ${trialEndsAtFormatted}` : `Next billing ${nextBillingDate}`}
-              </span>
-              <p className="text-sm text-muted-foreground">
-                {isTrialing 
-                  ? `${trialDaysRemaining} ${trialDaysRemaining === 1 ? "day" : "days"} remaining — your subscription will start automatically`
-                  : `${daysRemaining} days remaining in billing period`
-                }
-              </p>
-            </div>
-          </div>
-
-          {/* Invoices */}
-          <div className="flex items-center justify-between py-3 border-b border-border">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <span className="text-sm font-medium">Invoices</span>
-                <p className="text-sm text-muted-foreground">View and download past invoices</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleManagePlan}
-              disabled={billingPortal.isPending || !subscription?.stripeCustomerId}
-            >
-              View Invoices
-              <ArrowUpRight className="ml-1 h-3 w-3" />
-            </Button>
-          </div>
-
-          {/* Cancel Subscription */}
-          <div className="flex items-center justify-between py-3">
-            <span className="text-sm font-medium text-muted-foreground">
-              {cancelAtPeriodEnd ? "Subscription will cancel at period end" : "Cancel subscription"}
-            </span>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={handleCancelPlan}
-              disabled={billingPortal.isPending || cancelAtPeriodEnd || !subscription?.stripeCustomerId}
-            >
-              {cancelAtPeriodEnd ? "Canceled" : "Cancel"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          <p className="text-sm text-muted-foreground">
+            Have more questions?{" "}
+            <Link href={routes.marketing.Contact} className="underline hover:text-foreground">
+              Contact us
+            </Link>
+          </p>
+        </div>
+        
+        <Card>
+          <CardContent className="py-2">
+            <Accordion type="single" collapsible className="w-full">
+              {FAQ_DATA.map((faq, index) => (
+                <AccordionItem key={index} value={index.toString()}>
+                  <AccordionTrigger className="text-left text-sm hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      </section>
 
     </div>
   );

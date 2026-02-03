@@ -1,44 +1,128 @@
 import { env } from './env';
+import PLAN_LIMITS_JSON from './limits.json';
 
 // Feature type that supports optional badges
 export type PlanFeature = string | { text: string; badge: string };
 
-// Plan limits configuration based on new 2-tier pricing structure
+// Limit types
 // -1 = unlimited, 0 = feature not included
 
-export const PLAN_LIMITS = {
-  growth: {
-    // Count-based limits
-    maxBrands: 5,
-    maxPrompts: 150,
-    maxCompetitors: 10,
-    maxKeywords: 10,
-    maxIntegrations: 5,
-    // Usage-based limits (monthly)
-    maxInsightsQueries: 30,
-    maxSiteAuditPages: 25,
-    maxContentGen: 25,
-    maxImageGen: 10,
-    maxAudioMinutes: 30,
-    maxApiCalls: 1000,
-  },
-  custom: {
-    // Unlimited or custom limits
-    maxBrands: -1,
-    maxPrompts: -1,
-    maxCompetitors: -1,
-    maxKeywords: -1,
-    maxIntegrations: -1,
-    maxInsightsQueries: -1,
-    maxSiteAuditPages: -1,
-    maxContentGen: -1,
-    maxImageGen: -1,
-    maxAudioMinutes: -1,
-    maxApiCalls: -1,
-  },
-} as const;
+export type RefreshRate = 'daily' | 'weekly' | 'monthly';
 
-export type PlanId = keyof typeof PLAN_LIMITS;
+// Functional area limit types
+export type WorkspacesLimits = {
+  max: number;
+};
+
+export type TeamLimits = {
+  maxMembers: number;
+};
+
+export type BrandsLimits = {
+  max: number;
+};
+
+export type PromptsLimits = {
+  maxGlobal: number;
+  maxPerBrand: number;
+};
+
+export type CompetitorsLimits = {
+  maxGlobal: number;
+  maxPerBrand: number;
+};
+
+export type KeywordsLimits = {
+  maxGlobal: number;
+  maxPerBrand: number;
+};
+
+export type IntegrationsLimits = {
+  max: number;
+};
+
+export type ExtensionsLimits = {
+  max: number;
+};
+
+export type TasksLimits = {
+  maxGlobal: number;
+  maxPerBrand: number;
+};
+
+export type VisibilityLimits = {
+  maxInsightsQueries: number;
+  refreshRate: RefreshRate;
+};
+
+export type ContentLimits = {
+  maxGlobal: number;
+  maxPerBrand: number;
+  refreshRate: RefreshRate;
+};
+
+export type MediaLimits = {
+  maxImageGen: number;
+  maxAudioMinutes: number;
+};
+
+export type TechnicalAuditLimits = {
+  maxPages: number;
+};
+
+export type BacklinksLimits = {
+  max: number; // Note: uses separate credit system
+};
+
+export type RedditLimits = {
+  maxKeywordsPerBrand: number;
+  maxScansPerBrand: number;
+  maxScansGlobal: number;
+};
+
+export type StorageLimits = {
+  maxGbPerBrand: number;
+};
+
+export type WebhooksLimits = {
+  maxPerBrand: number;
+};
+
+export type HistoryLimits = {
+  retentionMonths: number;
+};
+
+export type ApiLimits = {
+  maxCalls: number;
+};
+
+export type PlanLimits = {
+  workspaces: WorkspacesLimits;
+  team: TeamLimits;
+  brands: BrandsLimits;
+  prompts: PromptsLimits;
+  competitors: CompetitorsLimits;
+  keywords: KeywordsLimits;
+  integrations: IntegrationsLimits;
+  extensions: ExtensionsLimits;
+  tasks: TasksLimits;
+  visibility: VisibilityLimits;
+  content: ContentLimits;
+  media: MediaLimits;
+  technicalAudit: TechnicalAuditLimits;
+  backlinks: BacklinksLimits;
+  reddit: RedditLimits;
+  storage: StorageLimits;
+  webhooks: WebhooksLimits;
+  history: HistoryLimits;
+  api: ApiLimits;
+};
+
+export type PlanId = 'growth' | 'custom';
+
+// Plan limits configuration based on new 2-tier pricing structure
+// Imported from limits.json for single source of truth
+export const PLAN_LIMITS: Record<PlanId, PlanLimits> = PLAN_LIMITS_JSON;
 
 // Plan pricing configuration - New 2-tier model
 export const PLANS = {

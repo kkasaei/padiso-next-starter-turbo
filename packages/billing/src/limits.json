@@ -1,0 +1,140 @@
+{
+  "growth": {
+    "workspaces": {
+      "max": -1
+    },
+    "team": {
+      "maxMembers": 2
+    },
+    "brands": {
+      "max": 2
+    },
+    "prompts": {
+      "maxGlobal": 50,
+      "maxPerBrand": 25
+    },
+    "competitors": {
+      "maxGlobal": 50,
+      "maxPerBrand": 10
+    },
+    "keywords": {
+      "maxGlobal": 200,
+      "maxPerBrand": 50
+    },
+    "integrations": {
+      "max": 5
+    },
+    "extensions": {
+      "max": -1
+    },
+    "tasks": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1
+    },
+    "visibility": {
+      "maxInsightsQueries": 30,
+      "refreshRate": "weekly"
+    },
+    "content": {
+      "maxGlobal": 180,
+      "maxPerBrand": 30,
+      "refreshRate": "weekly"
+    },
+    "media": {
+      "maxImageGen": 10,
+      "maxAudioMinutes": 30
+    },
+    "technicalAudit": {
+      "maxPages": 25
+    },
+    "backlinks": {
+      "max": -1
+    },
+    "reddit": {
+      "maxKeywordsPerBrand": 5,
+      "maxScansPerBrand": 30,
+      "maxScansGlobal": 60
+    },
+    "storage": {
+      "maxGbPerBrand": 1
+    },
+    "webhooks": {
+      "maxPerBrand": 1
+    },
+    "history": {
+      "retentionMonths": 16
+    },
+    "api": {
+      "maxCalls": 1000
+    }
+  },
+  "custom": {
+    "workspaces": {
+      "max": -1
+    },
+    "team": {
+      "maxMembers": -1
+    },
+    "brands": {
+      "max": -1
+    },
+    "prompts": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1
+    },
+    "competitors": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1
+    },
+    "keywords": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1
+    },
+    "integrations": {
+      "max": -1
+    },
+    "extensions": {
+      "max": -1
+    },
+    "tasks": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1
+    },
+    "visibility": {
+      "maxInsightsQueries": -1,
+      "refreshRate": "daily"
+    },
+    "content": {
+      "maxGlobal": -1,
+      "maxPerBrand": -1,
+      "refreshRate": "daily"
+    },
+    "media": {
+      "maxImageGen": -1,
+      "maxAudioMinutes": -1
+    },
+    "technicalAudit": {
+      "maxPages": -1
+    },
+    "backlinks": {
+      "max": -1
+    },
+    "reddit": {
+      "maxKeywordsPerBrand": -1,
+      "maxScansPerBrand": -1,
+      "maxScansGlobal": -1
+    },
+    "storage": {
+      "maxGbPerBrand": -1
+    },
+    "webhooks": {
+      "maxPerBrand": -1
+    },
+    "history": {
+      "retentionMonths": -1
+    },
+    "api": {
+      "maxCalls": -1
+    }
+  }
+}
