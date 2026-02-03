@@ -12,12 +12,12 @@ import {
 } from "@clerk/nextjs";
 import { Button } from "@workspace/ui/components/button";
 import { Logo } from "@workspace/ui/components/logo";
-import { Loader2, Check, ArrowRight, LogOut } from "lucide-react";
+import { Loader2, Check, ArrowRight, LogOut, ChevronDown } from "lucide-react";
 import { useCreateWorkspace } from "@/hooks/use-workspace";
 import { useSyncSubscription } from "@/hooks/use-subscription";
 import { routes } from "@workspace/common";
 import { cn } from "@workspace/ui/lib/utils";
-import { PLANS, type PlanId } from "@workspace/billing";
+import { PLANS } from "@workspace/billing";
 
 type SetupStep = 1 | 2 | 3 | 4;
 
@@ -30,17 +30,16 @@ const STEPS = [
 
 // Get features from actual PLANS configuration
 const GROWTH_FEATURES = PLANS.growth.features.slice(0, 11) as readonly string[];
-const CUSTOM_FEATURES = PLANS.custom.features.slice(0, 6) as readonly string[];
 
 export function WorkspaceSetup() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [step, setStep] = useState<SetupStep>(1);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(null);
-  const [billingInterval, setBillingInterval] = useState<"month" | "year">("month");
+  const [selectedBilling, setSelectedBilling] = useState<"month" | "year">("year");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [featuresExpanded, setFeaturesExpanded] = useState(false);
   
   const initialOrgIdRef = useRef<string | null | undefined>(undefined);
   const isSettingUpRef = useRef(false);
@@ -131,13 +130,13 @@ export function WorkspaceSetup() {
     }
   }, [organization?.id, step, handleCreateWorkspaceInDB]);
 
-  const handleSelectPlan = (plan: PlanId) => {
-    setSelectedPlan(plan);
+  const handleSelectBilling = (interval: "month" | "year") => {
+    setSelectedBilling(interval);
   };
 
   const handleStartTrial = async () => {
-    if (!selectedPlan || !workspaceId) {
-      setError("Please select a plan to continue.");
+    if (!selectedBilling || !workspaceId) {
+      setError("Please select a billing option to continue.");
       return;
     }
 
@@ -150,8 +149,8 @@ export function WorkspaceSetup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspaceId,
-          planId: selectedPlan,
-          interval: billingInterval, // "month" or "year"
+          planId: "growth",
+          interval: selectedBilling,
         }),
       });
 
@@ -181,15 +180,10 @@ export function WorkspaceSetup() {
 
   // Get pricing from actual PLANS configuration
   const growthPlan = PLANS.growth;
-  const customPlan = PLANS.custom;
   
   const growthMonthlyCost = growthPlan.prices.month.amount;
   const growthYearlyCost = Math.round(growthPlan.prices.year.amount / 12);
   const growthYearlySavings = (growthMonthlyCost - growthYearlyCost) * 12;
-  
-  const customMonthlyCost = customPlan.prices.month.amount;
-  const customYearlyCost = customPlan.prices.year.amount;
-  const customYearlySavings = (customMonthlyCost * 12) - customYearlyCost;
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -298,7 +292,7 @@ export function WorkspaceSetup() {
                   transition={{ duration: 0.2 }}
                 >
                   <h1 className="text-2xl font-semibold text-foreground mb-1">
-                    Select your plan
+                    Select your billing
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
                     Start with a {growthPlan.trialDays}-day free trial. Cancel anytime.
@@ -310,160 +304,132 @@ export function WorkspaceSetup() {
                     </div>
                   )}
 
-                  {/* Billing Toggle */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex items-center p-1 bg-muted rounded-lg">
-                      <button
-                        onClick={() => setBillingInterval("month")}
-                        className={cn(
-                          "px-4 py-2 text-sm font-medium rounded-md transition-colors",
-                          billingInterval === "month"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Monthly
-                      </button>
-                      <button
-                        onClick={() => setBillingInterval("year")}
-                        className={cn(
-                          "px-4 py-2 text-sm font-medium rounded-md transition-colors",
-                          billingInterval === "year"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Yearly
-                      </button>
+                  {/* Plan Header */}
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg font-semibold text-foreground">{growthPlan.name}</span>
+                      {'recommended' in growthPlan && growthPlan.recommended && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+                          Recommended
+                        </span>
+                      )}
                     </div>
-                    {billingInterval === "year" && (
-                      <span className="text-xs text-muted-foreground">
-                        Save up to ${growthYearlySavings}/year
-                      </span>
-                    )}
+                    <p className="text-sm text-muted-foreground">
+                      {growthPlan.description}
+                    </p>
                   </div>
 
-                  <div className="space-y-4 mb-6">
-                    {/* Growth Plan */}
+                  <div className="space-y-3 mb-6">
+                    {/* Monthly Option */}
                     <button
-                      onClick={() => handleSelectPlan("growth")}
+                      onClick={() => handleSelectBilling("month")}
                       className={cn(
-                        "w-full p-5 rounded-xl border text-left transition-colors",
-                        selectedPlan === "growth"
+                        "w-full p-4 rounded-xl border text-left transition-colors",
+                        selectedBilling === "month"
                           ? "border-foreground bg-muted/50"
                           : "border-border hover:border-muted-foreground/50"
                       )}
                     >
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground uppercase tracking-wide">
-                          For Growing Brands
-                        </span>
-                        {'recommended' in growthPlan && growthPlan.recommended && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
-                            Recommended
-                          </span>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-baseline justify-between mb-3">
-                        <span className="text-lg font-semibold text-foreground">{growthPlan.name}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "w-5 h-5 rounded-full border-2 flex items-center justify-center",
+                            selectedBilling === "month" ? "border-foreground" : "border-muted-foreground/50"
+                          )}>
+                            {selectedBilling === "month" && (
+                              <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-medium text-foreground">Monthly</span>
+                            <p className="text-sm text-muted-foreground">Billed monthly</p>
+                          </div>
+                        </div>
                         <div className="text-right">
-                          {billingInterval === "year" && (
-                            <span className="text-sm text-muted-foreground line-through mr-2">
-                              ${growthMonthlyCost}
-                            </span>
-                          )}
-                          <span className="text-2xl font-bold text-foreground">
-                            ${billingInterval === "month" ? growthMonthlyCost : growthYearlyCost}
-                          </span>
+                          <span className="text-2xl font-bold text-foreground">${growthMonthlyCost}</span>
                           <span className="text-sm text-muted-foreground">/mo</span>
                         </div>
                       </div>
-
-                      {billingInterval === "year" && (
-                        <p className="text-xs text-primary mb-3">
-                          Save ${growthYearlySavings}/year
-                        </p>
-                      )}
-
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {growthPlan.description}
-                      </p>
-
-                      <ul className="space-y-2">
-                        {GROWTH_FEATURES.slice(0, 5).map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                        {selectedPlan === "growth" && GROWTH_FEATURES.slice(5).map((feature, i) => (
-                          <li key={i + 5} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {selectedPlan !== "growth" && GROWTH_FEATURES.length > 5 && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          +{GROWTH_FEATURES.length - 5} more features
-                        </p>
-                      )}
                     </button>
 
-                    {/* Custom Plan */}
+                    {/* Yearly Option */}
                     <button
-                      onClick={() => handleSelectPlan("custom")}
+                      onClick={() => handleSelectBilling("year")}
                       className={cn(
-                        "w-full p-5 rounded-xl border text-left transition-colors",
-                        selectedPlan === "custom"
+                        "w-full p-4 rounded-xl border text-left transition-colors relative",
+                        selectedBilling === "year"
                           ? "border-foreground bg-muted/50"
                           : "border-border hover:border-muted-foreground/50"
                       )}
                     >
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground uppercase tracking-wide">
-                          For Agencies & Teams
+                      <div className="absolute -top-2.5 right-4">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+                          Save ${growthYearlySavings}/year
                         </span>
                       </div>
-                      
-                      <div className="flex items-baseline justify-between mb-3">
-                        <span className="text-lg font-semibold text-foreground">{customPlan.name}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "w-5 h-5 rounded-full border-2 flex items-center justify-center",
+                            selectedBilling === "year" ? "border-foreground" : "border-muted-foreground/50"
+                          )}>
+                            {selectedBilling === "year" && (
+                              <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-medium text-foreground">Yearly</span>
+                            <p className="text-sm text-muted-foreground">${growthPlan.prices.year.amount} billed annually</p>
+                          </div>
+                        </div>
                         <div className="text-right">
-                          <span className="text-sm text-muted-foreground">starts at </span>
-                          <span className="text-2xl font-bold text-foreground">
-                            ${billingInterval === "month" ? customMonthlyCost : customYearlyCost.toLocaleString()}
+                          <span className="text-sm text-muted-foreground line-through mr-2">
+                            ${growthMonthlyCost}
                           </span>
-                          <span className="text-sm text-muted-foreground">
-                            /{billingInterval === "month" ? "mo" : "yr"}
-                          </span>
+                          <span className="text-2xl font-bold text-foreground">${growthYearlyCost}</span>
+                          <span className="text-sm text-muted-foreground">/mo</span>
                         </div>
                       </div>
-
-                      {billingInterval === "year" && customYearlySavings > 0 && (
-                        <p className="text-xs text-primary mb-3">
-                          Save ${customYearlySavings.toLocaleString()}/year
-                        </p>
-                      )}
-
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {customPlan.description}
-                      </p>
-
-                      <ul className="space-y-2">
-                        {CUSTOM_FEATURES.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
                     </button>
+                  </div>
+
+                  {/* Features - Collapsible */}
+                  <div className="mb-6 rounded-xl border border-border bg-card overflow-hidden">
+                    <button
+                      onClick={() => setFeaturesExpanded(!featuresExpanded)}
+                      className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/50 transition-colors"
+                    >
+                      <span className="text-sm font-medium text-foreground">What&apos;s included</span>
+                      <ChevronDown className={cn(
+                        "w-4 h-4 text-muted-foreground transition-transform",
+                        featuresExpanded && "rotate-180"
+                      )} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {featuresExpanded && (
+                        <motion.div
+                          initial={{ height: 0 }}
+                          animate={{ height: "auto" }}
+                          exit={{ height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <ul className="space-y-2 px-4 pb-4">
+                            {GROWTH_FEATURES.map((feature, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <Button
                     onClick={handleStartTrial}
-                    disabled={!selectedPlan || isCheckingOut}
+                    disabled={!selectedBilling || isCheckingOut}
                     className="w-full"
                   >
                     {isCheckingOut ? (
@@ -478,6 +444,16 @@ export function WorkspaceSetup() {
                       </>
                     )}
                   </Button>
+
+                  <p className="text-center text-xs text-muted-foreground mt-4">
+                    Need a custom plan?{" "}
+                    <a
+                      href="mailto:support@searchfit.com?subject=Custom%20Plan%20Inquiry"
+                      className="text-foreground hover:underline"
+                    >
+                      Get in touch
+                    </a>
+                  </p>
                 </motion.div>
               )}
 
@@ -513,7 +489,7 @@ export function WorkspaceSetup() {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {selectedPlan === "growth" ? growthPlan.name : customPlan.name} Plan
+                          {growthPlan.name} Plan
                         </p>
                         <p className="text-sm text-muted-foreground">{growthPlan.trialDays}-day free trial active</p>
                       </div>

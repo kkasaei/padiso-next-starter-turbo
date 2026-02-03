@@ -43,6 +43,9 @@
     },
     "db:seed": {
       "dependsOn": ["^db:seed"]
+    },
+    "db:reset": {
+      "dependsOn": ["^db:reset"]
     }
   }
 }
