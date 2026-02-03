@@ -35,15 +35,25 @@ const GROWTH_FEATURES = PLANS.growth.features.slice(0, 11) as readonly string[];
 
 // How did you hear about us options
 const REFERRAL_SOURCES = [
-  { id: "google", label: "Google", icon: "G" },
-  { id: "facebook", label: "Facebook", icon: "f" },
-  { id: "instagram", label: "Instagram", icon: "📷" },
-  { id: "linkedin", label: "LinkedIn", icon: "in" },
-  { id: "twitter", label: "Twitter / X", icon: "𝕏" },
-  { id: "reddit", label: "Reddit", icon: "r" },
-  { id: "email", label: "Email", icon: "✉" },
-  { id: "friend", label: "Friend", icon: "👥" },
-  { id: "other", label: "Other", icon: "?" },
+  { id: "google", label: "Google" },
+  { id: "linkedin", label: "LinkedIn" },
+  { id: "twitter", label: "Twitter / X" },
+  { id: "youtube", label: "YouTube" },
+  { id: "ai-search", label: "ChatGPT / Perplexity" },
+  { id: "friend", label: "Friend or colleague" },
+  { id: "other", label: "Other" },
+];
+
+// CMS options
+const CMS_OPTIONS = [
+  { id: "wordpress", label: "WordPress" },
+  { id: "shopify", label: "Shopify" },
+  { id: "webflow", label: "Webflow" },
+  { id: "wix", label: "Wix" },
+  { id: "squarespace", label: "Squarespace" },
+  { id: "custom", label: "Custom / Headless" },
+  { id: "nextjs", label: "Next.js" },
+  { id: "other", label: "Other" },
 ];
 
 export function WorkspaceSetup() {
@@ -66,6 +76,7 @@ export function WorkspaceSetup() {
   
   // Survey state
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [selectedCms, setSelectedCms] = useState<string | null>(null);
   const [isSubmittingSurvey, setIsSubmittingSurvey] = useState(false);
   
   const initialOrgIdRef = useRef<string | null | undefined>(undefined);
@@ -246,10 +257,14 @@ export function WorkspaceSetup() {
     setIsSubmittingSurvey(true);
     
     // TODO: Save survey response to DB
-    if (selectedSource && workspaceId) {
+    if (workspaceId) {
       try {
         // You can add an API call here to save the survey response
-        console.log("Survey response:", { workspaceId, source: selectedSource });
+        console.log("Survey response:", { 
+          workspaceId, 
+          source: selectedSource,
+          cms: selectedCms 
+        });
       } catch (err) {
         console.error("Failed to save survey:", err);
       }
@@ -653,7 +668,7 @@ export function WorkspaceSetup() {
                 </motion.div>
               )}
 
-              {/* Step 4: How did you hear about us? */}
+              {/* Step 4: Quick Survey */}
               {step === 4 && (
                 <motion.div
                   key="step-4"
@@ -663,34 +678,64 @@ export function WorkspaceSetup() {
                   transition={{ duration: 0.2 }}
                 >
                   <h1 className="text-2xl font-semibold text-foreground mb-1">
-                    How did you hear about us?
+                    Quick questions
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
-                    This helps us improve our marketing and reach more people like you.
+                    Help us personalize your experience.
                   </p>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    {REFERRAL_SOURCES.map((source) => (
-                      <button
-                        key={source.id}
-                        onClick={() => setSelectedSource(source.id)}
-                        className={cn(
-                          "flex items-center gap-3 p-3 rounded-xl border text-left transition-colors",
-                          selectedSource === source.id
-                            ? "border-foreground bg-muted/50"
-                            : "border-border hover:border-muted-foreground/50"
-                        )}
-                      >
-                        <span className="text-lg w-6 text-center">{source.icon}</span>
-                        <span className="text-sm font-medium text-foreground">{source.label}</span>
-                      </button>
-                    ))}
+                  <div className="space-y-6 mb-6">
+                    {/* How did you hear about us? */}
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-3">
+                        How did you hear about us?
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {REFERRAL_SOURCES.map((source) => (
+                          <button
+                            key={source.id}
+                            onClick={() => setSelectedSource(source.id)}
+                            className={cn(
+                              "px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                              selectedSource === source.id
+                                ? "border-foreground/30 bg-muted"
+                                : "border-border hover:bg-muted/50"
+                            )}
+                          >
+                            {source.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* What CMS do you use? */}
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-3">
+                        What CMS does your website use?
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {CMS_OPTIONS.map((cms) => (
+                          <button
+                            key={cms.id}
+                            onClick={() => setSelectedCms(cms.id)}
+                            className={cn(
+                              "px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                              selectedCms === cms.id
+                                ? "border-foreground/30 bg-muted"
+                                : "border-border hover:bg-muted/50"
+                            )}
+                          >
+                            {cms.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
                     <Button
                       onClick={handleSubmitSurvey}
-                      disabled={!selectedSource || isSubmittingSurvey}
+                      disabled={isSubmittingSurvey}
                       className="w-full"
                     >
                       {isSubmittingSurvey ? (
