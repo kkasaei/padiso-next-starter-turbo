@@ -7,23 +7,7 @@ import Link from 'next/link'
 import { format, eachDayOfInterval, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval } from 'date-fns'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
-import { Badge } from '@workspace/ui/components/badge'
-import { Input } from '@workspace/ui/components/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { MoreVertical, ArrowUpRight, TrendingUp, TrendingDown, Minus, HelpCircle, Sparkles, Rocket, Search, ArrowLeft, FileText, Clock, User, ChevronRight, Loader2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, HelpCircle, Sparkles, Rocket, ArrowUpRight, Loader2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 import {
@@ -34,9 +18,6 @@ import {
 } from '@workspace/ui/components/chart'
 import { AnalyticsDatePicker } from '@workspace/ui/components/analytics-date-picker'
 import { AnalyticsDateRangeProvider, useAnalyticsDateRange } from '@workspace/ui/hooks/use-analytics-date-range'
-import { ACTIVITY_TYPE_LABELS, type ProjectActivityDto } from '@workspace/common/lib/shcmea/types/activity'
-import type { ContentDraftDto } from '@workspace/common/lib/shcmea/types/content'
-import { CONTENT_STATUS_CONFIG } from '@workspace/common/lib/shcmea/types/content'
 import { ActiveBrandProvider, useActiveBrand } from '@workspace/react-providers/active-brand'
 import { useBrand } from '@/hooks/use-brands'
 import { cn } from '@workspace/ui/lib/utils'
@@ -62,8 +43,6 @@ interface MetricCardData {
   href?: string
   hasData?: boolean // Whether this metric has real data
 }
-
-const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
 
 // ============================================================
 // BRAND STATUS BADGE COMPONENT
@@ -507,367 +486,6 @@ function MetricsGrid({ brandId, hasData = true, dashboardStats }: MetricsGridPro
   )
 }
 
-// ============================================================
-// CONTENT TAB COMPONENT
-// ============================================================
-function ContentTab({ brandId }: { brandId: string }) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [content, setContent] = useState<ContentDraftDto[]>([])
-  const [totalItems, setTotalItems] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  // Data fetching removed - useAction calls commented out
-  useEffect(() => {
-    // TODO: Implement content fetching
-    setIsLoading(false)
-  }, [brandId, statusFilter, searchQuery, currentPage, pageSize])
-
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
-  const validCurrentPage = Math.min(currentPage, totalPages)
-  const startIndex = (validCurrentPage - 1) * pageSize
-  const endIndex = Math.min(startIndex + pageSize, totalItems)
-
-  return (
-    <TabsContent value="content" className="space-y-8">
-      <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-        <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-          <div className="flex w-full flex-col gap-y-2">
-            <span className="text-lg font-semibold">Content Drafts</span>
-            <p className="text-sm text-muted-foreground">
-              All content pieces for this brand. Click to edit or view details.
-            </p>
-          </div>
-
-          <div className="flex shrink-0 flex-row items-center gap-2">
-            {(['all', 'DRAFT', 'REVIEW', 'PUBLISHED'] as const).map((status) => (
-              <button
-                key={status}
-                onClick={() => { setStatusFilter(status); setCurrentPage(1) }}
-                className={cn(
-                  'flex items-center gap-x-2 rounded-full px-3 py-1.5 text-sm transition-all',
-                  statusFilter === status
-                    ? 'bg-card shadow-sm ring-1 ring-border'
-                    : 'opacity-50 hover:opacity-75'
-                )}
-              >
-                <span>{status === 'all' ? 'All' : CONTENT_STATUS_CONFIG[status].label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-border">
-            <div className="relative max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search content..."
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1) }}
-                className="pl-9 h-9"
-              />
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Title</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Updated</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="h-8 w-8 text-muted-foreground/50 animate-spin" />
-                        <p className="text-sm text-muted-foreground">Loading content...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : content.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <FileText className="h-8 w-8 text-muted-foreground/50" />
-                        <p className="text-sm text-muted-foreground">
-                          {searchQuery || statusFilter !== 'all' ? 'No content matches your filters' : 'No content drafts yet'}
-                        </p>
-                        {(searchQuery || statusFilter !== 'all') && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => { setSearchQuery(''); setStatusFilter('all') }}
-                            className="text-primary"
-                          >
-                            Clear filters
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  content.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-muted/50 transition-colors cursor-pointer"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                            <FileText className="h-4 w-4" />
-                          </div>
-                          <span className="text-sm font-medium">{item.title}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge className={cn("text-xs", CONTENT_STATUS_CONFIG[item.status].bgColor, CONTENT_STATUS_CONFIG[item.status].color)}>
-                          {CONTENT_STATUS_CONFIG[item.status].label}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="flex flex-col gap-4 px-6 py-4 border-t border-border bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {totalItems > 0 ? startIndex + 1 : 0}–{endIndex} of {totalItems} items
-            </div>
-            <div className="flex items-center gap-4">
-              <Select value={pageSize.toString()} onValueChange={(value) => { setPageSize(Number(value)); setCurrentPage(1) }}>
-                <SelectTrigger className="w-[70px] h-8"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {PAGE_SIZE_OPTIONS.map((size) => (<SelectItem key={size} value={size.toString()}>{size}</SelectItem>))}
-                </SelectContent>
-              </Select>
-              {totalPages > 1 && (
-                <div className="flex items-center gap-1">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={validCurrentPage === 1} className="h-8 px-2">
-                    <ArrowLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="px-2 text-sm text-muted-foreground">{validCurrentPage} / {totalPages}</span>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={validCurrentPage === totalPages} className="h-8 px-2">
-                    <ArrowLeft className="h-4 w-4 rotate-180" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </TabsContent>
-  )
-}
-
-// ============================================================
-// ACTIVITIES TAB COMPONENT
-// ============================================================
-function ActivitiesTab({ brandId }: { brandId: string }) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [activities, setActivities] = useState<ProjectActivityDto[]>([])
-  const [totalItems, setTotalItems] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  // Data fetching removed - useAction calls commented out
-  useEffect(() => {
-    // TODO: Implement activities fetching
-    setIsLoading(false)
-  }, [brandId, currentPage, pageSize])
-
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
-  const validCurrentPage = Math.min(currentPage, totalPages)
-  const startIndex = (validCurrentPage - 1) * pageSize
-  const endIndex = Math.min(startIndex + pageSize, totalItems)
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'BRAND_CREATED':
-      case 'PROJECT_CREATED':
-        return <Sparkles className="h-4 w-4 text-green-500" />
-      case 'BRAND_UPDATED':
-      case 'PROJECT_UPDATED':
-        return <FileText className="h-4 w-4 text-blue-500" />
-      case 'BRAND_DELETED':
-      case 'PROJECT_DELETED':
-        return <Clock className="h-4 w-4 text-red-500" />
-      case 'BRAND_FAVORITED':
-      case 'PROJECT_FAVORITED':
-        return <TrendingUp className="h-4 w-4 text-yellow-500" />
-      case 'BRAND_UNFAVORITED':
-      case 'PROJECT_UNFAVORITED':
-        return <TrendingDown className="h-4 w-4 text-gray-500 dark:text-polar-500" />
-      default:
-        return <Clock className="h-4 w-4 text-gray-500 dark:text-polar-500" />
-    }
-  }
-
-  const formatMetadata = (activity: ProjectActivityDto) => {
-    if (!activity.metadata || Object.keys(activity.metadata).length === 0) {
-      return null
-    }
-    if (activity.metadata.field) {
-      return (
-        <span className="text-muted-foreground">
-          Changed <span className="font-medium text-foreground">{activity.metadata.field}</span>
-          {activity.metadata.from && (
-            <>
-              {' from '}<span className="font-medium text-foreground">&quot;{activity.metadata.from || 'empty'}&quot;</span>
-            </>
-          )}
-          {activity.metadata.to && (
-            <>
-              {' to '}<span className="font-medium text-foreground">&quot;{activity.metadata.to}&quot;</span>
-            </>
-          )}
-        </span>
-      )
-    }
-    return null
-  }
-
-  return (
-    <TabsContent value="activities" className="space-y-8">
-      <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-        <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-          <div className="flex w-full flex-col gap-y-2">
-            <span className="text-lg font-semibold">Activity Log</span>
-            <p className="text-sm text-muted-foreground">
-              Audit trail of all changes made to this brand.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">User</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Details</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="h-8 w-8 text-muted-foreground/50 animate-spin" />
-                        <p className="text-sm text-muted-foreground">Loading activities...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : activities.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <Clock className="h-8 w-8 text-muted-foreground/50" />
-                        <p className="text-sm text-muted-foreground">No activity recorded yet</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  activities.map((activity) => (
-                    <tr
-                      key={activity.id}
-                      className="hover:bg-muted/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-col">
-                          <span className="text-sm">
-                            {new Date(activity.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(activity.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {getActivityIcon(activity.type)}
-                          <span className="text-sm font-medium">{ACTIVITY_TYPE_LABELS[activity.type]}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted">
-                            <User className="h-3.5 w-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{activity.performedByUserId || 'System'}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm">
-                          {formatMetadata(activity) || <span className="text-muted-foreground">—</span>}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="flex flex-col gap-4 px-6 py-4 border-t border-border bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {totalItems > 0 ? startIndex + 1 : 0}–{endIndex} of {totalItems} activities
-            </div>
-            <div className="flex items-center gap-4">
-              <Select value={pageSize.toString()} onValueChange={(value) => { setPageSize(Number(value)); setCurrentPage(1) }}>
-                <SelectTrigger className="w-[70px] h-8"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {PAGE_SIZE_OPTIONS.map((size) => (<SelectItem key={size} value={size.toString()}>{size}</SelectItem>))}
-                </SelectContent>
-              </Select>
-              {totalPages > 1 && (
-                <div className="flex items-center gap-1">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={validCurrentPage === 1} className="h-8 px-2">
-                    <ArrowLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="px-2 text-sm text-muted-foreground">{validCurrentPage} / {totalPages}</span>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={validCurrentPage === totalPages} className="h-8 px-2">
-                    <ArrowLeft className="h-4 w-4 rotate-180" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </TabsContent>
-  )
-}
 
 // ============================================================
 // OPPORTUNITIES BAR CHART (Uses Date Range Context + Real Data)
@@ -1107,36 +725,11 @@ function PageContent() {
     <div className="relative flex min-w-0 flex-2 flex-col items-center md:overflow-y-auto md:bg-white md:shadow-xs">
       <div className="flex h-full w-full flex-col">
 
-        {/* Tabs Container */}
-        <Tabs defaultValue="overview" className="w-full">
-          {/* Tab Navigation */}
-          <div className="flex items-center justify-between overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
-            <TabsList className="bg-transparent ring-0 dark:bg-transparent dark:ring-0 p-1 gap-2 w-max md:w-auto">
-              <TabsTrigger
-                value="overview"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger
-                value="content"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Content
-              </TabsTrigger>
-              <TabsTrigger
-                value="activities"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Activities
-              </TabsTrigger>
-            </TabsList>
+        <div className="flex items-center justify-end mb-6">
+          <AnalyticsDatePicker />
+        </div>
 
-            <AnalyticsDatePicker />
-          </div>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-12 pb-8">
+        <div className="space-y-12 pb-8">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Link href={`/dashboard/brands/${brand.id}/prompts`}>
@@ -1215,16 +808,9 @@ function PageContent() {
             {/* 6-Month Opportunities Chart */}
             <OpportunitiesChart brandId={brand.id} />
 
-            {/* Metric Cards Grid - Real data from ClickHouse analytics */}
-            <MetricsGrid brandId={brand.id} hasData={hasBrandData} dashboardStats={dashboardStats} />
-          </TabsContent>
-
-          {/* Content Tab */}
-          <ContentTab brandId={brand.id} />
-
-          {/* Activities Tab */}
-          <ActivitiesTab brandId={brand.id} />
-        </Tabs>
+          {/* Metric Cards Grid - Real data from ClickHouse analytics */}
+          <MetricsGrid brandId={brand.id} hasData={hasBrandData} dashboardStats={dashboardStats} />
+        </div>
       </div>
     </div>
   )

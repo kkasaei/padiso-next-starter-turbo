@@ -1,43 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { MoreVertical, HelpCircle } from 'lucide-react'
-import { Button } from '@workspace/ui/components/button'
+import { HelpCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
 import { AnalyticsDatePicker } from '@workspace/ui/components/analytics-date-picker'
 import { AnalyticsDateRangeProvider } from '@workspace/ui/hooks/use-analytics-date-range'
 
 import type { DashboardStats } from './types'
 import {
-  ProjectStatusBadge,
   MetricsGrid,
-  ContentTab,
-  ActivitiesTab,
   OpportunitiesChart,
 } from './components'
 
 function PageContent() {
-  const router = useRouter()
-
   // TODO: Replace with actual data fetching when API is ready
   const [dashboardStats] = useState<DashboardStats | null>(null)
   const [isLoadingStats] = useState(false)
-
-  const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      // TODO: Implement delete functionality
-    }
-  }
 
   const stats = {
     trackedPrompts: dashboardStats?.trackedPrompts ?? 0,
@@ -50,46 +30,15 @@ function PageContent() {
   return (
     <div className="relative flex min-w-0 flex-2 flex-col items-center px-4">
       <div className="flex h-full w-full flex-col">
-        {/* Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
-          <div className="flex flex-row items-center justify-between mb-4">
-
-          <div className="overflow-x-auto">
-            <TabsList className="bg-transparent ring-0 dark:bg-transparent dark:ring-0 p-1 gap-2 w-max md:w-auto">
-              <TabsTrigger
-                value="overview"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger
-                value="content"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Content
-              </TabsTrigger>
-              <TabsTrigger
-                value="activities"
-                className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
-              >
-                Activities
-              </TabsTrigger>
-            </TabsList>
-  
-          </div>
+        <div className="flex flex-row items-center justify-end mb-4">
           <AnalyticsDatePicker />
-          </div>
+        </div>
 
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-12 pb-8">
-            <StatsCards stats={stats} hasProjectData={hasProjectData} />
-            <OpportunitiesChart projectId="123" />
-            <MetricsGrid projectId="123" hasData={hasProjectData} dashboardStats={dashboardStats} />
-          </TabsContent>
-
-          <ContentTab projectId="123" />
-          <ActivitiesTab projectId="123" />
-        </Tabs>
+        <div className="space-y-12 pb-8">
+          <StatsCards stats={stats} hasProjectData={hasProjectData} />
+          <OpportunitiesChart projectId="123" />
+          <MetricsGrid projectId="123" hasData={hasProjectData} dashboardStats={dashboardStats} />
+        </div>
       </div>
     </div>
   )
