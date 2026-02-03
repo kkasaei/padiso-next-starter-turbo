@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
 import {
@@ -288,6 +289,14 @@ export default function ContentListPage() {
   const [instructionsModalOpen, setInstructionsModalOpen] = useState(false)
   const [changeTopicModalOpen, setChangeTopicModalOpen] = useState(false)
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null)
+  const [importModalOpen, setImportModalOpen] = useState(false)
+  const [importedArticles, setImportedArticles] = useState<Array<{
+    title: string
+    type: ContentType
+    keywordDifficulty: number
+    searchVolume: number
+  }>>([])
+  const [isImporting, setIsImporting] = useState(false)
 
   // Get selected content item
   const selectedContent = useMemo(() => {
@@ -317,6 +326,61 @@ export default function ContentListPage() {
       setSelectedContentId(null)
       toast.success('Content deleted successfully')
     }
+  }
+
+  // Download and import sample content
+  const handleDownloadSample = async () => {
+    setIsImporting(true)
+    try {
+      const response = await fetch('/assets/sample-content.csv')
+      const csvText = await response.text()
+      
+      // Parse CSV
+      const lines = csvText.trim().split('\n')
+      const headers = lines[0].split(',')
+      const articles = lines.slice(1).map(line => {
+        const values = line.split(',')
+        return {
+          title: values[0],
+          type: values[1] as ContentType,
+          keywordDifficulty: parseInt(values[2]) || 0,
+          searchVolume: parseInt(values[3]) || 0,
+        }
+      })
+      
+      setImportedArticles(articles)
+      setImportModalOpen(true)
+    } catch (error) {
+      toast.error('Failed to load sample content')
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
+  // Import articles with distribution
+  const handleImportArticles = (articlesPerDay: number, startDate: Date) => {
+    const newContent: ContentItem[] = importedArticles.map((article, index) => {
+      const dayOffset = Math.floor(index / articlesPerDay)
+      const scheduledDate = new Date(startDate)
+      scheduledDate.setDate(startDate.getDate() + dayOffset)
+      
+      return {
+        id: `imported-${Date.now()}-${index}`,
+        title: article.title,
+        type: article.type,
+        status: 'draft' as const,
+        scheduledDate,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        keywordDifficulty: article.keywordDifficulty,
+        searchVolume: article.searchVolume,
+      }
+    })
+    
+    setContent(prev => [...prev, ...newContent])
+    setImportModalOpen(false)
+    setImportedArticles([])
+    toast.success(`Imported ${newContent.length} articles to your calendar`)
   }
 
   // Update content scheduled date (for drag and drop)
@@ -477,7 +541,16 @@ export default function ContentListPage() {
                   Import
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem onClick={handleDownloadSample} disabled={isImporting}>
+                  {isImporting ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4 mr-2" />
+                  )}
+                  Download Sample (20 Articles)
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => toast.info('Google Drive import coming soon')}>
                   <Image 
                     src="/icons/google-drive.svg" 
@@ -752,6 +825,15 @@ export default function ContentListPage() {
           setChangeTopicModalOpen(false)
           setSelectedContentId(null)
         }}
+      />
+
+      {/* Import Sample Modal */}
+      <ImportSampleModal
+        open={importModalOpen}
+        onOpenChange={setImportModalOpen}
+        articles={importedArticles}
+        currentDate={currentDate}
+        onImport={handleImportArticles}
       />
     </div>
   )
@@ -2328,6 +2410,169 @@ function ChangeTopicModal({ open, onOpenChange, onConfirm }: ChangeTopicModalPro
             className="rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Confirm
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ============================================================
+// IMPORT SAMPLE MODAL
+// ============================================================
+interface ImportSampleModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  articles: Array<{
+    title: string
+    type: ContentType
+    keywordDifficulty: number
+    searchVolume: number
+  }>
+  currentDate: Date
+  onImport: (articlesPerDay: number, startDate: Date) => void
+}
+
+function ImportSampleModal({ open, onOpenChange, articles, currentDate, onImport }: ImportSampleModalProps) {
+  const [articlesPerDay, setArticlesPerDay] = useState(1)
+  const [startDate, setStartDate] = useState<Date>(currentDate)
+
+  // Calculate distribution preview
+  const distributionPreview = useMemo(() => {
+    const totalDays = Math.ceil(articles.length / articlesPerDay)
+    const endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + totalDays - 1)
+    return {
+      totalDays,
+      endDate,
+    }
+  }, [articles.length, articlesPerDay, startDate])
+
+  const handleImport = () => {
+    onImport(articlesPerDay, startDate)
+  }
+
+  const getTypeBadgeColor = (type: string) => {
+    switch (type) {
+      case 'Listicle': return 'bg-rose-100 text-rose-700'
+      case 'How To': return 'bg-blue-100 text-blue-700'
+      case 'Explainer': return 'bg-emerald-100 text-emerald-700'
+      case 'Product Listicle': return 'bg-purple-100 text-purple-700'
+      case 'Guide': return 'bg-amber-100 text-amber-700'
+      case 'Tutorial': return 'bg-cyan-100 text-cyan-700'
+      default: return 'bg-gray-100 text-gray-700'
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[700px] p-0 rounded-2xl max-h-[85vh] flex flex-col">
+        <DialogHeader className="p-6 pb-4 shrink-0">
+          <DialogTitle className="text-xl font-semibold">Import Sample Articles</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            {articles.length} articles ready to import. Choose how to distribute them across your calendar.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="px-6 flex-1 overflow-hidden flex flex-col">
+          {/* Distribution settings */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Articles per day</Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map(num => (
+                  <button
+                    key={num}
+                    onClick={() => setArticlesPerDay(num)}
+                    className={cn(
+                      "w-10 h-10 rounded-lg border text-sm font-medium transition-colors",
+                      articlesPerDay === num
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border hover:bg-muted"
+                    )}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Start date</Label>
+              <Input
+                type="date"
+                value={startDate.toISOString().split('T')[0]}
+                onChange={(e) => setStartDate(new Date(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Distribution preview */}
+          <div className="bg-muted/50 rounded-xl p-4 mb-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Distribution preview:</span>
+              <span className="font-medium">
+                {articles.length} articles over {distributionPreview.totalDays} days
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm mt-1">
+              <span className="text-muted-foreground">Date range:</span>
+              <span className="font-medium">
+                {startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {distributionPreview.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
+          </div>
+
+          {/* Articles list */}
+          <div className="flex-1 overflow-auto border rounded-xl">
+            <table className="w-full">
+              <thead className="sticky top-0 bg-background">
+                <tr className="border-b bg-muted/30">
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground w-8">#</th>
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Title</th>
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Type</th>
+                  <th className="text-right py-2 px-3 text-xs font-medium text-muted-foreground">KD</th>
+                  <th className="text-right py-2 px-3 text-xs font-medium text-muted-foreground">Vol</th>
+                </tr>
+              </thead>
+              <tbody>
+                {articles.map((article, index) => (
+                  <tr key={index} className="border-b last:border-0">
+                    <td className="py-2 px-3 text-xs text-muted-foreground">{index + 1}</td>
+                    <td className="py-2 px-3">
+                      <span className="text-sm line-clamp-1">{article.title}</span>
+                    </td>
+                    <td className="py-2 px-3">
+                      <span className={cn(
+                        "inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap",
+                        getTypeBadgeColor(article.type)
+                      )}>
+                        {article.type}
+                      </span>
+                    </td>
+                    <td className="py-2 px-3 text-right">
+                      <span className="text-xs text-muted-foreground">{article.keywordDifficulty}</span>
+                    </td>
+                    <td className="py-2 px-3 text-right">
+                      <span className="text-xs text-muted-foreground">{article.searchVolume}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <DialogFooter className="p-6 pt-4 gap-2 shrink-0">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-lg">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleImport}
+            className="rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Import {articles.length} Articles
           </Button>
         </DialogFooter>
       </DialogContent>
