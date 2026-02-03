@@ -43,6 +43,9 @@ const AVAILABLE_INTEGRATIONS: AvailableIntegration[] = [
   { id: "slack", name: "Slack", description: "Real-time alerts and notifications", icon: "/icons/slack.svg", category: "Communication", comingSoon: true },
   { id: "teams", name: "Microsoft Teams", description: "Enterprise notifications", icon: "/icons/teams.svg", category: "Communication", comingSoon: true },
   
+  // Project Management
+  { id: "linear", name: "Linear", description: "Sync tasks and track issues", icon: "/icons/linear.svg", category: "Project Management", comingSoon: true },
+  
   // Analytics
   { id: "adobe-analytics", name: "Adobe Analytics", description: "Enterprise analytics", icon: "/icons/adobe.svg", category: "Analytics", comingSoon: true },
   { id: "mixpanel", name: "Mixpanel", description: "Product analytics", icon: "/icons/mixpanel.svg", category: "Analytics", comingSoon: true },
@@ -71,16 +74,17 @@ const AVAILABLE_INTEGRATIONS: AvailableIntegration[] = [
   
   // E-Commerce
   { id: "shopify", name: "Shopify", description: "Product SEO and store data", icon: "/icons/shopify_glyph_black.svg", category: "E-Commerce", comingSoon: false },
-  { id: "woocommerce", name: "WooCommerce", description: "WordPress e-commerce", icon: "/icons/woocommerce.svg", category: "E-Commerce", comingSoon: true },
   
   // Advertising
   { id: "meta-ads", name: "Meta Ads", description: "Facebook/Instagram ad data", icon: "/icons/meta-ads.svg", category: "Advertising", comingSoon: true },
   
-  // Automation
-  { id: "webhook", name: "Webhooks", description: "Send data to custom endpoints", icon: "/icons/webhook.svg", category: "Automation", comingSoon: false },
-  { id: "zapier", name: "Zapier", description: "Connect to 5000+ apps", icon: "/icons/zapier.svg", category: "Automation", comingSoon: true },
-  { id: "make", name: "Make", description: "Advanced automation workflows", icon: "/icons/make.svg", category: "Automation", comingSoon: true },
-  { id: "n8n", name: "n8n", description: "Open source workflow automation", icon: "/icons/n8n.svg", category: "Automation", comingSoon: true },
+  // Automation & Developer
+  { id: "api", name: "API", description: "Generate API keys for programmatic access", icon: "/icons/api.svg", category: "Automation & Developer", comingSoon: true },
+  { id: "mcp", name: "MCP", description: "Connect to Claude as a remote MCP server", icon: "/icons/mcp.svg", category: "Automation & Developer", comingSoon: true },
+  { id: "webhook", name: "Webhooks", description: "Send data to custom endpoints", icon: "/icons/webhook.svg", category: "Automation & Developer", comingSoon: true },
+  { id: "zapier", name: "Zapier", description: "Connect to 5000+ apps", icon: "/icons/zapier.svg", category: "Automation & Developer", comingSoon: true },
+  { id: "make", name: "Make", description: "Advanced automation workflows", icon: "/icons/make.svg", category: "Automation & Developer", comingSoon: true },
+  { id: "n8n", name: "n8n", description: "Open source workflow automation", icon: "/icons/n8n.svg", category: "Automation & Developer", comingSoon: true },
   
   // AI Platforms
   { id: "openai", name: "OpenAI", description: "Monitor ChatGPT mentions", icon: "/icons/openai.svg", category: "AI Platforms", comingSoon: true },
@@ -93,13 +97,14 @@ const CATEGORIES = [
   "Google Services",
   "Search & Webmaster",
   "Communication",
+  "Project Management",
   "Analytics",
   "Content & CMS",
   "Social & Communities",
   "SEO Tools",
   "E-Commerce",
   "Advertising",
-  "Automation",
+  "Automation & Developer",
   "AI Platforms",
 ];
 
