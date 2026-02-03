@@ -18,9 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { Badge } from '@workspace/ui/components/badge'
 import { Sparkle, HelpCircle, Loader2, Trash2, AlertTriangle } from 'lucide-react'
-import type { ProjectFormData } from '@workspace/common/lib/shcmea/types/project-form'
-import type { SiteDiscoveryState } from '@workspace/common/lib/shcmea/types/site-discovery'
-import type { ContextFilesState } from '@workspace/common/lib/shcmea/types/context-files'
+import type { ProjectFormData, SiteDiscoveryState, ContextFilesState } from '@workspace/common/lib'
 
 import { SiteDiscoverySection } from '@/components/brands/create-brand/SiteDiscoverySection'
 import { ContextFilesSection } from '@/components/brands/create-brand/ContextFilesSection'
@@ -804,7 +802,7 @@ export default function Page() {
   }
 
   return (
-    <div className="relative flex min-w-0 flex-2 flex-col items-center px-4 md:overflow-y-auto md:bg-white dark:md:bg-polar-900 md:px-8 md:shadow-xs">
+    <div className="relative flex min-w-0 flex-2 flex-col items-center md:overflow-y-auto md:bg-white dark:md:bg-polar-900 md:px-8 md:shadow-xs">
     <div className="flex h-full w-full flex-col max-w-(--breakpoint-md)! max-w-(--breakpoint-xl)">
       {/* Page-Level Tabs */}
       <Tabs defaultValue="project-info" className="w-full">
