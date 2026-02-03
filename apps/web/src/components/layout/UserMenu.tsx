@@ -98,7 +98,7 @@ export function UserMenu({ variant = "full", className }: UserMenuProps) {
           )
         })}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/dashboard/settings/profile")}>
+        <DropdownMenuItem onClick={() => router.push("/profile")}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>

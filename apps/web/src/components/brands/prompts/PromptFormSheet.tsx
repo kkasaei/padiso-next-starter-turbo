@@ -89,11 +89,11 @@ export function PromptFormSheet({
             </div>
 
             <div className="flex flex-row items-center gap-x-4">
-              <Button type="submit" disabled={isSaving} className="bg-blue-600 hover:bg-blue-700">
+              <Button type="submit" disabled={isSaving} className="rounded-full px-6">
                 {isSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingPrompt ? 'Update' : 'Create'}
               </Button>
-              <Button type="button" variant="ghost" onClick={onCancel}>
+              <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full">
                 Cancel
               </Button>
             </div>

@@ -30,10 +30,10 @@ const navItems = [
 ] as const
 
 const footerItems = [
-  { id: "roadmap", label: "Roadmap", icon: Map, href: "#" },
-  { id: "changelog", label: "Change Log", icon: History, href: "#" },
-  { id: "support", label: "Support", icon: Headphones, href: "#" },
-  { id: "feedbacks", label: "Feedbacks", icon: Send, href: "#" },
+  { id: "roadmap", label: "Roadmap", icon: Map, href: "https://searchfit.canny.io/" },
+  { id: "changelog", label: "Change Log", icon: History, href: "https://searchfit.canny.io/changelog" },
+  { id: "support", label: "Support", icon: Headphones, href: "https://searchfit.canny.io/support" },
+  { id: "feedbacks", label: "Feedbacks", icon: Send, href: "https://searchfit.canny.io/feature-requests" },
 ] as const
 
 export function AdminSidebar() {
@@ -102,12 +102,14 @@ export function AdminSidebar() {
             return (
               <Tooltip key={item.id}>
                 <TooltipTrigger asChild>
-                  <Link
+                  <a
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground transition-colors"
                   >
                     <Icon className="h-5 w-5" />
-                  </Link>
+                  </a>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={12}>
                   {item.label}

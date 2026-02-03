@@ -75,6 +75,7 @@ import {
   type KeywordIntent,
   type KeywordTrend,
 } from '@workspace/common/lib/mocks/tracking'
+import { FEATURE_FLAGS } from '@/lib/feature-flags'
 
 // ============================================================
 // PROMPTS TYPES & CONSTANTS
@@ -148,7 +149,7 @@ type TrackingTab = 'prompts' | 'keywords' | 'competitors'
 export default function TrackingPage() {
   const params = useParams()
   const searchParams = useSearchParams()
-  const projectId = params.projectId as string
+  const projectId = (params.id || params.projectId) as string
 
   // Get tab from URL query param, default to 'prompts'
   const tabFromUrl = searchParams.get('tab') as TrackingTab | null
@@ -219,30 +220,27 @@ export default function TrackingPage() {
   // LOAD DATA
   // ============================================================
   useEffect(() => {
-    if (projectId) {
-      // Load mock prompts
-      const promptTimer = setTimeout(() => {
-        // Initialize with empty prompts - can be replaced with mock data if needed
-        setPrompts([])
-        setPromptsLoading(false)
-      }, 300)
-      // Load mock keywords
-      const keywordTimer = setTimeout(() => {
-        setKeywords(MOCK_KEYWORDS)
-        setKeywordsLoading(false)
-      }, 300)
-      // Load mock competitors
-      const competitorTimer = setTimeout(() => {
-        setCompetitors(MOCK_COMPETITORS)
-        setCompetitorsLoading(false)
-      }, 300)
-      return () => {
-        clearTimeout(promptTimer)
-        clearTimeout(keywordTimer)
-        clearTimeout(competitorTimer)
-      }
+    // Load mock prompts - initialize with empty array
+    const promptTimer = setTimeout(() => {
+      setPrompts([])
+      setPromptsLoading(false)
+    }, 500)
+    // Load mock keywords
+    const keywordTimer = setTimeout(() => {
+      setKeywords(MOCK_KEYWORDS)
+      setKeywordsLoading(false)
+    }, 500)
+    // Load mock competitors
+    const competitorTimer = setTimeout(() => {
+      setCompetitors(MOCK_COMPETITORS)
+      setCompetitorsLoading(false)
+    }, 500)
+    return () => {
+      clearTimeout(promptTimer)
+      clearTimeout(keywordTimer)
+      clearTimeout(competitorTimer)
     }
-  }, [projectId])
+  }, [])
 
   // ============================================================
   // PROMPTS HANDLERS
@@ -694,6 +692,133 @@ export default function TrackingPage() {
   // ============================================================
   // RENDER
   // ============================================================
+  
+  // If tabs are coming soon, just show prompts table directly without tabs
+  if (FEATURE_FLAGS.AI_TRACKING_TABS_COMING_SOON) {
+    return (
+      <div className="relative flex min-w-0 flex-2 flex-col items-center">
+        <div className="mx-auto flex w-full flex-col">
+          <PromptsTabContent
+            projectId={projectId}
+            prompts={paginatedPrompts}
+            allPrompts={prompts}
+            isLoading={isPromptsLoading}
+            searchQuery={promptSearchQuery}
+            onSearchChange={(v) => { setPromptSearchQuery(v); setPromptCurrentPage(1) }}
+            sortKey={promptSortKey}
+            sortDirection={promptSortDirection}
+            onSort={handlePromptSort}
+            currentPage={promptCurrentPage}
+            pageSize={promptPageSize}
+            totalItems={promptTotalItems}
+            totalPages={promptTotalPages}
+            startIndex={promptStartIndex}
+            endIndex={promptEndIndex}
+            onPageChange={setPromptCurrentPage}
+            onPageSizeChange={(v) => { setPromptPageSize(v); setPromptCurrentPage(1) }}
+            onEdit={handlePromptEdit}
+            onDelete={handlePromptDelete}
+            onToggleActive={handlePromptToggleActive}
+            onRunScan={handlePromptRunScan}
+            selectedIds={selectedPromptIds}
+            onSelectOne={handleSelectPrompt}
+            onSelectAll={handleSelectAllPrompts}
+            onBulkDelete={handleBulkDeletePrompts}
+            onBulkScan={handleBulkScanPrompts}
+            onBulkToggleActive={handleBulkToggleActive}
+            onNewPrompt={() => { resetPromptForm(); setIsPromptFormSheetOpen(true) }}
+            onSuggestions={() => setIsPromptSuggestionsSheetOpen(true)}
+            onImport={() => setIsImportModalOpen(true)}
+            onExport={() => setIsExportModalOpen(true)}
+          />
+        </div>
+
+        {/* Prompt Form Sheet */}
+        <PromptFormSheet
+          isOpen={isPromptFormSheetOpen}
+          onOpenChange={setIsPromptFormSheetOpen}
+          editingPrompt={editingPrompt}
+          formData={promptFormData}
+          onFormChange={handlePromptFormChange}
+          onSubmit={handlePromptSubmit}
+          onCancel={() => { resetPromptForm(); setIsPromptFormSheetOpen(false) }}
+          isSaving={isPromptSaving}
+        />
+
+        {/* Prompt Suggestions Sheet */}
+        <SuggestionsSheet
+          projectId={projectId}
+          isOpen={isPromptSuggestionsSheetOpen}
+          onOpenChange={setIsPromptSuggestionsSheetOpen}
+          onSelectSuggestion={handlePromptSelectSuggestion}
+        />
+
+        {/* Delete Prompt Confirmation Modal */}
+        <AlertDialog open={promptToDelete !== null} onOpenChange={(open) => !open && setPromptToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Prompt</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this prompt? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmPromptDelete}
+                className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Bulk Delete Confirmation Modal */}
+        <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {selectedPromptIds.size} Prompt(s)</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete {selectedPromptIds.size} selected prompt(s)? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmBulkDelete}
+                className="bg-destructive text-white hover:bg-destructive/90 focus:ring-destructive"
+              >
+                Delete {selectedPromptIds.size} Prompt(s)
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Import Prompts Modal */}
+        <ImportPromptsModal
+          open={isImportModalOpen}
+          onOpenChange={setIsImportModalOpen}
+          projectId={projectId}
+          googleIntegrationId={googleIntegrationId}
+          onConnectGoogle={() => toast.info('Google connection coming soon')}
+          onImportComplete={() => toast.success('Import completed!')}
+        />
+
+        {/* Export Prompts Modal */}
+        <ExportPromptsModal
+          open={isExportModalOpen}
+          onOpenChange={setIsExportModalOpen}
+          projectId={projectId}
+          prompts={prompts}
+          selectedIds={selectedPromptIds}
+          googleIntegrationId={googleIntegrationId}
+          onConnectGoogle={() => toast.info('Google connection coming soon')}
+        />
+      </div>
+    )
+  }
+  
   return (
     <div className="relative flex min-w-0 flex-2 flex-col items-center">
       <div className="mx-auto flex w-full flex-col">
@@ -713,14 +838,12 @@ export default function TrackingPage() {
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
                 Keywords
-                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
               </TabsTrigger>
               <TabsTrigger
                 value="competitors"
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
                 Competitors
-                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -764,19 +887,54 @@ export default function TrackingPage() {
 
           {/* Keywords Tab */}
           <TabsContent value="keywords" className="mt-0">
-            <ComingSoonContent
-              title="Keyword Tracking"
-              description="Track keyword rankings and discover new SEO opportunities across search engines."
-              icon={<Target className="h-12 w-12" />}
+            <KeywordsTabContent
+              projectId={projectId}
+              keywords={paginatedKeywords}
+              isLoading={keywordsLoading}
+              searchQuery={keywordSearchQuery}
+              onSearchChange={(v) => { setKeywordSearchQuery(v); setKeywordCurrentPage(1) }}
+              sortKey={keywordSortKey}
+              sortDirection={keywordSortDirection}
+              onSort={handleKeywordSort}
+              currentPage={keywordCurrentPage}
+              pageSize={keywordPageSize}
+              totalItems={keywordTotalItems}
+              totalPages={keywordTotalPages}
+              startIndex={keywordStartIndex}
+              endIndex={keywordEndIndex}
+              onPageChange={setKeywordCurrentPage}
+              onPageSizeChange={(v) => { setKeywordPageSize(v); setKeywordCurrentPage(1) }}
+              onEdit={handleKeywordEdit}
+              onDelete={handleKeywordDelete}
+              onToggleTracking={handleKeywordToggleTracking}
+              onNewKeyword={() => { resetKeywordForm(); setIsKeywordFormSheetOpen(true) }}
+              onSuggestions={() => setIsKeywordSuggestionsSheetOpen(true)}
+              trackingCount={trackingKeywordsCount}
             />
           </TabsContent>
 
           {/* Competitors Tab */}
           <TabsContent value="competitors" className="mt-0">
-            <ComingSoonContent
-              title="Competitor Tracking"
-              description="Monitor your competitors' AI visibility and discover how they appear in AI responses."
-              icon={<Users className="h-12 w-12" />}
+            <CompetitorsTabContent
+              projectId={projectId}
+              competitors={paginatedCompetitors}
+              isLoading={competitorsLoading}
+              searchQuery={competitorSearchQuery}
+              onSearchChange={(v) => { setCompetitorSearchQuery(v); setCompetitorCurrentPage(1) }}
+              sortKey={competitorSortKey}
+              sortDirection={competitorSortDirection}
+              onSort={handleCompetitorSort}
+              currentPage={competitorCurrentPage}
+              pageSize={competitorPageSize}
+              totalItems={competitorTotalItems}
+              totalPages={competitorTotalPages}
+              startIndex={competitorStartIndex}
+              endIndex={competitorEndIndex}
+              onPageChange={setCompetitorCurrentPage}
+              onPageSizeChange={(v) => { setCompetitorPageSize(v); setCompetitorCurrentPage(1) }}
+              onDelete={handleCompetitorDelete}
+              onToggleTracking={handleCompetitorToggleTracking}
+              trackingCount={trackingCompetitorsCount}
             />
           </TabsContent>
 
@@ -990,21 +1148,20 @@ function PromptsTabContent(props: PromptsTabContentProps) {
           <p className="text-sm text-muted-foreground">Manage prompts to track your brand visibility across AI platforms.</p>
         </div>
         <div className="flex shrink-0 flex-row items-center gap-2">
-          <Button variant="outline" size="sm" onClick={onImport} className="gap-2">
-
-            <Download className="h-4 w-4" />
+          <Button variant="ghost" size="sm" onClick={onImport} className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground">
+            <Download className="h-3.5 w-3.5 mr-1.5" />
             Import
           </Button>
-          <Button variant="outline" size="sm" onClick={onExport} disabled={allPrompts.length === 0} className="gap-2">
-          <Upload className="h-4 w-4" />
+          <Button variant="ghost" size="sm" onClick={onExport} disabled={allPrompts.length === 0} className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground">
+            <Upload className="h-3.5 w-3.5 mr-1.5" />
             Export
           </Button>
-          <Button variant="outline" size="sm" onClick={onSuggestions} className="gap-2">
-            <Sparkles className="h-4 w-4" />
+          <Button variant="ghost" size="sm" onClick={onSuggestions} className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground">
+            <Sparkles className="h-3.5 w-3.5 mr-1.5" />
             Suggestions
           </Button>
-          <Button size="sm" onClick={onNewPrompt} className="gap-2">
-            <Plus className="h-4 w-4" />
+          <Button variant="ghost" size="sm" onClick={onNewPrompt} className="rounded-full h-8 px-3 text-muted-foreground hover:text-foreground">
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
             New Prompt
           </Button>
         </div>
@@ -1036,41 +1193,41 @@ function PromptsTabContent(props: PromptsTabContentProps) {
                   Clear
                 </Button>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={onExport}
-                  className="h-8 gap-2"
+                  className="rounded-full h-7 px-3 text-xs text-muted-foreground hover:text-foreground"
                 >
-                  <Download className="h-3.5 w-3.5" />
+                  <Download className="h-3 w-3 mr-1" />
                   Export
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={onBulkScan}
-                  className="h-8 gap-2"
+                  className="rounded-full h-7 px-3 text-xs text-muted-foreground hover:text-foreground"
                 >
-                  <Play className="h-3.5 w-3.5" />
+                  <Play className="h-3 w-3 mr-1" />
                   Run Scan
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={onBulkToggleActive}
-                  className="h-8 gap-2"
+                  className="rounded-full h-7 px-3 text-xs text-muted-foreground hover:text-foreground"
                 >
                   {bulkToggleText}
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={onBulkDelete}
-                  className="h-8 gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  className="rounded-full h-7 px-3 text-xs text-destructive/70 hover:text-destructive hover:bg-destructive/10"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete ({selectedIds.size})
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete
                 </Button>
               </div>
             </div>

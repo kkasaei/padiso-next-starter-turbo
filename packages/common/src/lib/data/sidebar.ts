@@ -38,8 +38,8 @@ export const favouriteProjects: FavouriteProject[] = [
 ]
 
 export const footerItems: SidebarFooterItem[] = [
-    { id: "roadmap", label: "Roadmap", href: "#roadmap" },
-    { id: "changelog", label: "Change Log", href: "#changelog" },
-    { id: "support", label: "Support", href: "#support" },
-    { id: "feedbacks", label: "Feedbacks", href: "#feedbacks" },
+    { id: "roadmap", label: "Roadmap", href: "https://searchfit.canny.io/" },
+    { id: "changelog", label: "Change Log", href: "https://searchfit.canny.io/changelog" },
+    { id: "support", label: "Support", href: "https://searchfit.canny.io/support" },
+    { id: "feedbacks", label: "Feedbacks", href: "https://searchfit.canny.io/feature-requests" },
 ]

@@ -22,6 +22,8 @@ interface KeywordsTabProps {
   brandId: string
 }
 
+const MAX_KEYWORDS = 3
+
 export function KeywordsTab({ brandId }: KeywordsTabProps) {
   const [newKeyword, setNewKeyword] = useState('')
   const [newSubreddits, setNewSubreddits] = useState('')
@@ -30,6 +32,9 @@ export function KeywordsTab({ brandId }: KeywordsTabProps) {
   const utils = trpc.useUtils()
 
   const { data: keywords, isLoading } = trpc.reddit.getKeywords.useQuery({ brandId })
+  
+  const keywordCount = keywords?.length ?? 0
+  const hasReachedLimit = keywordCount >= MAX_KEYWORDS
 
   const addKeyword = trpc.reddit.addKeyword.useMutation({
     onSuccess: () => {
@@ -64,6 +69,11 @@ export function KeywordsTab({ brandId }: KeywordsTabProps) {
   })
 
   const handleAddKeyword = () => {
+    if (hasReachedLimit) {
+      toast.error(`You can only add up to ${MAX_KEYWORDS} keywords`)
+      return
+    }
+    
     if (!newKeyword.trim()) {
       toast.error('Please enter a keyword')
       return
@@ -107,10 +117,24 @@ export function KeywordsTab({ brandId }: KeywordsTabProps) {
   return (
     <div className="space-y-6">
       {/* Add Keyword Dialog */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        {hasReachedLimit && (
+          <span className="text-xs text-muted-foreground">
+            {keywordCount}/{MAX_KEYWORDS} keywords
+          </span>
+        )}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-full gap-2">
+            <Button 
+              className="rounded-full gap-2" 
+              disabled={hasReachedLimit}
+              onClick={(e) => {
+                if (hasReachedLimit) {
+                  e.preventDefault()
+                  toast.error(`You can only add up to ${MAX_KEYWORDS} keywords`)
+                }
+              }}
+            >
               <Plus className="h-4 w-4" />
               Add Keyword
             </Button>
