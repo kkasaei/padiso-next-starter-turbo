@@ -1,8 +1,20 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
+import Image from 'next/image'
 import { Button } from '@workspace/ui/components/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@workspace/ui/components/tooltip'
+import { Input } from '@workspace/ui/components/input'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { Label } from '@workspace/ui/components/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@workspace/ui/components/dialog'
 import { 
   FileText, 
   Hash, 
@@ -19,7 +31,10 @@ import {
   Trash2,
   Loader2,
   Globe,
-  Languages
+  Languages,
+  ArrowLeftRight,
+  Lightbulb,
+  X
 } from 'lucide-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@workspace/ui/lib/utils'
@@ -585,6 +600,426 @@ function LanguagesCard({ primaryLocale, locales }: LanguagesCardProps) {
   )
 }
 
+// ============================================================
+// ACTIONS CARD
+// ============================================================
+type ActionsCardProps = {
+  targetKeyword: string
+  onChangeTopic: () => void
+  onAddInstructions: () => void
+}
+
+function ActionsCard({ targetKeyword, onChangeTopic, onAddInstructions }: ActionsCardProps) {
+  return (
+    <div>
+      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.16em] mb-2">
+        Actions
+      </div>
+      <p className="text-xs text-muted-foreground mb-3">
+        Modify content settings and instructions
+      </p>
+      
+      <div className="space-y-2">
+        <button
+          onClick={onChangeTopic}
+          className="w-full flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-background hover:bg-muted/50 transition-colors text-left"
+        >
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted">
+            <ArrowLeftRight className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium">Change Topic</div>
+            <div className="text-xs text-muted-foreground truncate">Current: {targetKeyword}</div>
+          </div>
+        </button>
+        
+        <button
+          onClick={onAddInstructions}
+          className="w-full flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-background hover:bg-muted/50 transition-colors text-left"
+        >
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-muted">
+            <Lightbulb className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium">Add Instructions</div>
+            <div className="text-xs text-muted-foreground">Provide context for AI generation</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// ADD INSTRUCTIONS MODAL
+// ============================================================
+const AI_INSTRUCTION_TEMPLATES = [
+  `Focus on practical, actionable advice that readers can implement immediately. Include real-world examples and case studies from successful AI implementations. Highlight common pitfalls to avoid and best practices for maximizing ROI.`,
+  `Write in a conversational yet authoritative tone. Target decision-makers (CTOs, CEOs, VPs) who are evaluating AI solutions. Include specific metrics and benchmarks where possible. Address common objections and concerns.`,
+  `Structure the article with clear sections: Introduction, Key Considerations, Comparison Criteria, Top Recommendations, and Conclusion. Use bullet points for easy scanning. Include a summary table comparing options.`,
+  `Emphasize the strategic value of AI consulting over DIY approaches. Include quotes or insights from industry experts. Reference recent trends and statistics from 2025-2026. Keep the tone professional but accessible.`,
+]
+
+interface SidebarAddInstructionsModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  contentTitle: string
+  onSave: (instructions: string, referenceUrl: string, productImage: string | null) => void
+}
+
+function SidebarAddInstructionsModal({ open, onOpenChange, contentTitle, onSave }: SidebarAddInstructionsModalProps) {
+  const [instructions, setInstructions] = useState('')
+  const [referenceUrl, setReferenceUrl] = useState('')
+  const [productImage, setProductImage] = useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const maxLength = 1000
+
+  const handleGenerateWithAI = async () => {
+    setIsGenerating(true)
+    await new Promise(resolve => setTimeout(resolve, 1200))
+    const template = AI_INSTRUCTION_TEMPLATES[Math.floor(Math.random() * AI_INSTRUCTION_TEMPLATES.length)] as string
+    setInstructions(template)
+    setIsGenerating(false)
+    toast.success('Instructions generated')
+  }
+
+  const handleSave = () => {
+    onSave(instructions, referenceUrl, productImage)
+    setInstructions('')
+    setReferenceUrl('')
+    setProductImage(null)
+  }
+
+  const handleCancel = () => {
+    onOpenChange(false)
+    setInstructions('')
+    setReferenceUrl('')
+    setProductImage(null)
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setProductImage(event.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[600px] p-0 rounded-2xl">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle className="text-xl font-semibold">Article Instructions</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            For: {contentTitle}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="p-6 space-y-6">
+          {/* Special Instructions */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">Special Instructions</Label>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleGenerateWithAI}
+                  disabled={isGenerating}
+                  className="h-7 px-2 text-xs gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  {isGenerating ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3.5 w-3.5" />
+                  )}
+                  Generate with AI
+                </Button>
+                <span className="text-xs text-muted-foreground">{instructions.length}/{maxLength}</span>
+              </div>
+            </div>
+            <Textarea
+              placeholder="Share any context, key points, or specific directions you'd like the model to use when generating this article."
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value.slice(0, maxLength))}
+              className="min-h-[120px] resize-none"
+            />
+          </div>
+
+          {/* Reference URL */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-1">
+              <Label className="text-sm font-medium">Reference URL</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add a URL for reference material</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <Input
+              placeholder="https://example.com/your-notes-or-brief"
+              value={referenceUrl}
+              onChange={(e) => setReferenceUrl(e.target.value)}
+            />
+          </div>
+
+          {/* Integrate Product or Logo */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Integrate Product or Logo</Label>
+            <p className="text-xs text-muted-foreground">Select which product or logo you want to see in the article images.</p>
+            <div className="flex gap-3 mt-3">
+              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors">
+                <Upload className="h-5 w-5 text-muted-foreground mb-1" />
+                <span className="text-xs text-muted-foreground">Upload New</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+              </label>
+              
+              {productImage && (
+                <div className="relative w-24 h-24 rounded-xl border-2 border-primary overflow-hidden">
+                  <Image
+                    src={productImage}
+                    alt="Product"
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    onClick={() => setProductImage(null)}
+                    className="absolute top-1 right-1 p-0.5 bg-background/80 rounded-full hover:bg-background"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter className="p-6 pt-0 gap-2">
+          <Button variant="outline" onClick={handleCancel} className="rounded-lg">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} className="rounded-lg bg-foreground text-background hover:bg-foreground/90">
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ============================================================
+// CHANGE TOPIC MODAL
+// ============================================================
+interface TopicSuggestion {
+  id: string
+  title: string
+  difficulty: number
+  volume: number
+  type: string
+}
+
+const INITIAL_TOPICS: TopicSuggestion[] = [
+  { id: '1', title: 'AI consulting firms comparison', difficulty: 5, volume: 320, type: 'Product Listicle' },
+  { id: '2', title: 'best AI implementation partners', difficulty: 4, volume: 280, type: 'Product Listicle' },
+  { id: '3', title: 'enterprise AI strategy consultants', difficulty: 6, volume: 150, type: 'Product Listicle' },
+  { id: '4', title: 'how to choose an AI consultant', difficulty: 3, volume: 420, type: 'How To' },
+  { id: '5', title: 'AI transformation services guide', difficulty: 4, volume: 190, type: 'Guide' },
+  { id: '6', title: 'top AI advisory firms 2026', difficulty: 5, volume: 510, type: 'Listicle' },
+]
+
+const AI_GENERATED_TOPICS: TopicSuggestion[][] = [
+  [
+    { id: '7', title: 'AI readiness assessment services', difficulty: 4, volume: 180, type: 'Product Listicle' },
+    { id: '8', title: 'how to build an AI roadmap', difficulty: 3, volume: 340, type: 'How To' },
+    { id: '9', title: 'machine learning consulting costs', difficulty: 5, volume: 290, type: 'Explainer' },
+    { id: '10', title: 'AI consulting vs in-house teams', difficulty: 4, volume: 220, type: 'Explainer' },
+    { id: '11', title: 'best generative AI consultants', difficulty: 6, volume: 480, type: 'Product Listicle' },
+    { id: '12', title: 'enterprise AI adoption strategies', difficulty: 5, volume: 360, type: 'Guide' },
+  ],
+  [
+    { id: '13', title: 'AI consulting ROI calculator', difficulty: 4, volume: 150, type: 'How To' },
+    { id: '14', title: 'ChatGPT implementation services', difficulty: 5, volume: 620, type: 'Product Listicle' },
+    { id: '15', title: 'AI integration best practices', difficulty: 3, volume: 410, type: 'Guide' },
+    { id: '16', title: 'custom AI solution providers', difficulty: 6, volume: 180, type: 'Product Listicle' },
+    { id: '17', title: 'AI consulting for startups', difficulty: 4, volume: 290, type: 'Guide' },
+    { id: '18', title: 'LLM deployment consultants', difficulty: 7, volume: 240, type: 'Product Listicle' },
+  ],
+]
+
+interface SidebarChangeTopicModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: (topic: TopicSuggestion) => void
+}
+
+function SidebarChangeTopicModal({ open, onOpenChange, onConfirm }: SidebarChangeTopicModalProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedTopic, setSelectedTopic] = useState<TopicSuggestion | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [topics, setTopics] = useState<TopicSuggestion[]>(INITIAL_TOPICS)
+  const [generationIndex, setGenerationIndex] = useState(0)
+
+  const filteredTopics = useMemo(() => {
+    if (!searchQuery.trim()) return topics
+    const query = searchQuery.toLowerCase()
+    return topics.filter(t => t.title.toLowerCase().includes(query))
+  }, [searchQuery, topics])
+
+  const handleGenerateWithAI = async () => {
+    setIsLoading(true)
+    setSelectedTopic(null)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    const newTopics = AI_GENERATED_TOPICS[generationIndex % AI_GENERATED_TOPICS.length] as TopicSuggestion[]
+    setTopics(newTopics)
+    setGenerationIndex(prev => prev + 1)
+    setIsLoading(false)
+    toast.success('Generated new topic suggestions')
+  }
+
+  const handleConfirm = () => {
+    if (selectedTopic) {
+      onConfirm(selectedTopic)
+      setSelectedTopic(null)
+      setSearchQuery('')
+      setTopics(INITIAL_TOPICS)
+      setGenerationIndex(0)
+    }
+  }
+
+  const handleCancel = () => {
+    onOpenChange(false)
+    setSelectedTopic(null)
+    setSearchQuery('')
+    setTopics(INITIAL_TOPICS)
+    setGenerationIndex(0)
+  }
+
+  const getDifficultyColor = (difficulty: number) => {
+    if (difficulty <= 3) return 'text-emerald-600'
+    if (difficulty <= 5) return 'text-amber-600'
+    return 'text-rose-600'
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[700px] p-0 rounded-2xl">
+        <DialogHeader className="p-6 pb-4">
+          <DialogTitle className="text-xl font-semibold">Choose Alternative Topic</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            Choose among our topic recommendations or insert your own.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="px-6">
+          <div className="flex gap-3 mb-4">
+            <Input
+              placeholder="Search or insert your own topic (e.g. 'AI implementation')"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              variant="outline"
+              onClick={handleGenerateWithAI}
+              disabled={isLoading}
+              className="shrink-0 gap-2"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              Generate with AI
+            </Button>
+          </div>
+
+          <div className="border rounded-xl overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/30">
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Topic</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Difficulty</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Search Volume</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Article Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center">
+                      <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+                    </td>
+                  </tr>
+                ) : filteredTopics.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-muted-foreground text-sm">
+                      No topics found. Try a different search term.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredTopics.map((topic) => (
+                    <tr
+                      key={topic.id}
+                      onClick={() => setSelectedTopic(topic)}
+                      className={cn(
+                        "border-b last:border-0 cursor-pointer transition-colors",
+                        selectedTopic?.id === topic.id 
+                          ? "bg-primary/5 hover:bg-primary/10" 
+                          : "hover:bg-muted/30"
+                      )}
+                    >
+                      <td className="py-3 px-4">
+                        <span className="text-sm">{topic.title}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={cn("text-sm font-medium", getDifficultyColor(topic.difficulty))}>
+                          {topic.difficulty}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-sm">{topic.volume}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-sm text-muted-foreground">{topic.type}</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <DialogFooter className="p-6 gap-2">
+          <Button variant="outline" onClick={handleCancel} className="rounded-lg">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={!selectedTopic}
+            className="rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Confirm
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
@@ -616,6 +1051,18 @@ function ContentFooterActions({ brandId }: ContentFooterActionsProps) {
 export function ContentDetailSidebar({ content, brandId }: ContentDetailSidebarProps) {
   const [showScoreFactors, setShowScoreFactors] = useState(false)
   const [featuredImage, setFeaturedImage] = useState<string | null>((content as { featuredImage?: string | null }).featuredImage ?? null)
+  const [changeTopicModalOpen, setChangeTopicModalOpen] = useState(false)
+  const [instructionsModalOpen, setInstructionsModalOpen] = useState(false)
+
+  const handleChangeTopic = (topic: TopicSuggestion) => {
+    toast.success(`Topic changed to "${topic.title}"`)
+    setChangeTopicModalOpen(false)
+  }
+
+  const handleSaveInstructions = (instructions: string, referenceUrl: string, productImage: string | null) => {
+    toast.success('Instructions saved')
+    setInstructionsModalOpen(false)
+  }
 
   return (
     <aside className="relative h-full border-l border-border bg-muted/20">
@@ -650,12 +1097,30 @@ export function ContentDetailSidebar({ content, brandId }: ContentDetailSidebarP
           primaryLocale={(content as { primaryLocale?: LocaleInfo }).primaryLocale}
           locales={(content as { locales?: LocaleInfo[] }).locales}
         />
+        <ActionsCard
+          targetKeyword={content.targetKeyword}
+          onChangeTopic={() => setChangeTopicModalOpen(true)}
+          onAddInstructions={() => setInstructionsModalOpen(true)}
+        />
       </div>
 
       {/* Fixed footer */}
       <div className="absolute bottom-0 left-0 right-0">
         <ContentFooterActions brandId={brandId} />
       </div>
+
+      {/* Modals */}
+      <SidebarChangeTopicModal
+        open={changeTopicModalOpen}
+        onOpenChange={setChangeTopicModalOpen}
+        onConfirm={handleChangeTopic}
+      />
+      <SidebarAddInstructionsModal
+        open={instructionsModalOpen}
+        onOpenChange={setInstructionsModalOpen}
+        contentTitle={content.title}
+        onSave={handleSaveInstructions}
+      />
     </aside>
   )
 }

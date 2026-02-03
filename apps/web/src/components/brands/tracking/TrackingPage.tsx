@@ -1308,7 +1308,7 @@ function PromptsTabContent(props: PromptsTabContentProps) {
                         aria-label={`Select ${prompt.prompt}`}
                       />
                     </td>
-                    <td className="px-6 py-4"><Link href={`/dashboard/brands/${projectId}/tracking/prompts/${prompt.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors line-clamp-2">{prompt.prompt}</Link></td>
+                    <td className="px-6 py-4"><Link href={`/dashboard/brands/${projectId}/ai-tracking/prompts/${prompt.id}`} className="text-sm font-medium hover:text-foreground/80 transition-colors line-clamp-2">{prompt.prompt}</Link></td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {/* Show scan status only when actively scanning */}
                       {prompt.scanStatus === 'SCANNING' ? (
@@ -1341,7 +1341,7 @@ function PromptsTabContent(props: PromptsTabContentProps) {
                           className="h-8 w-8"
                           asChild
                         >
-                          <Link href={`/dashboard/brands/${projectId}/tracking/prompts/${prompt.id}`} title="View details">
+                          <Link href={`/dashboard/brands/${projectId}/ai-tracking/prompts/${prompt.id}`} title="View details">
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
