@@ -11,12 +11,50 @@ import { useBrands } from "@/hooks/use-brands"
 import { useBrandLimit } from "@/hooks/use-billing-guard"
 import { UpgradePlanModal } from "@/components/shared/UpgradePlanModal"
 
+// Generate a consistent hash from brand ID for deterministic mock data
+function getHashFromId(brandId: string): number {
+  let hash = 0
+  for (let i = 0; i < brandId.length; i++) {
+    hash = ((hash << 5) - hash) + brandId.charCodeAt(i)
+    hash = hash & hash
+  }
+  return Math.abs(hash)
+}
+
+// Generate mock data for each brand
+function getMockBrandData(brandId: string) {
+  const hash = getHashFromId(brandId)
+  const now = new Date()
+  
+  // AI Score: 66-95
+  const aiScore = 66 + (hash % 30)
+  
+  // Last scan: random time in the past 48 hours (0-48 hours ago)
+  const lastScanHoursAgo = (hash % 48) + 1
+  const lastScanAt = new Date(now.getTime() - lastScanHoursAgo * 60 * 60 * 1000)
+  
+  // Next scan: ~7 days from now (5-9 days, randomized)
+  const nextScanDays = 5 + (hash % 5)
+  const nextScanAt = new Date(now.getTime() + nextScanDays * 24 * 60 * 60 * 1000)
+  
+  return { aiScore, lastScanAt, nextScanAt }
+}
+
 export function BrandsListPage() {
   const { data: brandsData = [], isLoading } = useBrands()
   const { canCreateBrand, currentBrands, maxBrands, hasReachedLimit } = useBrandLimit()
   
   // Cast to proper Brand type (tRPC serializes dates as strings)
-  const brands = brandsData as unknown as Brand[]
+  // Add mock data (AI scores, scan dates) to each brand
+  const brands = (brandsData as unknown as Brand[]).map(brand => {
+    const mockData = getMockBrandData(brand.id)
+    return {
+      ...brand,
+      visibilityScore: brand.visibilityScore || mockData.aiScore,
+      lastScanAt: brand.lastScanAt || mockData.lastScanAt,
+      nextScanAt: brand.nextScanAt || mockData.nextScanAt,
+    }
+  })
 
   const [viewOptions, setViewOptions] = useState<ViewOptions>(DEFAULT_VIEW_OPTIONS)
   const [isWizardOpen, setIsWizardOpen] = useState(false)

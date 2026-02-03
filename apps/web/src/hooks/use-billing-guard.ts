@@ -3,6 +3,7 @@
 import { trpc } from "@/lib/trpc/client";
 import { useOrganization } from "@clerk/nextjs";
 import { useWorkspaceByClerkOrgId } from "./use-workspace";
+import { FEATURE_FLAGS } from "@/lib/feature-flags";
 
 export type LimitType = "brands" | "apiCalls" | "aiCredits";
 
@@ -114,13 +115,16 @@ export function useBillingGuard(limitType: LimitType): BillingGuardResult {
 export function useBrandLimit() {
   const guard = useBillingGuard("brands");
 
+  // Bypass billing limits for demo mode
+  const bypassLimits = FEATURE_FLAGS.BYPASS_BILLING_LIMITS;
+
   return {
-    canCreateBrand: guard.canPerformAction,
+    canCreateBrand: bypassLimits || guard.canPerformAction,
     currentBrands: guard.current,
-    maxBrands: guard.limit,
-    brandsRemaining: guard.remaining,
-    isUnlimited: guard.isUnlimited,
-    hasReachedLimit: guard.hasReachedLimit,
+    maxBrands: bypassLimits ? -1 : guard.limit,
+    brandsRemaining: bypassLimits ? -1 : guard.remaining,
+    isUnlimited: bypassLimits || guard.isUnlimited,
+    hasReachedLimit: bypassLimits ? false : guard.hasReachedLimit,
     isLoading: guard.isLoading,
     error: guard.error,
     refetch: guard.refetch,

@@ -22,6 +22,10 @@ import {
   ArrowLeft,
   Link2,
   Image,
+  ExternalLink,
+  FileImage,
+  FileCode,
+  File,
 } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Button } from '@workspace/ui/components/button';
@@ -100,34 +104,57 @@ interface PageReportData {
   };
 }
 
+interface LinkData {
+  id: string;
+  sourceUrl: string;
+  targetUrl: string;
+  anchorText: string;
+  type: 'internal' | 'external';
+  status: 'ok' | 'broken' | 'redirect';
+  statusCode: number;
+  nofollow: boolean;
+  foundOn: string;
+}
+
+interface AssetData {
+  id: string;
+  url: string;
+  type: 'image' | 'script' | 'stylesheet' | 'font' | 'other';
+  size: number;
+  status: 'ok' | 'warning' | 'error';
+  issues: string[];
+  loadTime: number;
+  foundOn: string;
+}
+
 // ============================================================
 // MOCK DATA
 // ============================================================
 const createMockAudit = (projectId: string): WebsiteAuditDto => ({
   id: `audit-${Date.now()}`,
   projectId,
-  sitemapUrl: null,
-  maxPagesToScan: 100,
+  sitemapUrl: 'https://www.padiso.co/sitemap.xml',
+  maxPagesToScan: 500,
   status: 'COMPLETED',
   startedAt: new Date(Date.now() - 3600000).toISOString(),
   completedAt: new Date(Date.now() - 3000000).toISOString(),
-  overallScore: 86,
-  seoScore: 82,
-  performanceScore: 74,
-  accessibilityScore: 85,
-  contentScore: 71,
-  criticalIssues: 3,
-  warningIssues: 12,
-  infoIssues: 8,
-  totalPages: 50,
-  pagesDiscovered: 50,
-  pagesScanned: 47,
-  pagesFailed: 3,
+  overallScore: 84,
+  seoScore: 86,
+  performanceScore: 82,
+  accessibilityScore: 88,
+  contentScore: 79,
+  criticalIssues: 2,
+  warningIssues: 18,
+  infoIssues: 24,
+  totalPages: 358,
+  pagesDiscovered: 358,
+  pagesScanned: 352,
+  pagesFailed: 6,
   pagesQueued: 0,
-  totalLinks: 234,
-  brokenLinks: 5,
-  totalAssets: 128,
-  assetsWithIssues: 12,
+  totalLinks: 4820,
+  brokenLinks: 8,
+  totalAssets: 892,
+  assetsWithIssues: 23,
   totalCost: null,
   createdAt: new Date(Date.now() - 3600000).toISOString(),
   updatedAt: new Date(Date.now() - 3000000).toISOString(),
@@ -137,17 +164,17 @@ const createMockPages = (): PageAuditDto[] => [
   {
     id: 'page-1',
     auditId: 'audit-1',
-    url: 'https://apple.com/',
+    url: 'https://www.padiso.co/',
     path: '/',
-    title: 'Apple',
+    title: 'Padiso - AI Automation & Digital Transformation Agency Sydney',
     discoveredAt: new Date().toISOString(),
     discoveredFrom: 'sitemap',
     depth: 0,
-    overallScore: 86,
-    seoScore: 88,
-    aeoScore: 72,
-    contentScore: 80,
-    technicalScore: 90,
+    overallScore: 89,
+    seoScore: 91,
+    aeoScore: 85,
+    contentScore: 88,
+    technicalScore: 92,
     metadata: null,
     analysis: null,
     issues: [],
@@ -160,16 +187,16 @@ const createMockPages = (): PageAuditDto[] => [
   {
     id: 'page-2',
     auditId: 'audit-1',
-    url: 'https://apple.com/iphone',
-    path: '/iphone',
-    title: 'iPhone - Apple',
+    url: 'https://www.padiso.co/blog',
+    path: '/blog',
+    title: 'Blog - AI & Automation Insights | Padiso',
     discoveredAt: new Date().toISOString(),
-    discoveredFrom: 'crawl',
+    discoveredFrom: 'sitemap',
     depth: 1,
-    overallScore: 82,
-    seoScore: 85,
-    aeoScore: 70,
-    contentScore: 78,
+    overallScore: 84,
+    seoScore: 86,
+    aeoScore: 78,
+    contentScore: 82,
     technicalScore: 88,
     metadata: null,
     analysis: null,
@@ -183,17 +210,17 @@ const createMockPages = (): PageAuditDto[] => [
   {
     id: 'page-3',
     auditId: 'audit-1',
-    url: 'https://apple.com/mac',
-    path: '/mac',
-    title: 'Mac - Apple',
+    url: 'https://www.padiso.co/services/product-strategy',
+    path: '/services/product-strategy',
+    title: 'Product Strategy Services | Padiso',
     discoveredAt: new Date().toISOString(),
-    discoveredFrom: 'crawl',
+    discoveredFrom: 'sitemap',
     depth: 1,
-    overallScore: 79,
-    seoScore: 75,
-    aeoScore: 68,
-    contentScore: 82,
-    technicalScore: 85,
+    overallScore: 82,
+    seoScore: 80,
+    aeoScore: 75,
+    contentScore: 85,
+    technicalScore: 86,
     metadata: null,
     analysis: null,
     issues: [],
@@ -206,17 +233,17 @@ const createMockPages = (): PageAuditDto[] => [
   {
     id: 'page-4',
     auditId: 'audit-1',
-    url: 'https://apple.com/ipad',
-    path: '/ipad',
-    title: 'iPad - Apple',
+    url: 'https://www.padiso.co/blog/ai-consulting-sydney',
+    path: '/blog/ai-consulting-sydney',
+    title: 'AI Consulting Sydney - Expert AI Implementation Services | Padiso',
     discoveredAt: new Date().toISOString(),
-    discoveredFrom: 'crawl',
-    depth: 1,
+    discoveredFrom: 'sitemap',
+    depth: 2,
     overallScore: 91,
-    seoScore: 92,
-    aeoScore: 85,
-    contentScore: 88,
-    technicalScore: 94,
+    seoScore: 93,
+    aeoScore: 88,
+    contentScore: 90,
+    technicalScore: 92,
     metadata: null,
     analysis: null,
     issues: [],
@@ -229,17 +256,132 @@ const createMockPages = (): PageAuditDto[] => [
   {
     id: 'page-5',
     auditId: 'audit-1',
-    url: 'https://apple.com/watch',
-    path: '/watch',
-    title: 'Apple Watch',
+    url: 'https://www.padiso.co/blog/ai-automation-agency-services',
+    path: '/blog/ai-automation-agency-services',
+    title: 'AI Automation Agency Services - Transform Your Business | Padiso',
     discoveredAt: new Date().toISOString(),
-    discoveredFrom: 'crawl',
-    depth: 1,
-    overallScore: 74,
-    seoScore: 70,
-    aeoScore: 65,
-    contentScore: 78,
+    discoveredFrom: 'sitemap',
+    depth: 2,
+    overallScore: 87,
+    seoScore: 89,
+    aeoScore: 82,
+    contentScore: 86,
+    technicalScore: 90,
+    metadata: null,
+    analysis: null,
+    issues: [],
+    content: null,
+    status: 'COMPLETED',
+    error: null,
+    scannedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'page-6',
+    auditId: 'audit-1',
+    url: 'https://www.padiso.co/blog/digital-transformation-roi-measuring-success-and-value-creation',
+    path: '/blog/digital-transformation-roi-measuring-success-and-value-creation',
+    title: 'Digital Transformation ROI: Measuring Success and Value Creation | Padiso',
+    discoveredAt: new Date().toISOString(),
+    discoveredFrom: 'sitemap',
+    depth: 2,
+    overallScore: 78,
+    seoScore: 76,
+    aeoScore: 72,
+    contentScore: 82,
     technicalScore: 80,
+    metadata: null,
+    analysis: null,
+    issues: [],
+    content: null,
+    status: 'COMPLETED',
+    error: null,
+    scannedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'page-7',
+    auditId: 'audit-1',
+    url: 'https://www.padiso.co/blog/ai-strategy-for-startups-building-ai-first-products-and-services',
+    path: '/blog/ai-strategy-for-startups-building-ai-first-products-and-services',
+    title: 'AI Strategy for Startups: Building AI-First Products | Padiso',
+    discoveredAt: new Date().toISOString(),
+    discoveredFrom: 'sitemap',
+    depth: 2,
+    overallScore: 85,
+    seoScore: 87,
+    aeoScore: 80,
+    contentScore: 84,
+    technicalScore: 88,
+    metadata: null,
+    analysis: null,
+    issues: [],
+    content: null,
+    status: 'COMPLETED',
+    error: null,
+    scannedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'page-8',
+    auditId: 'audit-1',
+    url: 'https://www.padiso.co/privacy',
+    path: '/privacy',
+    title: 'Privacy Policy | Padiso',
+    discoveredAt: new Date().toISOString(),
+    discoveredFrom: 'sitemap',
+    depth: 1,
+    overallScore: 72,
+    seoScore: 68,
+    aeoScore: 60,
+    contentScore: 75,
+    technicalScore: 82,
+    metadata: null,
+    analysis: null,
+    issues: [],
+    content: null,
+    status: 'COMPLETED',
+    error: null,
+    scannedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'page-9',
+    auditId: 'audit-1',
+    url: 'https://www.padiso.co/terms',
+    path: '/terms',
+    title: 'Terms of Service | Padiso',
+    discoveredAt: new Date().toISOString(),
+    discoveredFrom: 'sitemap',
+    depth: 1,
+    overallScore: 70,
+    seoScore: 65,
+    aeoScore: 58,
+    contentScore: 72,
+    technicalScore: 80,
+    metadata: null,
+    analysis: null,
+    issues: [],
+    content: null,
+    status: 'COMPLETED',
+    error: null,
+    scannedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'page-10',
+    auditId: 'audit-1',
+    url: 'https://www.padiso.co/blog/ai-agency-roi-sydney-2026',
+    path: '/blog/ai-agency-roi-sydney-2026',
+    title: 'AI Agency ROI Sydney 2026: Maximizing Your Investment | Padiso',
+    discoveredAt: new Date().toISOString(),
+    discoveredFrom: 'sitemap',
+    depth: 2,
+    overallScore: 93,
+    seoScore: 95,
+    aeoScore: 90,
+    contentScore: 92,
+    technicalScore: 94,
     metadata: null,
     analysis: null,
     issues: [],
@@ -260,7 +402,10 @@ const createMockHistory = (projectId: string): WebsiteAuditDto[] => [
     startedAt: new Date(Date.now() - 86400000).toISOString(),
     completedAt: new Date(Date.now() - 86100000).toISOString(),
     updatedAt: new Date(Date.now() - 86100000).toISOString(),
-    overallScore: 72,
+    overallScore: 81,
+    pagesScanned: 348,
+    criticalIssues: 4,
+    warningIssues: 22,
   },
   {
     ...createMockAudit(projectId),
@@ -269,71 +414,434 @@ const createMockHistory = (projectId: string): WebsiteAuditDto[] => [
     startedAt: new Date(Date.now() - 172800000).toISOString(),
     completedAt: new Date(Date.now() - 172500000).toISOString(),
     updatedAt: new Date(Date.now() - 172500000).toISOString(),
-    overallScore: 68,
+    overallScore: 78,
+    pagesScanned: 340,
+    criticalIssues: 5,
+    warningIssues: 28,
+  },
+  {
+    ...createMockAudit(projectId),
+    id: `audit-${Date.now() - 604800000}`, // 7 days ago
+    createdAt: new Date(Date.now() - 604800000).toISOString(),
+    startedAt: new Date(Date.now() - 604800000).toISOString(),
+    completedAt: new Date(Date.now() - 604500000).toISOString(),
+    updatedAt: new Date(Date.now() - 604500000).toISOString(),
+    overallScore: 74,
+    pagesScanned: 325,
+    criticalIssues: 7,
+    warningIssues: 35,
   },
 ];
 
-const createMockPageReport = (page: PageAuditDto): PageReportData => ({
-  id: page.id,
-  url: page.url,
-  title: page.title || 'Untitled',
-  score: page.overallScore || 0,
-  scannedAt: page.scannedAt || new Date().toISOString(),
-  seo: {
-    title: { status: 'pass', value: page.title },
-    metaDescription: {
-      status: 'pass',
-      value: 'Discover the innovative world of Apple and shop everything iPhone, iPad, Apple Watch, Mac, and Apple TV, plus explore accessories, entertainment, and expert device support.',
-      suggestion: undefined,
+const createMockLinks = (): LinkData[] => [
+  {
+    id: 'link-1',
+    sourceUrl: 'https://www.padiso.co/',
+    targetUrl: 'https://www.padiso.co/blog',
+    anchorText: 'Blog',
+    type: 'internal',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: false,
+    foundOn: '/',
+  },
+  {
+    id: 'link-2',
+    sourceUrl: 'https://www.padiso.co/',
+    targetUrl: 'https://www.padiso.co/services/product-strategy',
+    anchorText: 'Product Strategy',
+    type: 'internal',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: false,
+    foundOn: '/',
+  },
+  {
+    id: 'link-3',
+    sourceUrl: 'https://www.padiso.co/blog',
+    targetUrl: 'https://www.padiso.co/blog/ai-consulting-sydney',
+    anchorText: 'AI Consulting Sydney',
+    type: 'internal',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: false,
+    foundOn: '/blog',
+  },
+  {
+    id: 'link-4',
+    sourceUrl: 'https://www.padiso.co/blog/ai-consulting-sydney',
+    targetUrl: 'https://www.linkedin.com/company/padiso',
+    anchorText: 'LinkedIn',
+    type: 'external',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: true,
+    foundOn: '/blog/ai-consulting-sydney',
+  },
+  {
+    id: 'link-5',
+    sourceUrl: 'https://www.padiso.co/blog/ai-automation-agency-services',
+    targetUrl: 'https://www.padiso.co/blog/old-article-removed',
+    anchorText: 'Related Article',
+    type: 'internal',
+    status: 'broken',
+    statusCode: 404,
+    nofollow: false,
+    foundOn: '/blog/ai-automation-agency-services',
+  },
+  {
+    id: 'link-6',
+    sourceUrl: 'https://www.padiso.co/',
+    targetUrl: 'https://twitter.com/padisoco',
+    anchorText: 'Twitter',
+    type: 'external',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: true,
+    foundOn: '/',
+  },
+  {
+    id: 'link-7',
+    sourceUrl: 'https://www.padiso.co/blog/digital-transformation-roi-measuring-success-and-value-creation',
+    targetUrl: 'https://www.padiso.co/case-studies',
+    anchorText: 'View Case Studies',
+    type: 'internal',
+    status: 'redirect',
+    statusCode: 301,
+    nofollow: false,
+    foundOn: '/blog/digital-transformation-roi-measuring-success-and-value-creation',
+  },
+  {
+    id: 'link-8',
+    sourceUrl: 'https://www.padiso.co/blog/ai-strategy-for-startups-building-ai-first-products-and-services',
+    targetUrl: 'https://aws.amazon.com/ai/',
+    anchorText: 'AWS AI Services',
+    type: 'external',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: true,
+    foundOn: '/blog/ai-strategy-for-startups-building-ai-first-products-and-services',
+  },
+  {
+    id: 'link-9',
+    sourceUrl: 'https://www.padiso.co/privacy',
+    targetUrl: 'mailto:privacy@padiso.co',
+    anchorText: 'privacy@padiso.co',
+    type: 'external',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: false,
+    foundOn: '/privacy',
+  },
+  {
+    id: 'link-10',
+    sourceUrl: 'https://www.padiso.co/blog/venture-studio-for-ai-startups-building-the-next-generation-of-ai-companies',
+    targetUrl: 'https://www.padiso.co/contact-old',
+    anchorText: 'Contact Us',
+    type: 'internal',
+    status: 'broken',
+    statusCode: 404,
+    nofollow: false,
+    foundOn: '/blog/venture-studio-for-ai-startups-building-the-next-generation-of-ai-companies',
+  },
+  {
+    id: 'link-11',
+    sourceUrl: 'https://www.padiso.co/',
+    targetUrl: 'https://www.google.com/partners/agency?id=padiso',
+    anchorText: 'Google Partner',
+    type: 'external',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: true,
+    foundOn: '/',
+  },
+  {
+    id: 'link-12',
+    sourceUrl: 'https://www.padiso.co/blog',
+    targetUrl: 'https://www.padiso.co/blog/ai-agency-roi-sydney-2026',
+    anchorText: 'AI Agency ROI Sydney 2026',
+    type: 'internal',
+    status: 'ok',
+    statusCode: 200,
+    nofollow: false,
+    foundOn: '/blog',
+  },
+];
+
+const createMockAssets = (): AssetData[] => [
+  {
+    id: 'asset-1',
+    url: 'https://www.padiso.co/images/hero-ai-automation.webp',
+    type: 'image',
+    size: 245000,
+    status: 'ok',
+    issues: [],
+    loadTime: 120,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-2',
+    url: 'https://www.padiso.co/images/team-sydney.jpg',
+    type: 'image',
+    size: 1850000,
+    status: 'warning',
+    issues: ['Image is too large (1.8MB). Consider compressing or using WebP format.'],
+    loadTime: 890,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-3',
+    url: 'https://www.padiso.co/js/main.bundle.js',
+    type: 'script',
+    size: 156000,
+    status: 'ok',
+    issues: [],
+    loadTime: 45,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-4',
+    url: 'https://www.padiso.co/css/styles.css',
+    type: 'stylesheet',
+    size: 42000,
+    status: 'ok',
+    issues: [],
+    loadTime: 28,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-5',
+    url: 'https://www.padiso.co/images/blog/ai-consulting-hero.png',
+    type: 'image',
+    size: 2400000,
+    status: 'error',
+    issues: ['Image exceeds 2MB limit. Convert to WebP and compress.', 'Missing alt attribute.'],
+    loadTime: 1240,
+    foundOn: '/blog/ai-consulting-sydney',
+  },
+  {
+    id: 'asset-6',
+    url: 'https://www.padiso.co/fonts/inter-var.woff2',
+    type: 'font',
+    size: 98000,
+    status: 'ok',
+    issues: [],
+    loadTime: 35,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-7',
+    url: 'https://www.padiso.co/images/logo-padiso.svg',
+    type: 'image',
+    size: 4200,
+    status: 'ok',
+    issues: [],
+    loadTime: 12,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-8',
+    url: 'https://www.padiso.co/js/analytics.js',
+    type: 'script',
+    size: 28000,
+    status: 'warning',
+    issues: ['Script is render-blocking. Consider using defer or async attribute.'],
+    loadTime: 180,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-9',
+    url: 'https://www.padiso.co/images/blog/digital-transformation-infographic.png',
+    type: 'image',
+    size: 520000,
+    status: 'warning',
+    issues: ['Consider using WebP format for better compression.'],
+    loadTime: 340,
+    foundOn: '/blog/digital-transformation-roi-measuring-success-and-value-creation',
+  },
+  {
+    id: 'asset-10',
+    url: 'https://www.padiso.co/images/testimonials/client-1.webp',
+    type: 'image',
+    size: 45000,
+    status: 'ok',
+    issues: [],
+    loadTime: 28,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-11',
+    url: 'https://www.padiso.co/js/chatbot.min.js',
+    type: 'script',
+    size: 89000,
+    status: 'ok',
+    issues: [],
+    loadTime: 65,
+    foundOn: '/',
+  },
+  {
+    id: 'asset-12',
+    url: 'https://www.padiso.co/images/services/product-strategy-icon.svg',
+    type: 'image',
+    size: 3800,
+    status: 'ok',
+    issues: [],
+    loadTime: 8,
+    foundOn: '/services/product-strategy',
+  },
+];
+
+const createMockPageReport = (page: PageAuditDto): PageReportData => {
+  // Generate contextual meta description based on page type
+  const getMetaDescription = (url: string): string => {
+    if (url.includes('/blog/ai-consulting')) {
+      return 'Expert AI consulting services in Sydney. Padiso helps businesses implement AI automation, machine learning solutions, and digital transformation strategies for sustainable growth.';
+    }
+    if (url.includes('/blog/ai-automation')) {
+      return 'Transform your business with AI automation agency services. Discover how Padiso helps Sydney businesses streamline operations, reduce costs, and drive innovation through intelligent automation.';
+    }
+    if (url.includes('/blog/digital-transformation')) {
+      return 'Learn how to measure digital transformation ROI and create lasting value. Comprehensive guide to tracking success metrics and maximizing your technology investments.';
+    }
+    if (url.includes('/blog/ai-strategy')) {
+      return 'Build AI-first products and services with proven strategies for startups. Expert guidance on implementing AI solutions that scale with your business.';
+    }
+    if (url.includes('/blog/ai-agency-roi')) {
+      return 'Maximize your AI investment in 2026. Learn how Sydney businesses are achieving significant ROI through strategic AI implementation with Padiso.';
+    }
+    if (url.includes('/blog')) {
+      return 'Explore insights on AI automation, digital transformation, and technology strategy. Expert articles from Padiso to help your business thrive in the digital age.';
+    }
+    if (url.includes('/services')) {
+      return 'Strategic product development and digital transformation services. Padiso helps businesses define, build, and scale innovative technology solutions.';
+    }
+    if (url.includes('/privacy')) {
+      return 'Padiso privacy policy. Learn how we collect, use, and protect your personal information when you use our AI automation and consulting services.';
+    }
+    if (url.includes('/terms')) {
+      return 'Terms of service for Padiso AI automation and consulting services. Read our terms and conditions for using our platform and services.';
+    }
+    return 'Padiso is a leading AI automation and digital transformation agency in Sydney. We help businesses leverage AI, machine learning, and intelligent automation to drive growth and innovation.';
+  };
+
+  // Generate contextual keywords based on page type
+  const getKeywords = (url: string): string[] => {
+    if (url.includes('/blog/ai-consulting')) {
+      return ['ai consulting', 'sydney ai agency', 'machine learning', 'ai implementation', 'business automation', 'digital strategy'];
+    }
+    if (url.includes('/blog/ai-automation')) {
+      return ['ai automation', 'business automation', 'intelligent automation', 'workflow automation', 'process automation', 'rpa'];
+    }
+    if (url.includes('/blog/digital-transformation')) {
+      return ['digital transformation', 'roi measurement', 'value creation', 'technology investment', 'business metrics', 'kpis'];
+    }
+    if (url.includes('/blog/ai-strategy')) {
+      return ['ai strategy', 'startups', 'ai products', 'machine learning', 'product development', 'innovation'];
+    }
+    if (url.includes('/blog')) {
+      return ['ai insights', 'automation blog', 'digital transformation', 'technology trends', 'business innovation'];
+    }
+    if (url.includes('/services')) {
+      return ['product strategy', 'digital services', 'consulting', 'technology advisory', 'business transformation'];
+    }
+    return ['ai automation', 'digital transformation', 'sydney', 'machine learning', 'business consulting', 'padiso', 'technology'];
+  };
+
+  const isHomepage = page.path === '/';
+  const isBlogPost = page.path.includes('/blog/') && page.path !== '/blog';
+  const isLegalPage = page.path.includes('/privacy') || page.path.includes('/terms');
+
+  return {
+    id: page.id,
+    url: page.url,
+    title: page.title || 'Untitled',
+    score: page.overallScore || 0,
+    scannedAt: page.scannedAt || new Date().toISOString(),
+    seo: {
+      title: { status: 'pass', value: page.title },
+      metaDescription: {
+        status: 'pass',
+        value: getMetaDescription(page.url),
+        suggestion: undefined,
+      },
+      headings: { 
+        status: isBlogPost ? 'pass' : 'warning', 
+        h1: page.title, 
+        h2Count: isBlogPost ? 8 : isHomepage ? 6 : 4 
+      },
+      contentKeywords: { status: 'pass', keywords: getKeywords(page.url) },
+      imageKeywords: { 
+        status: isLegalPage ? 'warning' : 'pass', 
+        message: isLegalPage ? 'Legal pages have minimal images - consider adding relevant visuals.' : 'All images have alt attributes set with relevant keywords.' 
+      },
+      seoFriendlyUrl: { status: 'pass', message: 'The URL is SEO friendly and follows best practices.' },
+      errorPages: { status: 'pass', count: 0, urls: [] },
+      robotsAccess: { status: 'pass', message: 'The webpage can be accessed by search engines.' },
+      inPageLinks: { 
+        status: 'pass', 
+        internal: isHomepage ? 45 : isBlogPost ? 28 : 18, 
+        external: isBlogPost ? 12 : 5 
+      },
+      favicon: { status: 'pass', message: 'The webpage has a properly configured favicon.' },
+      language: { status: 'pass', value: 'en-AU' },
+      noindex: { 
+        status: isLegalPage ? 'warning' : 'pass', 
+        message: isLegalPage ? 'Consider adding noindex to legal pages to focus crawl budget.' : 'The webpage does not have a noindex tag set.' 
+      },
+      metaRefresh: { status: 'pass', message: 'The webpage does not have a meta refresh tag set.' },
+      metaKeywords: {
+        status: 'warning',
+        value: null,
+        suggestion: 'ai automation sydney, digital transformation agency, ai consulting australia, machine learning services, business automation, intelligent automation, padiso',
+      },
     },
-    headings: { status: 'warning', h1: page.title, h2Count: 12 },
-    contentKeywords: { status: 'pass', keywords: ['apple', 'iphone', 'mac', 'ipad', 'watch', 'airpods', 'vision pro'] },
-    imageKeywords: { status: 'pass', message: 'All images have alt attributes set.' },
-    seoFriendlyUrl: { status: 'pass', message: 'The URL is SEO friendly.' },
-    errorPages: { status: 'pass', count: 0, urls: [] },
-    robotsAccess: { status: 'pass', message: 'The webpage can be accessed by search engines.' },
-    inPageLinks: { status: 'pass', internal: 186, external: 49 },
-    favicon: { status: 'warning', message: 'The webpage does not have a favicon.' },
-    language: { status: 'pass', value: 'en-US' },
-    noindex: { status: 'pass', message: 'The webpage does not have a noindex tag set.' },
-    metaRefresh: { status: 'pass', message: 'The webpage does not have a meta refresh tag set.' },
-    metaKeywords: {
-      status: 'warning',
-      value: null,
-      suggestion: 'apple store, macbook, iphone, airpods, vision pro, tv & home, ipad, apple watch, airpods, gift cards, apple card, trade in, apple store online, shop apple',
+    performance: {
+      textCompression: { status: 'pass', message: 'The HTML file is compressed using gzip/brotli.' },
+      loadTime: { status: 'pass', value: '0.892 seconds' },
+      pageSize: { status: 'pass', value: '156.4 KB' },
+      httpRequests: { status: 'pass', count: 38 },
+      imageFormat: { status: 'pass', message: 'Images are served in modern WebP format with fallbacks.' },
+      javascriptDefer: { status: 'pass', message: 'JavaScript resources use defer/async attributes correctly.' },
+      domSize: { status: 'pass', value: 1240 },
+      doctype: { status: 'pass', message: 'The webpage has the HTML5 DOCTYPE declaration set.' },
     },
-  },
-  performance: {
-    textCompression: { status: 'pass', message: 'The HTML file is compressed.' },
-    loadTime: { status: 'pass', value: '0.536 seconds' },
-    pageSize: { status: 'pass', value: '28.02 KB' },
-    httpRequests: { status: 'pass', count: 42 },
-    imageFormat: { status: 'pass', message: 'The images are served in the AVIF WebP format.' },
-    javascriptDefer: { status: 'pass', message: 'JavaScript resources use defer attribute.' },
-    domSize: { status: 'pass', value: 1500 },
-    doctype: { status: 'pass', message: 'The webpage has the DOCTYPE declaration tag set.' },
-  },
-  security: {
-    httpsEncryption: { status: 'pass', message: 'The webpage uses HTTPS encryption.' },
-    http2: { status: 'pass', message: 'The webpage is using the HTTP/2 protocol.' },
-    mixedContent: { status: 'pass', message: 'There are no mixed content resources on the webpage.' },
-    serverSignature: { status: 'warning', message: 'The webpage has a public server signature.' },
-    unsafeCrossOrigin: { status: 'pass', message: 'The webpage has 1 unsafe cross-origin links.' },
-    hsts: { status: 'pass', message: 'The webpage has the HTTP Strict Transport Security header set.' },
-    plaintextEmail: { status: 'pass', message: 'The webpage does not contain any plaintext emails.' },
-  },
-  miscellaneous: {
-    structuredData: { status: 'pass', types: ['Organization', 'WebPage'] },
-    metaViewport: { status: 'pass', value: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-    characterSet: { status: 'pass', value: 'UTF-8' },
-    sitemap: { status: 'pass', message: 'The website has sitemaps.' },
-    social: { status: 'warning', message: 'The webpage does not contain any social links.' },
-    contentLength: { status: 'pass', wordCount: 8794 },
-    textToHtmlRatio: { status: 'pass', value: '78%' },
-    inlineCss: { status: 'warning', message: 'The webpage contains inline CSS styles.' },
-    deprecatedHtml: { status: 'pass', message: 'There are no deprecated HTML tags on the webpage.' },
-  },
-});
+    security: {
+      httpsEncryption: { status: 'pass', message: 'The webpage uses HTTPS encryption with a valid SSL certificate.' },
+      http2: { status: 'pass', message: 'The webpage is using the HTTP/2 protocol for faster loading.' },
+      mixedContent: { status: 'pass', message: 'No mixed content resources detected on the webpage.' },
+      serverSignature: { status: 'pass', message: 'Server signature is hidden for security.' },
+      unsafeCrossOrigin: { status: 'pass', message: 'All cross-origin links have proper rel attributes.' },
+      hsts: { status: 'pass', message: 'HTTP Strict Transport Security header is properly configured.' },
+      plaintextEmail: { status: 'pass', message: 'No plaintext emails exposed on the webpage.' },
+    },
+    miscellaneous: {
+      structuredData: { 
+        status: 'pass', 
+        types: isHomepage 
+          ? ['Organization', 'WebPage', 'LocalBusiness'] 
+          : isBlogPost 
+            ? ['Article', 'BlogPosting', 'Organization'] 
+            : ['WebPage', 'Organization'] 
+      },
+      metaViewport: { status: 'pass', value: 'width=device-width, initial-scale=1' },
+      characterSet: { status: 'pass', value: 'UTF-8' },
+      sitemap: { status: 'pass', message: 'XML sitemap found at /sitemap.xml with 350+ URLs indexed.' },
+      social: { 
+        status: isHomepage ? 'pass' : 'warning', 
+        message: isHomepage 
+          ? 'Open Graph and Twitter Card meta tags are properly configured.' 
+          : 'Consider adding social sharing meta tags for better social media visibility.' 
+      },
+      contentLength: { 
+        status: isBlogPost ? 'pass' : isLegalPage ? 'pass' : 'warning', 
+        wordCount: isBlogPost ? 2450 : isHomepage ? 1200 : isLegalPage ? 3200 : 850 
+      },
+      textToHtmlRatio: { status: 'pass', value: isBlogPost ? '68%' : '52%' },
+      inlineCss: { status: 'pass', message: 'Critical CSS is inlined, non-critical CSS is deferred.' },
+      deprecatedHtml: { status: 'pass', message: 'No deprecated HTML tags found on the webpage.' },
+    },
+  };
+};
 
 // ============================================================
 // CONSTANTS
@@ -530,7 +1038,7 @@ function PageReportPanel({
         <ReportSection title="SEO" icon={Search}>
           <ReportItem label="Title" status={report.seo.title.status} value={report.seo.title.value ? `The title tag is perfect: "${report.seo.title.value}"` : 'Missing title tag'} />
           <ReportItem label="Meta description" status={report.seo.metaDescription.status} value={report.seo.metaDescription.value ? `The meta description tag is good: "${report.seo.metaDescription.value}"` : 'Missing meta description'} />
-          <ReportItem label="Headings" status={report.seo.headings.status} value={`The H1 tag is the same with the title tag.`} suggestion={report.seo.headings.h1 ? `#1 (Official): iphone, Mac, iPad, Watch, AirPods, Vision Pro...` : undefined} />
+          <ReportItem label="Headings" status={report.seo.headings.status} value={`The H1 tag is properly set. ${report.seo.headings.h2Count} H2 subheadings found.`} suggestion={report.seo.headings.status === 'warning' ? `Consider adding more descriptive H2s like: "AI Automation Services", "Digital Transformation Solutions", "Sydney AI Consulting"` : undefined} />
           <ReportItem label="Content keywords" status={report.seo.contentKeywords.status} value={`The content has relevant keywords: ${report.seo.contentKeywords.keywords.join(', ')}`} />
           <ReportItem label="Image keywords" status={report.seo.imageKeywords.status} value={report.seo.imageKeywords.message} />
           <ReportItem label="SEO friendly URL" status={report.seo.seoFriendlyUrl.status} value={report.seo.seoFriendlyUrl.message} />
@@ -636,6 +1144,8 @@ export default function AuditPage() {
   const [activeTab, setActiveTab] = useState<AuditTab>(initialTab);
   const [audit, setAudit] = useState<WebsiteAuditDto | null>(null);
   const [pages, setPages] = useState<PageAuditDto[]>([]);
+  const [links, setLinks] = useState<LinkData[]>([]);
+  const [assets, setAssets] = useState<AssetData[]>([]);
   const [auditHistory, setAuditHistory] = useState<WebsiteAuditDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
@@ -646,10 +1156,26 @@ export default function AuditPage() {
   const [pageCurrentPage, setPageCurrentPage] = useState(1);
   const [pagePageSize, setPagePageSize] = useState<number>(10);
 
+  // Links tab state
+  const [linkSearchQuery, setLinkSearchQuery] = useState('');
+  const [linkCurrentPage, setLinkCurrentPage] = useState(1);
+  const [linkPageSize, setLinkPageSize] = useState<number>(10);
+  const [linkTypeFilter, setLinkTypeFilter] = useState<'all' | 'internal' | 'external'>('all');
+  const [linkStatusFilter, setLinkStatusFilter] = useState<'all' | 'ok' | 'broken' | 'redirect'>('all');
+
+  // Assets tab state
+  const [assetSearchQuery, setAssetSearchQuery] = useState('');
+  const [assetCurrentPage, setAssetCurrentPage] = useState(1);
+  const [assetPageSize, setAssetPageSize] = useState<number>(10);
+  const [assetTypeFilter, setAssetTypeFilter] = useState<'all' | 'image' | 'script' | 'stylesheet' | 'font' | 'other'>('all');
+  const [assetStatusFilter, setAssetStatusFilter] = useState<'all' | 'ok' | 'warning' | 'error'>('all');
+
   const loadAuditData = useCallback(() => {
     setTimeout(() => {
       setAudit(createMockAudit(projectId));
       setPages(createMockPages());
+      setLinks(createMockLinks());
+      setAssets(createMockAssets());
       setAuditHistory(createMockHistory(projectId));
       setIsLoading(false);
     }, 500);
@@ -757,15 +1283,13 @@ export default function AuditPage() {
                 value="links"
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
-                Links
-                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
+                Links ({links.length})
               </TabsTrigger>
               <TabsTrigger
                 value="assets"
                 className="dark:data-[state=active]:bg-polar-700 dark:hover:text-polar-50 dark:text-polar-500 data-[state=active]:bg-gray-100 data-[state=active]:shadow-none px-4 whitespace-nowrap"
               >
-                Assets
-                <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">Soon</Badge>
+                Assets ({assets.length})
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1128,42 +1652,395 @@ export default function AuditPage() {
 
           {/* Links Tab */}
           <TabsContent value="links" className="mt-0">
-            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-              <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-                <div className="flex flex-col items-center justify-center gap-y-6 py-24 md:py-32">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10">
-                    <Link2 className="h-8 w-8 text-blue-500" />
+            {(() => {
+              // Filter links
+              const filteredLinks = links.filter((link) => {
+                if (linkTypeFilter !== 'all' && link.type !== linkTypeFilter) return false;
+                if (linkStatusFilter !== 'all' && link.status !== linkStatusFilter) return false;
+                if (!linkSearchQuery.trim()) return true;
+                const query = linkSearchQuery.toLowerCase();
+                return (
+                  link.targetUrl.toLowerCase().includes(query) ||
+                  link.anchorText.toLowerCase().includes(query) ||
+                  link.foundOn.toLowerCase().includes(query)
+                );
+              });
+
+              const linkTotalItems = filteredLinks.length;
+              const linkTotalPages = Math.ceil(linkTotalItems / linkPageSize);
+              const linkValidCurrentPage = Math.max(1, Math.min(linkCurrentPage, linkTotalPages || 1));
+              const linkStartIndex = (linkValidCurrentPage - 1) * linkPageSize;
+              const linkEndIndex = Math.min(linkStartIndex + linkPageSize, linkTotalItems);
+              const paginatedLinks = filteredLinks.slice(linkStartIndex, linkEndIndex);
+
+              const brokenLinksCount = links.filter(l => l.status === 'broken').length;
+              const redirectLinksCount = links.filter(l => l.status === 'redirect').length;
+              const internalLinksCount = links.filter(l => l.type === 'internal').length;
+              const externalLinksCount = links.filter(l => l.type === 'external').length;
+
+              return (
+                <div className="space-y-6">
+                  {/* Links Summary */}
+                  <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+                    <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                      <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100 dark:divide-polar-800">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Total Links</span>
+                            <Link2 className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <span className="text-3xl font-bold">{links.length}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Broken Links</span>
+                            <AlertTriangle className="h-4 w-4 text-red-500" />
+                          </div>
+                          <span className="text-3xl font-bold text-red-600">{brokenLinksCount}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Internal</span>
+                            <Link2 className="h-4 w-4 text-blue-500" />
+                          </div>
+                          <span className="text-3xl font-bold">{internalLinksCount}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">External</span>
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <span className="text-3xl font-bold">{externalLinksCount}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center gap-y-2 px-4">
-                    <h3 className="text-lg font-semibold">Link Analysis</h3>
-                    <p className="dark:text-polar-500 text-gray-500 text-center max-w-md text-sm">
-                      View and analyze all internal and external links across your website. Identify broken links, redirects, and optimization opportunities.
-                    </p>
+
+                  {/* Links Table */}
+                  <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+                    <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
+                      <div className="flex w-full flex-col gap-y-2">
+                        <span className="text-lg font-semibold">Link Analysis</span>
+                        <p className="text-sm text-muted-foreground">All links discovered during the audit with their status.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                      {/* Filters */}
+                      <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800 flex flex-wrap gap-4 items-center">
+                        <div className="relative flex-1 min-w-[200px] max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="text"
+                            placeholder="Search links..."
+                            value={linkSearchQuery}
+                            onChange={(e) => { setLinkSearchQuery(e.target.value); setLinkCurrentPage(1); }}
+                            className="pl-9 h-9"
+                          />
+                        </div>
+                        <Select value={linkTypeFilter} onValueChange={(v) => { setLinkTypeFilter(v as typeof linkTypeFilter); setLinkCurrentPage(1); }}>
+                          <SelectTrigger className="w-[130px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            <SelectItem value="internal">Internal</SelectItem>
+                            <SelectItem value="external">External</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value={linkStatusFilter} onValueChange={(v) => { setLinkStatusFilter(v as typeof linkStatusFilter); setLinkCurrentPage(1); }}>
+                          <SelectTrigger className="w-[130px] h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="ok">OK</SelectItem>
+                            <SelectItem value="broken">Broken</SelectItem>
+                            <SelectItem value="redirect">Redirect</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b border-gray-200 dark:border-polar-800">
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Target URL</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Anchor Text</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Type</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Found On</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
+                            {paginatedLinks.length === 0 ? (
+                              <tr>
+                                <td colSpan={5} className="px-6 py-12 text-center">
+                                  <p className="text-sm text-muted-foreground">No links match your filters</p>
+                                </td>
+                              </tr>
+                            ) : (
+                              paginatedLinks.map((link) => (
+                                <tr key={link.id} className="hover:bg-gray-50 dark:hover:bg-polar-800/50 transition-colors">
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                      {link.type === 'external' && <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                                      <span className="text-sm truncate max-w-[300px]" title={link.targetUrl}>{link.targetUrl}</span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 text-sm">{link.anchorText}</td>
+                                  <td className="px-6 py-4">
+                                    <Badge variant="outline" className={cn(
+                                      link.type === 'internal' ? 'text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30' : 'text-gray-600 border-gray-300 bg-gray-50 dark:bg-gray-800'
+                                    )}>
+                                      {link.type}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <Badge variant="outline" className={cn(
+                                      link.status === 'ok' && 'text-emerald-600 border-emerald-300 bg-emerald-50 dark:bg-emerald-950/30',
+                                      link.status === 'broken' && 'text-red-600 border-red-300 bg-red-50 dark:bg-red-950/30',
+                                      link.status === 'redirect' && 'text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30'
+                                    )}>
+                                      {link.status === 'ok' ? `${link.statusCode} OK` : link.status === 'broken' ? `${link.statusCode} Broken` : `${link.statusCode} Redirect`}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-muted-foreground">{link.foundOn}</td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Pagination */}
+                      {linkTotalItems > 0 && (
+                        <PaginationFooter
+                          label="links"
+                          startIndex={linkStartIndex}
+                          endIndex={linkEndIndex}
+                          totalItems={linkTotalItems}
+                          totalPages={linkTotalPages}
+                          currentPage={linkValidCurrentPage}
+                          pageSize={linkPageSize}
+                          onPageChange={setLinkCurrentPage}
+                          onPageSizeChange={(v) => { setLinkPageSize(v); setLinkCurrentPage(1); }}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <Badge variant="outline" className="rounded-lg">Coming Soon</Badge>
                 </div>
-              </div>
-            </div>
+              );
+            })()}
           </TabsContent>
 
           {/* Assets Tab */}
           <TabsContent value="assets" className="mt-0">
-            <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
-              <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
-                <div className="flex flex-col items-center justify-center gap-y-6 py-24 md:py-32">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/10">
-                    <Image className="h-8 w-8 text-purple-500" />
+            {(() => {
+              // Filter assets
+              const filteredAssets = assets.filter((asset) => {
+                if (assetTypeFilter !== 'all' && asset.type !== assetTypeFilter) return false;
+                if (assetStatusFilter !== 'all' && asset.status !== assetStatusFilter) return false;
+                if (!assetSearchQuery.trim()) return true;
+                const query = assetSearchQuery.toLowerCase();
+                return (
+                  asset.url.toLowerCase().includes(query) ||
+                  asset.foundOn.toLowerCase().includes(query)
+                );
+              });
+
+              const assetTotalItems = filteredAssets.length;
+              const assetTotalPages = Math.ceil(assetTotalItems / assetPageSize);
+              const assetValidCurrentPage = Math.max(1, Math.min(assetCurrentPage, assetTotalPages || 1));
+              const assetStartIndex = (assetValidCurrentPage - 1) * assetPageSize;
+              const assetEndIndex = Math.min(assetStartIndex + assetPageSize, assetTotalItems);
+              const paginatedAssets = filteredAssets.slice(assetStartIndex, assetEndIndex);
+
+              const totalSize = assets.reduce((acc, a) => acc + a.size, 0);
+              const assetsWithIssues = assets.filter(a => a.status !== 'ok').length;
+              const imageCount = assets.filter(a => a.type === 'image').length;
+              const scriptCount = assets.filter(a => a.type === 'script').length;
+
+              const formatSize = (bytes: number) => {
+                if (bytes < 1024) return `${bytes} B`;
+                if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+                return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+              };
+
+              const getAssetIcon = (type: AssetData['type']) => {
+                switch (type) {
+                  case 'image': return <FileImage className="h-4 w-4 text-purple-500" />;
+                  case 'script': return <FileCode className="h-4 w-4 text-amber-500" />;
+                  case 'stylesheet': return <FileText className="h-4 w-4 text-blue-500" />;
+                  case 'font': return <File className="h-4 w-4 text-gray-500" />;
+                  default: return <File className="h-4 w-4 text-gray-400" />;
+                }
+              };
+
+              return (
+                <div className="space-y-6">
+                  {/* Assets Summary */}
+                  <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+                    <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                      <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100 dark:divide-polar-800">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Total Assets</span>
+                            <File className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <span className="text-3xl font-bold">{assets.length}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Total Size</span>
+                            <Zap className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <span className="text-3xl font-bold">{formatSize(totalSize)}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">With Issues</span>
+                            <AlertCircle className="h-4 w-4 text-amber-500" />
+                          </div>
+                          <span className="text-3xl font-bold text-amber-600">{assetsWithIssues}</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Images</span>
+                            <FileImage className="h-4 w-4 text-purple-500" />
+                          </div>
+                          <span className="text-3xl font-bold">{imageCount}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center gap-y-2 px-4">
-                    <h3 className="text-lg font-semibold">Asset Management</h3>
-                    <p className="dark:text-polar-500 text-gray-500 text-center max-w-md text-sm">
-                      Monitor images, scripts, and other assets. Track file sizes, loading performance, and identify optimization opportunities.
-                    </p>
+
+                  {/* Assets Table */}
+                  <div className="group flex w-full flex-col justify-between rounded-xl bg-muted/30 p-2 lg:rounded-3xl">
+                    <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
+                      <div className="flex w-full flex-col gap-y-2">
+                        <span className="text-lg font-semibold">Asset Analysis</span>
+                        <p className="text-sm text-muted-foreground">All assets discovered during the audit with optimization opportunities.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex w-full flex-col rounded-3xl bg-card overflow-hidden">
+                      {/* Filters */}
+                      <div className="px-6 py-4 border-b border-gray-200 dark:border-polar-800 flex flex-wrap gap-4 items-center">
+                        <div className="relative flex-1 min-w-[200px] max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="text"
+                            placeholder="Search assets..."
+                            value={assetSearchQuery}
+                            onChange={(e) => { setAssetSearchQuery(e.target.value); setAssetCurrentPage(1); }}
+                            className="pl-9 h-9"
+                          />
+                        </div>
+                        <Select value={assetTypeFilter} onValueChange={(v) => { setAssetTypeFilter(v as typeof assetTypeFilter); setAssetCurrentPage(1); }}>
+                          <SelectTrigger className="w-[130px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            <SelectItem value="image">Images</SelectItem>
+                            <SelectItem value="script">Scripts</SelectItem>
+                            <SelectItem value="stylesheet">Stylesheets</SelectItem>
+                            <SelectItem value="font">Fonts</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value={assetStatusFilter} onValueChange={(v) => { setAssetStatusFilter(v as typeof assetStatusFilter); setAssetCurrentPage(1); }}>
+                          <SelectTrigger className="w-[130px] h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="ok">OK</SelectItem>
+                            <SelectItem value="warning">Warning</SelectItem>
+                            <SelectItem value="error">Error</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b border-gray-200 dark:border-polar-800">
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Asset</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Type</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Size</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Load Time</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Issues</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 dark:divide-polar-800">
+                            {paginatedAssets.length === 0 ? (
+                              <tr>
+                                <td colSpan={6} className="px-6 py-12 text-center">
+                                  <p className="text-sm text-muted-foreground">No assets match your filters</p>
+                                </td>
+                              </tr>
+                            ) : (
+                              paginatedAssets.map((asset) => (
+                                <tr key={asset.id} className="hover:bg-gray-50 dark:hover:bg-polar-800/50 transition-colors">
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                      {getAssetIcon(asset.type)}
+                                      <span className="text-sm truncate max-w-[250px]" title={asset.url}>
+                                        {asset.url.split('/').pop()}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1 truncate max-w-[250px]" title={asset.foundOn}>
+                                      Found on: {asset.foundOn}
+                                    </p>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <Badge variant="outline" className="capitalize">{asset.type}</Badge>
+                                  </td>
+                                  <td className="px-6 py-4 text-sm font-medium">{formatSize(asset.size)}</td>
+                                  <td className="px-6 py-4 text-sm">{asset.loadTime}ms</td>
+                                  <td className="px-6 py-4">
+                                    <Badge variant="outline" className={cn(
+                                      asset.status === 'ok' && 'text-emerald-600 border-emerald-300 bg-emerald-50 dark:bg-emerald-950/30',
+                                      asset.status === 'warning' && 'text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30',
+                                      asset.status === 'error' && 'text-red-600 border-red-300 bg-red-50 dark:bg-red-950/30'
+                                    )}>
+                                      {asset.status === 'ok' ? 'OK' : asset.status === 'warning' ? 'Warning' : 'Error'}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    {asset.issues.length > 0 ? (
+                                      <div className="space-y-1">
+                                        {asset.issues.map((issue, i) => (
+                                          <p key={i} className="text-xs text-muted-foreground">{issue}</p>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <span className="text-xs text-muted-foreground">None</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Pagination */}
+                      {assetTotalItems > 0 && (
+                        <PaginationFooter
+                          label="assets"
+                          startIndex={assetStartIndex}
+                          endIndex={assetEndIndex}
+                          totalItems={assetTotalItems}
+                          totalPages={assetTotalPages}
+                          currentPage={assetValidCurrentPage}
+                          pageSize={assetPageSize}
+                          onPageChange={setAssetCurrentPage}
+                          onPageSizeChange={(v) => { setAssetPageSize(v); setAssetCurrentPage(1); }}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <Badge variant="outline" className="rounded-lg">Coming Soon</Badge>
                 </div>
-              </div>
-            </div>
+              );
+            })()}
           </TabsContent>
         </Tabs>
       </div>

@@ -5,6 +5,17 @@ export interface LocaleInfo {
   status: 'draft' | 'published' | 'scheduled'
 }
 
+// Locale-specific content data (only the fields that change per locale)
+export interface LocaleContentData {
+  title: string
+  content: string
+  metaDescription: string
+  slug: string
+  targetKeyword: string
+  wordCount: number
+  keywordCount: number
+}
+
 export interface ContentData {
   id: string
   title: string
@@ -337,5 +348,116 @@ This article is currently being written. Check back soon for the full content.
 9. Keep content fresh and updated
 10. Monitor and measure your AI visibility
     `,
+  },
+}
+
+// Locale-specific content for content-1
+export const localeContentData: Record<string, Record<string, LocaleContentData>> = {
+  'content-1': {
+    'en': {
+      title: 'The Complete Guide to AI Visibility: How to Get Your Brand Mentioned by ChatGPT, Perplexity, and Gemini',
+      targetKeyword: 'ai visibility guide',
+      slug: 'complete-guide-ai-visibility-chatgpt-perplexity-gemini',
+      metaDescription: 'Learn how to improve your brand\'s visibility in AI-powered search engines like ChatGPT, Perplexity, and Google Gemini. Complete guide with actionable strategies.',
+      wordCount: 3899,
+      keywordCount: 12,
+      content: mockContentData['content-1']?.content || '',
+    },
+    'es': {
+      title: 'La Guía Completa de Visibilidad en IA: Cómo Hacer que ChatGPT, Perplexity y Gemini Mencionen tu Marca',
+      targetKeyword: 'guía visibilidad ia',
+      slug: 'guia-completa-visibilidad-ia-chatgpt-perplexity-gemini',
+      metaDescription: 'Aprende cómo mejorar la visibilidad de tu marca en motores de búsqueda impulsados por IA como ChatGPT, Perplexity y Google Gemini. Guía completa con estrategias prácticas.',
+      wordCount: 4150,
+      keywordCount: 14,
+      content: `
+## Introducción
+
+En el panorama digital actual en rápida evolución, ha surgido una nueva frontera en la visibilidad de marca: los motores de búsqueda impulsados por IA y los asistentes conversacionales. A medida que millones de usuarios recurren a ChatGPT, Perplexity, Google Gemini y plataformas de IA similares para encontrar respuestas, recomendaciones y soluciones, las marcas enfrentan tanto una oportunidad sin precedentes como un desafío significativo.
+
+La pregunta ya no es solo "¿Cómo posicionamos en Google?" sino cada vez más "¿Cómo aseguramos que los sistemas de IA recomienden nuestra marca cuando los usuarios buscan soluciones?" Esta guía completa te llevará a través de todo lo que necesitas saber sobre la visibilidad en IA: qué es, por qué importa y, lo más importante, cómo mejorarla.
+
+## ¿Qué es la Visibilidad en IA?
+
+La visibilidad en IA se refiere a la frecuencia y favorabilidad con la que tu marca aparece en las respuestas generadas por grandes modelos de lenguaje (LLMs) y motores de búsqueda impulsados por IA. A diferencia del SEO tradicional, que se centra en el ranking en las páginas de resultados de motores de búsqueda (SERPs), la visibilidad en IA se trata de ser parte del "conocimiento" de la IA y ser recomendado en respuestas conversacionales.
+
+Cuando un usuario pregunta a ChatGPT "¿Cuál es la mejor herramienta de gestión de proyectos para equipos remotos?" o consulta a Perplexity sobre "las mejores plataformas de CRM para pequeñas empresas", la IA extrae de sus datos de entrenamiento e información en tiempo real para formular una respuesta. Tu puntuación de visibilidad en IA mide con qué frecuencia aparece tu marca en estas respuestas, en qué contexto y con qué sentimiento.
+
+### Los Tres Pilares de la Visibilidad en IA
+
+**1. Reconocimiento**: ¿La IA sabe que tu marca existe? Esta es la base: si no estás en la base de conocimientos de la IA, no puedes ser recomendado.
+
+**2. Posicionamiento**: Cuando tu marca es mencionada, ¿cómo se caracteriza? ¿Estás posicionado como líder, una alternativa, o simplemente una opción más entre muchas?
+
+**3. Sentimiento**: ¿Qué tono usa la IA al hablar de tu marca? Las asociaciones positivas con calidad, innovación y confiabilidad impactan significativamente la probabilidad de recomendación.
+
+## Por Qué la Visibilidad en IA Importa Ahora
+
+El cambio hacia la toma de decisiones asistida por IA representa uno de los cambios más significativos en el comportamiento del consumidor desde la llegada de la búsqueda móvil. Considera estas tendencias:
+
+### Comportamiento del Usuario en Evolución
+
+Los usuarios prefieren cada vez más la IA conversacional para la investigación de productos porque proporciona respuestas sintetizadas y personalizadas en lugar de listas de enlaces para evaluar. Un estudio reciente encontró que el 67% de los usuarios que probaron la búsqueda por IA continuaron usándola como su método principal de investigación.
+
+### El Factor Confianza
+
+Las recomendaciones de IA tienen un peso significativo. Cuando ChatGPT o Perplexity sugiere un producto o servicio, los usuarios lo perciben como una recomendación verificada de una fuente inteligente e imparcial. Esta objetividad percibida hace que las menciones de IA sean increíblemente valiosas para la confianza de marca.
+
+### Ventaja del Pionero
+
+Las marcas que establecen una fuerte visibilidad en IA ahora tendrán una ventaja significativa a medida que estas plataformas se vuelvan más dominantes. Como los primeros adoptantes de SEO que construyeron tráfico orgánico duradero, los primeros líderes en visibilidad en IA están construyendo asociaciones de marca que serán difíciles de desplazar para los competidores.
+
+## Estrategias para Mejorar tu Visibilidad en IA
+
+Ahora la parte práctica: aquí está cómo mejorar sistemáticamente la visibilidad de tu marca en IA en las principales plataformas.
+
+### 1. Estrategia de Contenido para Consumo de IA
+
+**Crea Contenido Completo y Autoritativo**
+
+Los modelos de IA favorecen el contenido que aborda los temas de manera exhaustiva. En lugar de contenido superficial dirigido a palabras clave específicas, desarrolla recursos en profundidad que establezcan tu experiencia:
+
+- Guías y tutoriales detallados
+- Investigación y datos originales
+- Entrevistas con expertos y liderazgo de pensamiento
+- Documentación completa del producto
+
+**Estructura para la Comprensión de IA**
+
+Usa encabezados claros, viñetas y datos estructurados para ayudar a los sistemas de IA a entender y extraer información:
+
+- Implementa marcado de esquema FAQ
+- Usa encabezados claros y descriptivos (H1, H2, H3)
+- Incluye secciones de resumen que respondan directamente a preguntas comunes
+- Agrega información estructurada del producto (especificaciones, precios, características)
+
+### 2. Construye Backlinks y Menciones Autoritativas
+
+**Obtén Cobertura en Publicaciones Autoritativas**
+
+Los modelos de IA ponderan fuertemente las fuentes autoritativas. Busca cobertura en:
+
+- Publicaciones y blogs líderes de la industria
+- Principales medios de comunicación (para anuncios significativos)
+- Publicaciones académicas o de investigación
+- Sitios web gubernamentales e institucionales
+
+**Desarrolla Presencia en Wikipedia**
+
+Wikipedia es una de las fuentes más referenciadas en los datos de entrenamiento de IA. Asegúrate de que tu marca tenga cobertura precisa en Wikipedia (siguiendo sus directrices) y que la información esté actualizada y bien documentada.
+
+## Conclusión
+
+La visibilidad en IA representa un cambio fundamental en cómo los consumidores descubren y evalúan marcas. Las organizaciones que reconozcan este cambio y adapten sus estrategias en consecuencia captarán un valor desproporcionado a medida que la IA se convierta en la interfaz principal para información y recomendaciones.
+
+Comienza auditando tu visibilidad actual en IA en las principales plataformas. Identifica brechas en tu contenido, autoridad y consistencia de marca. Luego implementa sistemáticamente las estrategias descritas en esta guía, midiendo el progreso y ajustando tu enfoque según los resultados.
+
+Las marcas que dominen la visibilidad en IA hoy serán las que prosperen en el mundo de IA del mañana. El momento de comenzar es ahora.
+
+---
+
+*¿Quieres rastrear tu visibilidad en IA en ChatGPT, Perplexity y Gemini? Nuestra plataforma proporciona monitoreo en tiempo real e insights accionables para mejorar la presencia de tu marca en IA. [Comienza gratis →]*
+      `,
+    },
   },
 }

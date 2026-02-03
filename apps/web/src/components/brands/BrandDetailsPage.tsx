@@ -343,10 +343,37 @@ function MetricsGrid({ brandId, hasData = true, dashboardStats }: MetricsGridPro
   } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Data fetching removed - useAction calls commented out
+  // Load mock analytics data
   useEffect(() => {
-    // TODO: Implement data fetching
-    setIsLoading(false)
+    const timer = setTimeout(() => {
+      // Generate mock visibility chart data for the date range
+      const startDate = dateRange.from || new Date()
+      const endDate = dateRange.to || new Date()
+      const days = eachDayOfInterval({ start: startDate, end: endDate })
+      
+      const visibilityChartData = days.map((date, index) => {
+        // Create realistic trending data
+        const baseValue = 45 + (index / days.length) * 15 // Trending up
+        const randomFactor = Math.sin(index * 0.5) * 8
+        return {
+          date: format(date, 'MMM d'),
+          chatgpt: Math.round(baseValue + randomFactor + Math.random() * 5),
+          perplexity: Math.round(baseValue + randomFactor * 0.8 + Math.random() * 4),
+          gemini: Math.round(baseValue + randomFactor * 1.2 + Math.random() * 6),
+        }
+      })
+
+      setAnalyticsData({
+        overallScore: 72,
+        brandMentions: 156,
+        sentimentScore: 78,
+        visibilityTrend: 'up',
+        competitorCount: 8,
+        visibilityChartData,
+      })
+      setIsLoading(false)
+    }, 600)
+    return () => clearTimeout(timer)
   }, [brandId, dateRange.from, dateRange.to])
 
   const { metrics, dateRangeLabel } = useMemo(() => {
@@ -497,10 +524,32 @@ function OpportunitiesChart({ brandId }: { brandId: string }) {
   const [totalOpportunities, setTotalOpportunities] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Data fetching removed - useAction calls commented out
+  // Load mock opportunities data
   useEffect(() => {
-    // TODO: Implement opportunities data fetching
-    setIsLoading(false)
+    const timer = setTimeout(() => {
+      const startDate = dateRange.from || subMonths(new Date(), 5)
+      const endDate = dateRange.to || new Date()
+      const days = eachDayOfInterval({ start: startDate, end: endDate })
+      
+      // Generate mock opportunities per day (some days have 0, others have 1-4)
+      const mockData = days.map((date, index) => {
+        // More opportunities detected in recent weeks (simulating growth)
+        const recencyBonus = index / days.length * 2
+        const hasOpportunity = Math.random() < (0.3 + recencyBonus * 0.2)
+        const count = hasOpportunity ? Math.floor(Math.random() * 3) + 1 : 0
+        return {
+          date: format(date, 'yyyy-MM-dd'),
+          count,
+        }
+      })
+      
+      const total = mockData.reduce((sum, item) => sum + item.count, 0)
+      
+      setRawData(mockData)
+      setTotalOpportunities(total)
+      setIsLoading(false)
+    }, 400)
+    return () => clearTimeout(timer)
   }, [brandId, dateRange])
 
   // Process and group data based on date range
@@ -691,15 +740,23 @@ function PageContent() {
   const brand = useActiveBrand()
 
   // ============================================================
-  // DASHBOARD STATS STATE
+  // DASHBOARD STATS STATE (with mock data)
   // ============================================================
   const [dashboardStats, setDashboardStats] = useState<any>(null)
   const [isLoadingStats, setIsLoadingStats] = useState(true)
 
-  // Data fetching removed - useAction calls commented out
+  // Load mock dashboard stats
   useEffect(() => {
-    // TODO: Implement dashboard stats fetching
-    setIsLoadingStats(false)
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setDashboardStats({
+        trackedPrompts: 47,
+        openOpportunities: 12,
+        websiteHealth: 78,
+      })
+      setIsLoadingStats(false)
+    }, 500)
+    return () => clearTimeout(timer)
   }, [brand.id])
 
   // ============================================================
