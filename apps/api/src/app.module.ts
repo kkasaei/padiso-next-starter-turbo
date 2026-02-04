@@ -7,6 +7,7 @@ import { BrandMembersModule } from './modules/brand-members/brand-members.module
 import { TasksModule } from './modules/tasks/tasks.module';
 import { FilesModule } from './modules/files/files.module';
 import { PromptsModule } from './modules/prompts/prompts.module';
+import { McpModule } from './modules/mcp/mcp.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PromptsModule } from './modules/prompts/prompts.module';
     TasksModule,
     FilesModule,
     PromptsModule,
+    McpModule,
   ],
   controllers: [AppController],
 })
