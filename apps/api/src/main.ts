@@ -47,9 +47,9 @@ async function bootstrap() {
     ],
   });
 
-  // Scalar API Reference at / (main homepage)
+  // Scalar API Reference at /reference
   app.use(
-    '/',
+    '/reference',
     apiReference({
       spec: {
         content: document,
@@ -69,11 +69,16 @@ async function bootstrap() {
     res.json(document);
   });
 
+  // Redirect root to Scalar API Reference
+  app.getHttpAdapter().get('/', (req, res: { redirect: (url: string) => void }) => {
+    res.redirect('/reference');
+  });
+
   const port = process.env.PORT ?? 3001;
   await app.listen(port);
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`✨ Scalar API Reference at: http://localhost:${port}/`);
+  console.log(`✨ Scalar API Reference at: http://localhost:${port}/reference`);
   console.log(`📚 Swagger docs available at: http://localhost:${port}/docs`);
   console.log(`🔌 MCP Server endpoint at: http://localhost:${port}/mcp`);
 }

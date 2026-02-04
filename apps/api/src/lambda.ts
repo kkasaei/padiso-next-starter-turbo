@@ -57,9 +57,9 @@ async function createApp(): Promise<NestExpressApplication> {
     ],
   });
 
-  // Scalar API Reference at / (main homepage)
+  // Scalar API Reference at /reference
   app.use(
-    '/',
+    '/reference',
     apiReference({
       spec: {
         content: document,
@@ -77,6 +77,11 @@ async function createApp(): Promise<NestExpressApplication> {
   // Expose OpenAPI JSON at /openapi.json
   app.getHttpAdapter().get('/openapi.json', (req, res: { json: (data: unknown) => void }) => {
     res.json(document);
+  });
+
+  // Redirect root to Scalar API Reference
+  app.getHttpAdapter().get('/', (req, res: { redirect: (url: string) => void }) => {
+    res.redirect('/reference');
   });
 
   await app.init();

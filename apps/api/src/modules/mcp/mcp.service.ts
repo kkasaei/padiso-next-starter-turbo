@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { content, publicReports } from '@workspace/db';
 import { BrandsService } from '../brands/brands.service';
 import { WorkspacesService } from '../workspaces/workspaces.service';
-import { TasksService } from '../tasks/tasks.service';
-import { PromptsService } from '../prompts/prompts.service';
-import { BrandStatus } from '../brands/dto/create-brand.dto';
+import { DatabaseService } from '../../features/database/database.service';
 
 interface McpTool {
   name: string;
@@ -25,39 +25,30 @@ export class McpService {
   private tools: McpTool[] = [
     {
       name: 'list_workspaces',
-      description: 'List all workspaces',
+      description: 'List all workspaces in the system',
       inputSchema: {
         type: 'object',
         properties: {},
       },
     },
     {
-      name: 'get_workspace',
-      description: 'Get a workspace by ID',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          id: { type: 'string', description: 'Workspace UUID' },
-        },
-        required: ['id'],
-      },
-    },
-    {
       name: 'list_brands',
-      description: 'List all brands, optionally filtered by workspace',
+      description:
+        'List all brands with their AI visibility scores, optionally filtered by workspace',
       inputSchema: {
         type: 'object',
         properties: {
           workspaceId: {
             type: 'string',
-            description: 'Optional workspace ID to filter by',
+            description: 'Optional workspace ID to filter brands by',
           },
         },
       },
     },
     {
       name: 'get_brand',
-      description: 'Get a brand by ID',
+      description:
+        'Get detailed information about a brand including AI visibility score',
       inputSchema: {
         type: 'object',
         properties: {
@@ -67,66 +58,59 @@ export class McpService {
       },
     },
     {
-      name: 'create_brand',
-      description: 'Create a new brand',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          workspaceId: { type: 'string', description: 'Workspace UUID' },
-          brandName: { type: 'string', description: 'Brand name' },
-          websiteUrl: { type: 'string', description: 'Website URL' },
-          brandColor: { type: 'string', description: 'Brand color hex' },
-          status: {
-            type: 'string',
-            enum: ['backlog', 'planned', 'active', 'cancelled', 'completed'],
-            description: 'Brand status',
-            default: 'active',
-          },
-        },
-        required: ['workspaceId', 'brandName', 'status'],
-      },
-    },
-    {
-      name: 'list_tasks',
-      description: 'List all tasks, optionally filtered by brand',
+      name: 'list_content',
+      description:
+        'List all content (articles, opportunities) for a brand, optionally filtered by status',
       inputSchema: {
         type: 'object',
         properties: {
           brandId: {
             type: 'string',
-            description: 'Optional brand ID to filter by',
+            description: 'Brand ID to get content for',
+          },
+          status: {
+            type: 'string',
+            enum: [
+              'opportunity',
+              'generating',
+              'draft',
+              'review',
+              'scheduled',
+              'published',
+              'archived',
+            ],
+            description: 'Optional status filter',
           },
         },
+        required: ['brandId'],
       },
     },
     {
-      name: 'get_task',
-      description: 'Get a task by ID',
+      name: 'get_content_details',
+      description:
+        'Get detailed information about a specific content item including SEO metrics and article score',
       inputSchema: {
         type: 'object',
         properties: {
-          id: { type: 'string', description: 'Task UUID' },
+          id: { type: 'string', description: 'Content UUID' },
         },
         required: ['id'],
       },
     },
     {
-      name: 'list_prompts',
-      description: 'List all prompt templates',
-      inputSchema: {
-        type: 'object',
-        properties: {},
-      },
-    },
-    {
-      name: 'get_prompt',
-      description: 'Get a prompt template by ID',
+      name: 'get_domain_ai_visibility',
+      description:
+        'Get the AI visibility report for a domain, including scores from ChatGPT, Perplexity, and Gemini',
       inputSchema: {
         type: 'object',
         properties: {
-          id: { type: 'string', description: 'Prompt UUID' },
+          domain: {
+            type: 'string',
+            description:
+              'Domain name to get AI visibility for (e.g., example.com)',
+          },
         },
-        required: ['id'],
+        required: ['domain'],
       },
     },
   ];
@@ -134,18 +118,27 @@ export class McpService {
   constructor(
     private readonly brandsService: BrandsService,
     private readonly workspacesService: WorkspacesService,
-    private readonly tasksService: TasksService,
-    private readonly promptsService: PromptsService,
+    private readonly databaseService: DatabaseService,
   ) {}
+
+  private get db() {
+    return this.databaseService.db;
+  }
 
   // Get server info for the MCP endpoint
   getServerInfo() {
     return {
-      name: 'searchfit-api',
+      name: 'searchfit-mcp',
       version: '1.0.0',
       protocolVersion: '2024-11-05',
       capabilities: {
-        tools: {},
+        tools: { listChanged: true },
+      },
+      toolsCount: this.tools.length,
+      endpoints: {
+        tools: '/mcp/tools',
+        jsonRpc: 'POST /mcp',
+        sse: '/mcp/sse',
       },
     };
   }
@@ -171,25 +164,28 @@ export class McpService {
           };
         }
 
-        case 'get_workspace': {
-          const workspace = await this.workspacesService.findOne(
-            args?.id as string,
-          );
-          return {
-            content: [
-              { type: 'text', text: JSON.stringify(workspace, null, 2) },
-            ],
-          };
-        }
-
         case 'list_brands': {
           const brands = args?.workspaceId
             ? await this.brandsService.findByWorkspace(
                 args.workspaceId as string,
               )
             : await this.brandsService.findAll();
+
+          // Format brands with visibility info
+          const formattedBrands = brands.map((brand) => ({
+            id: brand.id,
+            brandName: brand.brandName,
+            websiteUrl: brand.websiteUrl,
+            status: brand.status,
+            visibilityScore: brand.visibilityScore,
+            lastScanAt: brand.lastScanAt,
+            workspaceId: brand.workspaceId,
+          }));
+
           return {
-            content: [{ type: 'text', text: JSON.stringify(brands, null, 2) }],
+            content: [
+              { type: 'text', text: JSON.stringify(formattedBrands, null, 2) },
+            ],
           };
         }
 
@@ -200,49 +196,126 @@ export class McpService {
           };
         }
 
-        case 'create_brand': {
-          const status = (args?.status as BrandStatus) || BrandStatus.ACTIVE;
-          const newBrand = await this.brandsService.create({
-            workspaceId: args?.workspaceId as string,
-            brandName: args?.brandName as string,
-            websiteUrl: args?.websiteUrl as string,
-            brandColor: args?.brandColor as string,
-            status,
-          });
+        case 'list_content': {
+          const brandId = args?.brandId as string;
+          const status = args?.status as string | undefined;
+
+          let query = this.db
+            .select({
+              id: content.id,
+              title: content.title,
+              status: content.status,
+              type: content.type,
+              targetKeyword: content.targetKeyword,
+              searchVolume: content.searchVolume,
+              wordCount: content.wordCount,
+              articleScore: content.articleScore,
+              locale: content.locale,
+              createdAt: content.createdAt,
+              updatedAt: content.updatedAt,
+            })
+            .from(content)
+            .where(eq(content.brandId, brandId));
+
+          if (status) {
+            query = this.db
+              .select({
+                id: content.id,
+                title: content.title,
+                status: content.status,
+                type: content.type,
+                targetKeyword: content.targetKeyword,
+                searchVolume: content.searchVolume,
+                wordCount: content.wordCount,
+                articleScore: content.articleScore,
+                locale: content.locale,
+                createdAt: content.createdAt,
+                updatedAt: content.updatedAt,
+              })
+              .from(content)
+              .where(eq(content.brandId, brandId));
+          }
+
+          const contentList = await query;
+
           return {
             content: [
-              { type: 'text', text: JSON.stringify(newBrand, null, 2) },
+              { type: 'text', text: JSON.stringify(contentList, null, 2) },
             ],
           };
         }
 
-        case 'list_tasks': {
-          const tasks = args?.brandId
-            ? await this.tasksService.findByBrand(args.brandId as string)
-            : await this.tasksService.findAll();
+        case 'get_content_details': {
+          const [contentItem] = await this.db
+            .select()
+            .from(content)
+            .where(eq(content.id, args?.id as string));
+
+          if (!contentItem) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Content with ID ${args?.id} not found`,
+                },
+              ],
+              isError: true,
+            };
+          }
+
           return {
-            content: [{ type: 'text', text: JSON.stringify(tasks, null, 2) }],
+            content: [
+              { type: 'text', text: JSON.stringify(contentItem, null, 2) },
+            ],
           };
         }
 
-        case 'get_task': {
-          const task = await this.tasksService.findOne(args?.id as string);
-          return {
-            content: [{ type: 'text', text: JSON.stringify(task, null, 2) }],
-          };
-        }
+        case 'get_domain_ai_visibility': {
+          const domain = (args?.domain as string)
+            .toLowerCase()
+            .replace(/^(https?:\/\/)?(www\.)?/, '')
+            .split('/')[0];
 
-        case 'list_prompts': {
-          const prompts = await this.promptsService.findAll();
-          return {
-            content: [{ type: 'text', text: JSON.stringify(prompts, null, 2) }],
-          };
-        }
+          const [report] = await this.db
+            .select()
+            .from(publicReports)
+            .where(eq(publicReports.domain, domain));
 
-        case 'get_prompt': {
-          const prompt = await this.promptsService.findOne(args?.id as string);
+          if (!report) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(
+                    {
+                      domain,
+                      status: 'NOT_FOUND',
+                      message: `No AI visibility report found for domain: ${domain}`,
+                    },
+                    null,
+                    2,
+                  ),
+                },
+              ],
+            };
+          }
+
+          // Extract key visibility data
+          const visibilityData = {
+            domain: report.domain,
+            status: report.status,
+            data: report.data,
+            llmResults: report.llmResults,
+            generationTimeMs: report.generationTimeMs,
+            viewCount: report.viewCount,
+            createdAt: report.createdAt,
+            updatedAt: report.updatedAt,
+          };
+
           return {
-            content: [{ type: 'text', text: JSON.stringify(prompt, null, 2) }],
+            content: [
+              { type: 'text', text: JSON.stringify(visibilityData, null, 2) },
+            ],
           };
         }
 

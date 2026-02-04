@@ -26,14 +26,19 @@ export class McpController {
   @Get()
   @ApiOperation({
     summary: 'MCP Server Information',
-    description: 'Returns information about the MCP server and its capabilities',
+    description: 'Returns information about the MCP server, capabilities, and available tools',
   })
   @ApiResponse({
     status: 200,
-    description: 'MCP server information',
+    description: 'MCP server information with tools',
   })
-  getServerInfo() {
-    return this.mcpService.getServerInfo();
+  async getServerInfo() {
+    const serverInfo = this.mcpService.getServerInfo();
+    const { tools } = await this.mcpService.listTools();
+    return {
+      ...serverInfo,
+      tools,
+    };
   }
 
   @Get('tools')
