@@ -33,7 +33,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
 } from '@workspace/ui/components/navigation-menu';
-import { ThemeToggle } from '@workspace/ui/components/theme-toggle';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { cn } from '@workspace/common/lib';
 
 import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
@@ -107,35 +107,54 @@ export function Navbar(): React.JSX.Element {
                           <ul className="w-96 list-none p-2">
                             {item.items.map((subItem, subIndex) => (
                               <li key={subIndex}>
-                                <NavigationMenuLink asChild>
-                                  <Link
-                                    href={subItem.href}
-                                    target={
-                                      subItem.external ? '_blank' : undefined
-                                    }
-                                    rel={
-                                      subItem.external
-                                        ? 'noopener noreferrer'
-                                        : undefined
-                                    }
-                                    className="group flex select-none flex-row items-center gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                  >
-                                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground transition-colors group-hover:text-foreground">
+                                {'disabled' in subItem && subItem.disabled ? (
+                                  <div className="group flex select-none flex-row items-center gap-4 rounded-md p-3 leading-none no-underline outline-none cursor-not-allowed opacity-50">
+                                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground">
                                       {subItem.icon}
                                     </div>
-                                    <div>
-                                      <div className="text-sm font-medium">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 text-sm font-medium">
                                         {subItem.title}
-                                        {subItem.external && (
-                                          <ExternalLink className="-mt-2 ml-1 size-2 inline text-muted-foreground" />
-                                        )}
+                                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                          Soon
+                                        </span>
                                       </div>
                                       <p className="text-sm leading-snug text-muted-foreground">
                                         {subItem.description}
                                       </p>
                                     </div>
-                                  </Link>
-                                </NavigationMenuLink>
+                                  </div>
+                                ) : (
+                                  <NavigationMenuLink asChild>
+                                    <Link
+                                      href={subItem.href}
+                                      target={
+                                        subItem.external ? '_blank' : undefined
+                                      }
+                                      rel={
+                                        subItem.external
+                                          ? 'noopener noreferrer'
+                                          : undefined
+                                      }
+                                      className="group flex select-none flex-row items-center gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                    >
+                                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground transition-colors group-hover:text-foreground">
+                                        {subItem.icon}
+                                      </div>
+                                      <div>
+                                        <div className="text-sm font-medium">
+                                          {subItem.title}
+                                          {subItem.external && (
+                                            <ExternalLink className="-mt-2 ml-1 size-2 inline text-muted-foreground" />
+                                          )}
+                                        </div>
+                                        <p className="text-sm leading-snug text-muted-foreground">
+                                          {subItem.description}
+                                        </p>
+                                      </div>
+                                    </Link>
+                                  </NavigationMenuLink>
+                                )}
                               </li>
                             ))}
                           </ul>

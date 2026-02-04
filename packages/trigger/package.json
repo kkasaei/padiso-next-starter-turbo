@@ -18,8 +18,10 @@
     "@trigger.dev/build": "4.3.3",
     "@trigger.dev/sdk": "4.3.3",
     "@workspace/ai": "workspace:*",
+    "@workspace/cloudflare": "workspace:*",
     "@workspace/db": "workspace:*",
     "@workspace/integrations": "workspace:*",
+    "@workspace/pdf": "workspace:*",
     "drizzle-orm": "^0.38.3",
     "postgres": "^3.4.5"
   },

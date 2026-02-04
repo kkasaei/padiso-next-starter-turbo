@@ -1,0 +1,189 @@
+---
+title: Integrations
+description: Connect SearchFit with 40+ analytics, CMS, and marketing tools.
+---
+
+SearchFit integrates with your existing tools to provide comprehensive visibility insights and streamlined workflows.
+
+## Available Integrations
+
+### Analytics Platforms
+
+<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div className="rounded-lg border p-4">
+    <h4 className="font-semibold">Google Analytics</h4>
+    <p className="text-sm text-muted-foreground">Import traffic data and correlate with AI visibility</p>
+  </div>
+  <div className="rounded-lg border p-4">
+    <h4 className="font-semibold">Google Search Console</h4>
+    <p className="text-sm text-muted-foreground">Sync keyword rankings and search performance</p>
+  </div>
+  <div className="rounded-lg border p-4">
+    <h4 className="font-semibold">Adobe Analytics</h4>
+    <p className="text-sm text-muted-foreground">Enterprise analytics integration</p>
+  </div>
+  <div className="rounded-lg border p-4">
+    <h4 className="font-semibold">Mixpanel</h4>
+    <p className="text-sm text-muted-foreground">Product analytics correlation</p>
+  </div>
+</div>
+
+### CMS Platforms
+
+| Platform | Features |
+|----------|----------|
+| WordPress | Content sync, direct publishing, plugin |
+| Webflow | Design export, CMS sync |
+| Shopify | Product content, blog integration |
+| Contentful | Headless CMS sync |
+| Sanity | Content management |
+| Strapi | Self-hosted CMS integration |
+
+### Marketing Tools
+
+- **HubSpot** - CRM and marketing automation
+- **Mailchimp** - Email campaign coordination
+- **Salesforce** - Enterprise CRM
+- **Marketo** - Marketing automation
+
+### SEO Tools
+
+- **Ahrefs** - Backlink data import
+- **SEMrush** - Keyword and competitor data
+- **Moz** - Domain authority metrics
+- **Screaming Frog** - Crawl data import
+
+### Social Platforms
+
+- **X (Twitter)** - Social monitoring
+- **LinkedIn** - Professional network tracking
+- **Facebook** - Social insights
+
+## Setting Up Integrations
+
+### OAuth Connections
+
+For most integrations:
+
+1. Go to **Settings** → **Integrations**
+2. Find the integration you want
+3. Click **Connect**
+4. Authorize SearchFit in the popup
+5. Configure sync settings
+
+### API Key Connections
+
+Some integrations require API keys:
+
+1. Get your API key from the service
+2. Go to **Settings** → **Integrations**
+3. Click **Connect** on the integration
+4. Enter your API key
+5. Test the connection
+
+### Webhook Integrations
+
+For custom integrations:
+
+1. Go to **Settings** → **Integrations** → **Webhooks**
+2. Create a new webhook
+3. Copy the webhook URL
+4. Configure in your external service
+5. Test with a sample payload
+
+## Data Sync Options
+
+Configure how data syncs:
+
+### Sync Frequency
+- **Real-time** - Immediate updates
+- **Hourly** - Every hour
+- **Daily** - Once per day
+- **Manual** - On-demand only
+
+### Data Direction
+- **Import only** - Pull data into SearchFit
+- **Export only** - Push data out
+- **Bidirectional** - Two-way sync
+
+## API Access
+
+Build custom integrations with our API:
+
+### Authentication
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.searchfit.com/v1/reports
+```
+
+### Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `/reports` | Access AEO reports |
+| `/domains` | Manage tracked domains |
+| `/analytics` | Retrieve analytics data |
+| `/webhooks` | Configure webhooks |
+
+### Rate Limits
+
+| Plan | Requests/minute |
+|------|-----------------|
+| Free | 10 |
+| Pro | 100 |
+| Enterprise | Unlimited |
+
+## Zapier Integration
+
+Connect SearchFit to 5,000+ apps via Zapier:
+
+1. Go to **Settings** → **Integrations** → **Zapier**
+2. Click **Connect to Zapier**
+3. Create Zaps with SearchFit triggers and actions
+
+### Available Triggers
+- New report generated
+- Visibility score change
+- New mention detected
+
+### Available Actions
+- Generate report
+- Add domain
+- Export data
+
+## Enterprise Integrations
+
+For enterprise customers:
+
+- **Custom SSO** - SAML/OIDC integration
+- **Data warehouse** - BigQuery, Snowflake export
+- **Custom APIs** - Bespoke integration development
+- **Dedicated support** - Integration assistance
+
+## Troubleshooting
+
+### Connection Issues
+
+If an integration isn't working:
+
+1. Check the integration status in Settings
+2. Verify API keys are current
+3. Reauthorize OAuth connections
+4. Check the service's status page
+
+### Data Sync Delays
+
+If data isn't syncing:
+
+1. Check sync frequency settings
+2. Verify data permissions
+3. Review error logs in Settings
+4. Contact support if issues persist
+
+## Best Practices
+
+1. **Connect essential tools first** - Start with Analytics and Search Console
+2. **Review permissions** - Only grant necessary access
+3. **Monitor sync status** - Check integrations regularly
+4. **Keep credentials secure** - Rotate API keys periodically
+5. **Use webhooks wisely** - Don't overload external services

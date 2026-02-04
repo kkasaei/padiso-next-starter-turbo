@@ -3,9 +3,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { BuildingIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon, LogOutIcon, SettingsIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, LogOutIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useUser, useClerk, useOrganizationList } from '@clerk/nextjs';
+import { useUser, useClerk } from '@clerk/nextjs';
 
 import { FEATURE_FLAGS } from '@workspace/common';
 import { baseURL, getPathname } from '@workspace/common';
@@ -22,7 +22,7 @@ import {
 } from '@workspace/ui/components/collapsible';
 import { Logo } from '@workspace/ui/components/logo';
 import { Portal } from '@workspace/ui/components/portal';
-import { ThemeSwitcher } from '@workspace/ui/components/theme-switcher';
+import { ThemeSwitcher } from '@/components/common/ThemeSwitcher';
 import { RemoveScroll } from '@workspace/common/lib';
 import { cn } from '@workspace/common/lib';
 
@@ -141,16 +141,6 @@ function MainMobileMenu({
   const { isSignedIn, user } = useUser();
   const router = useRouter();
   const { signOut } = useClerk();
-  const { userMemberships, setActive } = useOrganizationList({
-    userMemberships: {
-      infinite: true,
-    },
-  });
-
-  // Get current organization slug from user's active membership
-  const activeOrgSlug = user?.organizationMemberships?.find(
-    (m) => m.organization.id === user?.organizationMemberships?.[0]?.organization.id
-  )?.organization.slug;
 
   const dashboardUrl = '/dashboard';
 
@@ -158,16 +148,6 @@ function MainMobileMenu({
     await signOut();
     router.push('/');
     onLinkClicked();
-  };
-
-  const handleSwitchOrganization = async (orgId: string, orgSlug: string): Promise<void> => {
-    if (setActive) {
-      await setActive({ organization: orgId });
-      // Navigate to the switched organization's dashboard
-      const newDashboardUrl = '/dashboard';
-      router.push(newDashboardUrl);
-      onLinkClicked();
-    }
   };
 
   return (
@@ -204,36 +184,8 @@ function MainMobileMenu({
               )}
               onClick={onLinkClicked}
             >
-              <SettingsIcon className="mr-2 size-4" />
-              Dashboard
+              Go to dashboard
             </Link>
-            {userMemberships && userMemberships.data && userMemberships.data.length > 1 && (
-              <div className="w-full space-y-2 border-y border-border/40 py-2">
-                <p className="px-2 text-xs font-medium text-muted-foreground">ORGANIZATIONS</p>
-                {userMemberships.data.map((membership) => (
-                  <button
-                    key={membership.organization.id}
-                    className={cn(
-                      buttonVariants({
-                        variant: 'ghost',
-                        size: 'lg'
-                      }),
-                      'w-full justify-start'
-                    )}
-                    onClick={() => membership.organization.slug && handleSwitchOrganization(
-                      membership.organization.id,
-                      membership.organization.slug
-                    )}
-                  >
-                    <BuildingIcon className="mr-2 size-4" />
-                    <span className="flex-1 truncate text-left">{membership.organization.name}</span>
-                    {membership.organization.id === user?.organizationMemberships?.[0]?.organization.id && (
-                      <CheckIcon className="ml-2 size-4" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
             <Button
               variant="outline"
               size="lg"
@@ -310,37 +262,63 @@ function MainMobileMenu({
                     <ul className="mt-2 pl-4">
                       {item.items.map((subItem) => (
                         <li key={subItem.title}>
-                          <Link
-                            href={subItem.href}
-                            target={subItem.external ? '_blank' : undefined}
-                            rel={
-                              subItem.external
-                                ? 'noopener noreferrer'
-                                : undefined
-                            }
-                            className={cn(
-                              buttonVariants({ variant: 'ghost' }),
-                              'm-0 h-auto w-full justify-start gap-4 p-1.5'
-                            )}
-                            onClick={onLinkClicked}
-                          >
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground transition-colors group-hover:text-foreground">
-                              {subItem.icon}
-                            </div>
-                            <div>
-                              <span className="text-sm font-medium">
-                                {subItem.title}
-                                {subItem.external && (
-                                  <ExternalLink className="-mt-2 ml-1 inline size-2 text-muted-foreground" />
-                                )}
-                              </span>
-                              {subItem.description && (
-                                <p className="text-xs text-muted-foreground">
-                                  {subItem.description}
-                                </p>
+                          {'disabled' in subItem && subItem.disabled ? (
+                            <div
+                              className={cn(
+                                buttonVariants({ variant: 'ghost' }),
+                                'm-0 h-auto w-full justify-start gap-4 p-1.5 cursor-not-allowed opacity-50'
                               )}
+                            >
+                              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground">
+                                {subItem.icon}
+                              </div>
+                              <div>
+                                <span className="flex items-center gap-2 text-sm font-medium">
+                                  {subItem.title}
+                                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                    Soon
+                                  </span>
+                                </span>
+                                {subItem.description && (
+                                  <p className="text-xs text-muted-foreground">
+                                    {subItem.description}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          </Link>
+                          ) : (
+                            <Link
+                              href={subItem.href}
+                              target={subItem.external ? '_blank' : undefined}
+                              rel={
+                                subItem.external
+                                  ? 'noopener noreferrer'
+                                  : undefined
+                              }
+                              className={cn(
+                                buttonVariants({ variant: 'ghost' }),
+                                'm-0 h-auto w-full justify-start gap-4 p-1.5'
+                              )}
+                              onClick={onLinkClicked}
+                            >
+                              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border bg-background text-muted-foreground transition-colors group-hover:text-foreground">
+                                {subItem.icon}
+                              </div>
+                              <div>
+                                <span className="text-sm font-medium">
+                                  {subItem.title}
+                                  {subItem.external && (
+                                    <ExternalLink className="-mt-2 ml-1 inline size-2 text-muted-foreground" />
+                                  )}
+                                </span>
+                                {subItem.description && (
+                                  <p className="text-xs text-muted-foreground">
+                                    {subItem.description}
+                                  </p>
+                                )}
+                              </div>
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>

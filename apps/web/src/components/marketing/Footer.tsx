@@ -5,20 +5,19 @@ import Link from 'next/link';
 
 import { APP_NAME } from '@workspace/common/constants';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
 import { Logo } from '@workspace/ui/components/logo';
 import { Separator } from '@workspace/ui/components/separator';
 import { toast } from '@workspace/ui/components/sonner';
-import { ThemeSwitcher } from '@workspace/ui/components/theme-switcher';
+import { ThemeSwitcher } from '@/components/common/ThemeSwitcher';
 
 import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { FOOTER_LINKS, SOCIAL_LINKS } from '@/components/marketing/MarketingLinks';
 
 export function Footer(): React.JSX.Element {
   const [email, setEmail] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
 
-
-  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     if (!email) {
@@ -26,6 +25,29 @@ export function Footer(): React.JSX.Element {
       return;
     }
 
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message);
+        setEmail('');
+      } else {
+        toast.error(data.message || 'Failed to subscribe');
+      }
+    } catch (error) {
+      console.error('[Newsletter] Error:', error);
+      toast.error('Failed to subscribe. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <footer className="px-2 pb-10 pt-20 sm:container">
@@ -50,18 +72,27 @@ export function Footer(): React.JSX.Element {
                 >
                   {group.links.map((link) => (
                     <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        title={link.name}
-                        target={link.external ? '_blank' : undefined}
-                        rel={link.external ? 'noopener noreferrer' : undefined}
-                        className="relative text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {link.name}
-                        {link.external && (
-                          <ExternalLink className="absolute right-[-10px] top-[2px] opacity-80" />
-                        )}
-                      </Link>
+                      {'disabled' in link && link.disabled ? (
+                        <span className="relative inline-flex items-center gap-2 text-sm text-muted-foreground/50 cursor-not-allowed">
+                          {link.name}
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/40">
+                            Soon
+                          </span>
+                        </span>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          title={link.name}
+                          target={link.external ? '_blank' : undefined}
+                          rel={link.external ? 'noopener noreferrer' : undefined}
+                          className="relative text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {link.name}
+                          {link.external && (
+                            <ExternalLink className="absolute right-[-10px] top-[2px] opacity-80" />
+                          )}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -74,25 +105,20 @@ export function Footer(): React.JSX.Element {
             </h3>
             <form
               onSubmit={handleSubscribe}
-              className="py-2 sm:flex sm:max-w-md"
               suppressHydrationWarning
             >
-              <div
-                className="w-full min-w-0"
-                suppressHydrationWarning
-              >
-                <Input
+              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-border bg-background shadow-sm">
+                <input
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full"
+                  className="h-9 w-[180px] sm:w-[220px] pl-4 pr-2 rounded-full bg-transparent border-0 text-sm focus:outline-none focus:ring-0"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                   required
                 />
-              </div>
-              <div className="mt-3 sm:ml-4 sm:mt-0 sm:shrink-0">
-                <Button type="submit">
-                  Subscribe
+                <Button type="submit" className="rounded-full h-9 px-4" disabled={isLoading}>
+                  {isLoading ? 'Subscribing...' : 'Subscribe'}
                 </Button>
               </div>
             </form>

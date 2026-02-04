@@ -8,9 +8,8 @@ import {
   TrendingUpIcon,
   PenToolIcon,
   FileBarChartIcon,
-  CircuitBoardIcon,
-  Bot,
-  PlugIcon
+  BarChart3Icon,
+  MessageCircleIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -225,43 +224,43 @@ export function HeroIllustration(): React.JSX.Element {
       transition={{ delay: 0.6, duration: 0.4 }}
       className="relative px-2 sm:px-0"
     >
-      <UnderlinedTabs defaultValue="ai-seo">
+      <UnderlinedTabs defaultValue="ai-tracking">
         <ScrollArea className="max-w-screen lg:max-w-none">
           <UnderlinedTabsList className="relative z-20 mb-4 flex h-fit flex-row flex-wrap justify-center gap-1 sm:mb-6 sm:gap-0 md:flex-nowrap">
             <UnderlinedTabsTrigger
-              value="ai-seo"
+              value="ai-tracking"
               className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
             >
               <TrendingUpIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
-              <span className="whitespace-nowrap">AEO Tracking</span>
+              <span className="whitespace-nowrap">AI Tracking</span>
             </UnderlinedTabsTrigger>
             <UnderlinedTabsTrigger
-              value="ai-content"
+              value="content"
               className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
             >
               <PenToolIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
-              <span className="whitespace-nowrap">AI Content</span>
+              <span className="whitespace-nowrap">Content</span>
             </UnderlinedTabsTrigger>
             <UnderlinedTabsTrigger
-              value="website-audit"
+              value="analytics"
+              className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
+            >
+              <BarChart3Icon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
+              <span className="whitespace-nowrap">Analytics</span>
+            </UnderlinedTabsTrigger>
+            <UnderlinedTabsTrigger
+              value="technical-audit"
               className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
             >
               <FileBarChartIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
               <span className="whitespace-nowrap">Technical Audit</span>
             </UnderlinedTabsTrigger>
             <UnderlinedTabsTrigger
-              value="insight-engine"
+              value="social-listening"
               className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
             >
-              <CircuitBoardIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
-              <span className="whitespace-nowrap">Insight Engine</span>
-            </UnderlinedTabsTrigger>
-            <UnderlinedTabsTrigger
-              value="visual-workflow"
-              className="mx-0.5 px-2 text-xs sm:mx-1 sm:px-2.5 sm:text-sm md:mx-2 md:px-3"
-            >
-              <Bot className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
-              <span className="whitespace-nowrap">Visual Workflow</span>
+              <MessageCircleIcon className="mr-1.5 size-3.5 shrink-0 sm:mr-2 sm:size-4" />
+              <span className="whitespace-nowrap">Social Listening</span>
             </UnderlinedTabsTrigger>
           </UnderlinedTabsList>
           <ScrollBar
@@ -272,14 +271,14 @@ export function HeroIllustration(): React.JSX.Element {
         <div className="relative mb-1 w-full overflow-hidden rounded-lg dark:border-none dark:bg-background sm:rounded-xl">
           <SupportiveDashedGridLines />
           <div className="relative z-20 bg-background">
-            <UnderlinedTabsContent value="ai-seo">
+            <UnderlinedTabsContent value="ai-tracking">
               <Image
                 priority
                 quality={100}
                 src="/assets/hero/screen1-light.png"
                 width="1328"
                 height="727"
-                alt="AEO Tracking screenshot"
+                alt="AI Tracking screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -288,17 +287,17 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen1-dark.png"
                 width="1328"
                 height="727"
-                alt="AEO Tracking screenshot"
+                alt="AI Tracking screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>
-            <UnderlinedTabsContent value="ai-content">
+            <UnderlinedTabsContent value="content">
               <Image
                 quality={100}
                 src="/assets/hero/screen2-light.png"
                 width="1328"
                 height="727"
-                alt="AI Content screenshot"
+                alt="Content screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -306,17 +305,17 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen2-dark.png"
                 width="1328"
                 height="727"
-                alt="AI Content screenshot"
+                alt="Content screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>
-            <UnderlinedTabsContent value="website-audit">
+            <UnderlinedTabsContent value="analytics">
               <Image
                 quality={100}
                 src="/assets/hero/screen3-light.png"
                 width="1328"
                 height="727"
-                alt="Technical Audit screenshot"
+                alt="Analytics screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -324,17 +323,17 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen3-dark.png"
                 width="1328"
                 height="727"
-                alt="Technical Audit screenshot"
+                alt="Analytics screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>
-            <UnderlinedTabsContent value="insight-engine">
+            <UnderlinedTabsContent value="technical-audit">
               <Image
                 quality={100}
                 src="/assets/hero/screen4-light.png"
                 width="1328"
                 height="727"
-                alt="Insight Engine screenshot"
+                alt="Technical Audit screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -342,17 +341,17 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen4-dark.png"
                 width="1328"
                 height="727"
-                alt="Insight Engine screenshot"
+                alt="Technical Audit screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>
-            <UnderlinedTabsContent value="visual-workflow">
+            <UnderlinedTabsContent value="social-listening">
               <Image
                 quality={100}
                 src="/assets/hero/screen5-light.png"
                 width="1328"
                 height="727"
-                alt="Visual Workflow screenshot"
+                alt="Social Listening screenshot"
                 className="block h-auto w-full rounded-lg border shadow dark:hidden sm:rounded-xl"
               />
               <Image
@@ -360,7 +359,7 @@ export function HeroIllustration(): React.JSX.Element {
                 src="/assets/hero/screen5-dark.png"
                 width="1328"
                 height="727"
-                alt="Visual Workflow screenshot"
+                alt="Social Listening screenshot"
                 className="hidden h-auto w-full rounded-lg border shadow dark:block sm:rounded-xl"
               />
             </UnderlinedTabsContent>

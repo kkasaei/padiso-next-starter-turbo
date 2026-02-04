@@ -544,12 +544,24 @@ importers:
       '@workspace/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@workspace/monitoring':
+        specifier: workspace:*
+        version: link:../../packages/monitoring
+      '@workspace/newsletter':
+        specifier: workspace:*
+        version: link:../../packages/newsletter
       '@workspace/notification':
         specifier: workspace:*
         version: link:../../packages/notification
+      '@workspace/pdf':
+        specifier: workspace:*
+        version: link:../../packages/pdf
       '@workspace/react-providers':
         specifier: workspace:*
         version: link:../../packages/react-providers
+      '@workspace/trigger':
+        specifier: workspace:*
+        version: link:../../packages/trigger
       '@workspace/trpc':
         specifier: workspace:*
         version: link:../../packages/trpc
@@ -1028,11 +1040,82 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  packages/monitoring:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.19.7
+      '@types/react':
+        specifier: ^19.1.9
+        version: 19.2.10
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      react:
+        specifier: ^19.2.3
+        version: 19.2.4
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/newsletter:
+    dependencies:
+      resend:
+        specifier: ^4.0.0
+        version: 4.8.0(react-dom@19.2.3(react@19.2.4))(react@19.2.4)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.19.7
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/notification:
     devDependencies:
       '@types/node':
         specifier: ^22.10.5
         version: 22.19.7
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/pdf:
+    dependencies:
+      '@react-pdf/renderer':
+        specifier: ^4.3.0
+        version: 4.3.2(react@19.2.4)
+      '@workspace/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@workspace/cloudflare':
+        specifier: workspace:*
+        version: link:../cloudflare
+      react:
+        specifier: ^19.2.3
+        version: 19.2.4
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.19.7
+      '@types/react':
+        specifier: ^19.1.9
+        version: 19.2.10
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -1079,12 +1162,18 @@ importers:
       '@workspace/ai':
         specifier: workspace:*
         version: link:../ai
+      '@workspace/cloudflare':
+        specifier: workspace:*
+        version: link:../cloudflare
       '@workspace/db':
         specifier: workspace:*
         version: link:../db
       '@workspace/integrations':
         specifier: workspace:*
         version: link:../integrations
+      '@workspace/pdf':
+        specifier: workspace:*
+        version: link:../pdf
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.4(@opentelemetry/api@1.9.0)(@types/react@19.2.10)(postgres@3.4.8)(react@19.2.4)
@@ -1297,7 +1386,7 @@ importers:
         specifier: ^16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.4))(react@19.2.4)(sass@1.51.0)
       next-themes:
-        specifier: ^0.4.6
+        specifier: ^0.4.0
         version: 0.4.6(react-dom@19.2.3(react@19.2.4))(react@19.2.4)
       react:
         specifier: ^19.2.3
@@ -4336,6 +4425,13 @@ packages:
 
   '@react-email/render@1.0.3':
     resolution: {integrity: sha512-VQ8g4SuIq/jWdfBTdTjb7B8Np0jj+OoD7VebfdHhLTZzVQKesR2aigpYqE/ZXmwj4juVxDm8T2b6WIIu48rPCg==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
+
+  '@react-email/render@1.1.2':
+    resolution: {integrity: sha512-RnRehYN3v9gVlNMehHPHhyp2RQo7+pSkHDtXPvg3s0GbzM9SQMW4Qrf8GRNvtpLC4gsI+Wt0VatNRUFqjvevbw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
@@ -10307,6 +10403,10 @@ packages:
     resolution: {integrity: sha512-gAZ+kLqBdHarXB64XpAe2VCjB7rIRv+mU8tfRWziHRJ5umKsIHN2tLLv6EtMw7WCdP19S0ERVMldNvxYCHnhSQ==}
     engines: {node: '>=8.6.0'}
 
+  resend@4.8.0:
+    resolution: {integrity: sha512-R8eBOFQDO6dzRTDmaMEdpqrkmgSjPpVXt4nGfWsZdYOet0kqra0xgbvTES6HmCriZEXbmGk3e0DiGIaLFTFSHA==}
+    engines: {node: '>=18'}
+
   resend@6.9.1:
     resolution: {integrity: sha512-jFY3qPP2cith1npRXvS7PVdnhbR1CcuzHg65ty5Elv55GKiXhe+nItXuzzoOlKeYJez1iJAo2+8f6ae8sCj0iA==}
     engines: {node: '>=20'}
@@ -15132,6 +15232,14 @@ snapshots:
       react-dom: 19.2.3(react@19.2.4)
       react-promise-suspense: 0.3.4
 
+  '@react-email/render@1.1.2(react-dom@19.2.3(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      html-to-text: 9.0.5
+      prettier: 3.8.1
+      react: 19.2.4
+      react-dom: 19.2.3(react@19.2.4)
+      react-promise-suspense: 0.3.4
+
   '@react-email/render@2.0.4(react-dom@19.2.3(react@19.2.4))(react@19.2.4)':
     dependencies:
       html-to-text: 9.0.5
@@ -15208,6 +15316,12 @@ snapshots:
       react: 19.2.3
       scheduler: 0.25.0-rc-603e6108-20241029
 
+  '@react-pdf/reconciler@2.0.0(react@19.2.4)':
+    dependencies:
+      object-assign: 4.1.1
+      react: 19.2.4
+      scheduler: 0.25.0-rc-603e6108-20241029
+
   '@react-pdf/render@4.3.2':
     dependencies:
       '@babel/runtime': 7.28.6
@@ -15237,6 +15351,23 @@ snapshots:
       prop-types: 15.8.1
       queue: 6.0.2
       react: 19.2.3
+
+  '@react-pdf/renderer@4.3.2(react@19.2.4)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@react-pdf/fns': 3.1.2
+      '@react-pdf/font': 4.0.4
+      '@react-pdf/layout': 4.4.2
+      '@react-pdf/pdfkit': 4.1.0
+      '@react-pdf/primitives': 4.1.1
+      '@react-pdf/reconciler': 2.0.0(react@19.2.4)
+      '@react-pdf/render': 4.3.2
+      '@react-pdf/types': 2.9.2
+      events: 3.3.0
+      object-assign: 4.1.1
+      prop-types: 15.8.1
+      queue: 6.0.2
+      react: 19.2.4
 
   '@react-pdf/stylesheet@6.1.2':
     dependencies:
@@ -22730,6 +22861,13 @@ snapshots:
       resolve: 1.22.11
     transitivePeerDependencies:
       - supports-color
+
+  resend@4.8.0(react-dom@19.2.3(react@19.2.4))(react@19.2.4):
+    dependencies:
+      '@react-email/render': 1.1.2(react-dom@19.2.3(react@19.2.4))(react@19.2.4)
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   resend@6.9.1(@react-email/render@2.0.4(react-dom@19.2.3(react@19.2.4))(react@19.2.4)):
     dependencies:

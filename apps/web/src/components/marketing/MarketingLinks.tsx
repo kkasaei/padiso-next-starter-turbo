@@ -108,8 +108,25 @@ export const MENU_LINKS = [
         title: 'API Reference',
         description: 'Build integrations with our API',
         icon: <CodeIcon className="size-5 shrink-0" />,
-        href: baseURL,
-        external: true
+        href: '#',
+        external: false,
+        disabled: true
+      },
+      {
+        title: 'MCP',
+        description: 'Model Context Protocol integration',
+        icon: <PlugIcon className="size-5 shrink-0" />,
+        href: '#',
+        external: false,
+        disabled: true
+      },
+      {
+        title: 'Tools',
+        description: 'Free SEO and AI visibility tools',
+        icon: <CuboidIcon className="size-5 shrink-0" />,
+        href: '#',
+        external: false,
+        disabled: true
       }
     ]
   },
@@ -149,7 +166,9 @@ export const FOOTER_LINKS = [
       { name: 'Contact', href: '/contact', external: false },
       { name: 'Roadmap', href: 'https://canny.io/product/searchfit/roadmap', external: true },
       { name: 'Docs', href: '/docs', external: false },
-      { name: 'API Reference', href: baseURL, external: true }
+      { name: 'API Reference', href: '#', external: false, disabled: true },
+      { name: 'MCP', href: '#', external: false, disabled: true },
+      { name: 'Tools', href: '#', external: false, disabled: true }
     ]
   },
   {
@@ -220,19 +239,75 @@ export const DOCS_LINKS = [
         items: []
       },
       {
-        title: 'Dependencies',
-        href: '/docs/dependencies',
+        title: 'Quick Start',
+        href: '/docs/quick-start',
+        items: []
+      },
+      {
+        title: 'Account Setup',
+        href: '/docs/account-setup',
         items: []
       }
     ]
   },
   {
-    title: 'Guides',
+    title: 'Features',
     icon: <BookIcon className="size-4 shrink-0 text-muted-foreground" />,
     items: [
       {
-        title: 'Using MDX',
-        href: '/docs/using-mdx',
+        title: 'AI Tracking',
+        href: '/docs/ai-tracking',
+        items: []
+      },
+      {
+        title: 'Content',
+        href: '/docs/content',
+        items: []
+      },
+      {
+        title: 'Analytics',
+        href: '/docs/analytics',
+        items: []
+      },
+      {
+        title: 'Backlinks',
+        href: '/docs/backlinks',
+        items: []
+      },
+      {
+        title: 'Technical Audit',
+        href: '/docs/technical-audit',
+        items: []
+      },
+      {
+        title: 'Social Listening',
+        href: '/docs/social-listening',
+        items: []
+      },
+      {
+        title: 'Integrations',
+        href: '/docs/integrations',
+        items: []
+      }
+    ]
+  },
+  {
+    title: 'Reports',
+    icon: <FileBarChartIcon className="size-4 shrink-0 text-muted-foreground" />,
+    items: [
+      {
+        title: 'AEO Reports',
+        href: '/docs/aeo-reports',
+        items: []
+      },
+      {
+        title: 'PDF Reports',
+        href: '/docs/pdf-reports',
+        items: []
+      },
+      {
+        title: 'Free Report',
+        href: '/docs/free-report',
         items: []
       }
     ]
