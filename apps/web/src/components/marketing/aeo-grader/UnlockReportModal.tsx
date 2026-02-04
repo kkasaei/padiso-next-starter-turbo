@@ -15,6 +15,8 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 
+import { unlockReport } from '@/actions/report/unlock-report';
+
 // Custom hook for window size
 function useWindowSize() {
   const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -94,7 +96,7 @@ export function UnlockReportModal({
     setIsSubmitting(true);
     setError(null);
 
-   /*  try {
+    try {
       const result = await unlockReport({
         domain: domain || '',
         ...formData,
@@ -124,7 +126,7 @@ export function UnlockReportModal({
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
-    } */
+    }
   };
 
   const handleInputChange = (field: keyof typeof formData) => (
@@ -357,4 +359,3 @@ export function UnlockReportModal({
     </Dialog>
   );
 }
-

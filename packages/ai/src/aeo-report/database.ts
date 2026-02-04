@@ -1,19 +1,18 @@
 /**
  * AEO Report Database Layer
  *
- * TODO: Replace with actual database implementation
- * Currently using mock database for development.
+ * Uses Drizzle ORM with PostgreSQL for persistent storage.
  *
  * Performance Optimizations Applied:
  * - ✅ Parallel queries with Promise.all()
- * - ✅ findUnique() for O(1) lookups on indexed fields
+ * - ✅ findFirst() for O(1) lookups on indexed fields
  * - ✅ Compound indexes for filtered+sorted queries
  * - ✅ Fire-and-forget updates for non-critical operations
  * - ✅ Always limit query results at database level
  * - ✅ Client-side filtering only for single records
  */
 
-import { mockPrisma as prisma } from '../mock-db';
+import { db, eq, and, lt, ne, desc, publicReports } from '@workspace/db';
 import type { AEOReport } from '../types/aeo-report';
 import type { CachedReport, LLMExecutionResult } from './types';
 
@@ -38,12 +37,7 @@ export function normalizeDomain(domain: string): string {
 }
 
 // ============================================================
-// Check if Report Exists and is Valid
-// ============================================================
-
-// ============================================================
-// PERFORMANCE OPTIMIZATION: Parallel queries + compound index usage
-// Uses the compound index: @@index([domain, status])
+// Check if Report Exists and is Valid (from Cache)
 // ============================================================
 
 export async function getCachedReport(
@@ -51,15 +45,9 @@ export async function getCachedReport(
 ): Promise<CachedReport | null> {
   const normalized = normalizeDomain(domain);
 
-  // ============================================================
-  // PERFORMANCE OPTIMIZATION: Use unique domain field for O(1) lookup
-  // findUnique is much faster than findFirst
-  // ============================================================
-  const report = await prisma.publicReport.findUnique({
-    where: {
-      domain: normalized
-    },
-    select: {
+  const report = await db.query.publicReports.findFirst({
+    where: eq(publicReports.domain, normalized),
+    columns: {
       id: true,
       domain: true,
       domainURL: true,
@@ -67,8 +55,8 @@ export async function getCachedReport(
       status: true,
       expiresAt: true,
       createdAt: true,
-      updatedAt: true
-    }
+      updatedAt: true,
+    },
   });
 
   // Check if report exists, is completed, and not expired
@@ -76,18 +64,15 @@ export async function getCachedReport(
     return null;
   }
 
-  // ============================================================
-  // PERFORMANCE OPTIMIZATION: Fire-and-forget update
-  // Don't await - update happens in background without blocking response
-  // ============================================================
-  // TODO: Re-enable after schema migration
-  // void prisma.publicReport.update({
-  //   where: { id: report.id },
-  //   data: {
-  //     lastViewedAt: new Date(),
-  //     viewCount: { increment: 1 }
-  //   }
-  // }).catch(() => {});
+  // Fire-and-forget: Update view count and last viewed timestamp
+  void db
+    .update(publicReports)
+    .set({
+      lastViewedAt: new Date(),
+      viewCount: (report as any).viewCount ? (report as any).viewCount + 1 : 1,
+    })
+    .where(eq(publicReports.id, report.id))
+    .catch(() => {});
 
   return {
     id: report.id,
@@ -97,7 +82,7 @@ export async function getCachedReport(
     status: report.status as CachedReport['status'],
     expiresAt: report.expiresAt,
     createdAt: report.createdAt,
-    updatedAt: report.updatedAt
+    updatedAt: report.updatedAt,
   };
 }
 
@@ -115,39 +100,52 @@ export async function upsertReport(options: {
   totalCost?: number;
   error?: string;
 }): Promise<string> {
-  const { domainURL, status, data } = options;
+  const { domainURL, status, data, generationTimeMs, totalCost, llmResults } = options;
   const normalized = normalizeDomain(domainURL);
   const expiresAt = new Date(Date.now() + CACHE_DURATION_MS);
 
-  // Check if report exists using unique domain field
-  const existing = await prisma.publicReport.findUnique({
-    where: { domain: normalized },
-    select: { id: true }
+  // Check if report exists
+  const existing = await db.query.publicReports.findFirst({
+    where: eq(publicReports.domain, normalized),
+    columns: { id: true },
   });
 
-  const report = existing
-    ? await prisma.publicReport.update({
-        where: { id: existing.id },
-        data: {
-          domain: normalized,
-          domainURL,
-          status,
-          data: data || undefined,
-          expiresAt,
-          updatedAt: new Date()
-        }
+  if (existing) {
+    // Update existing report
+    await db
+      .update(publicReports)
+      .set({
+        domain: normalized,
+        domainURL,
+        status,
+        data: data || undefined,
+        llmResults: llmResults || undefined,
+        generationTimeMs: generationTimeMs || undefined,
+        totalCost: totalCost || undefined,
+        expiresAt,
+        updatedAt: new Date(),
       })
-    : await prisma.publicReport.create({
-        data: {
-          domain: normalized,
-          domainURL,
-          status,
-          data: data || null,
-          expiresAt
-        }
-      });
+      .where(eq(publicReports.id, existing.id));
 
-  return report.id;
+    return existing.id;
+  }
+
+  // Create new report
+  const [newReport] = await db
+    .insert(publicReports)
+    .values({
+      domain: normalized,
+      domainURL,
+      status,
+      data: data || null,
+      llmResults: llmResults || null,
+      generationTimeMs: generationTimeMs || null,
+      totalCost: totalCost || null,
+      expiresAt,
+    })
+    .returning({ id: publicReports.id });
+
+  return newReport.id;
 }
 
 // ============================================================
@@ -158,10 +156,10 @@ export async function updateReportStatus(
   reportId: string,
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
 ): Promise<void> {
-  await prisma.publicReport.update({
-    where: { id: reportId },
-    data: { status }
-  });
+  await db
+    .update(publicReports)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(publicReports.id, reportId));
 }
 
 // ============================================================
@@ -169,9 +167,9 @@ export async function updateReportStatus(
 // ============================================================
 
 export async function getReportById(reportId: string): Promise<CachedReport | null> {
-  const report = await prisma.publicReport.findUnique({
-    where: { id: reportId },
-    select: {
+  const report = await db.query.publicReports.findFirst({
+    where: eq(publicReports.id, reportId),
+    columns: {
       id: true,
       domain: true,
       domainURL: true,
@@ -179,8 +177,8 @@ export async function getReportById(reportId: string): Promise<CachedReport | nu
       status: true,
       expiresAt: true,
       createdAt: true,
-      updatedAt: true
-    }
+      updatedAt: true,
+    },
   });
 
   if (!report) return null;
@@ -193,7 +191,7 @@ export async function getReportById(reportId: string): Promise<CachedReport | nu
     status: report.status as CachedReport['status'],
     expiresAt: report.expiresAt,
     createdAt: report.createdAt,
-    updatedAt: report.updatedAt
+    updatedAt: report.updatedAt,
   };
 }
 
@@ -201,10 +199,6 @@ export async function getReportById(reportId: string): Promise<CachedReport | nu
 // Check if Domain Exists (any status)
 // ============================================================
 
-// ============================================================
-// PERFORMANCE OPTIMIZATION: Use unique domain field for O(1) lookup
-// findUnique is much faster than findFirst
-// ============================================================
 export async function checkReportExists(domain: string): Promise<{
   exists: boolean;
   status?: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'EXPIRED';
@@ -213,14 +207,13 @@ export async function checkReportExists(domain: string): Promise<{
 }> {
   const normalized = normalizeDomain(domain);
 
-  // Use unique domain field for fast O(1) lookup
-  const report = await prisma.publicReport.findUnique({
-    where: { domain: normalized },
-    select: {
+  const report = await db.query.publicReports.findFirst({
+    where: eq(publicReports.domain, normalized),
+    columns: {
       id: true,
       status: true,
-      expiresAt: true
-    }
+      expiresAt: true,
+    },
   });
 
   if (!report) {
@@ -236,7 +229,7 @@ export async function checkReportExists(domain: string): Promise<{
     exists: true,
     status,
     reportId: report.id,
-    expiresAt: report.expiresAt
+    expiresAt: report.expiresAt,
   };
 }
 
@@ -245,21 +238,17 @@ export async function checkReportExists(domain: string): Promise<{
 // ============================================================
 
 export async function cleanupExpiredReports(): Promise<number> {
-  const result = await prisma.publicReport.updateMany({
-    where: {
-      expiresAt: {
-        lt: new Date()
-      },
-      status: {
-        not: 'EXPIRED'
-      }
-    },
-    data: {
-      status: 'EXPIRED'
-    }
-  });
+  const result = await db
+    .update(publicReports)
+    .set({ status: 'EXPIRED' })
+    .where(
+      and(
+        lt(publicReports.expiresAt, new Date()),
+        ne(publicReports.status, 'EXPIRED')
+      )
+    );
 
-  return result.count;
+  return (result as any).rowCount || 0;
 }
 
 // ============================================================
@@ -269,38 +258,31 @@ export async function cleanupExpiredReports(): Promise<number> {
 export async function deleteOldReports(): Promise<number> {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const result = await prisma.publicReport.deleteMany({
-    where: {
-      expiresAt: {
-        lt: thirtyDaysAgo
-      }
-    }
-  });
+  const result = await db
+    .delete(publicReports)
+    .where(lt(publicReports.expiresAt, thirtyDaysAgo));
 
-  return result.count;
+  return (result as any).rowCount || 0;
 }
 
 // ============================================================
 // Get Report Statistics
 // ============================================================
 
-// ============================================================
-// PERFORMANCE OPTIMIZATION: Parallel queries instead of sequential
-// Fetches all data in parallel, reducing total query time by ~70%
-// ============================================================
 export async function getReportStats() {
-  const [total, pending, processing, completed, failed, expired] = await Promise.all([
-    prisma.publicReport.count(),
-    prisma.publicReport.count({ where: { status: 'PENDING' } }),
-    prisma.publicReport.count({ where: { status: 'PROCESSING' } }),
-    prisma.publicReport.count({ where: { status: 'COMPLETED' } }),
-    prisma.publicReport.count({ where: { status: 'FAILED' } }),
-    prisma.publicReport.count({
-      where: {
-        expiresAt: { lt: new Date() }
-      }
-    })
+  const [total, pending, processing, completed, failed] = await Promise.all([
+    db.select().from(publicReports).then(r => r.length),
+    db.select().from(publicReports).where(eq(publicReports.status, 'PENDING')).then(r => r.length),
+    db.select().from(publicReports).where(eq(publicReports.status, 'PROCESSING')).then(r => r.length),
+    db.select().from(publicReports).where(eq(publicReports.status, 'COMPLETED')).then(r => r.length),
+    db.select().from(publicReports).where(eq(publicReports.status, 'FAILED')).then(r => r.length),
   ]);
+
+  const expired = await db
+    .select()
+    .from(publicReports)
+    .where(lt(publicReports.expiresAt, new Date()))
+    .then(r => r.length);
 
   return {
     total,
@@ -309,8 +291,8 @@ export async function getReportStats() {
       processing,
       completed,
       failed,
-      expired
-    }
+      expired,
+    },
   };
 }
 
@@ -318,31 +300,18 @@ export async function getReportStats() {
 // Get Popular Domains (Most Viewed)
 // ============================================================
 
-// ============================================================
-// PERFORMANCE OPTIMIZATION: Always limit query results
-// Compound index on [status, viewCount] makes this fast
-// ============================================================
 export async function getPopularDomains(limit = 10) {
-  // Ensure limit is reasonable (max 100)
   const safeLimit = Math.min(limit, 100);
 
-  return prisma.publicReport.findMany({
-    where: {
-      status: 'COMPLETED'
-      // TODO: Re-enable viewCount filter after schema migration
-      // viewCount: { gt: 0 }
-    },
-    select: {
+  return db.query.publicReports.findMany({
+    where: eq(publicReports.status, 'COMPLETED'),
+    columns: {
       domainURL: true,
-      createdAt: true
-      // TODO: Re-enable after schema migration
-      // viewCount: true,
-      // lastViewedAt: true
+      createdAt: true,
+      viewCount: true,
+      lastViewedAt: true,
     },
-    orderBy: {
-      createdAt: 'desc' // Fallback to creation date until viewCount is added
-    },
-    take: safeLimit // Always limit at database level
+    orderBy: [desc(publicReports.viewCount)],
+    limit: safeLimit,
   });
 }
-

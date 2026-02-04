@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.32",
+    "@workspace/db": "workspace:^",
     "ai": "^6.0.67",
     "react": "^19.2.4"
   },

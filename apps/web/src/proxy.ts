@@ -22,6 +22,12 @@ const isPublicRoute = createRouteMatcher([
   '/backlinks(.*)',
   '/technical-audit(.*)',
   '/social-listening(.*)',
+  // Public report pages
+  '/report(.*)',
+  // Public API routes for reports
+  '/api/reports/(.*)',
+  // tRPC routes (needed for public report page to query unlock status)
+  '/api/trpc/(.*)',
 ])
 
 export default clerkMiddleware(async (auth, req) => {
