@@ -371,7 +371,7 @@ export default function WorkspaceDetailsPage() {
         <h2 className="text-xl font-semibold mb-2">Workspace not found</h2>
         <p className="text-muted-foreground mb-4">The workspace you're looking for doesn't exist.</p>
         <Button asChild>
-          <Link href="/admin/workspaces">Back to Workspaces</Link>
+          <Link href="/workspaces">Back to Workspaces</Link>
         </Button>
       </div>
     )
@@ -388,7 +388,7 @@ export default function WorkspaceDetailsPage() {
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/admin/workspaces">
+              <Link href="/workspaces">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
@@ -927,7 +927,7 @@ export default function WorkspaceDetailsPage() {
                     <div 
                       key={member.id} 
                       className="flex items-center justify-between py-2 hover:bg-muted/30 rounded-lg px-2 -mx-2 cursor-pointer transition-colors"
-                      onClick={() => router.push(`/admin/users/${member.id}`)}
+                      onClick={() => router.push(`/users/${member.id}`)}
                     >
                       <div className="flex items-center gap-3">
                         {member.imageUrl ? (

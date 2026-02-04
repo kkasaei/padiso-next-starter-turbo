@@ -133,7 +133,7 @@ export default function UserDetailsPage() {
     const result = await deleteUser(userId)
     if (result.success) {
       toast.success("User deleted")
-      window.location.href = "/admin/users"
+      window.location.href = "/users"
     } else {
       toast.error(result.error || "Failed to delete user")
     }
@@ -166,7 +166,7 @@ export default function UserDetailsPage() {
           <Users className="h-12 w-12 mb-4 opacity-50" />
           <p className="text-lg font-medium">User not found</p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/admin/users">Back to Users</Link>
+            <Link href="/users">Back to Users</Link>
           </Button>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function UserDetailsPage() {
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/admin/users">
+              <Link href="/users">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
@@ -327,7 +327,7 @@ export default function UserDetailsPage() {
                         {org.role.replace("org:", "")}
                       </span>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/workspaces`}>
+                        <Link href={`/workspaces`}>
                           <ExternalLink className="h-4 w-4" />
                         </Link>
                       </Button>

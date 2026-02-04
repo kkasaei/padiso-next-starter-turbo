@@ -376,7 +376,7 @@ export default function WorkspacesPage() {
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             <Button asChild>
-              <Link href="/admin/workspaces/new" className="flex items-center gap-2">
+              <Link href="/workspaces/new" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 New Workspace
               </Link>
@@ -466,7 +466,7 @@ export default function WorkspacesPage() {
                     <tr
                       key={workspace.clerkOrgId}
                       className="hover:bg-muted/30 transition-colors cursor-pointer group"
-                      onClick={() => router.push(`/admin/workspaces/${workspace.clerkOrgId}`)}
+                      onClick={() => router.push(`/workspaces/${workspace.clerkOrgId}`)}
                     >
                       {/* Workspace Info */}
                       <td className="px-6 py-4">

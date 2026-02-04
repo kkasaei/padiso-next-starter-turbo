@@ -36,7 +36,7 @@ export default function NewWorkspacePage() {
       
       if (result.success) {
         toast.success("Workspace created successfully!")
-        router.push("/admin/workspaces")
+        router.push("/workspaces")
       } else {
         toast.error(result.error || "Failed to create workspace")
       }
@@ -56,7 +56,7 @@ export default function NewWorkspacePage() {
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/admin/workspaces">
+            <Link href="/workspaces">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
@@ -242,7 +242,7 @@ export default function NewWorkspacePage() {
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 mt-6">
             <Button variant="outline" asChild disabled={isPending}>
-              <Link href="/admin/workspaces">Cancel</Link>
+              <Link href="/workspaces">Cancel</Link>
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? (

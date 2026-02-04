@@ -259,7 +259,7 @@ export default function UsersPage() {
                     <tr
                       key={user.id}
                       className="hover:bg-muted/30 transition-colors cursor-pointer group"
-                      onClick={() => router.push(`/admin/users/${user.id}`)}
+                      onClick={() => router.push(`/users/${user.id}`)}
                     >
                       {/* User Info */}
                       <td className="px-6 py-4">
