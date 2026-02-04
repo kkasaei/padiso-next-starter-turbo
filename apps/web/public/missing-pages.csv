@@ -1,0 +1,138 @@
+title,slug,purpose
+Missing Keywords Tool,/free-tools/missing-keywords,Free tool to find missing keywords in content - lead generation
+JSON-LD Schema Generator,/free-tools/jsonld-schema,Free tool to generate structured data markup - lead generation
+Geo Audit Tool,/free-tools/geo-audit,Free tool to audit local SEO performance - lead generation
+Success Stories,/success-stories,Showcase customer case studies and results - social proof
+Affiliate Program,/affiliate,Public landing page for affiliate/partner program - partnerships
+Whitelabel Solution,/whitelabel,White-label offering for agencies - B2B sales
+AI SEO Agent,/ai-seo-agent,Feature page for AI-powered SEO automation - SEO traffic
+AI Blog Writer,/ai-blog-writer,Feature page for AI content generation - SEO traffic
+Answer Engine Optimization,/answer-engine-optimization,Feature page for AEO services - SEO traffic
+Generative Engine Optimization,/generative-engine-optimization,Feature page for GEO services - SEO traffic
+Rank on ChatGPT,/rank-on-chatgpt,Feature page for AI visibility - SEO traffic
+Keyword Research Tool,/keyword-research,Feature page for keyword research capabilities - SEO traffic
+Keyword Clustering,/keyword-clustering,Feature page for keyword grouping features - SEO traffic
+Keyword Discovery,/keyword-discovery,Feature page for keyword discovery features - SEO traffic
+SEO Automation,/seo-automation,Feature page for automation capabilities - SEO traffic
+SEO Audit Software,/seo-audit-software,Feature page for audit features - SEO traffic
+Content Automation,/content-automation,Feature page for content automation - SEO traffic
+Content Strategy Platform,/content-strategy,Feature page for content planning - SEO traffic
+Autoblog,/autoblog,Feature page for automated blogging - SEO traffic
+Automated Publishing,/automated-publishing,Feature page for auto-publish features - SEO traffic
+SEO Article Generator,/article-generator,Feature page for article generation - SEO traffic
+Multilingual SEO,/multilingual-seo,Feature page for multi-language support - SEO traffic
+JSON-LD Schema,/json-ld-schema,Feature page for schema markup features - SEO traffic
+Auto Linking Tool,/auto-linking,Feature page for internal linking automation - SEO traffic
+Backlink Building Software,/backlink-building,Feature page for backlink acquisition - SEO traffic
+Link Building,/link-building,Feature page for link building services - SEO traffic
+Domain Authority,/domain-authority,Feature page for DA improvement - SEO traffic
+Organic Traffic Tool,/organic-traffic,Feature page for traffic growth - SEO traffic
+AI Content Marketing,/ai-content-marketing,Feature page for AI marketing - SEO traffic
+SEO for Agencies,/seo-agencies,Feature page targeting SEO agencies - B2B
+Backlink Exchange,/backlink-exchange,Backlink exchange marketplace - lead generation
+Shopify SEO,/platforms/shopify,Platform-specific SEO page - programmatic SEO
+WooCommerce SEO,/platforms/woocommerce,Platform-specific SEO page - programmatic SEO
+WordPress SEO,/platforms/wordpress,Platform-specific SEO page - programmatic SEO
+Webflow SEO,/platforms/webflow,Platform-specific SEO page - programmatic SEO
+Wix SEO,/platforms/wix,Platform-specific SEO page - programmatic SEO
+Squarespace SEO,/platforms/squarespace,Platform-specific SEO page - programmatic SEO
+BigCommerce SEO,/platforms/bigcommerce,Platform-specific SEO page - programmatic SEO
+Magento SEO,/platforms/magento,Platform-specific SEO page - programmatic SEO
+Ghost SEO,/platforms/ghost,Platform-specific SEO page - programmatic SEO
+Drupal SEO,/platforms/drupal,Platform-specific SEO page - programmatic SEO
+SEO for Restaurants,/industries/restaurants,Industry-specific SEO page - programmatic SEO
+SEO for Dentists,/industries/dentists,Industry-specific SEO page - programmatic SEO
+SEO for Lawyers,/industries/lawyers,Industry-specific SEO page - programmatic SEO
+SEO for Real Estate,/industries/real-estate,Industry-specific SEO page - programmatic SEO
+SEO for Healthcare,/industries/healthcare,Industry-specific SEO page - programmatic SEO
+SEO for Ecommerce,/industries/ecommerce,Industry-specific SEO page - programmatic SEO
+SEO for Gyms,/industries/gyms,Industry-specific SEO page - programmatic SEO
+SEO for Plumbers,/industries/plumbers,Industry-specific SEO page - programmatic SEO
+SEO for Accountants,/industries/accountants,Industry-specific SEO page - programmatic SEO
+SEO for Photographers,/industries/photographers,Industry-specific SEO page - programmatic SEO
+German Content Generator,/languages/german,Language-specific AI content page - programmatic SEO
+French Content Generator,/languages/french,Language-specific AI content page - programmatic SEO
+Spanish Content Generator,/languages/spanish,Language-specific AI content page - programmatic SEO
+Italian Content Generator,/languages/italian,Language-specific AI content page - programmatic SEO
+Portuguese Content Generator,/languages/portuguese,Language-specific AI content page - programmatic SEO
+Japanese Content Generator,/languages/japanese,Language-specific AI content page - programmatic SEO
+Korean Content Generator,/languages/korean,Language-specific AI content page - programmatic SEO
+Chinese Content Generator,/languages/chinese,Language-specific AI content page - programmatic SEO
+Arabic Content Generator,/languages/arabic,Language-specific AI content page - programmatic SEO
+Dutch Content Generator,/languages/dutch,Language-specific AI content page - programmatic SEO
+Compare Index,/compare,Comparison landing page - SEO traffic
+SearchFIT vs Ahrefs,/compare/ahrefs,Competitor comparison page - high intent traffic
+SearchFIT vs SEMrush,/compare/semrush,Competitor comparison page - high intent traffic
+SearchFIT vs Moz,/compare/moz,Competitor comparison page - high intent traffic
+SearchFIT vs Surfer SEO,/compare/surfer,Competitor comparison page - high intent traffic
+SearchFIT vs Clearscope,/compare/clearscope,Competitor comparison page - high intent traffic
+SearchFIT vs Frase,/compare/frase,Competitor comparison page - high intent traffic
+SearchFIT vs Jasper,/compare/jasper,Competitor comparison page - high intent traffic
+SearchFIT vs MarketMuse,/compare/marketmuse,Competitor comparison page - high intent traffic
+SearchFIT vs Scalenut,/compare/scalenut,Competitor comparison page - high intent traffic
+SearchFIT vs Writesonic,/compare/writesonic,Competitor comparison page - high intent traffic
+SEO Agency Index,/seo-agency,City directory landing page - local SEO
+SEO Agency New York,/seo-agency/new-york,City-specific SEO page - local SEO
+SEO Agency Los Angeles,/seo-agency/los-angeles,City-specific SEO page - local SEO
+SEO Agency Chicago,/seo-agency/chicago,City-specific SEO page - local SEO
+SEO Agency Houston,/seo-agency/houston,City-specific SEO page - local SEO
+SEO Agency San Francisco,/seo-agency/san-francisco,City-specific SEO page - local SEO
+SEO Agency Seattle,/seo-agency/seattle,City-specific SEO page - local SEO
+SEO Agency Boston,/seo-agency/boston,City-specific SEO page - local SEO
+SEO Agency Miami,/seo-agency/miami,City-specific SEO page - local SEO
+SEO Agency Atlanta,/seo-agency/atlanta,City-specific SEO page - local SEO
+SEO Agency Denver,/seo-agency/denver,City-specific SEO page - local SEO
+SEO Agency London,/seo-agency/london,City-specific SEO page - local SEO
+SEO Agency Manchester,/seo-agency/manchester,City-specific SEO page - local SEO
+SEO Agency Berlin,/seo-agency/berlin,City-specific SEO page - local SEO
+SEO Agency Paris,/seo-agency/paris,City-specific SEO page - local SEO
+SEO Agency Amsterdam,/seo-agency/amsterdam,City-specific SEO page - local SEO
+SEO Agency Sydney,/seo-agency/sydney,City-specific SEO page - local SEO
+SEO Agency Melbourne,/seo-agency/melbourne,City-specific SEO page - local SEO
+SEO Agency Toronto,/seo-agency/toronto,City-specific SEO page - local SEO
+SEO Agency Singapore,/seo-agency/singapore,City-specific SEO page - local SEO
+SEO Agency Dubai,/seo-agency/dubai,City-specific SEO page - local SEO
+Use Cases Index,/use-cases,Use cases landing page - conversion
+For Marketing Teams,/use-cases/marketing-teams,Use case page - conversion
+For Agencies,/use-cases/agencies,Use case page - conversion
+For Startups,/use-cases/startups,Use case page - conversion
+For Enterprises,/use-cases/enterprises,Use case page - conversion
+For Ecommerce,/use-cases/ecommerce,Use case page - conversion
+For SaaS,/use-cases/saas,Use case page - conversion
+For Publishers,/use-cases/publishers,Use case page - conversion
+For Freelancers,/use-cases/freelancers,Use case page - conversion
+For Content Creators,/use-cases/content-creators,Use case page - conversion
+For Local Business,/use-cases/local-business,Use case page - conversion
+Google Search Console Integration,/integrations/google-search-console,Integration page - feature discovery
+Google Analytics Integration,/integrations/google-analytics,Integration page - feature discovery
+Shopify Integration,/integrations/shopify,Integration page - feature discovery
+WordPress Integration,/integrations/wordpress,Integration page - feature discovery
+Webflow Integration,/integrations/webflow,Integration page - feature discovery
+Slack Integration,/integrations/slack,Integration page - feature discovery
+Zapier Integration,/integrations/zapier,Integration page - feature discovery
+Notion Integration,/integrations/notion,Integration page - feature discovery
+Airtable Integration,/integrations/airtable,Integration page - feature discovery
+HubSpot Integration,/integrations/hubspot,Integration page - feature discovery
+SEMrush Integration,/integrations/semrush,Integration page - feature discovery
+Ahrefs Integration,/integrations/ahrefs,Integration page - feature discovery
+SEO Glossary Index,/glossary,Educational content index - SEO traffic
+SEO Definition,/glossary/seo,Glossary term - SEO traffic
+AEO Definition,/glossary/aeo,Glossary term - SEO traffic
+GEO Definition,/glossary/geo,Glossary term - SEO traffic
+Backlink Definition,/glossary/backlink,Glossary term - SEO traffic
+Domain Authority Definition,/glossary/domain-authority,Glossary term - SEO traffic
+Keyword Definition,/glossary/keyword,Glossary term - SEO traffic
+SERP Definition,/glossary/serp,Glossary term - SEO traffic
+Changelog,/changelog,Product updates - builds trust
+Developers & API,/developers,API documentation - developer audience
+System Status,/status,Uptime monitoring - builds trust
+ROI Calculator,/roi-calculator,Interactive tool - lead generation
+SEO Templates,/templates,Free resources - lead generation
+Webinars,/webinars,Educational content - lead generation
+Resources,/resources,Guides and ebooks - lead generation
+Careers,/careers,Hiring page - employer branding
+Press & Media Kit,/press,PR resources - media relations
+Partners,/partners,Partnership program - business development
+Security,/security,Security info - enterprise trust
+GDPR Compliance,/gdpr,Compliance info - enterprise trust
+Customer Reviews,/reviews,Social proof - conversion

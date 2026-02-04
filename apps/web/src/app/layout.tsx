@@ -10,6 +10,14 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "SearchFIT",
   description: "SearchFit.ai - AI-powered search engine",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 }
 
 export const viewport: Viewport = {
