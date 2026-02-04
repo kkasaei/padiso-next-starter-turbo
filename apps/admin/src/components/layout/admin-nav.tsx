@@ -2,15 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Logo } from "@workspace/ui/components/logo"
+import { LogoIcon } from "@/components/layout/LogoIcon";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@workspace/ui/components/tooltip"
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar"
 import {
   LayoutDashboard,
   Users,
-  Building2,
+  Layers,
   Settings,
-  BarChart3,
+  Activity,
   FileText,
   Map,
   History,
@@ -22,10 +22,10 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
+  { id: "workspaces", label: "Workspaces", icon: Layers, href: "/admin/workspaces" },
   { id: "users", label: "Users", icon: Users, href: "/admin/users" },
-  { id: "organizations", label: "Organizations", icon: Building2, href: "/admin/organizations" },
-  { id: "analytics", label: "Analytics", icon: BarChart3, href: "/admin/analytics" },
-  { id: "reports", label: "Reports", icon: FileText, href: "/admin/reports" },
+  { id: "public-reports", label: "Public Reports", icon: FileText, href: "/admin/public-reports" },
+  { id: "activity", label: "Activity", icon: Activity, href: "/admin/activity" },
   { id: "settings", label: "Settings", icon: Settings, href: "/admin/settings" },
 ] as const
 
@@ -43,9 +43,9 @@ export function AdminSidebar() {
   const isItemActive = (id: string): boolean => {
     if (id === "dashboard") return pathname === "/admin"
     if (id === "users") return pathname.startsWith("/admin/users")
-    if (id === "organizations") return pathname.startsWith("/admin/organizations")
-    if (id === "analytics") return pathname.startsWith("/admin/analytics")
-    if (id === "reports") return pathname.startsWith("/admin/reports")
+    if (id === "workspaces") return pathname.startsWith("/admin/workspaces")
+    if (id === "public-reports") return pathname.startsWith("/admin/public-reports")
+    if (id === "activity") return pathname.startsWith("/admin/activity")
     if (id === "settings") return pathname.startsWith("/admin/settings")
     return false
   }
@@ -56,9 +56,7 @@ export function AdminSidebar() {
         {/* Logo */}
         <div className="flex items-center justify-center p-4">
           <Link href="/admin">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)] hover:opacity-90 transition-opacity">
-              <Logo className="h-6 w-6" />
-            </div>
+            <LogoIcon size="md" />
           </Link>
         </div>
 

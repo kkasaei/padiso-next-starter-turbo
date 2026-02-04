@@ -9,6 +9,7 @@ import { subscriptionsRouter } from "./subscriptions";
 import { contentRouter } from "./content";
 import { integrationsRouter } from "./integrations";
 import { redditRouter } from "./reddit";
+import { adminRouter } from "./admin";
 
 export const appRouter = router({
   brands: brandsRouter,
@@ -21,6 +22,7 @@ export const appRouter = router({
   content: contentRouter,
   integrations: integrationsRouter,
   reddit: redditRouter,
+  admin: adminRouter,
 });
 
 export type AppRouter = typeof appRouter;

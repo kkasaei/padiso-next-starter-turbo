@@ -1,9 +1,21 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { workspaces } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
 export const workspacesRouter = router({
+  /**
+   * Get all workspaces (admin only)
+   */
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const allWorkspaces = await ctx.db
+      .select()
+      .from(workspaces)
+      .orderBy(desc(workspaces.createdAt));
+
+    return allWorkspaces;
+  }),
+
   /**
    * Create a new workspace from Clerk organization
    */
