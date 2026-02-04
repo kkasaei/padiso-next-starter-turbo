@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   BookIcon,
   BookOpenIcon,
-  CircuitBoardIcon,
   CodeIcon,
   CuboidIcon,
   FileBarChartIcon,
@@ -11,7 +10,10 @@ import {
   TrendingUpIcon,
   PenToolIcon,
   PlugIcon,
-  Bot
+  BarChart3Icon,
+  Link2Icon,
+  SearchIcon,
+  MessageCircleIcon
 } from 'lucide-react';
 
 import { baseURL } from '@workspace/common';
@@ -28,45 +30,52 @@ export const MENU_LINKS = [
     title: 'Product',
     items: [
       {
-        title: 'AEO Tracking',
-        description: 'Optimize your website for Answer Engines like ChatGPT, Perplexity, and Gemini',
+        title: 'AI Tracking',
+        description: 'Track your visibility across ChatGPT, Perplexity, Claude, and Gemini',
         icon: <TrendingUpIcon className="size-5 shrink-0" />,
-        href: '#',
+        href: '/ai-tracking',
         external: false
       },
       {
-        title: 'AI Content',
+        title: 'Content',
         description: 'Generate SEO-optimized content with AI assistance',
         icon: <PenToolIcon className="size-5 shrink-0" />,
-        href: '#',
+        href: '/content',
+        external: false
+      },
+      {
+        title: 'Analytics',
+        description: 'AI-powered insights and performance metrics',
+        icon: <BarChart3Icon className="size-5 shrink-0" />,
+        href: '/analytics',
+        external: false
+      },
+      {
+        title: 'Backlinks',
+        description: 'Monitor and analyze your backlink profile',
+        icon: <Link2Icon className="size-5 shrink-0" />,
+        href: '/backlinks',
         external: false
       },
       {
         title: 'Technical Audit',
         description: 'Comprehensive SEO analysis and optimization recommendations',
-        icon: <FileBarChartIcon className="size-5 shrink-0" />,
-        href: '#',
+        icon: <SearchIcon className="size-5 shrink-0" />,
+        href: '/technical-audit',
         external: false
       },
       {
-        title: 'Insight Engine',
-        description: 'AI-powered analytics and insights for your SEO performance',
-        icon: <CircuitBoardIcon className="size-5 shrink-0" />,
-        href: '#',
-        external: false
-      },
-      {
-        title: 'Visual Workflow',
-        description: 'Automate your entire SEO and Content workflow',
-        icon: <Bot className="size-5 shrink-0" />,
-        href: '#',
+        title: 'Social Listening',
+        description: 'Monitor brand mentions across social platforms',
+        icon: <MessageCircleIcon className="size-5 shrink-0" />,
+        href: '/social-listening',
         external: false
       },
       {
         title: 'Integrations',
-        description: 'Connect with analytics, CMS, and marketing tools',
+        description: 'Connect with 40+ analytics, CMS, and marketing tools',
         icon: <PlugIcon className="size-5 shrink-0" />,
-        href: '#',
+        href: '/integrations',
         external: false
       }
     ]
@@ -125,13 +134,13 @@ export const FOOTER_LINKS = [
   {
     title: 'Product',
     links: [
-      { name: 'AEO Tracking', href: '#', external: false },
-      { name: 'AI Content', href: '#', external: false },
-      { name: 'Technical Audit', href: '#', external: false },
-      { name: 'Insight Engine', href: '#', external: false },
-      { name: 'Visual Workflow', href: '#', external: false },
-      { name: 'Integrations', href: '#', external: false },
-      { name: 'Analytics', href: '#', external: false }
+      { name: 'AI Tracking', href: '/ai-tracking', external: false },
+      { name: 'Content', href: '/content', external: false },
+      { name: 'Analytics', href: '/analytics', external: false },
+      { name: 'Backlinks', href: '/backlinks', external: false },
+      { name: 'Technical Audit', href: '/technical-audit', external: false },
+      { name: 'Social Listening', href: '/social-listening', external: false },
+      { name: 'Integrations', href: '/integrations', external: false }
     ]
   },
   {

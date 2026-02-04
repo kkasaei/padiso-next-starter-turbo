@@ -18,8 +18,9 @@ export const env = createEnv({
   },
   client: {
     NEXT_PUBLIC_CLIENT_URL: z.string().url(),
-     
-
+    
+    // Cloudflare Turnstile Site Key (public, used in browser)
+    NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM: z.string().min(1).optional(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -28,10 +29,9 @@ export const env = createEnv({
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
     
-
     // Cloudflare Turnstile (Captcha)
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     TURNSILE_SECRET_KEY_CONTACT_FORM: process.env.TURNSILE_SECRET_KEY_CONTACT_FORM,
-
+    NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM: process.env.NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM,
   }
 });

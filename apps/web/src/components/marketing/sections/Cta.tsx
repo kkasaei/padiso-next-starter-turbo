@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
 import { FEATURE_FLAGS } from '@workspace/common';
 import { buttonVariants } from '@workspace/ui/components/button';
@@ -7,29 +8,53 @@ import { cn } from '@workspace/common/lib';
 
 import { BlurFade } from '@workspace/ui/components/fragments/BlurFade';
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
-import { TextGenerateEffect } from '@workspace/ui/components/fragments/TextGenerateEffect';
 
 export function CTA(): React.JSX.Element {
   const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'Get started';
 
   return (
     <GridSection className="bg-diagonal-lines">
       <div className="container flex flex-col items-center justify-between gap-6 bg-background py-16 text-center">
-        <h3 className="m-0 max-w-fit text-3xl font-semibold md:text-4xl">
-          <TextGenerateEffect words={isWaitlist ? 'Join the waitlist' : 'Ready to start?'} />
-        </h3>
+        <BlurFade inView>
+          <h3 className="m-0 max-w-fit text-3xl font-semibold md:text-4xl">
+            {isWaitlist ? 'Join the waitlist' : 'Ready to get started?'}
+          </h3>
+        </BlurFade>
         <BlurFade
           inView
           delay={0.6}
         >
-          <Link
-            href={ctaLink}
-            className={cn(buttonVariants({ variant: 'default' }), 'rounded-xl')}
-          >
-            {ctaText}
-          </Link>
+          {isWaitlist ? (
+            <Link
+              href="/waitlist"
+              className={cn(buttonVariants({ variant: 'default' }), 'rounded-full')}
+            >
+              Join Waitlist
+            </Link>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                href="/pricing"
+                className={cn(
+                  buttonVariants({ variant: 'default', size: 'lg' }),
+                  'rounded-full px-8 shadow-lg shadow-primary/25'
+                )}
+              >
+                <Sparkles className="mr-2 size-4" />
+                Start 7-Day Free Trial
+              </Link>
+              <Link
+                href="/contact"
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'lg' }),
+                  'rounded-full px-8'
+                )}
+              >
+                Get in Touch
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </div>
+          )}
         </BlurFade>
       </div>
     </GridSection>

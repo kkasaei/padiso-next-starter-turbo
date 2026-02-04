@@ -174,7 +174,7 @@ export function Contact(): React.JSX.Element {
                   <div className="flex items-center justify-center py-2">
                       <Turnstile
                         ref={turnstileRef}
-                        siteKey={env.TURNSILE_SECRET_KEY_CONTACT_FORM!}
+                        siteKey={env.NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM!}
                         onSuccess={(token) => setTurnstileToken(token)}
                         onError={() => {
                           setTurnstileToken(null);
