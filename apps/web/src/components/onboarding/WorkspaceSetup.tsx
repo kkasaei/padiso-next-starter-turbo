@@ -61,10 +61,34 @@ export function WorkspaceSetup() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState<SetupStep>(1);
   const [error, setError] = useState<string | null>(null);
-  const [selectedBilling, setSelectedBilling] = useState<"month" | "year">("year");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [featuresExpanded, setFeaturesExpanded] = useState(false);
+  
+  // Plan selection from pricing page (stored in localStorage)
+  const [planFromPricing, setPlanFromPricing] = useState<{ plan: string; interval: "month" | "year" } | null>(null);
+  const [selectedBilling, setSelectedBilling] = useState<"month" | "year">("year");
+  
+  // Read plan selection from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('selectedPlan');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          // Only use if stored within the last hour (3600000ms)
+          if (parsed.timestamp && Date.now() - parsed.timestamp < 3600000) {
+            setPlanFromPricing({ plan: parsed.plan, interval: parsed.interval });
+            setSelectedBilling(parsed.interval === "month" || parsed.interval === "year" ? parsed.interval : "year");
+          }
+          // Clear the stored selection after reading
+          localStorage.removeItem('selectedPlan');
+        } catch (e) {
+          console.error('Failed to parse stored plan:', e);
+        }
+      }
+    }
+  }, []);
   
   // Form state for workspace creation
   const [workspaceName, setWorkspaceName] = useState("");
@@ -270,11 +294,20 @@ export function WorkspaceSetup() {
       }
     }
     
+    // Clean up localStorage from pricing page selection
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('selectedPlan');
+    }
+    
     // Navigate to dashboard regardless of survey submission
     router.push(routes.dashboard.Home);
   };
 
   const handleSkipSurvey = () => {
+    // Clean up localStorage from pricing page selection
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('selectedPlan');
+    }
     router.push(routes.dashboard.Home);
   };
 
@@ -457,10 +490,13 @@ export function WorkspaceSetup() {
                   transition={{ duration: 0.2 }}
                 >
                   <h1 className="text-2xl font-semibold text-foreground mb-1">
-                    Select your billing
+                    {planFromPricing ? 'Confirm your plan' : 'Select your billing'}
                   </h1>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Start with a {growthPlan.trialDays}-day free trial. Cancel anytime.
+                    {planFromPricing 
+                      ? `You selected ${selectedBilling === 'year' ? 'yearly' : 'monthly'} billing. Start your ${growthPlan.trialDays}-day free trial.`
+                      : `Start with a ${growthPlan.trialDays}-day free trial. Cancel anytime.`
+                    }
                   </p>
 
                   {error && (

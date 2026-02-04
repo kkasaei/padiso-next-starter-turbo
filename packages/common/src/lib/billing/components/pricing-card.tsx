@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChevronRightIcon, Users } from 'lucide-react';
 
 import { Badge } from '@workspace/ui/components/badge';
@@ -33,6 +34,7 @@ export function PricingCard({
   className,
   ...other
 }: PricingCardProps): React.JSX.Element {
+  const router = useRouter();
   const price = plan.prices[selectedInterval];
   const isRecommended = 'recommended' in plan ? plan.recommended : false;
   const isEnterprise = 'isEnterprise' in plan ? plan.isEnterprise : false;
@@ -41,6 +43,23 @@ export function PricingCard({
   const limitedSpots = 'limitedSpots' in plan ? plan.limitedSpots : undefined;
 
   const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+
+  // Handle upgrade click - if no onUpgrade callback, redirect to sign-up with plan stored
+  const handleUpgradeClick = () => {
+    if (onUpgrade) {
+      onUpgrade(plan.id, `plan-${plan.id}-${selectedInterval}`);
+    } else {
+      // Store plan selection in localStorage for retrieval after sign-up
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('selectedPlan', JSON.stringify({
+          plan: plan.id,
+          interval: selectedInterval,
+          timestamp: Date.now(),
+        }));
+      }
+      router.push('/auth/sign-up');
+    }
+  };
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -146,7 +165,7 @@ export function PricingCard({
             variant="default"
             size="lg"
             disabled={pending}
-            onClick={() => onUpgrade?.(plan.id, `plan-${plan.id}-${selectedInterval}`)}
+            onClick={handleUpgradeClick}
             className={cn(
               'group relative overflow-hidden rounded-full font-semibold',
               'bg-gradient-to-r from-primary to-primary/80',
