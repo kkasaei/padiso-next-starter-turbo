@@ -102,18 +102,14 @@ export class McpController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    // For now, we'll create a simple login page
-    // In production, redirect to your Clerk-powered login page
-    const loginUrl = process.env.CLERK_SIGN_IN_URL || 'https://searchfit.dev/sign-in';
-    
-    // Store the OAuth request params in the session/state
-    const oauthState = Buffer.from(
-      JSON.stringify({ clientId, redirectUri, state, scope }),
-    ).toString('base64');
+    // Validate redirect_uri is provided
+    if (!redirectUri) {
+      return res.status(400).json({
+        error: 'invalid_request',
+        error_description: 'redirect_uri is required',
+      });
+    }
 
-    // Redirect to Clerk login with callback to our OAuth callback
-    const callbackUrl = `${req.protocol}://${req.get('host')}/mcp/oauth/callback?oauth_state=${oauthState}`;
-    
     // For demo: auto-approve and redirect with code
     // In production: show consent screen or redirect to Clerk
     const code = randomUUID();
@@ -126,13 +122,19 @@ export class McpController {
     });
 
     // Redirect back to Claude with the code
-    const redirectUrl = new URL(redirectUri);
-    redirectUrl.searchParams.set('code', code);
-    if (state) {
-      redirectUrl.searchParams.set('state', state);
+    try {
+      const redirectUrl = new URL(redirectUri);
+      redirectUrl.searchParams.set('code', code);
+      if (state) {
+        redirectUrl.searchParams.set('state', state);
+      }
+      return res.redirect(redirectUrl.toString());
+    } catch (error) {
+      return res.status(400).json({
+        error: 'invalid_request',
+        error_description: 'Invalid redirect_uri format',
+      });
     }
-
-    return res.redirect(redirectUrl.toString());
   }
 
   /**

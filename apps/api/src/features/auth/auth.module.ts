@@ -7,11 +7,11 @@ import { ClerkAuthGuard } from './auth.guard';
 @Module({
   providers: [
     ClerkService,
-    // Uncomment to enable auth globally:
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ClerkAuthGuard,
-    // },
+    // Enable auth globally - use @Public() decorator to skip auth on specific endpoints
+    {
+      provide: APP_GUARD,
+      useClass: ClerkAuthGuard,
+    },
   ],
   exports: [ClerkService],
 })

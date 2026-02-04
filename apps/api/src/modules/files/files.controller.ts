@@ -16,11 +16,13 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FilesService } from './files.service';
 import { CreateFileDto, UpdateFileDto } from './dto';
 
 @ApiTags('files')
+@ApiBearerAuth('clerk-auth')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}

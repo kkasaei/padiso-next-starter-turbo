@@ -16,11 +16,13 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { PromptsService } from './prompts.service';
 import { CreatePromptDto, UpdatePromptDto } from './dto';
 
 @ApiTags('prompts')
+@ApiBearerAuth('clerk-auth')
 @Controller('prompts')
 export class PromptsController {
   constructor(private readonly promptsService: PromptsService) {}

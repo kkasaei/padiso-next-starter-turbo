@@ -16,11 +16,13 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto, UpdateTaskDto } from './dto';
 
 @ApiTags('tasks')
+@ApiBearerAuth('clerk-auth')
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

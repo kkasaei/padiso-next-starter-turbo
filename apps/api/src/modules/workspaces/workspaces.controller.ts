@@ -16,11 +16,13 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto, UpdateWorkspaceDto } from './dto';
 
 @ApiTags('workspaces')
+@ApiBearerAuth('clerk-auth')
 @Controller('workspaces')
 export class WorkspacesController {
   constructor(private readonly workspacesService: WorkspacesService) {}
