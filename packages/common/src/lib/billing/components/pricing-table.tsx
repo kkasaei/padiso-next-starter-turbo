@@ -5,6 +5,7 @@ import { cn } from '@workspace/common/lib';
 import { PLANS } from '../plans';
 import { PriceIntervalSelector, type PriceInterval } from './price-interval-selector';
 import { PricingCard } from './pricing-card';
+import { PricingFeaturesTable } from './pricing-features-table';
 
 export type PricingTableProps = React.HtmlHTMLAttributes<HTMLDivElement> & {
   pending?: boolean;
@@ -19,6 +20,10 @@ export type PricingTableProps = React.HtmlHTMLAttributes<HTMLDivElement> & {
    * Whether the trial status is being loaded
    */
   isLoading?: boolean;
+  /**
+   * Whether to show the features comparison table
+   */
+  showFeaturesTable?: boolean;
 };
 
 export function PricingTable({
@@ -27,6 +32,7 @@ export function PricingTable({
   currentProductId,
   isOnTrial,
   isLoading,
+  showFeaturesTable = true,
   className,
   ...other
 }: PricingTableProps): React.JSX.Element {
@@ -35,10 +41,10 @@ export function PricingTable({
   const plans = Object.values(PLANS);
 
   return (
-    <div className={cn('flex flex-col overflow-y-auto space-y-8 xl:space-y-12', className)} {...other}>
+    <div className={cn('flex flex-col overflow-y-auto space-y-12', className)} {...other}>
       <PriceIntervalSelector interval={selectedInterval} onIntervalChange={setSelectedInterval} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-4xl mx-auto items-stretch">
         {plans.map((plan) => (
           <PricingCard
             key={plan.id}
@@ -51,6 +57,10 @@ export function PricingTable({
           />
         ))}
       </div>
+
+      {showFeaturesTable && (
+        <PricingFeaturesTable className="mt-8" />
+      )}
     </div>
   );
 }

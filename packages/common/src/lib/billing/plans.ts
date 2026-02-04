@@ -41,9 +41,9 @@ export type PlanId = keyof typeof PLAN_LIMITS;
 export const PLANS = {
   growth: {
     id: 'growth',
-    name: 'Growth Engine',
-    tagline: 'For Smart Entrepreneurs',
-    description: 'Everything you need to build lasting organic visibility and drive sustainable growth.',
+    name: 'Growth',
+    tagline: 'For Small Businesses',
+    description: 'Put your growth engine on autopilot. Everything you need to build lasting organic visibility.',
     trialDays: 7,
     recommended: true,
     prices: {
@@ -55,7 +55,7 @@ export const PLANS = {
       },
       year: {
         id: 'price_growth_year',
-        amount: 948,
+        amount: 990,
         currency: 'USD',
         originalAmount: 3588,
       },
@@ -79,9 +79,9 @@ export const PLANS = {
   },
   scale: {
     id: 'scale',
-    name: 'Scale Partner',
-    tagline: 'For Agencies, Enterprises & Teams',
-    description: 'Custom solutions for agencies, enterprises, and businesses serving multiple clients.',
+    name: 'Scale',
+    tagline: 'For Larger Organizations',
+    description: 'Custom solutions for agencies, enterprises, and teams that need more power and flexibility.',
     isEnterprise: true,
     prices: {
       month: {

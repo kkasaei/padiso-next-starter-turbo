@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { CheckIcon, ChevronRightIcon, XIcon, Users } from 'lucide-react';
+import { ChevronRightIcon, Users } from 'lucide-react';
 
 import { Badge } from '@workspace/ui/components/badge';
 import { Button, buttonVariants } from '@workspace/ui/components/button';
 import { cn } from '@workspace/common/lib';
-import { PLANS, type PlanId, type PlanFeature } from '../plans';
+import { PLANS, type PlanId } from '../plans';
 import type { PriceInterval } from './price-interval-selector';
 
 export type PricingCardProps = React.HtmlHTMLAttributes<HTMLDivElement> & {
@@ -51,89 +51,82 @@ export function PricingCard({
   return (
     <div
       className={cn(
-        'w-full relative flex flex-1 grow flex-col items-stretch justify-between self-stretch rounded-lg border px-6 py-5',
-        isRecommended ? 'border-primary' : 'border-border',
+        'w-full relative flex flex-1 grow flex-col items-stretch justify-between self-stretch rounded-2xl border p-6 sm:p-8',
+        isRecommended ? 'border-primary border-2' : 'border-border',
         className
       )}
       {...other}
     >
       {isRecommended && (
-        <div className="absolute -top-2.5 left-0 flex w-full justify-center">
-          <Badge>Recommended</Badge>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <Badge className="px-4 py-1.5 text-sm font-medium shadow-md bg-primary text-primary-foreground whitespace-nowrap">Recommended</Badge>
         </div>
       )}
 
-      <div className="flex h-full flex-col gap-y-5">
-        {/* Header Section - Fixed height for alignment */}
-        <div className="flex min-h-[180px] flex-col gap-y-4">
-          {/* Tagline Badge */}
-          <Badge 
-            variant="outline" 
-            className="w-fit border-primary/30 bg-primary/5 text-xs font-semibold uppercase tracking-wider text-primary"
-          >
-            {tagline || '\u00A0'}
-          </Badge>
+      <div className="flex h-full flex-col gap-y-6">
+        {/* Content Section - grows to push button to bottom */}
+        <div className="flex flex-1 flex-col gap-y-6">
+          {/* Header Section - consistent padding for all cards */}
+          <div className="flex flex-col gap-y-4 pt-2">
+            {/* Product Details - fixed height for alignment */}
+            <div className="space-y-2 min-h-[80px]">
+              <h3 className={cn(
+                "text-xl font-semibold",
+                isRecommended && "text-primary"
+              )}>{plan.name}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{plan.description}</p>
+            </div>
 
-          {/* Product Details */}
-          <div className="space-y-2">
-            <h3 className={cn(
-              "text-xl font-semibold",
-              isRecommended && "text-2xl text-primary"
-            )}>{plan.name}</h3>
-            <p className="text-sm text-muted-foreground">{plan.description}</p>
-          </div>
-
-          {/* Price */}
-          <div className="space-y-1 mt-auto text-center">
-            {isEnterprise ? (
-              <>
-                <div className="text-4xl font-bold md:text-5xl">Custom</div>
-                {/* Reserve same space as pricing card */}
-                <p className="text-xs h-4 text-transparent">placeholder</p>
-              </>
-            ) : (
-              <>
-                <div className="flex items-baseline justify-center gap-2">
-                  {'originalAmount' in price && price.originalAmount && (
-                    <span className="text-xl text-muted-foreground line-through">
-                      ${price.originalAmount}
-                    </span>
-                  )}
-                  <span className="text-4xl font-bold md:text-5xl">{formattedPrice}</span>
-                  <span className="text-lg text-muted-foreground">/{selectedInterval === 'month' ? 'mo' : 'yr'}</span>
-                </div>
-                {/* Always reserve space for the annual billing text */}
-                <p className={cn(
-                  "text-xs h-4",
-                  selectedInterval === 'year' ? "text-muted-foreground" : "text-transparent"
-                )}>
-                  ${Math.round(price.amount / 12)}/mo billed annually
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Limited Spots Message */}
-        {limitedSpots && (
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
-            <Users className="mt-0.5 size-4 shrink-0 text-primary" />
-            <div>
-              <p className="text-sm font-medium text-primary">Only {limitedSpots} spots left in {currentMonth}</p>
-              <p className="text-xs text-muted-foreground">
-                Limited monthly admissions to maintain quality.
-              </p>
+            {/* Price - fixed height for alignment */}
+            <div className="space-y-2 text-center h-[80px] flex flex-col justify-center">
+              {isEnterprise ? (
+                <>
+                  <div className="text-4xl font-bold md:text-5xl">Custom</div>
+                  <p className="text-xs h-4" aria-hidden="true">&nbsp;</p>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline justify-center gap-2">
+                    {'originalAmount' in price && price.originalAmount && (
+                      <span className="text-xl text-muted-foreground line-through">
+                        ${price.originalAmount}
+                      </span>
+                    )}
+                    <span className="text-4xl font-bold md:text-5xl">{formattedPrice}</span>
+                    <span className="text-lg text-muted-foreground">/{selectedInterval === 'month' ? 'mo' : 'yr'}</span>
+                  </div>
+                  <p className={cn(
+                    "text-xs h-4",
+                    selectedInterval === 'year' ? "text-muted-foreground" : "text-transparent"
+                  )} aria-hidden={selectedInterval !== 'year'}>
+                    ${Math.round(plan.prices.year.amount / 12)}/mo billed annually
+                  </p>
+                </>
+              )}
             </div>
           </div>
-        )}
 
-        {/* CTA Button */}
+          {/* Limited Spots Message */}
+          {limitedSpots && (
+            <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
+              <Users className="mt-0.5 size-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-medium text-primary">Only {limitedSpots} spots left in {currentMonth}</p>
+                <p className="text-xs text-muted-foreground">
+                  Limited monthly admissions to maintain quality.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* CTA Button - always at bottom */}
         {isEnterprise ? (
           <Link
             href={'/contact'}
             className={cn(
               buttonVariants({ variant: 'outline', size: 'lg' }),
-              'group relative overflow-hidden border-2 font-semibold',
+              'group relative overflow-hidden rounded-full border-2 font-semibold',
               'transition-all duration-300 ease-out',
               'hover:border-primary hover:bg-primary/5 hover:shadow-md',
               'active:scale-[0.98]'
@@ -145,7 +138,7 @@ export function PricingCard({
             </span>
           </Link>
         ) : isCurrent ? (
-          <Button variant="outline" size="lg" disabled className="font-semibold">
+          <Button variant="outline" size="lg" disabled className="rounded-full font-semibold">
             Current Plan
           </Button>
         ) : (
@@ -155,7 +148,7 @@ export function PricingCard({
             disabled={pending}
             onClick={() => onUpgrade?.(plan.id, `plan-${plan.id}-${selectedInterval}`)}
             className={cn(
-              'group relative overflow-hidden font-semibold',
+              'group relative overflow-hidden rounded-full font-semibold',
               'bg-gradient-to-r from-primary to-primary/80',
               'shadow-lg shadow-primary/25',
               'transition-all duration-300 ease-out',
@@ -169,39 +162,6 @@ export function PricingCard({
               <ChevronRightIcon className="ml-1 size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </Button>
-        )}
-
-        <div className="h-px w-full border border-dashed" />
-
-        {/* Features */}
-        <ul className="space-y-2">
-          {(plan.features as readonly PlanFeature[]).map((feature) => {
-            const featureText = typeof feature === 'string' ? feature : feature.text;
-            const featureBadge = typeof feature === 'string' ? null : feature.badge;
-            return (
-              <li key={featureText} className="flex items-start gap-2">
-                <CheckIcon className="size-4 shrink-0 mt-0.5 text-primary" />
-                <span className="text-sm">{featureText}</span>
-                {featureBadge && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
-                    {featureBadge}
-                  </Badge>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Not Included Features */}
-        {'notIncluded' in plan && (plan.notIncluded as readonly string[]).length > 0 && (
-          <ul className="space-y-2 pt-2 border-t border-dashed">
-            {(plan.notIncluded as readonly string[]).map((feature) => (
-              <li key={feature} className="flex items-start gap-2">
-                <XIcon className="size-4 shrink-0 mt-0.5 text-muted-foreground/50" />
-                <span className="text-sm text-muted-foreground">{feature}</span>
-              </li>
-            ))}
-          </ul>
         )}
       </div>
     </div>

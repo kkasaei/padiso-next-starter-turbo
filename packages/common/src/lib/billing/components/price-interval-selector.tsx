@@ -28,7 +28,7 @@ export function PriceIntervalSelector({
       className={cn('flex justify-center', className)}
       {...other}
     >
-      <div className="flex h-10 w-fit shrink-0 items-center rounded-md bg-muted p-1 text-lg">
+      <div className="flex h-12 w-fit shrink-0 items-center rounded-full bg-muted p-1 border border-border">
         <RadioGroup
           value={interval}
           className="h-full gap-0 grid-cols-2"
@@ -36,25 +36,34 @@ export function PriceIntervalSelector({
             onIntervalChange(value as PriceInterval);
           }}
         >
-          {(['month', 'year'] as const).map((displayInterval) => (
-            <div
-              key={displayInterval}
-              className='h-full rounded-md transition-all has-[button[data-state="checked"]]:bg-background has-[button[data-state="checked"]]:shadow-xs'
-            >
-              <RadioGroupItem
-                value={displayInterval}
-                id={displayInterval}
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor={displayInterval}
-                className="flex h-full cursor-pointer items-center justify-center px-5 font-semibold text-muted-foreground peer-data-[state=checked]:text-primary"
+          {(['month', 'year'] as const).map((displayInterval) => {
+            const isSelected = interval === displayInterval;
+            return (
+              <div
+                key={displayInterval}
+                className={cn(
+                  'h-full rounded-full transition-all',
+                  isSelected && 'bg-white shadow-md dark:bg-zinc-900'
+                )}
               >
-                {displayInterval === 'month' && 'Billed Monthly'}
-                {displayInterval === 'year' && 'Billed Yearly'}
-              </Label>
-            </div>
-          ))}
+                <RadioGroupItem
+                  value={displayInterval}
+                  id={displayInterval}
+                  className="peer sr-only"
+                />
+                <Label
+                  htmlFor={displayInterval}
+                  className={cn(
+                    'flex h-full cursor-pointer items-center justify-center px-6 text-sm transition-all',
+                    isSelected ? 'text-foreground font-semibold' : 'text-muted-foreground'
+                  )}
+                >
+                  {displayInterval === 'month' && 'Billed Monthly'}
+                  {displayInterval === 'year' && 'Billed Yearly'}
+                </Label>
+              </div>
+            );
+          })}
         </RadioGroup>
       </div>
     </div>
