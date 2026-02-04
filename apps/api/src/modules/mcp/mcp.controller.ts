@@ -11,15 +11,24 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { Response, Request } from 'express';
+import { IsString, IsOptional, IsObject, Equals } from 'class-validator';
 import { McpService } from './mcp.service';
 import { ClerkService } from '../../features/auth/clerk.service';
 import { Public } from '../../features/auth/auth.guard';
 import { randomUUID } from 'crypto';
 
 class McpRequestDto {
+  @Equals('2.0')
   jsonrpc: '2.0';
+
+  @IsString()
   id: string | number;
+
+  @IsString()
   method: string;
+
+  @IsOptional()
+  @IsObject()
   params?: Record<string, unknown>;
 }
 
