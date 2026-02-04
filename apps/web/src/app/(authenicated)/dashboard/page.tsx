@@ -177,64 +177,70 @@ function TrainingCard() {
       icon: BookOpen,
       title: "Getting Started",
       description:
-        "Learn the fundamentals of brand management and how to navigate the dashboard",
-      duration: "10 min read",
+        "Learn the basics of SearchFit and how to set up your first brand for AI visibility tracking",
+      duration: "5 min read",
       difficulty: "Beginner",
       color: "bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
+      href: "/docs/quick-start",
     },
     {
       id: 2,
       icon: TrendingUp,
-      title: "Tracking Progress",
+      title: "AI Tracking",
       description:
-        "Discover how to monitor brand milestones and track team performance",
-      duration: "15 min read",
+        "Monitor your brand's visibility across ChatGPT, Perplexity, Claude, and Gemini",
+      duration: "8 min read",
       difficulty: "Beginner",
       color:
         "bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400",
+      href: "/docs/ai-tracking",
     },
     {
       id: 3,
       icon: FileText,
-      title: "Task Management",
+      title: "AEO Reports",
       description:
-        "Master the art of organizing tasks and setting up effective workflows",
-      duration: "12 min read",
+        "Understand your AI Engine Optimization report and how to improve your score",
+      duration: "10 min read",
       difficulty: "Intermediate",
       color:
         "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
+      href: "/docs/aeo-reports",
     },
     {
       id: 4,
       icon: Users,
-      title: "Team Collaboration",
+      title: "Content Strategy",
       description:
-        "Understand how to work effectively with your team members on brands",
-      duration: "20 min read",
+        "Create SEO and AEO-optimized content that ranks in both search and AI platforms",
+      duration: "12 min read",
       difficulty: "Intermediate",
       color:
         "bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400",
+      href: "/docs/content",
     },
     {
       id: 5,
       icon: BarChart,
-      title: "Analytics & Reports",
+      title: "Analytics",
       description:
-        "Track and analyze your brand performance with key metrics and KPIs",
-      duration: "18 min read",
-      difficulty: "Advanced",
+        "Track your AI visibility metrics and understand performance trends over time",
+      duration: "8 min read",
+      difficulty: "Intermediate",
       color: "bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400",
+      href: "/docs/analytics",
     },
     {
       id: 6,
       icon: Lightbulb,
-      title: "Advanced Features",
+      title: "Integrations",
       description:
-        "Implement cutting-edge techniques to maximize your productivity",
-      duration: "25 min read",
+        "Connect SearchFit with your existing tools like Google Analytics and Search Console",
+      duration: "15 min read",
       difficulty: "Advanced",
       color:
         "bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400",
+      href: "/docs/integrations",
     },
   ]
 
@@ -342,7 +348,7 @@ function TrainingCard() {
                     {topic.duration}
                   </span>
                   <Button asChild className="w-full">
-                    <Link href="#">Start Learning</Link>
+                    <Link href={topic.href} target="_blank" rel="noopener noreferrer">Start Learning</Link>
                   </Button>
                 </div>
               </div>

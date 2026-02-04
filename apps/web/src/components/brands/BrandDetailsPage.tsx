@@ -780,7 +780,7 @@ function PageContent() {
   const hasBrandData = !isLoadingStats && (dashboardStats?.trackedPrompts ?? 0) > 0
 
   return (
-    <div className="relative flex min-w-0 flex-2 flex-col items-center md:overflow-y-auto md:bg-white md:shadow-xs">
+    <div className="relative flex min-w-0 flex-2 flex-col items-center md:overflow-y-auto">
       <div className="flex h-full w-full flex-col">
 
         <div className="flex items-center justify-end mb-6">

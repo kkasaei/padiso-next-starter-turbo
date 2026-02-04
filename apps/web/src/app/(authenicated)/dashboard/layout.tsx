@@ -20,7 +20,7 @@ export default function DashboardLayout({
   return (
     <>
       <SignedIn>
-        <div className="flex min-h-screen bg-[#F2F2F4]">
+        <div className="flex min-h-screen bg-sidebar">
           {/* Fixed Workspace Sidebar - 80px, never collapses */}
           <WorkspaceSidebar />
           
