@@ -34,6 +34,32 @@ async function createApp(): Promise<NestExpressApplication> {
     .setTitle('SearchFit API')
     .setDescription('The SearchFit API documentation')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter your Clerk JWT token',
+        in: 'header',
+      },
+      'clerk-auth',
+    )
+    .addOAuth2(
+      {
+        type: 'oauth2',
+        flows: {
+          authorizationCode: {
+            authorizationUrl: '/mcp/oauth/authorize',
+            tokenUrl: '/mcp/oauth/token',
+            scopes: {
+              'mcp:tools': 'Access MCP tools',
+            },
+          },
+        },
+      },
+      'mcp-oauth',
+    )
     .addTag('workspaces', 'Workspace management endpoints')
     .addTag('brands', 'Brand management endpoints')
     .addTag('brand-members', 'Brand member management endpoints')

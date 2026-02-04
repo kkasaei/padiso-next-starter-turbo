@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { DatabaseModule } from './features/database';
+import { AuthModule } from './features/auth';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 import { BrandsModule } from './modules/brands/brands.module';
 import { BrandMembersModule } from './modules/brand-members/brand-members.module';
@@ -12,6 +13,7 @@ import { McpModule } from './modules/mcp/mcp.module';
 @Module({
   imports: [
     DatabaseModule,
+    AuthModule,
     WorkspacesModule,
     BrandsModule,
     BrandMembersModule,
