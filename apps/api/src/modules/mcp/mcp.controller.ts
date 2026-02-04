@@ -11,24 +11,17 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { Response, Request } from 'express';
-import { IsString, IsOptional, IsObject, Equals } from 'class-validator';
 import { McpService } from './mcp.service';
 import { ClerkService } from '../../features/auth/clerk.service';
 import { Public } from '../../features/auth/auth.guard';
 import { randomUUID } from 'crypto';
 
-class McpRequestDto {
-  @Equals('2.0')
-  jsonrpc: '2.0';
-
-  @IsString()
-  id: string | number;
-
-  @IsString()
+// Note: We don't use class-validator here because MCP requests need
+// flexible validation and must return JSON-RPC formatted errors
+interface McpRequestDto {
+  jsonrpc: string;
+  id?: string | number;
   method: string;
-
-  @IsOptional()
-  @IsObject()
   params?: Record<string, unknown>;
 }
 
@@ -341,12 +334,13 @@ export class McpController {
     @Body() body: McpRequestDto,
     @Res() res: Response,
   ) {
+    const requestId = body?.id ?? null;
     const session = sessions.get(sessionId);
 
     if (!session) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
+      return res.status(HttpStatus.OK).json({
         jsonrpc: '2.0',
-        id: body.id,
+        id: requestId,
         error: {
           code: -32000,
           message: 'Invalid session. Please reconnect via SSE.',
@@ -470,16 +464,42 @@ export class McpController {
     description: 'JSON-RPC response',
   })
   async handleJsonRpc(@Body() body: McpRequestDto, @Res() res: Response) {
+    // Always return JSON-RPC formatted responses
+    const requestId = body?.id ?? null;
+
     try {
+      // Validate request structure
+      if (!body || typeof body !== 'object') {
+        return res.status(HttpStatus.OK).json({
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32700,
+            message: 'Parse error: Invalid JSON',
+          },
+        });
+      }
+
       const { jsonrpc, id, method, params } = body;
 
       if (jsonrpc !== '2.0') {
-        return res.status(HttpStatus.BAD_REQUEST).json({
+        return res.status(HttpStatus.OK).json({
           jsonrpc: '2.0',
-          id,
+          id: id ?? null,
           error: {
             code: -32600,
             message: 'Invalid Request: jsonrpc must be "2.0"',
+          },
+        });
+      }
+
+      if (!method || typeof method !== 'string') {
+        return res.status(HttpStatus.OK).json({
+          jsonrpc: '2.0',
+          id: id ?? null,
+          error: {
+            code: -32600,
+            message: 'Invalid Request: method is required and must be a string',
           },
         });
       }
@@ -513,7 +533,7 @@ export class McpController {
 
         case 'tools/call':
           if (!params?.name) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.OK).json({
               jsonrpc: '2.0',
               id,
               error: {
@@ -533,7 +553,7 @@ export class McpController {
           break;
 
         default:
-          return res.status(HttpStatus.BAD_REQUEST).json({
+          return res.status(HttpStatus.OK).json({
             jsonrpc: '2.0',
             id,
             error: {
@@ -549,9 +569,9 @@ export class McpController {
         result,
       });
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return res.status(HttpStatus.OK).json({
         jsonrpc: '2.0',
-        id: body.id,
+        id: requestId,
         error: {
           code: -32603,
           message: error instanceof Error ? error.message : 'Internal error',
