@@ -1,15 +1,27 @@
 /**
  * @workspace/notification package
  * 
- * Notification service for sending push notifications, in-app alerts, and real-time updates
+ * Notification service for Slack notifications and alerts
  */
 
 // Environment Configuration
 export { env, validateEnv } from './env';
-export type * from './env';
 
-// TODO: Add notification service exports when implemented
-// Examples:
-// export { sendPushNotification } from './push';
-// export { sendInAppNotification } from './in-app';
-// export { createNotificationChannel } from './channels';
+// Slack Notifications
+export {
+  notifyReportUnlock,
+  notifyDomainSearch,
+  notifyWaitlistSignup,
+  notifyUserSignup,
+  notifyCustomPackageInquiry,
+  notifyContactFormSubmission,
+} from './slack';
+
+export type {
+  ReportUnlockNotification,
+  DomainSearchNotification,
+  WaitlistSignupNotification,
+  UserSignupNotification,
+  CustomPackageInquiryNotification,
+  ContactFormNotification,
+} from './slack';

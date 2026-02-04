@@ -4,15 +4,10 @@
  * This module validates and exports all environment variables needed for notification functionality.
  */
 
-// Notification configuration (placeholder for future implementation)
-// Add your notification service environment variables here when implemented
-// Examples:
-// export const NOTIFICATION_SERVICE_API_KEY = process.env.NOTIFICATION_SERVICE_API_KEY || '';
-// export const NOTIFICATION_WEBHOOK_URL = process.env.NOTIFICATION_WEBHOOK_URL || '';
-
 // Environment object for easy access
 export const env = {
-  // Add environment variables here when needed
+  SLACK_WEBHOOK_URL: process.env.SLACK_WEBHOOK_URL,
+  NEXT_PUBLIC_CLIENT_URL: process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000',
 } as const;
 
 /**
@@ -20,8 +15,9 @@ export const env = {
  * Throws an error if any required variables are missing
  */
 export function validateEnv(): void {
-  // No required variables yet - placeholder for future implementation
-  // Add validation logic when notification service is implemented
+  if (!env.SLACK_WEBHOOK_URL) {
+    console.warn('[Notification] SLACK_WEBHOOK_URL is not set - Slack notifications will be disabled');
+  }
 }
 
 export default env;

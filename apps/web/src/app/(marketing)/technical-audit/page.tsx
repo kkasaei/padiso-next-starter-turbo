@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { TechnicalAuditHero } from '@/components/marketing/sections/TechnicalAuditHero';
 
 export const metadata: Metadata = {
   title: 'Technical Audit | SearchFIT',
@@ -6,14 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function TechnicalAuditPage() {
-  return (
-    <main className="container py-20">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl text-center mb-6">
-        Technical Audit
-      </h1>
-      <p className="text-center text-muted-foreground text-lg max-w-2xl mx-auto">
-        Comprehensive technical SEO audits that find and prioritize the issues hurting your rankings. Get actionable fixes, not just reports.
-      </p>
-    </main>
-  );
+  return <TechnicalAuditHero />;
 }

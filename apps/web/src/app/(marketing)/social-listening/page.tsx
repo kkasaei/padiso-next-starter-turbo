@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SocialListeningHero } from '@/components/marketing/sections/SocialListeningHero';
 
 export const metadata: Metadata = {
   title: 'Social Listening | SearchFIT',
@@ -6,14 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SocialListeningPage() {
-  return (
-    <main className="container py-20">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl text-center mb-6">
-        Social Listening
-      </h1>
-      <p className="text-center text-muted-foreground text-lg max-w-2xl mx-auto">
-        Monitor brand mentions across Reddit, Twitter, LinkedIn, and other platforms. Stay ahead of conversations and engage at the right time.
-      </p>
-    </main>
-  );
+  return <SocialListeningHero />;
 }
