@@ -18,12 +18,20 @@ import { useSubscriptionStatus, useSubscriptionUsage, useBillingPortal } from "@
 // Plan data
 const PLANS = [
   {
-    id: "growth",
+    id: "growth-monthly",
     name: "Growth Engine",
-    tagline: "For Smart Entrepreneurs",
+    tagline: "Monthly",
     price: "$99",
     interval: "month",
-    yearlyPrice: "$79/mo billed annually",
+    trialDays: 7,
+  },
+  {
+    id: "growth-yearly",
+    name: "Growth Engine",
+    tagline: "Annual · Save 20%",
+    price: "$79",
+    interval: "month",
+    billingNote: "Billed annually ($948/year)",
     recommended: true,
     trialDays: 7,
   },
@@ -33,7 +41,7 @@ const PLANS = [
     tagline: "For Agencies & Enterprises",
     price: "Custom",
     isEnterprise: true,
-    href: routes.marketing.Contact,
+    href: "/sales",
   },
 ];
 
@@ -195,7 +203,7 @@ export function SettingsBilling() {
         </div>
         
         {isLoading ? (
-          <Card>
+          <Card className="rounded-2xl">
             <CardContent className="py-6">
               <div className="space-y-4">
                 <Skeleton className="h-6 w-48" />
@@ -205,7 +213,7 @@ export function SettingsBilling() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <Card className="rounded-2xl">
             <CardContent className="py-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-4">
@@ -290,18 +298,20 @@ export function SettingsBilling() {
           <p className="text-sm text-muted-foreground">Choose the plan that fits your needs</p>
         </div>
         
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           {PLANS.map((plan) => {
-            const isOnGrowth = subscription?.planId?.includes("growth");
-            const isCurrent = plan.id === "growth" && isOnGrowth;
-            // Recommend Scale if user is on Growth, otherwise recommend Growth
-            const isRecommended = isOnGrowth ? plan.id === "scale" : plan.id === "growth";
+            const isOnGrowthMonthly = subscription?.planId?.includes("growth") && !subscription?.planId?.includes("yearly");
+            const isOnGrowthYearly = subscription?.planId?.includes("growth") && subscription?.planId?.includes("yearly");
+            const isCurrent = (plan.id === "growth-monthly" && isOnGrowthMonthly) || 
+                            (plan.id === "growth-yearly" && isOnGrowthYearly);
+            // Recommend yearly if on monthly, Scale if already on yearly
+            const isRecommended = plan.recommended || (isOnGrowthMonthly && plan.id === "growth-yearly") || (isOnGrowthYearly && plan.id === "scale");
             
             return (
               <Card 
                 key={plan.id} 
                 className={cn(
-                  "relative",
+                  "relative rounded-2xl",
                   isRecommended && "border-primary"
                 )}
               >
@@ -310,10 +320,10 @@ export function SettingsBilling() {
                     Recommended
                   </Badge>
                 )}
-                <CardContent className="pt-6 pb-4">
-                  <div className="space-y-4">
-                    {/* Plan Header */}
-                    <div className="text-center space-y-1">
+                <CardContent className="pt-6 pb-6 h-full flex flex-col">
+                  <div className="flex flex-col flex-1">
+                    {/* Plan Header - fixed height */}
+                    <div className="text-center space-y-2 h-[72px]">
                       <Badge variant="outline" className="text-xs font-medium uppercase tracking-wider">
                         {plan.tagline}
                       </Badge>
@@ -325,41 +335,44 @@ export function SettingsBilling() {
                       </h3>
                     </div>
                     
-                    {/* Price */}
-                    <div className="text-center py-2">
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      {plan.interval && (
-                        <span className="text-muted-foreground">/{plan.interval}</span>
-                      )}
-                      {plan.yearlyPrice && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {plan.yearlyPrice}
-                        </p>
-                      )}
+                    {/* Price - fixed height */}
+                    <div className="text-center py-4 h-[88px] flex flex-col justify-center">
+                      <div>
+                        <span className="text-4xl font-bold">{plan.price}</span>
+                        {plan.interval && (
+                          <span className="text-muted-foreground">/{plan.interval}</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1 h-4">
+                        {plan.billingNote || "\u00A0"}
+                      </p>
                     </div>
                     
-                    {/* CTA */}
-                    {plan.isEnterprise ? (
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href={plan.href || "#"}>
-                          Talk to Us
+                    {/* CTA - fixed at bottom */}
+                    <div className="mt-auto pt-2">
+                      {plan.isEnterprise ? (
+                        <Button asChild variant="outline" className="w-full rounded-xl">
+                          <Link href={plan.href || "#"} target="_blank" rel="noopener noreferrer">
+                            Talk to Us
+                            <ChevronRight className="ml-1 h-4 w-4" />
+                          </Link>
+                        </Button>
+                      ) : isCurrent ? (
+                        <Button variant="outline" className="w-full rounded-xl" disabled>
+                          Current Plan
+                        </Button>
+                      ) : (
+                        <Button 
+                          className={cn("w-full rounded-xl", isRecommended && "bg-primary")}
+                          variant={isRecommended ? "default" : "outline"}
+                          onClick={handleManagePlan}
+                          disabled={billingPortal.isPending}
+                        >
+                          {isCurrent ? "Current Plan" : isOnGrowthMonthly && plan.id === "growth-yearly" ? "Upgrade to Annual" : isTrialing ? "Upgrade Now" : `Start ${plan.trialDays}-Day Trial`}
                           <ChevronRight className="ml-1 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    ) : isCurrent ? (
-                      <Button variant="outline" className="w-full" disabled>
-                        Current Plan
-                      </Button>
-                    ) : (
-                      <Button 
-                        className="w-full" 
-                        onClick={handleManagePlan}
-                        disabled={billingPortal.isPending}
-                      >
-                        {isTrialing ? "Upgrade Now" : `Start ${plan.trialDays}-Day Trial`}
-                        <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -375,7 +388,7 @@ export function SettingsBilling() {
           <p className="text-sm text-muted-foreground">Compare features across plans</p>
         </div>
         
-        <Card>
+        <Card className="rounded-2xl overflow-hidden">
           <CardContent className="p-0">
             {/* Header */}
             <div className="grid grid-cols-3 gap-4 px-4 py-3 border-b border-border bg-muted/30">
@@ -429,7 +442,7 @@ export function SettingsBilling() {
           </p>
         </div>
         
-        <Card>
+        <Card className="rounded-2xl">
           <CardContent className="py-2">
             <Accordion type="single" collapsible className="w-full">
               {FAQ_DATA.map((faq, index) => (
