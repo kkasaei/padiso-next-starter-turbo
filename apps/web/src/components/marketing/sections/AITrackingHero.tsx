@@ -23,6 +23,19 @@ import {
   ClockIcon,
   PuzzleIcon,
   Quote,
+  Heart,
+  Code2,
+  MessageSquare,
+  Hash,
+  Link2,
+  Trophy,
+  Lightbulb,
+  ShieldCheck,
+  PieChart,
+  ShoppingBag,
+  Package,
+  Store,
+  CreditCard,
 } from 'lucide-react';
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
@@ -50,12 +63,12 @@ const AI_PLATFORMS = [
 
 // Chart data
 const VISIBILITY_DATA = [
-  { month: 'Jan', chatgpt: 12, perplexity: 8, claude: 5 },
-  { month: 'Feb', chatgpt: 18, perplexity: 15, claude: 12 },
-  { month: 'Mar', chatgpt: 25, perplexity: 22, claude: 18 },
-  { month: 'Apr', chatgpt: 32, perplexity: 28, claude: 24 },
-  { month: 'May', chatgpt: 45, perplexity: 38, claude: 32 },
-  { month: 'Jun', chatgpt: 58, perplexity: 48, claude: 42 },
+  { month: 'Jan', chatgpt: 12, perplexity: 8, claude: 5, gemini: 3, grok: 2, deepseek: 1 },
+  { month: 'Feb', chatgpt: 18, perplexity: 15, claude: 12, gemini: 8, grok: 6, deepseek: 4 },
+  { month: 'Mar', chatgpt: 25, perplexity: 22, claude: 18, gemini: 14, grok: 10, deepseek: 8 },
+  { month: 'Apr', chatgpt: 32, perplexity: 28, claude: 24, gemini: 20, grok: 15, deepseek: 12 },
+  { month: 'May', chatgpt: 45, perplexity: 38, claude: 32, gemini: 28, grok: 22, deepseek: 18 },
+  { month: 'Jun', chatgpt: 58, perplexity: 48, claude: 42, gemini: 35, grok: 28, deepseek: 24 },
 ];
 
 const MENTION_DATA = [
@@ -204,7 +217,7 @@ function HeroSection() {
             transition={{ delay: 0.4, duration: 0.4 }}
             className="max-w-2xl text-balance text-center text-lg text-muted-foreground md:text-xl"
           >
-            Track your visibility across <strong className="font-semibold text-foreground">ChatGPT, Perplexity, Claude, and Gemini</strong>. 
+            Track your visibility across <strong className="font-semibold text-foreground">ChatGPT, Perplexity, Claude, Grok, DeepSeek and Gemini</strong>. 
             Understand how AI platforms perceive and recommend your brand to potential customers.
           </motion.p>
 
@@ -360,6 +373,87 @@ function ProblemSection() {
   );
 }
 
+// Time periods for the visibility trends chart
+const TIME_PERIODS = [
+  { label: '2M', months: 2 },
+  { label: '3M', months: 3 },
+  { label: '6M', months: 6 },
+];
+
+// Visibility Trends Card with time period selector
+function VisibilityTrendsCard() {
+  const [selectedPeriod, setSelectedPeriod] = React.useState(6);
+  
+  const filteredData = React.useMemo(() => {
+    return VISIBILITY_DATA.slice(-selectedPeriod);
+  }, [selectedPeriod]);
+
+  const defaultTooltipIndex = React.useMemo(() => {
+    return Math.floor(filteredData.length / 2);
+  }, [filteredData.length]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="col-span-12 md:col-span-6 xl:col-span-8"
+    >
+      <Card className="h-full">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+            <TrendingUp className="size-5 text-primary" />
+            Visibility Trends
+          </CardTitle>
+          <div className="flex items-center gap-1 rounded-lg border bg-muted/50 p-1">
+            {TIME_PERIODS.map((period) => (
+              <button
+                key={period.months}
+                onClick={() => setSelectedPeriod(period.months)}
+                className={cn(
+                  'rounded-md px-3 py-1 text-xs font-medium transition-all',
+                  selectedPeriod === period.months
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {period.label}
+              </button>
+            ))}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Track your AI visibility growth across platforms over time
+          </p>
+          <ChartContainer config={{}} className="h-[200px] w-full">
+            <AreaChart data={filteredData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <defs>
+                <linearGradient id="chatgptGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#60a5fa" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#60a5fa" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area type="monotone" dataKey="chatgpt" stroke="#60a5fa" fill="url(#chatgptGradient)" strokeWidth={2} />
+              <Area type="monotone" dataKey="perplexity" stroke="#f97316" fill="transparent" strokeWidth={2} />
+              <Area type="monotone" dataKey="claude" stroke="#a855f7" fill="transparent" strokeWidth={2} />
+              <Area type="monotone" dataKey="gemini" stroke="#22c55e" fill="transparent" strokeWidth={2} />
+              <Area type="monotone" dataKey="grok" stroke="#ef4444" fill="transparent" strokeWidth={2} />
+              <Area type="monotone" dataKey="deepseek" stroke="#06b6d4" fill="transparent" strokeWidth={2} />
+              <ChartTooltip 
+                content={<ChartTooltipContent />} 
+                defaultIndex={defaultTooltipIndex}
+                cursor={false}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 // Bento Grid Section
 function BentoSection() {
   return (
@@ -422,45 +516,7 @@ function BentoSection() {
               </motion.div>
 
               {/* Trend Chart Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="col-span-12 md:col-span-6 xl:col-span-8"
-              >
-                <Card className="h-full">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                      <TrendingUp className="size-5 text-primary" />
-                      Visibility Trends
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="mb-4 text-sm text-muted-foreground">
-                      Track your AI visibility growth across platforms over time
-                    </p>
-                    <ChartContainer config={{}} className="h-[200px] w-full">
-                      <AreaChart data={VISIBILITY_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                        <defs>
-                          <linearGradient id="chatgpt" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="perplexity" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="chatgpt" stroke="hsl(var(--primary))" fill="url(#chatgpt)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="perplexity" stroke="hsl(var(--chart-2))" fill="url(#perplexity)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="claude" stroke="hsl(var(--chart-3))" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </AreaChart>
-                    </ChartContainer>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <VisibilityTrendsCard />
 
               {/* Mentions Card */}
               <motion.div
@@ -483,7 +539,7 @@ function BentoSection() {
                     </p>
                     <ChartContainer config={{}} className="h-[150px] w-full">
                       <BarChart data={MENTION_DATA} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
-                        <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </BarChart>
                     </ChartContainer>
@@ -578,6 +634,472 @@ function BentoSection() {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Sentiment Analysis Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Heart className="size-5 text-primary" />
+                      Sentiment Analysis
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      How AI platforms describe your brand
+                    </p>
+                    <div className="space-y-3">
+                      {[
+                        { label: 'Positive', value: 68, color: 'bg-green-500' },
+                        { label: 'Neutral', value: 24, color: 'bg-slate-400' },
+                        { label: 'Negative', value: 8, color: 'bg-red-500' },
+                      ].map((item, i) => (
+                        <div key={item.label} className="space-y-1.5">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">{item.label}</span>
+                            <span className="text-muted-foreground">{item.value}%</span>
+                          </div>
+                          <div className="h-2 rounded-full bg-muted">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${item.value}%` }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
+                              className={cn('h-2 rounded-full', item.color)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-500/10 p-3">
+                      <div className="text-2xl font-bold text-green-600">+12%</div>
+                      <p className="text-xs text-muted-foreground">
+                        Sentiment improved vs last month
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* MCP & API Access Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Code2 className="size-5 text-primary" />
+                      MCP & API Access
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Programmatic access to your AI visibility data
+                    </p>
+                    <div className="space-y-3">
+                      {[
+                        { name: 'Claude MCP', status: 'Connected', icon: '/icons/claude.svg' },
+                        { name: 'OpenAI MCP', status: 'Connected', icon: '/icons/openai.svg' },
+                        { name: 'REST API', status: 'Active', icon: null },
+                      ].map((item, i) => (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.8 + i * 0.1, duration: 0.3 }}
+                          className="flex items-center justify-between rounded-lg border p-3"
+                        >
+                          <div className="flex items-center gap-3">
+                            {item.icon ? (
+                              <Image
+                                src={item.icon}
+                                alt={item.name}
+                                width={20}
+                                height={20}
+                                className="size-5 brightness-0 dark:invert"
+                              />
+                            ) : (
+                              <Code2 className="size-5 text-muted-foreground" />
+                            )}
+                            <span className="text-sm font-medium">{item.name}</span>
+                          </div>
+                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
+                            {item.status}
+                          </Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <div className="rounded-lg bg-muted/50 p-3">
+                      <code className="text-xs text-muted-foreground">
+                        curl -X GET /api/v1/visibility
+                      </code>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Prompt Insights Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <MessageSquare className="size-5 text-primary" />
+                      Prompt Insights
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Questions that trigger your brand mentions
+                    </p>
+                    {[
+                      { prompt: '"Best CRM software for startups"', mentions: 847, trend: '+23%' },
+                      { prompt: '"Alternatives to Salesforce"', mentions: 612, trend: '+18%' },
+                      { prompt: '"Top marketing automation tools"', mentions: 489, trend: '+12%' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.9 + i * 0.1, duration: 0.3 }}
+                        className="rounded-lg border p-3"
+                      >
+                        <p className="text-sm font-medium line-clamp-1">{item.prompt}</p>
+                        <div className="mt-1.5 flex items-center gap-3 text-xs">
+                          <span className="text-muted-foreground">{item.mentions} mentions</span>
+                          <span className="text-green-600">{item.trend}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Top Keywords Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Hash className="size-5 text-primary" />
+                      Top Keywords
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Keywords AI associates with your brand
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { word: 'innovative', score: 94 },
+                        { word: 'reliable', score: 89 },
+                        { word: 'user-friendly', score: 87 },
+                        { word: 'affordable', score: 82 },
+                        { word: 'scalable', score: 78 },
+                        { word: 'secure', score: 75 },
+                        { word: 'fast', score: 71 },
+                        { word: 'modern', score: 68 },
+                      ].map((item, i) => (
+                        <motion.div
+                          key={item.word}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 1 + i * 0.05, duration: 0.2 }}
+                        >
+                          <Badge 
+                            variant="secondary" 
+                            className="cursor-default"
+                            style={{ opacity: 0.5 + (item.score / 200) }}
+                          >
+                            {item.word}
+                          </Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Citation Sources Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Link2 className="size-5 text-primary" />
+                      Citation Sources
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Where AI pulls information about you
+                    </p>
+                    {[
+                      { source: 'Your Website', percentage: 45, color: 'bg-primary' },
+                      { source: 'G2 Reviews', percentage: 28, color: 'bg-green-500' },
+                      { source: 'Blog Articles', percentage: 15, color: 'bg-orange-500' },
+                      { source: 'News & PR', percentage: 12, color: 'bg-purple-500' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={item.source}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.1 + i * 0.1, duration: 0.3 }}
+                        className="flex items-center gap-3"
+                      >
+                        <div className={cn('size-2 rounded-full', item.color)} />
+                        <span className="flex-1 text-sm">{item.source}</span>
+                        <span className="text-sm font-medium">{item.percentage}%</span>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Industry Ranking Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.1 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Trophy className="size-5 text-primary" />
+                      Industry Ranking
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Your position in AI recommendations
+                    </p>
+                    <div className="flex items-center justify-center gap-6">
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-primary">#3</div>
+                        <p className="text-xs text-muted-foreground">Overall Rank</p>
+                      </div>
+                      <Separator orientation="vertical" className="h-12" />
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-green-600">+2</div>
+                        <p className="text-xs text-muted-foreground">vs Last Month</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-muted/50 p-3 text-center">
+                      <p className="text-xs text-muted-foreground">Category: Marketing Software</p>
+                      <p className="text-xs text-muted-foreground">12 competitors tracked</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Content Opportunities Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Lightbulb className="size-5 text-primary" />
+                      Content Opportunities
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      AI-suggested topics to boost visibility
+                    </p>
+                    {[
+                      { topic: 'AI Integration Guide', impact: 'High', color: 'text-green-600 bg-green-500/10' },
+                      { topic: 'Pricing Comparison', impact: 'High', color: 'text-green-600 bg-green-500/10' },
+                      { topic: 'Customer Success Stories', impact: 'Medium', color: 'text-amber-600 bg-amber-500/10' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={item.topic}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.3 + i * 0.1, duration: 0.3 }}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <span className="text-sm font-medium">{item.topic}</span>
+                        <Badge variant="outline" className={item.color}>
+                          {item.impact}
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Response Accuracy Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.3 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <ShieldCheck className="size-5 text-primary" />
+                      Response Accuracy
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      How accurately AI describes your brand
+                    </p>
+                    <div className="flex items-center justify-center">
+                      <div className="relative size-32">
+                        <svg className="size-32 -rotate-90">
+                          <circle
+                            cx="64"
+                            cy="64"
+                            r="56"
+                            stroke="currentColor"
+                            strokeWidth="12"
+                            fill="none"
+                            className="text-muted"
+                          />
+                          <motion.circle
+                            cx="64"
+                            cy="64"
+                            r="56"
+                            stroke="currentColor"
+                            strokeWidth="12"
+                            fill="none"
+                            strokeLinecap="round"
+                            className="text-green-500"
+                            initial={{ strokeDasharray: '0 352' }}
+                            whileInView={{ strokeDasharray: '308 352' }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 1.4, duration: 1 }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-2xl font-bold">87%</span>
+                          <span className="text-xs text-muted-foreground">Accurate</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-center gap-4 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <div className="size-2 rounded-full bg-green-500" />
+                        <span className="text-muted-foreground">Accurate</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="size-2 rounded-full bg-muted" />
+                        <span className="text-muted-foreground">Needs Update</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Share of Voice Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.4 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <PieChart className="size-5 text-primary" />
+                      Share of Voice
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Your brand vs total industry mentions
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="relative size-24">
+                        <svg className="size-24 -rotate-90">
+                          <circle
+                            cx="48"
+                            cy="48"
+                            r="40"
+                            stroke="currentColor"
+                            strokeWidth="16"
+                            fill="none"
+                            className="text-muted"
+                          />
+                          <motion.circle
+                            cx="48"
+                            cy="48"
+                            r="40"
+                            stroke="currentColor"
+                            strokeWidth="16"
+                            fill="none"
+                            strokeLinecap="round"
+                            className="text-primary"
+                            initial={{ strokeDasharray: '0 251' }}
+                            whileInView={{ strokeDasharray: '70 251' }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 1.5, duration: 1 }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-xl font-bold">28%</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Your Brand</span>
+                          <span className="font-semibold text-primary">28%</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Competitors</span>
+                          <span className="font-semibold">72%</span>
+                        </div>
+                        <Separator />
+                        <div className="flex items-center gap-1.5 text-xs text-green-600">
+                          <TrendingUp className="size-3" />
+                          <span>+5% vs last month</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -624,14 +1146,14 @@ function FeatureListSection() {
           >
             <div className="overflow-hidden rounded-xl border bg-card shadow-xl">
               <Image
-                src="/assets/hero/screen4-light.png"
+                src="/assets/hero/screen7-light.png"
                 alt="AI Tracking Features"
                 width={600}
                 height={400}
                 className="block w-full dark:hidden"
               />
               <Image
-                src="/assets/hero/screen4-dark.png"
+                src="/assets/hero/screen7-dark.png"
                 alt="AI Tracking Features"
                 width={600}
                 height={400}
@@ -640,6 +1162,101 @@ function FeatureListSection() {
             </div>
             <div className="absolute -right-4 -top-4 size-20 rounded-full bg-primary/10 blur-2xl" />
           </motion.div>
+        </div>
+      </div>
+    </GridSection>
+  );
+}
+
+// E-Commerce Features for Shopify
+const ECOMMERCE_FEATURES = [
+  {
+    icon: ShoppingBag,
+    title: 'Product Discovery',
+    description: 'Get your products recommended when customers ask AI for buying advice.',
+  },
+  {
+    icon: Store,
+    title: 'Store Visibility',
+    description: 'Track how often AI recommends your Shopify store vs competitors.',
+  },
+  {
+    icon: Package,
+    title: 'SKU-Level Tracking',
+    description: 'Monitor individual product mentions across all AI platforms.',
+  },
+  {
+    icon: CreditCard,
+    title: 'Purchase Intent Queries',
+    description: 'Capture high-intent shoppers asking AI for product comparisons.',
+  },
+  {
+    icon: Target,
+    title: 'Category Optimization',
+    description: 'Dominate your product category in AI search recommendations.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Revenue Attribution',
+    description: 'Track sales that originate from AI-driven product discovery.',
+  },
+];
+
+// E-Commerce Shopify Section
+function EcommerceSection() {
+  return (
+    <GridSection>
+      <div className="container py-20">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
+            <div className="overflow-hidden rounded-xl border bg-card shadow-xl">
+              <Image
+                src="/assets/hero/screen1-light.png"
+                alt="E-Commerce AI Tracking"
+                width={600}
+                height={400}
+                className="block w-full dark:hidden"
+              />
+              <Image
+                src="/assets/hero/screen1-dark.png"
+                alt="E-Commerce AI Tracking"
+                width={600}
+                height={400}
+                className="hidden w-full dark:block"
+              />
+            </div>
+            <div className="absolute -left-4 -top-4 size-20 rounded-full bg-primary/10 blur-2xl" />
+          </motion.div>
+          <div>
+            <h2 className="mb-6 text-3xl font-semibold md:text-5xl">
+              AI is the new product search for E-Commerce
+            </h2>
+            <p className="mb-8 text-muted-foreground">
+              Customers are asking ChatGPT and Perplexity for product recommendations instead of Google. 
+              Make sure your Shopify store shows up when they do.
+            </p>
+            <ul className="space-y-4">
+              {ECOMMERCE_FEATURES.map((feature, index) => (
+                <BlurFade key={feature.title} inView delay={0.1 + index * 0.1}>
+                  <li className="flex gap-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-background shadow-sm">
+                      <feature.icon className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </li>
+                </BlurFade>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </GridSection>
@@ -657,9 +1274,18 @@ function TestimonialSection() {
             "SearchFIT showed us we had 0% visibility in ChatGPT. Within 3 months of optimizing, we're now recommended in 
             <span className="text-primary"> 45% of relevant queries</span>. That's traffic we were completely missing."
           </blockquote>
-          <div className="mt-8">
-            <p className="font-semibold">Sarah Chen</p>
-            <p className="text-sm text-muted-foreground">VP of Marketing, TechFlow Solutions</p>
+          <div className="mt-8 flex flex-col items-center gap-4">
+            <Image
+              src="/assets/testimonials/abe-ghani.avif"
+              alt="Abe Ghani"
+              width={64}
+              height={64}
+              className="size-16 rounded-full object-cover"
+            />
+            <div>
+              <p className="font-semibold">Abe Ghani</p>
+              <p className="text-sm text-muted-foreground">Co-Founder of Chapter Health</p>
+            </div>
           </div>
         </BlurFade>
       </div>
@@ -724,6 +1350,7 @@ export function AITrackingHero() {
       <ProblemSection />
       <BentoSection />
       <FeatureListSection />
+      <EcommerceSection />
       <TestimonialSection />
       <BottomCTA />
     </>
