@@ -13,19 +13,24 @@ import {
   Wand2,
   Languages,
   Target,
-  Zap,
   BarChart3,
-  CheckCircle2,
   ClockIcon,
   PuzzleIcon,
   TrendingUp,
   Quote,
-  BookOpen,
   Layers,
   Send,
   Palette,
-  Globe,
   Bot,
+  Calendar,
+  Repeat,
+  Link2,
+  Users,
+  RefreshCw,
+  MessagesSquare,
+  Mail,
+  Video,
+  Eye,
 } from 'lucide-react';
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
@@ -467,17 +472,17 @@ function BentoSection() {
                     <ChartContainer config={{}} className="h-[200px] w-full">
                       <AreaChart data={CONTENT_PERFORMANCE_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                         <defs>
-                          <linearGradient id="articles" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                          <linearGradient id="articlesGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                            <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
                           </linearGradient>
-                          <linearGradient id="ranking" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
+                          <linearGradient id="rankingGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#f97316" stopOpacity={0.4} />
+                            <stop offset="100%" stopColor="#f97316" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="articles" stroke="hsl(var(--primary))" fill="url(#articles)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="ranking" stroke="hsl(var(--chart-2))" fill="url(#ranking)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="articles" stroke="#8b5cf6" fill="url(#articlesGradient)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="ranking" stroke="#f97316" fill="url(#rankingGradient)" strokeWidth={2} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </AreaChart>
                     </ChartContainer>
@@ -548,7 +553,13 @@ function BentoSection() {
                     </p>
                     <ChartContainer config={{}} className="h-[150px] w-full">
                       <BarChart data={SEO_SCORE_DATA} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
-                        <Bar dataKey="score" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        <defs>
+                          <linearGradient id="seoScoreGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#22c55e" stopOpacity={1} />
+                            <stop offset="100%" stopColor="#16a34a" stopOpacity={0.8} />
+                          </linearGradient>
+                        </defs>
+                        <Bar dataKey="score" fill="url(#seoScoreGradient)" radius={[4, 4, 0, 0]} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </BarChart>
                     </ChartContainer>
@@ -598,6 +609,377 @@ function BentoSection() {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Content Calendar Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="col-span-12 md:col-span-6 xl:col-span-6"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Calendar className="size-5 text-primary" />
+                      Content Calendar
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Upcoming scheduled content
+                    </p>
+                    {[
+                      { title: 'SEO Best Practices 2024', date: 'Tomorrow', status: 'Ready' },
+                      { title: 'AI Content Guide', date: 'Wed, Feb 12', status: 'Draft' },
+                      { title: 'Link Building Tips', date: 'Fri, Feb 14', status: 'Review' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.7 + i * 0.1, duration: 0.3 }}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">{item.date}</p>
+                        </div>
+                        <Badge variant={item.status === 'Ready' ? 'default' : 'secondary'} className="text-xs">
+                          {item.status}
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Headline Analyzer Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="col-span-12 md:col-span-6 xl:col-span-6"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <BarChart3 className="size-5 text-primary" />
+                      Headline Analyzer
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Test headlines for maximum CTR
+                    </p>
+                    {[
+                      { headline: '10 Ways to Boost SEO', score: 72, color: 'text-amber-600' },
+                      { headline: 'The Ultimate AI Guide', score: 89, color: 'text-green-600' },
+                      { headline: 'How We 10x\'d Traffic', score: 94, color: 'text-green-600' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.8 + i * 0.1, duration: 0.3 }}
+                        className="space-y-1.5"
+                      >
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium truncate">{item.headline}</span>
+                          <span className={cn('font-semibold', item.color)}>{item.score}</span>
+                        </div>
+                        <Progress value={item.score} className="h-1.5" />
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Content Repurposing Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="col-span-12 md:col-span-6 xl:col-span-6"
+              >
+                <Card className="h-full overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Repeat className="size-5 text-primary" />
+                      Content Repurposing
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      One article becomes 10+ pieces of content
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Visual Flow */}
+                    <div className="relative rounded-xl bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-4">
+                      <div className="flex items-center justify-between">
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          whileInView={{ scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.9 }}
+                          className="flex flex-col items-center"
+                        >
+                          <div className="flex size-12 items-center justify-center rounded-xl bg-primary text-white">
+                            <FileText className="size-6" />
+                          </div>
+                          <span className="mt-2 text-xs font-medium">Blog Post</span>
+                        </motion.div>
+                        <div className="flex-1 px-4">
+                          <motion.div
+                            initial={{ scaleX: 0 }}
+                            whileInView={{ scaleX: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 1.0, duration: 0.5 }}
+                            className="h-0.5 w-full origin-left bg-gradient-to-r from-primary to-primary/30"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { icon: MessagesSquare, label: 'Twitter', bg: 'bg-primary/10', text: 'text-primary' },
+                            { icon: Mail, label: 'Email', bg: 'bg-orange-500/10', text: 'text-orange-600' },
+                            { icon: Video, label: 'Video', bg: 'bg-purple-500/10', text: 'text-purple-600' },
+                            { icon: FileText, label: 'LinkedIn', bg: 'bg-blue-500/10', text: 'text-blue-600' },
+                          ].map((item, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.5 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 1.1 + i * 0.1 }}
+                              className="flex flex-col items-center"
+                            >
+                              <div className={cn('flex size-8 items-center justify-center rounded-lg', item.bg, item.text)}>
+                                <item.icon className="size-4" />
+                              </div>
+                              <span className="mt-1 text-[10px] text-muted-foreground">{item.label}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="rounded-lg bg-primary/5 p-3 text-center">
+                        <p className="text-2xl font-bold text-foreground">847</p>
+                        <p className="text-[10px] text-muted-foreground">Pieces Created</p>
+                      </div>
+                      <div className="rounded-lg bg-primary/5 p-3 text-center">
+                        <p className="text-2xl font-bold text-foreground">12x</p>
+                        <p className="text-[10px] text-muted-foreground">Output Multiplier</p>
+                      </div>
+                      <div className="rounded-lg bg-primary/5 p-3 text-center">
+                        <p className="text-2xl font-bold text-foreground">3min</p>
+                        <p className="text-[10px] text-muted-foreground">Avg. Time</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Internal Linking Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+                className="col-span-12 md:col-span-6 xl:col-span-6"
+              >
+                <Card className="h-full overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Link2 className="size-5 text-primary" />
+                      Internal Linking
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      AI builds your site structure automatically
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Link Suggestions */}
+                    <div className="space-y-2">
+                      {[
+                        { from: 'SEO Guide', to: 'Keyword Research', relevance: 94, status: 'Add link' },
+                        { from: 'Content Tips', to: 'Writing Best Practices', relevance: 87, status: 'Add link' },
+                        { from: 'AI Tools', to: 'Automation Guide', relevance: 82, status: 'Review' },
+                      ].map((link, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 1.0 + i * 0.1, duration: 0.3 }}
+                          className="flex items-center gap-2 rounded-lg border bg-muted/30 p-2.5"
+                        >
+                          <div className="flex flex-1 items-center gap-2 text-sm">
+                            <span className="font-medium">{link.from}</span>
+                            <ArrowRight className="size-3 text-muted-foreground" />
+                            <span className="text-primary">{link.to}</span>
+                          </div>
+                          <Badge variant="secondary" className="text-xs font-medium text-primary">{link.relevance}%</Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="rounded-lg bg-primary/5 p-3 text-center">
+                        <p className="text-2xl font-bold text-foreground">+47%</p>
+                        <p className="text-[10px] text-muted-foreground">More Links</p>
+                      </div>
+                      <div className="rounded-lg bg-primary/5 p-3 text-center">
+                        <p className="text-2xl font-bold text-foreground">156</p>
+                        <p className="text-[10px] text-muted-foreground">Suggestions</p>
+                      </div>
+                      <div className="rounded-lg bg-orange-500/10 p-3 text-center">
+                        <p className="text-2xl font-bold text-orange-600">8</p>
+                        <p className="text-[10px] text-muted-foreground">Orphan Pages</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Competitor Analysis Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Eye className="size-5 text-primary" />
+                      Competitor Content
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Content gaps to exploit
+                    </p>
+                    {[
+                      { topic: 'AI Writing Tools Comparison', difficulty: 'Easy', potential: 'High' },
+                      { topic: 'SEO Automation Guide', difficulty: 'Medium', potential: 'High' },
+                      { topic: 'Content ROI Calculator', difficulty: 'Easy', potential: 'Medium' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.1 + i * 0.1, duration: 0.3 }}
+                        className="rounded-lg border p-3"
+                      >
+                        <p className="text-sm font-medium">{item.topic}</p>
+                        <div className="mt-1.5 flex gap-2">
+                          <Badge variant="outline" className="text-xs">{item.difficulty}</Badge>
+                          <Badge variant="outline" className={cn('text-xs', item.potential === 'High' ? 'text-green-600' : 'text-amber-600')}>
+                            {item.potential} potential
+                          </Badge>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Content Refresh Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.1 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <RefreshCw className="size-5 text-primary" />
+                      Content Refresh
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Articles needing updates
+                    </p>
+                    {[
+                      { title: 'SEO Trends 2023', age: '14 months old', priority: 'High' },
+                      { title: 'Google Algorithm Updates', age: '8 months old', priority: 'Medium' },
+                      { title: 'Link Building Strategies', age: '6 months old', priority: 'Low' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.2 + i * 0.1, duration: 0.3 }}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">{item.age}</p>
+                        </div>
+                        <Badge variant={item.priority === 'High' ? 'default' : 'secondary'} className={cn('text-xs', item.priority === 'High' && 'bg-red-500 text-white')}>
+                          {item.priority}
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Team Collaboration Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Users className="size-5 text-primary" />
+                      Team Activity
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Recent team updates
+                    </p>
+                    {[
+                      { user: 'Sarah', action: 'published', item: 'SEO Guide', time: '2h ago' },
+                      { user: 'Mike', action: 'commented on', item: 'AI Article', time: '4h ago' },
+                      { user: 'Emma', action: 'approved', item: 'Blog Post', time: '6h ago' },
+                    ].map((activity, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.3 + i * 0.1, duration: 0.3 }}
+                        className="flex items-start gap-3 text-sm"
+                      >
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                          {activity.user[0]}
+                        </div>
+                        <div>
+                          <p><span className="font-medium">{activity.user}</span> {activity.action} <span className="text-primary">{activity.item}</span></p>
+                          <p className="text-xs text-muted-foreground">{activity.time}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -617,7 +999,7 @@ function FeatureListSection() {
               Everything you need to create content at scale
             </h2>
             <p className="mb-8 text-muted-foreground">
-              From ideation to publication, get AI-powered tools that help you create better content faster—without sacrificing quality or SEO performance.
+              From ideation to publication, get AI-powered tools that help you create better content faster without sacrificing quality or SEO performance.
             </p>
             <ul className="space-y-4">
               {FEATURES.map((feature, index) => (
@@ -644,14 +1026,14 @@ function FeatureListSection() {
           >
             <div className="overflow-hidden rounded-xl border bg-card shadow-xl">
               <Image
-                src="/assets/hero/screen2-light.png"
+                src="/assets/hero/screen8-light.png"
                 alt="Content Creation Features"
                 width={600}
                 height={400}
                 className="block w-full dark:hidden"
               />
               <Image
-                src="/assets/hero/screen2-dark.png"
+                src="/assets/hero/screen8-dark.png"
                 alt="Content Creation Features"
                 width={600}
                 height={400}
@@ -660,6 +1042,197 @@ function FeatureListSection() {
             </div>
             <div className="absolute -right-4 -top-4 size-20 rounded-full bg-primary/10 blur-2xl" />
           </motion.div>
+        </div>
+      </div>
+    </GridSection>
+  );
+}
+
+// AI Agentic Workflow Section
+function AgenticWorkflowSection() {
+  return (
+    <GridSection className="bg-background">
+      <div className="container py-20">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          {/* Visual Workflow Diagram - Left */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
+            <div className="relative flex h-[400px] w-full items-center justify-center">
+              {/* Outer Integration Ring - Rotating */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="absolute size-[380px] rounded-full border border-dashed border-muted-foreground/20"
+              />
+              
+              {/* Outer Ring - Integrations (Slow rotation) */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="absolute size-[380px] animate-[spin_90s_linear_infinite]"
+              >
+                {[
+                  { icon: "/icons/linear.svg", name: "Linear", invert: true },
+                  { icon: "/icons/notion.svg", name: "Notion", invert: true },
+                  { icon: "/icons/n8n.svg", name: "n8n", invert: true },
+                  { icon: "/icons/zapier.svg", name: "Zapier", invert: true },
+                  { icon: "/icons/shopify.svg", name: "Shopify", invert: true },
+                  { icon: "/icons/wordpress.svg", name: "WordPress", invert: true },
+                  { icon: "/icons/webflow.svg", name: "Webflow", invert: true },
+                  { icon: "/icons/google-drive.svg", name: "Drive", invert: false },
+                  { icon: "/icons/webhook.svg", name: "Webhook", invert: true },
+                  { icon: "/icons/api.svg", name: "API", invert: true },
+                ].map((item, index, arr) => {
+                  const radius = 190;
+                  const angle = (360 / arr.length) * index;
+                  const angleRad = (angle - 90) * (Math.PI / 180);
+                  const x = Math.cos(angleRad) * radius;
+                  const y = Math.sin(angleRad) * radius;
+                  
+                  return (
+                    <div
+                      key={item.name}
+                      className="absolute left-1/2 top-1/2 flex flex-col items-center gap-1"
+                      style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
+                    >
+                      <div className="flex size-9 animate-[spin_90s_linear_infinite_reverse] items-center justify-center rounded-lg border bg-background">
+                        <Image
+                          src={item.icon}
+                          alt={item.name}
+                          width={18}
+                          height={18}
+                          className={cn("size-[18px]", item.invert && "dark:invert")}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Inner Ring - Agentic Layer */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="absolute size-[220px] rounded-full border border-dashed border-primary/30"
+              />
+
+              {/* Inner Ring - AI Agents (Faster rotation, opposite direction) */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="absolute size-[220px] animate-[spin_40s_linear_infinite_reverse]"
+              >
+                {[
+                  { icon: "/icons/claude.svg", name: "Claude", invert: false },
+                  { icon: "/icons/openai.svg", name: "OpenAI", invert: true },
+                  { icon: "/icons/gemini.svg", name: "Gemini", invert: false },
+                  { icon: "/icons/mistral.svg", name: "Mistral", invert: true },
+                  { icon: "/icons/perplexity.svg", name: "Perplexity", invert: true },
+                ].map((item, index, arr) => {
+                  const radius = 110;
+                  const angle = (360 / arr.length) * index;
+                  const angleRad = (angle - 90) * (Math.PI / 180);
+                  const x = Math.cos(angleRad) * radius;
+                  const y = Math.sin(angleRad) * radius;
+                  
+                  return (
+                    <div
+                      key={item.name}
+                      className="absolute left-1/2 top-1/2 flex flex-col items-center"
+                      style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
+                    >
+                      <div className="flex size-10 animate-[spin_40s_linear_infinite] items-center justify-center rounded-xl border bg-background">
+                        <Image
+                          src={item.icon}
+                          alt={item.name}
+                          width={22}
+                          height={22}
+                          className={cn("size-[22px]", item.invert && "dark:invert")}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Center - SearchFIT */}
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, type: "spring" }}
+                className="relative z-10 flex flex-col items-center"
+              >
+                <Image src="/icons/searchfit.svg" alt="SearchFIT" width={56} height={56} className="size-14" />
+                <span className="mt-2 text-xs font-semibold">SearchFIT</span>
+              </motion.div>
+            </div>
+            <div className="absolute -left-4 -top-4 size-20 rounded-full bg-primary/5 blur-2xl" />
+          </motion.div>
+
+          {/* Content - Right */}
+          <div>
+            <Badge variant="secondary" className="mb-4 rounded-full">
+              <Bot className="mr-1.5 size-3" />
+              AI Agentic Workflow
+            </Badge>
+            <h2 className="mb-6 text-3xl font-semibold md:text-5xl">
+              Designed for the future of autonomous content
+            </h2>
+            <p className="mb-8 text-muted-foreground">
+              SearchFIT integrates seamlessly with AI agents powered by Claude and OpenAI. 
+              Connect your project management tools and let AI handle content creation autonomously.
+            </p>
+            <ul className="space-y-4">
+              {[
+                {
+                  icon: Bot,
+                  title: 'MCP Protocol Support',
+                  description: 'Native integration with Claude MCP and OpenAI agents for autonomous workflows.',
+                },
+                {
+                  icon: Layers,
+                  title: 'Bi-directional Sync',
+                  description: 'Tasks from Jira or Linear automatically trigger content creation and updates.',
+                },
+                {
+                  icon: Wand2,
+                  title: 'Zero Manual Intervention',
+                  description: 'AI agents research, write, optimize, and publish—all without human input.',
+                },
+                {
+                  icon: Send,
+                  title: 'Smart Notifications',
+                  description: 'Get notified only when review is needed. AI handles the rest.',
+                },
+              ].map((feature, index) => (
+                <BlurFade key={feature.title} inView delay={0.1 + index * 0.1}>
+                  <li className="flex gap-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-background shadow-sm">
+                      <feature.icon className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </li>
+                </BlurFade>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </GridSection>
@@ -744,6 +1317,7 @@ export function ContentHero() {
       <ProblemSection />
       <BentoSection />
       <FeatureListSection />
+      <AgenticWorkflowSection />
       <TestimonialSection />
       <BottomCTA />
     </>
