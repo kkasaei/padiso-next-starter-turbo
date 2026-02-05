@@ -67,10 +67,10 @@ const HEALTH_SCORE_DATA = [
 
 // Issue distribution data
 const ISSUE_DATA = [
-  { name: 'Critical', count: 12, color: 'hsl(var(--destructive))' },
-  { name: 'Warning', count: 34, color: 'hsl(var(--chart-4))' },
-  { name: 'Info', count: 89, color: 'hsl(var(--chart-2))' },
-  { name: 'Passed', count: 156, color: 'hsl(var(--chart-1))' },
+  { name: 'Critical', count: 12, color: '#ef4444' },
+  { name: 'Warning', count: 34, color: '#f59e0b' },
+  { name: 'Info', count: 89, color: '#3b82f6' },
+  { name: 'Passed', count: 156, color: '#10b981' },
 ];
 
 // Stats data
@@ -323,7 +323,7 @@ function ProductShowcase() {
         >
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
             <Image
-              src="/assets/hero/screen1-light.png"
+              src="/assets/hero/screen4-light.png"
               alt="Technical Audit Dashboard"
               width={1328}
               height={727}
@@ -331,7 +331,7 @@ function ProductShowcase() {
               priority
             />
             <Image
-              src="/assets/hero/screen1-dark.png"
+              src="/assets/hero/screen4-dark.png"
               alt="Technical Audit Dashboard"
               width={1328}
               height={727}
@@ -468,11 +468,12 @@ function BentoSection() {
                       <AreaChart data={HEALTH_SCORE_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                         <defs>
                           <linearGradient id="healthScore" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.5} />
+                            <stop offset="50%" stopColor="#34d399" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#6ee7b7" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="score" stroke="hsl(var(--primary))" fill="url(#healthScore)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="score" stroke="#10b981" fill="url(#healthScore)" strokeWidth={2.5} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </AreaChart>
                     </ChartContainer>
