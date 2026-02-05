@@ -6,6 +6,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   /* config options here */
+  // Exclude mjml from bundling - it has native dependencies that break in Turbopack
+  serverExternalPackages: ['mjml', 'uglify-js'],
   // Increase body size limit for server actions (especially project creation with AI generation)
   experimental: {
     serverActions: {

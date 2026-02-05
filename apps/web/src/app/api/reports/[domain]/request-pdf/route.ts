@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { tasks } from '@workspace/trigger';
 import { db, publicReports, reportUnlockRequests, eq, and } from '@workspace/db';
-import { normalizeDomain } from '@workspace/cloudflare';
+import { normalizeDomain, uploadPDFToR2 } from '@workspace/cloudflare';
+import { generateReportPDF, convertReportIconsToCDN } from '@workspace/pdf';
+import type { AEOReport } from '@workspace/common/lib';
+import { AEOReportPDF } from '@/components/marketing/public-report/pdf-report/PdfDocument';
 
 /**
  * POST /api/reports/[domain]/request-pdf
@@ -9,7 +11,7 @@ import { normalizeDomain } from '@workspace/cloudflare';
  * Request PDF generation for a report
  * - Verifies user has unlocked the report (required email)
  * - Checks if PDF already exists in database (instant return)
- * - If not, triggers background job to generate PDF
+ * - If not, generates PDF inline and uploads to R2
  */
 export async function POST(
   request: NextRequest,
@@ -119,24 +121,64 @@ export async function POST(
       });
     }
 
-    // 4. PDF doesn't exist - trigger background job
+    // 4. PDF doesn't exist - generate inline
     console.log(
-      `[PDF API] Cache miss - triggering PDF generation for ${normalizedDomain}`
+      `[PDF API] Cache miss - generating PDF for ${normalizedDomain}`
     );
 
-    const handle = await tasks.trigger('generate-pdf-report', {
-      reportId: report.id,
-      domain: normalizedDomain,
-    });
+    try {
+      // Parse report data
+      const reportData = report.data as AEOReport;
+      
+      // Convert icons to CDN URLs for PDF compatibility
+      const dataWithCDNIcons = convertReportIconsToCDN(reportData);
+      
+      // Generate PDF using the AEOReportPDF component
+      console.log(`[PDF API] Starting PDF generation...`);
+      const pdfBuffer = await generateReportPDF(
+        dataWithCDNIcons,
+        normalizedDomain,
+        AEOReportPDF
+      );
+      console.log(`[PDF API] PDF generated: ${pdfBuffer.length} bytes`);
 
-    console.log(`[PDF API] Background job triggered: ${handle.id}`);
+      // Upload to R2
+      console.log(`[PDF API] Uploading to R2...`);
+      const pdfUrl = await uploadPDFToR2(
+        report.id,
+        normalizedDomain,
+        pdfBuffer
+      );
+      console.log(`[PDF API] Uploaded to R2: ${pdfUrl}`);
 
-    return NextResponse.json({
-      status: 'generating',
-      jobId: handle.id,
-      message:
-        'PDF generation started. Check status using the provided job ID.',
-    });
+      // Save URL to database
+      await db
+        .update(publicReports)
+        .set({
+          pdfUrl,
+          pdfGeneratedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(publicReports.id, report.id));
+
+      console.log(`[PDF API] ✅ PDF ready for ${email} - ${pdfUrl}`);
+
+      return NextResponse.json({
+        status: 'ready',
+        pdfUrl,
+        cached: false,
+        generatedAt: new Date().toISOString(),
+      });
+    } catch (pdfError) {
+      console.error(`[PDF API] PDF generation failed:`, pdfError);
+      return NextResponse.json(
+        {
+          error: 'PDF generation failed',
+          details: pdfError instanceof Error ? pdfError.message : 'Unknown error',
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error('[PDF API] Error requesting PDF:', error);
 

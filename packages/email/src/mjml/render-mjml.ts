@@ -9,7 +9,8 @@ import mjml2html from 'mjml';
 export function renderMJML(mjmlString: string): { html: string; text: string } {
   const { html, errors } = mjml2html(mjmlString, {
     validationLevel: 'soft',
-    minify: true,
+    // Avoid MJML's optional uglify-js dependency in server runtime.
+    minify: false,
   });
 
   if (errors.length > 0) {

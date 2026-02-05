@@ -3,7 +3,7 @@ import { View, Image } from '@react-pdf/renderer';
 
 /**
  * Decorative curved lines background
- * Uses the actual background image from public/pdf/width_1280.png
+ * Uses the CDN-hosted background image for server-side PDF generation
  */
 export function PDFDecorativeCurves() {
   return (
@@ -17,7 +17,7 @@ export function PDFDecorativeCurves() {
       }}
     >
       <Image
-        src="/pdf/width_1280.png"
+        src="https://cdn.searchfit.ai/assets/pdf/background.png"
         style={{
           width: 1280,
           height: 720,
