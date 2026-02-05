@@ -167,7 +167,7 @@ export function AEODomainInput({
             value={form.watch('vertical')}
             onValueChange={(value) => form.setValue('vertical', value)}
           >
-            <SelectTrigger className="h-14 w-32 shrink-0 border-0 bg-transparent px-3 text-xs font-medium shadow-none focus:ring-0 sm:h-16 sm:w-40 sm:px-4 sm:text-sm md:h-18 md:w-48 md:text-base lg:h-20 lg:w-52 xl:h-22 xl:w-56">
+            <SelectTrigger className="h-14 w-32 shrink-0 border-0 bg-transparent px-3 text-xs font-medium shadow-none focus:ring-0 focus:ring-offset-0 sm:h-16 sm:w-40 sm:px-4 sm:text-sm md:h-18 md:w-48 md:text-base lg:h-20 lg:w-52 xl:h-22 xl:w-56">
               <SelectValue placeholder="Business type" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
