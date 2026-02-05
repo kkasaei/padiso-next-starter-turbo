@@ -131,10 +131,10 @@ const BACKLINKS_DATA = [
 
 // Traffic sources
 const TRAFFIC_SOURCES = [
-  { name: 'Organic Search', value: 58, color: 'hsl(var(--primary))' },
-  { name: 'Direct', value: 22, color: 'hsl(var(--chart-2))' },
-  { name: 'Referral', value: 12, color: 'hsl(var(--chart-3))' },
-  { name: 'Social', value: 8, color: 'hsl(var(--chart-4))' },
+  { name: 'Organic Search', value: 58, color: '#10b981' },
+  { name: 'Direct', value: 22, color: '#8b5cf6' },
+  { name: 'Referral', value: 12, color: '#f59e0b' },
+  { name: 'Social', value: 8, color: '#ec4899' },
 ];
 
 // Features
@@ -341,7 +341,7 @@ function ProductShowcase() {
         >
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
             <Image
-              src="/assets/hero/screen1-light.png"
+              src="/assets/hero/screen3-light.png"
               alt="Analytics Dashboard"
               width={1328}
               height={727}
@@ -349,7 +349,7 @@ function ProductShowcase() {
               priority
             />
             <Image
-              src="/assets/hero/screen1-dark.png"
+              src="/assets/hero/screen3-dark.png"
               alt="Analytics Dashboard"
               width={1328}
               height={727}
@@ -479,17 +479,24 @@ function BentoSection() {
                       <AreaChart data={TRAFFIC_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                         <defs>
                           <linearGradient id="organic" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                            <stop offset="50%" stopColor="#34d399" stopOpacity={0.2} />
+                            <stop offset="100%" stopColor="#6ee7b7" stopOpacity={0} />
                           </linearGradient>
                           <linearGradient id="paid" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                            <stop offset="50%" stopColor="#a78bfa" stopOpacity={0.2} />
+                            <stop offset="100%" stopColor="#c4b5fd" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="direct" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.4} />
+                            <stop offset="50%" stopColor="#fbbf24" stopOpacity={0.2} />
+                            <stop offset="100%" stopColor="#fcd34d" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="organic" stroke="hsl(var(--primary))" fill="url(#organic)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="paid" stroke="hsl(var(--chart-2))" fill="url(#paid)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="direct" stroke="hsl(var(--chart-3))" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
+                        <Area type="monotone" dataKey="organic" stroke="#10b981" fill="url(#organic)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="paid" stroke="#8b5cf6" fill="url(#paid)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="direct" stroke="#f59e0b" fill="url(#direct)" strokeWidth={2.5} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </AreaChart>
                     </ChartContainer>
@@ -568,17 +575,25 @@ function BentoSection() {
                     <ChartContainer config={{}} className="h-[150px] w-full">
                       <AreaChart data={KEYWORD_DATA} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
                         <defs>
-                          <linearGradient id="positionGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                          <linearGradient id="positionGradient" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
+                            <stop offset="30%" stopColor="#f97316" stopOpacity={0.4} />
+                            <stop offset="60%" stopColor="#eab308" stopOpacity={0.3} />
+                            <stop offset="100%" stopColor="#22c55e" stopOpacity={0.4} />
+                          </linearGradient>
+                          <linearGradient id="positionStroke" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#ef4444" />
+                            <stop offset="30%" stopColor="#f97316" />
+                            <stop offset="60%" stopColor="#eab308" />
+                            <stop offset="100%" stopColor="#22c55e" />
                           </linearGradient>
                         </defs>
                         <Area 
                           type="monotone" 
                           dataKey="position" 
-                          stroke="hsl(var(--primary))" 
+                          stroke="url(#positionStroke)" 
                           fill="url(#positionGradient)"
-                          strokeWidth={2}
+                          strokeWidth={3}
                         />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </AreaChart>
@@ -767,14 +782,14 @@ function FeatureListSection() {
           >
             <div className="overflow-hidden rounded-xl border bg-card shadow-xl">
               <Image
-                src="/assets/hero/screen4-light.png"
+                src="/assets/hero/screen3-light.png"
                 alt="Analytics Features"
                 width={600}
                 height={400}
                 className="block w-full dark:hidden"
               />
               <Image
-                src="/assets/hero/screen4-dark.png"
+                src="/assets/hero/screen3-dark.png"
                 alt="Analytics Features"
                 width={600}
                 height={400}
