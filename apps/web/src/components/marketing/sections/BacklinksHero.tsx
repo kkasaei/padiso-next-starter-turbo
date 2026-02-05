@@ -26,7 +26,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   CheckCircle2,
-  XCircle,
   Eye,
   BarChart3,
 } from 'lucide-react';
@@ -44,107 +43,107 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@workspace/ui
 import { Separator } from '@workspace/ui/components/separator';
 import { cn } from '@workspace/ui/lib/utils';
 
-// Tool icons for backlink analysis
-const BACKLINK_TOOLS = [
-  { name: 'Ahrefs', src: '/icons/searchapi.svg' },
-  { name: 'Semrush', src: '/icons/semrush.svg' },
-  { name: 'Moz', src: '/icons/google-analytics.svg' },
-  { name: 'Majestic', src: '/icons/google-brand-color.svg' },
-  { name: 'Google Search Console', src: '/icons/google.svg' },
+// Network partner categories
+const NETWORK_CATEGORIES = [
+  { name: 'SaaS & Tech', count: '140+' },
+  { name: 'Marketing', count: '120+' },
+  { name: 'E-commerce', count: '95+' },
+  { name: 'Finance', count: '80+' },
+  { name: 'Health & Wellness', count: '65+' },
 ];
 
-// Backlink growth data
-const BACKLINK_GROWTH_DATA = [
-  { month: 'Jan', backlinks: 2400, domains: 320 },
-  { month: 'Feb', backlinks: 2800, domains: 380 },
-  { month: 'Mar', backlinks: 3200, domains: 420 },
-  { month: 'Apr', backlinks: 3800, domains: 490 },
-  { month: 'May', backlinks: 4500, domains: 580 },
-  { month: 'Jun', backlinks: 5200, domains: 680 },
+// Network growth data
+const NETWORK_GROWTH_DATA = [
+  { month: 'Jan', backlinks: 45, domains: 28 },
+  { month: 'Feb', backlinks: 68, domains: 42 },
+  { month: 'Mar', backlinks: 92, domains: 58 },
+  { month: 'Apr', backlinks: 124, domains: 78 },
+  { month: 'May', backlinks: 156, domains: 102 },
+  { month: 'Jun', backlinks: 189, domains: 127 },
 ];
 
-// Link velocity data
-const LINK_VELOCITY_DATA = [
-  { name: 'Week 1', gained: 45, lost: 12 },
-  { name: 'Week 2', gained: 52, lost: 8 },
-  { name: 'Week 3', gained: 38, lost: 15 },
-  { name: 'Week 4', gained: 67, lost: 10 },
+// Exchange activity data
+const EXCHANGE_ACTIVITY_DATA = [
+  { name: 'Week 1', gained: 12, lost: 10 },
+  { name: 'Week 2', gained: 15, lost: 13 },
+  { name: 'Week 3', gained: 9, lost: 11 },
+  { name: 'Week 4', gained: 18, lost: 15 },
 ];
 
 // Stats data
 const STATS = [
-  { value: 10, suffix: 'M+', description: 'Links Monitored' },
-  { value: 500, suffix: 'K+', description: 'Domains Tracked' },
-  { value: 99, suffix: '%', description: 'Data Accuracy' },
-  { value: 1, suffix: 'hr', description: 'Update Frequency' },
+  { value: 500, suffix: '+', description: 'Network Partners' },
+  { value: 2, suffix: 'K+', description: 'Links Exchanged' },
+  { value: 58, suffix: '+', description: 'Avg. Domain Rating' },
+  { value: 48, suffix: 'hr', description: 'Avg. Placement Time' },
 ];
 
 // Problem statements
 const PROBLEMS = [
   {
     icon: <ClockIcon className="size-5 shrink-0" />,
-    title: 'Links Disappear Without Warning',
-    description: 'You lose valuable backlinks every day without knowing. By the time you notice, the damage to your rankings is already done.'
+    title: 'Outreach Takes Forever',
+    description: 'Cold emailing hundreds of sites, following up, negotiating—traditional link building eats up weeks for a handful of links.'
   },
   {
     icon: <PuzzleIcon className="size-5 shrink-0" />,
-    title: 'Competitors Outpace You',
-    description: 'Your competitors are building links faster than you. Without visibility into their strategies, you\'re always playing catch-up.'
+    title: 'Finding Quality Partners is Hard',
+    description: 'Most link exchanges are low-quality or irrelevant. Finding legitimate, high-DR sites in your niche feels impossible.'
   },
   {
     icon: <AlertTriangle className="size-5 shrink-0" />,
-    title: 'Toxic Links Hurt Rankings',
-    description: 'Spammy backlinks can trigger Google penalties. Manual monitoring is impossible at scale, leaving your site vulnerable.'
+    title: 'No Guarantee of Placement',
+    description: 'You spend hours on outreach only to get ghosted or rejected. There\'s no predictable way to build links at scale.'
   }
 ];
 
-// Backlink metrics
-const BACKLINK_METRICS = [
-  { label: 'Total Backlinks', value: '24.8K', change: '+1,247', positive: true },
-  { label: 'Referring Domains', value: '3,892', change: '+312', positive: true },
-  { label: 'Dofollow Links', value: '19.2K', change: '+982', positive: true },
-  { label: 'Avg. Domain Rating', value: '58', change: '+4', positive: true },
+// Network metrics
+const NETWORK_METRICS = [
+  { label: 'Active Partners', value: '127', change: '+12', positive: true },
+  { label: 'Links Placed', value: '89', change: '+8', positive: true },
+  { label: 'Avg. Partner DR', value: '58', change: '+2', positive: true },
+  { label: 'Pending Requests', value: '5', change: '-2', positive: true },
 ];
 
-// Link quality distribution
-const LINK_QUALITY = [
-  { type: 'High Quality (DR 70+)', count: 892, percentage: 23, color: '#10b981' },
-  { type: 'Medium Quality (DR 40-69)', count: 1847, percentage: 47, color: '#3b82f6' },
-  { type: 'Low Quality (DR 20-39)', count: 784, percentage: 20, color: '#f59e0b' },
-  { type: 'Toxic/Spam (DR <20)', count: 369, percentage: 10, color: '#ef4444' },
+// Partner quality distribution
+const PARTNER_QUALITY = [
+  { type: 'Premium (DR 70+)', count: 85, percentage: 17, color: '#10b981' },
+  { type: 'High Quality (DR 50-69)', count: 235, percentage: 47, color: '#3b82f6' },
+  { type: 'Standard (DR 30-49)', count: 155, percentage: 31, color: '#f59e0b' },
+  { type: 'Emerging (DR 20-29)', count: 25, percentage: 5, color: '#8b5cf6' },
 ];
 
 // Features
 const FEATURES = [
   {
-    icon: Link2,
-    title: 'Complete Link Profile',
-    description: 'Monitor every backlink pointing to your site with detailed metrics like DR, anchor text, and link type.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Link Velocity Tracking',
-    description: 'See links gained and lost over time. Get alerts when you lose high-value links.',
-  },
-  {
     icon: Users,
-    title: 'Competitor Analysis',
-    description: 'Discover where competitors get their best links. Find link building opportunities they\'re using.',
-  },
-  {
-    icon: Shield,
-    title: 'Toxic Link Detection',
-    description: 'Automatically identify spammy or harmful links. Generate disavow files with one click.',
+    title: 'Curated Partner Network',
+    description: 'Join a growing community of 500+ vetted websites across industries. Every partner is manually reviewed for quality and relevance.',
   },
   {
     icon: Target,
-    title: 'Link Opportunities',
-    description: 'AI-powered suggestions for high-quality link targets based on your niche and competitors.',
+    title: 'Smart Matching',
+    description: 'AI matches you with relevant partners in your niche. No more wasting time on irrelevant link prospects.',
+  },
+  {
+    icon: Shield,
+    title: 'Quality Guaranteed',
+    description: 'All partners maintain DR 30+ with real organic traffic. We continuously monitor and remove low-quality sites.',
   },
   {
     icon: Zap,
-    title: 'Automated Outreach',
-    description: 'Built-in outreach tools to contact webmasters and track your link building campaigns.',
+    title: 'One-Click Requests',
+    description: 'Request link placements instantly. Partners respond within 48 hours on average—no endless follow-ups.',
+  },
+  {
+    icon: Link2,
+    title: 'Reciprocal & Guest Posts',
+    description: 'Choose between link exchanges, guest post opportunities, or niche edits. Flexible options for every strategy.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Track Everything',
+    description: 'Monitor all your network links in one dashboard. Get alerts if any link is removed or modified.',
   },
 ];
 
@@ -184,10 +183,10 @@ function HeroSection() {
                 variant="outline"
                 className="group flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium shadow-xs hover:bg-accent/50"
               >
-                <Link2 className="size-4 text-primary" />
-                <span>Backlinks</span>
+                <Users className="size-4 text-primary" />
+                <span>Backlink Network</span>
                 <Separator orientation="vertical" className="mx-1 h-4" />
-                <span className="text-muted-foreground">10M+ links monitored</span>
+                <span className="text-muted-foreground">Growing network of 500+ partners</span>
                 <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
               </Badge>
             </Link>
@@ -201,10 +200,10 @@ function HeroSection() {
             className="text-center"
           >
             <h1 className="text-balance text-center text-[32px] font-bold leading-[42px] tracking-[-0.6px] sm:text-[44px] sm:leading-[54px] md:text-[56px] md:leading-[66px] lg:text-[68px] lg:leading-[78px]">
-              Build links that
+              Your private network for
               <br />
               <span className="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                actually move rankings
+                high-quality backlinks
               </span>
             </h1>
           </motion.div>
@@ -216,8 +215,8 @@ function HeroSection() {
             transition={{ delay: 0.4, duration: 0.4 }}
             className="max-w-2xl text-balance text-center text-lg text-muted-foreground md:text-xl"
           >
-            Monitor your complete backlink profile, track competitor links, and discover <strong className="font-semibold text-foreground">high-quality opportunities</strong>. 
-            Never lose a valuable link without knowing.
+            Skip the cold outreach. Join our <strong className="font-semibold text-foreground">growing network of 500+ vetted websites</strong> ready to exchange quality links. 
+            Build authority faster with our exclusive partner community.
           </motion.p>
 
           {/* CTAs */}
@@ -241,7 +240,7 @@ function HeroSection() {
             </Button>
           </motion.div>
 
-          {/* Tool Icons */}
+          {/* Network Categories */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,24 +248,19 @@ function HeroSection() {
             className="mt-8 flex flex-col items-center gap-4"
           >
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Import data from your favorite tools
+              Partners across every industry
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
-              {BACKLINK_TOOLS.map((tool, index) => (
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+              {NETWORK_CATEGORIES.map((category, index) => (
                 <motion.div
-                  key={tool.name}
+                  key={category.name}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7 + index * 0.05, duration: 0.3 }}
-                  className="flex items-center justify-center transition-opacity hover:opacity-80"
+                  className="flex items-center gap-2 rounded-full border bg-card/50 px-4 py-2 transition-colors hover:bg-accent/50"
                 >
-                  <Image
-                    src={tool.src}
-                    alt={tool.name}
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all md:h-10"
-                  />
+                  <span className="text-sm font-medium">{category.name}</span>
+                  <span className="text-xs text-muted-foreground">{category.count}</span>
                 </motion.div>
               ))}
             </div>
@@ -348,7 +342,7 @@ function ProblemSection() {
     <GridSection>
       <div className="px-4 py-20 text-center">
         <h2 className="text-3xl font-semibold md:text-5xl">
-          <TextGenerateWithSelectBoxEffect words="Your Link Profile Is Leaking Authority. Every Day." />
+          <TextGenerateWithSelectBoxEffect words="Traditional Link Building Is Broken. There's a Better Way." />
         </h2>
       </div>
       <div className="grid divide-y border-t border-dashed md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -379,10 +373,10 @@ function BentoSection() {
         <div className="container space-y-10">
           <div>
             <h2 className="mb-2.5 text-3xl font-semibold md:text-5xl">
-              Complete backlink intelligence
+              Your link building dashboard
             </h2>
             <p className="mt-1 max-w-2xl text-muted-foreground md:mt-6">
-              Monitor every link, track competitors, and discover opportunities to build authority faster.
+              Manage your network, track placements, and watch your backlink profile grow—all in one place.
             </p>
           </div>
 
@@ -390,7 +384,7 @@ function BentoSection() {
           <div className="mx-auto xl:container xl:rounded-xl xl:bg-neutral-50 xl:p-6 dark:xl:bg-neutral-900">
             <div className="grid auto-rows-[minmax(200px,auto)] grid-cols-12 gap-6">
               
-              {/* Backlink Metrics Card */}
+              {/* Network Activity Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -401,15 +395,15 @@ function BentoSection() {
                 <Card className="h-full">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                      <Link2 className="size-5 text-primary" />
-                      Link Profile
+                      <Users className="size-5 text-primary" />
+                      Network Activity
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Your complete backlink overview
+                      Your partner network at a glance
                     </p>
-                    {BACKLINK_METRICS.map((metric, index) => (
+                    {NETWORK_METRICS.map((metric, index) => (
                       <motion.div
                         key={metric.label}
                         initial={{ opacity: 0, x: -20 }}
@@ -432,7 +426,7 @@ function BentoSection() {
                 </Card>
               </motion.div>
 
-              {/* Backlink Growth Chart */}
+              {/* Network Growth Chart */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -444,15 +438,15 @@ function BentoSection() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-semibold">
                       <TrendingUp className="size-5 text-primary" />
-                      Backlink Growth
+                      Network Growth
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
-                      Total backlinks and referring domains over time
+                      Links placed and new partners joined over time
                     </p>
                     <ChartContainer config={{}} className="h-[200px] w-full">
-                      <AreaChart data={BACKLINK_GROWTH_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                      <AreaChart data={NETWORK_GROWTH_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                         <defs>
                           <linearGradient id="backlinks" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#10b981" stopOpacity={0.5} />
@@ -474,7 +468,7 @@ function BentoSection() {
                 </Card>
               </motion.div>
 
-              {/* Link Quality Distribution */}
+              {/* Partner Quality Distribution */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -486,15 +480,15 @@ function BentoSection() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-semibold">
                       <Shield className="size-5 text-primary" />
-                      Link Quality
+                      Partner Quality
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
-                      Distribution by domain rating
+                      Network partners by domain rating
                     </p>
                     <div className="space-y-4">
-                      {LINK_QUALITY.map((item, i) => (
+                      {PARTNER_QUALITY.map((item, i) => (
                         <div key={item.type} className="space-y-1.5">
                           <div className="flex items-center justify-between">
                             <span className="text-sm">{item.type}</span>
@@ -517,7 +511,7 @@ function BentoSection() {
                 </Card>
               </motion.div>
 
-              {/* Link Velocity Card */}
+              {/* Exchange Activity Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -529,15 +523,15 @@ function BentoSection() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-semibold">
                       <BarChart3 className="size-5 text-primary" />
-                      Link Velocity
+                      Exchange Activity
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
-                      Links gained vs lost weekly
+                      Weekly link placements
                     </p>
                     <ChartContainer config={{}} className="h-[150px] w-full">
-                      <BarChart data={LINK_VELOCITY_DATA} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
+                      <BarChart data={EXCHANGE_ACTIVITY_DATA} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
                         <Bar dataKey="gained" fill="#10b981" radius={[4, 4, 0, 0]} />
                         <Bar dataKey="lost" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                         <ChartTooltip content={<ChartTooltipContent />} />
@@ -546,18 +540,18 @@ function BentoSection() {
                     <div className="mt-3 flex items-center justify-center gap-6 text-sm">
                       <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full" style={{ backgroundColor: '#10b981' }} />
-                        <span>Gained</span>
+                        <span>Placed</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
-                        <span>Lost</span>
+                        <span>Received</span>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {/* Recent Link Activity */}
+              {/* Recent Network Activity */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -569,17 +563,17 @@ function BentoSection() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl font-semibold">
                       <Eye className="size-5 text-primary" />
-                      Recent Activity
+                      Network Feed
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <p className="text-sm text-muted-foreground">
-                      Latest link changes
+                      Latest partner activity
                     </p>
                     {[
-                      { text: 'New link from techcrunch.com (DR 92)', type: 'new', time: '2 hours ago' },
-                      { text: 'Lost link from medium.com (DR 74)', type: 'lost', time: '5 hours ago' },
-                      { text: 'New link from forbes.com (DR 95)', type: 'new', time: '1 day ago' },
+                      { text: 'Link placed on techcrunch.com (DR 92)', type: 'new', time: '2 hours ago' },
+                      { text: 'New partner: marketingprofs.com (DR 74)', type: 'new', time: '5 hours ago' },
+                      { text: 'Request accepted by hubspot.com (DR 93)', type: 'new', time: '1 day ago' },
                     ].map((activity, i) => (
                       <motion.div
                         key={i}
@@ -589,11 +583,7 @@ function BentoSection() {
                         transition={{ delay: 0.6 + i * 0.1, duration: 0.3 }}
                         className="flex items-start gap-3 rounded-lg border p-3"
                       >
-                        {activity.type === 'new' ? (
-                          <CheckCircle2 className="mt-0.5 size-4 text-green-500" />
-                        ) : (
-                          <XCircle className="mt-0.5 size-4 text-red-500" />
-                        )}
+                        <CheckCircle2 className="mt-0.5 size-4 text-green-500" />
                         <div className="flex-1">
                           <p className="text-sm">{activity.text}</p>
                           <p className="text-xs text-muted-foreground">{activity.time}</p>
@@ -619,10 +609,10 @@ function FeatureListSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="mb-6 text-3xl font-semibold md:text-5xl">
-              Everything you need for link building success
+              How our backlink network works
             </h2>
             <p className="mb-8 text-muted-foreground">
-              From monitoring to outreach, get all the tools you need to build a powerful backlink profile that drives rankings.
+              Join a community of quality websites. Request placements, exchange links, and grow your authority without the outreach headaches.
             </p>
             <ul className="space-y-4">
               {FEATURES.map((feature, index) => (
@@ -679,12 +669,12 @@ function TestimonialSection() {
         <BlurFade inView className="mx-auto max-w-4xl text-center">
           <Quote className="mx-auto mb-6 size-10 text-primary/30" />
           <blockquote className="text-2xl font-medium leading-relaxed md:text-3xl">
-            "We discovered we'd lost 400+ backlinks over 6 months without knowing. SearchFIT helped us recover 
-            <span className="text-primary"> 60% of them</span> and our rankings bounced back within weeks."
+            "We went from spending 40 hours/month on cold outreach to building 
+            <span className="text-primary"> 50+ quality links</span> in the same time. The network pays for itself within the first month."
           </blockquote>
           <div className="mt-8">
-            <p className="font-semibold">David Park</p>
-            <p className="text-sm text-muted-foreground">Head of SEO, ScaleUp Agency</p>
+            <p className="font-semibold">Sarah Chen</p>
+            <p className="text-sm text-muted-foreground">SEO Director, GrowthLab Agency</p>
           </div>
         </BlurFade>
       </div>
@@ -700,12 +690,12 @@ function BottomCTA() {
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <BlurFade inView>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              Start building a stronger link profile
+              Join the network. Build links faster.
             </h2>
           </BlurFade>
           <BlurFade inView delay={0.2}>
             <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-              Join thousands of SEO professionals using SearchFIT to monitor, analyze, and grow their backlink profiles.
+              Join our growing network of vetted website owners ready to exchange quality backlinks. No more cold outreach.
             </p>
           </BlurFade>
           <BlurFade inView delay={0.4}>
