@@ -1104,13 +1104,13 @@ function AgenticWorkflowSection() {
                       className="absolute left-1/2 top-1/2 flex flex-col items-center gap-1"
                       style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
                     >
-                      <div className="flex size-9 animate-[spin_90s_linear_infinite_reverse] items-center justify-center rounded-lg border bg-background">
+                      <div className="flex size-9 items-center justify-center rounded-lg border bg-background">
                         <Image
                           src={item.icon}
                           alt={item.name}
                           width={18}
                           height={18}
-                          className={cn("size-[18px]", item.invert && "dark:invert")}
+                          className={cn("size-[18px] animate-[spin_90s_linear_infinite_reverse]", item.invert && "dark:invert")}
                         />
                       </div>
                     </div>
@@ -1154,13 +1154,13 @@ function AgenticWorkflowSection() {
                       className="absolute left-1/2 top-1/2 flex flex-col items-center"
                       style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
                     >
-                      <div className="flex size-10 animate-[spin_40s_linear_infinite] items-center justify-center rounded-xl border bg-background">
+                      <div className="flex size-10 items-center justify-center rounded-xl border bg-background">
                         <Image
                           src={item.icon}
                           alt={item.name}
                           width={22}
                           height={22}
-                          className={cn("size-[22px]", item.invert && "dark:invert")}
+                          className={cn("size-[22px] animate-[spin_40s_linear_infinite]", item.invert && "dark:invert")}
                         />
                       </div>
                     </div>
