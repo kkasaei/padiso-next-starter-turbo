@@ -46,83 +46,82 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@workspace/ui
 import { Separator } from '@workspace/ui/components/separator';
 import { cn } from '@workspace/ui/lib/utils';
 
-// Social platform icons
+// Social platform icons - focused on AI training data sources
 const SOCIAL_PLATFORMS = [
-  { name: 'Reddit', src: '/icons/rsshub-color.svg' },
-  { name: 'Twitter/X', src: '/icons/github.svg' },
-  { name: 'LinkedIn', src: '/icons/meta.svg' },
-  { name: 'YouTube', src: '/icons/bilibili-color.svg' },
-  { name: 'Hacker News', src: '/icons/coze.svg' },
-  { name: 'Product Hunt', src: '/icons/craft.svg' },
+  { name: 'Reddit', src: '/icons/reddit.svg', primary: true },
+  { name: 'Twitter/X', src: '/icons/twitter.svg' },
+  { name: 'Hacker News', src: '/icons/hackernews.svg' },
+  { name: 'Quora', src: '/icons/quora.svg' },
+  { name: 'Product Hunt', src: '/icons/producthunt.svg' },
 ];
 
 // Mentions trend data
 const MENTIONS_DATA = [
-  { day: 'Mon', mentions: 45, sentiment: 72 },
-  { day: 'Tue', mentions: 52, sentiment: 78 },
-  { day: 'Wed', mentions: 38, sentiment: 65 },
-  { day: 'Thu', mentions: 67, sentiment: 82 },
-  { day: 'Fri', mentions: 89, sentiment: 85 },
-  { day: 'Sat', mentions: 72, sentiment: 79 },
-  { day: 'Sun', mentions: 58, sentiment: 76 },
+  { day: 'Mon', mentions: 12, sentiment: 72 },
+  { day: 'Tue', mentions: 18, sentiment: 78 },
+  { day: 'Wed', mentions: 9, sentiment: 65 },
+  { day: 'Thu', mentions: 24, sentiment: 82 },
+  { day: 'Fri', mentions: 31, sentiment: 85 },
+  { day: 'Sat', mentions: 19, sentiment: 79 },
+  { day: 'Sun', mentions: 15, sentiment: 76 },
 ];
 
-// Platform distribution data
+// Platform distribution data - Reddit dominant for AI visibility
 const PLATFORM_DATA = [
-  { name: 'Reddit', mentions: 234 },
-  { name: 'Twitter', mentions: 189 },
-  { name: 'LinkedIn', mentions: 145 },
-  { name: 'YouTube', mentions: 98 },
+  { name: 'Reddit', mentions: 78, color: '#ff4500' },
+  { name: 'Twitter/X', mentions: 24, color: '#1da1f2' },
+  { name: 'Hacker News', mentions: 15, color: '#ff6600' },
+  { name: 'Quora', mentions: 11, color: '#8b5cf6' },
 ];
 
 // Stats data
 const STATS = [
-  { value: 50, suffix: '+', description: 'Platforms Monitored' },
-  { value: 1, suffix: 'M+', description: 'Daily Mentions Tracked' },
-  { value: 95, suffix: '%', description: 'Sentiment Accuracy' },
+  { value: 5, suffix: '', description: 'Key Platforms' },
+  { value: 500, suffix: '+', description: 'Subreddits Tracked' },
+  { value: 92, suffix: '%', description: 'Sentiment Accuracy' },
   { value: 5, suffix: 'min', description: 'Alert Response Time' },
 ];
 
-// Problem statements
+// Problem statements - Reddit focus for AI visibility
 const PROBLEMS = [
   {
     icon: <ClockIcon className="size-5 shrink-0" />,
-    title: 'You\'re Missing Conversations',
-    description: 'People are talking about your brand on Reddit, Twitter, and forums right now. Without monitoring, you\'re missing opportunities to engage and convert.'
+    title: 'Reddit Powers AI Answers',
+    description: 'ChatGPT, Perplexity, and other AI models are trained on Reddit data. When someone asks an AI about your niche, Reddit discussions shape the answer.'
   },
   {
     icon: <PuzzleIcon className="size-5 shrink-0" />,
-    title: 'Competitors Move Faster',
-    description: 'When someone asks for recommendations in your niche, competitors respond first. By the time you see it, the opportunity is gone.'
+    title: 'You\'re Invisible to AI',
+    description: 'If your brand isn\'t being discussed positively on Reddit and forums, AI models won\'t recommend you. Your competitors who engage there are winning AI visibility.'
   },
   {
     icon: <TrendingDown className="size-5 shrink-0" />,
-    title: 'Reputation Issues Spread Fast',
-    description: 'Negative mentions can go viral before you even know they exist. Early detection is the difference between a small issue and a PR crisis.'
+    title: 'Negative Mentions Train AI',
+    description: 'Bad Reddit threads about your brand become permanent AI training data. One viral complaint can shape how AI describes you for years.'
   }
 ];
 
 // Mention metrics
 const MENTION_METRICS = [
-  { label: 'Total Mentions', value: '2,847', change: '+23%', positive: true },
-  { label: 'Positive Sentiment', value: '78%', change: '+5%', positive: true },
-  { label: 'Engagement Rate', value: '12.4%', change: '+2.1%', positive: true },
-  { label: 'Share of Voice', value: '34%', change: '+8%', positive: true },
+  { label: 'Total Mentions', value: '128', change: '+18%', positive: true },
+  { label: 'Positive Sentiment', value: '72%', change: '+4%', positive: true },
+  { label: 'Engagement Rate', value: '8.2%', change: '+1.5%', positive: true },
+  { label: 'Share of Voice', value: '12%', change: '+3%', positive: true },
 ];
 
 // Sentiment breakdown
 const SENTIMENT_DATA = [
-  { type: 'Positive', percentage: 62, color: 'hsl(var(--chart-1))' },
-  { type: 'Neutral', percentage: 28, color: 'hsl(var(--chart-2))' },
-  { type: 'Negative', percentage: 10, color: 'hsl(var(--chart-4))' },
+  { type: 'Positive', percentage: 62, color: '#10b981' },
+  { type: 'Neutral', percentage: 28, color: '#f59e0b' },
+  { type: 'Negative', percentage: 10, color: '#ef4444' },
 ];
 
 // Features
 const FEATURES = [
   {
     icon: Radio,
-    title: 'Real-time Monitoring',
-    description: 'Track brand mentions across 50+ platforms including Reddit, Twitter, LinkedIn, and niche forums.',
+    title: 'Reddit-First Monitoring',
+    description: 'Deep Reddit coverage across 500+ subreddits. Track every mention that could influence how AI models see your brand.',
   },
   {
     icon: Smile,
@@ -190,7 +189,7 @@ function HeroSection() {
                 <Radio className="size-4 text-primary" />
                 <span>Social Listening</span>
                 <Separator orientation="vertical" className="mx-1 h-4" />
-                <span className="text-muted-foreground">50+ platforms</span>
+                <span className="text-muted-foreground">Reddit-first for AI visibility</span>
                 <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
               </Badge>
             </Link>
@@ -204,10 +203,10 @@ function HeroSection() {
             className="text-center"
           >
             <h1 className="text-balance text-center text-[32px] font-bold leading-[42px] tracking-[-0.6px] sm:text-[44px] sm:leading-[54px] md:text-[56px] md:leading-[66px] lg:text-[68px] lg:leading-[78px]">
-              Never miss a
+              Reddit shapes how
               <br />
               <span className="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                conversation about your brand
+                AI talks about your brand
               </span>
             </h1>
           </motion.div>
@@ -219,8 +218,8 @@ function HeroSection() {
             transition={{ delay: 0.4, duration: 0.4 }}
             className="max-w-2xl text-balance text-center text-lg text-muted-foreground md:text-xl"
           >
-            Monitor brand mentions across <strong className="font-semibold text-foreground">Reddit, Twitter, LinkedIn, and 50+ platforms</strong>. 
-            Get instant alerts and engage at the right moment.
+            AI models like ChatGPT and Perplexity are trained on <strong className="font-semibold text-foreground">Reddit discussions</strong>. 
+            Monitor what people say about you and shape your AI visibility.
           </motion.p>
 
           {/* CTAs */}
@@ -252,7 +251,7 @@ function HeroSection() {
             className="mt-8 flex flex-col items-center gap-4"
           >
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Monitor conversations across
+              Key platforms that train AI models
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
               {SOCIAL_PLATFORMS.map((platform, index) => (
@@ -321,7 +320,7 @@ function ProductShowcase() {
         >
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
             <Image
-              src="/assets/hero/screen1-light.png"
+              src="/assets/hero/screen5-light.png"
               alt="Social Listening Dashboard"
               width={1328}
               height={727}
@@ -329,7 +328,7 @@ function ProductShowcase() {
               priority
             />
             <Image
-              src="/assets/hero/screen1-dark.png"
+              src="/assets/hero/screen5-dark.png"
               alt="Social Listening Dashboard"
               width={1328}
               height={727}
@@ -351,7 +350,7 @@ function ProblemSection() {
     <GridSection>
       <div className="px-4 py-20 text-center">
         <h2 className="text-3xl font-semibold md:text-5xl">
-          <TextGenerateWithSelectBoxEffect words="People Are Talking About You Right Now. Are You Listening?" />
+          <TextGenerateWithSelectBoxEffect words="Reddit Discussions Become AI Training Data. What Are They Learning?" />
         </h2>
       </div>
       <div className="grid divide-y border-t border-dashed md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -458,26 +457,28 @@ function BentoSection() {
                       <AreaChart data={MENTIONS_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                         <defs>
                           <linearGradient id="mentions" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.5} />
+                            <stop offset="50%" stopColor="#60a5fa" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#93c5fd" stopOpacity={0} />
                           </linearGradient>
                           <linearGradient id="sentiment" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#f97316" stopOpacity={0.5} />
+                            <stop offset="50%" stopColor="#fb923c" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#fdba74" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="mentions" stroke="hsl(var(--primary))" fill="url(#mentions)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="sentiment" stroke="hsl(var(--chart-1))" fill="url(#sentiment)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="mentions" stroke="#3b82f6" fill="url(#mentions)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="sentiment" stroke="#f97316" fill="url(#sentiment)" strokeWidth={2.5} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </AreaChart>
                     </ChartContainer>
                     <div className="mt-3 flex items-center justify-center gap-6 text-sm">
                       <div className="flex items-center gap-2">
-                        <div className="size-3 rounded-full bg-primary" />
+                        <div className="size-3 rounded-full" style={{ backgroundColor: '#3b82f6' }} />
                         <span>Mentions</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="size-3 rounded-full bg-chart-1" />
+                        <div className="size-3 rounded-full" style={{ backgroundColor: '#f97316' }} />
                         <span>Sentiment Score</span>
                       </div>
                     </div>
@@ -562,10 +563,11 @@ function BentoSection() {
                           <div className="h-2 w-full rounded-full bg-muted">
                             <motion.div
                               initial={{ width: 0 }}
-                              whileInView={{ width: `${(platform.mentions / 234) * 100}%` }}
+                              whileInView={{ width: `${(platform.mentions / 78) * 100}%` }}
                               viewport={{ once: true }}
                               transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
-                              className="h-2 rounded-full bg-primary"
+                              className="h-2 rounded-full"
+                              style={{ backgroundColor: platform.color }}
                             />
                           </div>
                         </div>
@@ -668,14 +670,14 @@ function FeatureListSection() {
           >
             <div className="overflow-hidden rounded-xl border bg-card shadow-xl">
               <Image
-                src="/assets/hero/screen4-light.png"
+                src="/assets/hero/screen5-light.png"
                 alt="Social Listening Features"
                 width={600}
                 height={400}
                 className="block w-full dark:hidden"
               />
               <Image
-                src="/assets/hero/screen4-dark.png"
+                src="/assets/hero/screen5-dark.png"
                 alt="Social Listening Features"
                 width={600}
                 height={400}
@@ -698,12 +700,12 @@ function TestimonialSection() {
         <BlurFade inView className="mx-auto max-w-4xl text-center">
           <Quote className="mx-auto mb-6 size-10 text-primary/30" />
           <blockquote className="text-2xl font-medium leading-relaxed md:text-3xl">
-            "We caught a viral Reddit thread about our product 
-            <span className="text-primary"> within 5 minutes</span>. Our response turned a potential complaint into our most upvoted testimonial ever."
+            "We noticed ChatGPT was recommending our competitor instead of us. Turns out they had 
+            <span className="text-primary"> 10x more positive Reddit mentions</span>. Now we monitor and engage proactively."
           </blockquote>
           <div className="mt-8">
-            <p className="font-semibold">Alex Rivera</p>
-            <p className="text-sm text-muted-foreground">Community Manager, SaaS Startup</p>
+            <p className="font-semibold">Marcus Chen</p>
+            <p className="text-sm text-muted-foreground">Head of Growth, B2B SaaS</p>
           </div>
         </BlurFade>
       </div>
@@ -719,12 +721,12 @@ function BottomCTA() {
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           <BlurFade inView>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              Start listening to what people say about you
+              Control your narrative before AI does
             </h2>
           </BlurFade>
           <BlurFade inView delay={0.2}>
             <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-              Join brands using SearchFIT to monitor conversations and engage with their audience across 50+ platforms.
+              Monitor Reddit discussions that shape how AI models see your brand. Engage early, build positive sentiment.
             </p>
           </BlurFade>
           <BlurFade inView delay={0.4}>
