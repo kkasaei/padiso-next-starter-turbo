@@ -56,6 +56,53 @@ function HeroPill(): React.JSX.Element {
   );
 }
 
+function AnimatedLogo(): React.JSX.Element {
+  const aiLogos = [
+    { name: 'Google', src: '/icons/google.svg' },
+    { name: 'OpenAI', src: '/icons/openai.svg' },
+    { name: 'Perplexity', src: '/icons/perplexity.svg' },
+    { name: 'Claude', src: '/icons/claude.svg' },
+    { name: 'Gemini', src: '/icons/gemini.svg' },
+    { name: 'Grok', src: '/icons/xai.svg' },
+    { name: 'DeepSeek', src: '/icons/deepseek.svg' },
+  ];
+
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % aiLogos.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [aiLogos.length]);
+
+  return (
+    <span className="relative inline-flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-16 lg:w-16 xl:h-20 xl:w-20">
+      {aiLogos.map((logo, index) => (
+        <motion.span
+          key={logo.name}
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0, scale: 0.8, y: 10 }}
+          animate={{ 
+            opacity: index === currentIndex ? 1 : 0,
+            scale: index === currentIndex ? 1 : 0.8,
+            y: index === currentIndex ? 0 : -10
+          }}
+          transition={{ duration: 0.4 }}
+        >
+          <Image
+            src={logo.src}
+            alt={logo.name}
+            width={80}
+            height={80}
+            className="h-full w-full brightness-0 dark:invert"
+          />
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
 function HeroTitle(): React.JSX.Element {
   return (
     <motion.div
@@ -65,7 +112,7 @@ function HeroTitle(): React.JSX.Element {
       className="w-full overflow-x-hidden px-5 sm:px-4 md:px-2"
     >
       <h1 className="mt-8 w-full overflow-wrap-break-word text-balance text-center text-[30px] font-bold leading-[40px] tracking-[-0.6px] [font-kerning:none] sm:mt-8 sm:text-[40px] sm:leading-[50px] sm:tracking-[-0.8px] md:mt-6 md:text-[52px] md:leading-[62px] md:tracking-[-1px] lg:text-[64px] lg:leading-[76px] xl:text-[76px] xl:leading-[90px] xl:tracking-[-1.5px]">
-        Your competitors are showing up in ChatGPT. Are you?
+        Your competitors are showing up in <AnimatedLogo />. Are you?
       </h1>
     </motion.div>
   );
@@ -79,26 +126,59 @@ function HeroDescription(): React.JSX.Element {
       transition={{ delay: 0.4, duration: 0.4 }}
       className="mx-auto mt-6 w-full max-w-[900px] overflow-x-hidden px-6 text-balance text-center text-[15px] leading-[26px] text-muted-foreground sm:mt-6 sm:text-base sm:leading-[26px] md:mt-6 md:text-lg md:leading-[28px] lg:text-xl lg:leading-[30px] xl:text-xl"
     >
-      AI search engines are answering <strong className="font-semibold">buying questions right now and recommending your competitors</strong>. Most brands have <strong className="font-semibold">0% visibility</strong>. <strong className="font-semibold">Check yours in 90 seconds.</strong>
+      AI search engines are answering <strong className="font-semibold text-blue-600 dark:text-blue-400">buying questions right now and recommending your competitors</strong>. Most brands have <strong className="font-semibold text-blue-600 dark:text-blue-400">0% visibility</strong>. <strong className="font-semibold text-blue-600 dark:text-blue-400">Check yours in 90 seconds.</strong>
     </motion.p>
+  );
+}
+
+function HeroIcon({ icon }: { icon: { name: string; src: string; color: string } }): React.JSX.Element {
+  const [isHovered, setIsHovered] = React.useState(false);
+  
+  return (
+    <motion.div
+      className="relative flex cursor-pointer items-center justify-center"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      animate={{ scale: isHovered ? 1.1 : 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Black/grayscale version (default) */}
+      <Image
+        src={icon.src}
+        alt={icon.name}
+        width={160}
+        height={48}
+        className="h-9 w-auto max-w-[85px] brightness-0 transition-opacity duration-200 dark:invert sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
+        style={{ opacity: isHovered ? 0 : 1 }}
+      />
+      {/* Colored version (on hover) */}
+      <Image
+        src={icon.src}
+        alt={icon.name}
+        width={160}
+        height={48}
+        className="absolute h-9 w-auto max-w-[85px] transition-opacity duration-200 sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
+        style={{ opacity: isHovered ? 1 : 0 }}
+      />
+    </motion.div>
   );
 }
 
 function HeroAIIcons(): React.JSX.Element {
   const icons = [
-    { name: 'Google', src: '/icons/google.svg' },
-    { name: 'Bing', src: '/icons/bing.svg' },
-    { name: 'OpenAI', src: '/icons/openai.svg' },
-    { name: 'Perplexity', src: '/icons/perplexity.svg' },
-    { name: 'Gemini', src: '/icons/gemini.svg' },
-    { name: 'Claude', src: '/icons/claude.svg' },
-    { name: 'Grok', src: '/icons/grok.svg' },
-    { name: 'DeepSeek', src: '/icons/deepseek.svg' },
-    { name: 'Shopify', src: '/icons/shopify_glyph_black.svg' },
-    { name: 'Redit', src: '/icons/reddit.svg' },
-    { name: 'TikTok', src: '/icons/tiktok.svg' },
-    { name: 'Meta', src: '/icons/meta.svg' },
-    { name: 'Amazon', src: '/icons/amazon.svg' }
+    { name: 'Google', src: '/icons/google.svg', color: '#4285f4' },
+    { name: 'Bing', src: '/icons/bing.svg', color: '#00809d' },
+    { name: 'OpenAI', src: '/icons/openai.svg', color: '#10a37f' },
+    { name: 'Perplexity', src: '/icons/perplexity.svg', color: '#20808d' },
+    { name: 'Gemini', src: '/icons/gemini.svg', color: '#4285f4' },
+    { name: 'Claude', src: '/icons/claude.svg', color: '#d97706' },
+    { name: 'Grok', src: '/icons/grok.svg', color: '#1d9bf0' },
+    { name: 'DeepSeek', src: '/icons/deepseek.svg', color: '#0066ff' },
+    { name: 'Shopify', src: '/icons/shopify_glyph_black.svg', color: '#95bf47' },
+    { name: 'Reddit', src: '/icons/reddit.svg', color: '#ff4500' },
+    { name: 'TikTok', src: '/icons/tiktok.svg', color: '#00f2ea' },
+    { name: 'Meta', src: '/icons/meta.svg', color: '#0082fb' },
+    { name: 'Amazon', src: '/icons/amazon.svg', color: '#ff9900' }
   ];
 
   return (
@@ -108,24 +188,13 @@ function HeroAIIcons(): React.JSX.Element {
       transition={{ delay: 0.3, duration: 0.4 }}
       className="mx-auto flex w-full flex-col items-center justify-center gap-6 overflow-x-hidden px-5 sm:gap-6 sm:px-6 md:gap-4 lg:gap-4"
     >
-      <span className="w-full max-w-[95%] overflow-x-hidden text-balance text-center text-[11px] font-medium uppercase leading-relaxed tracking-wide text-muted-foreground sm:max-w-[600px] sm:text-xs sm:tracking-wider md:text-xs lg:text-sm">
-        <strong>SearchFit</strong> helps you <strong>be more visible</strong> where search is happening and{' '}
-        <strong>generate content</strong> that ranks in AI search results—<strong>at scale!</strong>
+      <span className="w-full max-w-[95%] overflow-x-hidden text-balance text-center text-[11px] font-medium uppercase leading-relaxed tracking-wide text-muted-foreground sm:max-w-[900px] sm:text-xs sm:tracking-wider md:text-xs lg:text-sm">
+        <strong className="text-blue-600 dark:text-blue-400">SearchFit</strong> helps <strong className="text-blue-600 dark:text-blue-400">Agencies, B2B SaaS, and E-Commerce</strong> Brands <strong className="text-blue-600 dark:text-blue-400">be more visible</strong> where search is happening and{' '}
+        <strong className="text-blue-600 dark:text-blue-400">generate content</strong> that ranks in AI search results—<strong className="text-blue-600 dark:text-blue-400">at scale!</strong>
       </span>
       <div className="flex w-full flex-wrap items-center justify-center gap-5 overflow-x-hidden py-2 sm:gap-6 md:gap-6 lg:gap-8">
         {icons.map((icon) => (
-          <div
-            key={icon.name}
-            className="flex items-center justify-center transition-opacity hover:opacity-80"
-          >
-            <Image
-              src={icon.src}
-              alt={icon.name}
-              width={160}
-              height={48}
-              className="h-9 w-auto max-w-[85px] brightness-0 dark:brightness-0 dark:invert sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
-            />
-          </div>
+          <HeroIcon key={icon.name} icon={icon} />
         ))}
       </div>
     </motion.div>

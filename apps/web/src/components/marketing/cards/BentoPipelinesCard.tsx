@@ -2,52 +2,63 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle
 } from '@workspace/ui/components/card';
 import { cn } from '@workspace/common/lib';
 
-const DATA = [
-  {
-    id: 'excellent',
-    label: 'Excellent (90-100)',
-    count: 124,
-    value: 32,
-    color: '#10b981'
+const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// Content items per month (month index -> day -> content)
+const CONTENT_BY_MONTH: Record<number, Record<number, { type: string; color: string; generating?: boolean }>> = {
+  0: { // January
+    8: { type: 'Tutorial', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300' },
+    15: { type: 'Guide', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    22: { type: 'Article', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
   },
-  {
-    id: 'good',
-    label: 'Good (75-89)',
-    count: 187,
-    value: 48,
-    color: '#22c55e'
+  1: { // February
+    5: { type: 'Tutorial', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300' },
+    12: { type: 'Guide', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    18: { type: 'Article', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+    24: { type: 'Writing', color: '', generating: true },
   },
-  {
-    id: 'needs-improvement',
-    label: 'Needs Improvement (50-74)',
-    count: 65,
-    value: 17,
-    color: '#3b82f6'
+  2: { // March
+    3: { type: 'Guide', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    10: { type: 'Tutorial', color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300' },
+    20: { type: 'Writing', color: '', generating: true },
+    27: { type: 'Article', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
   },
-  {
-    id: 'poor',
-    label: 'Poor (25-49)',
-    count: 12,
-    value: 3,
-    color: '#f59e0b'
-  },
-  {
-    id: 'critical',
-    label: 'Critical (0-24)',
-    count: 0,
-    value: 0,
-    color: '#ef4444'
+};
+
+function getCalendarDays(year: number, month: number): (number | null)[] {
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  // Adjust for Monday start (0 = Mon, 6 = Sun)
+  const startPadding = firstDay === 0 ? 6 : firstDay - 1;
+  
+  const days: (number | null)[] = [];
+  
+  // Add padding for days before the 1st
+  for (let i = 0; i < startPadding; i++) {
+    days.push(null);
   }
-];
+  
+  // Add days of the month
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
+  
+  // Pad to complete the grid (5 rows = 35 cells)
+  while (days.length < 35) {
+    days.push(null);
+  }
+  
+  return days;
+}
 
 const MotionCard = motion.create(Card);
 
@@ -55,49 +66,113 @@ export function BentoPipelinesCard({
   className,
   ...other
 }: React.ComponentPropsWithoutRef<typeof MotionCard>): React.JSX.Element {
+  const [monthOffset, setMonthOffset] = React.useState(0);
+  
+  const baseDate = new Date(2026, 1); // February 2026
+  const currentDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + monthOffset);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  
+  const calendarDays = getCalendarDays(year, month);
+  const contentItems = CONTENT_BY_MONTH[month] || {};
+
   return (
     <MotionCard
       className={cn(
-        'relative h-[380px] max-h-[380px] overflow-hidden',
+        'relative flex h-[300px] max-h-[300px] flex-col overflow-hidden',
         className
       )}
       {...other}
     >
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">Content Optimization</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          Real-time SEO scoring and suggestions for keywords, meta descriptions, readability
-        </p>
-        <div className="space-y-3 pt-2">
-          {DATA.map((stage, index) => (
-            <motion.div
-              key={stage.id}
-              className="flex items-center gap-3"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2">
+        <h3 className="text-base font-semibold">Content Calendar</h3>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-md border">
+            <button 
+              onClick={() => setMonthOffset(prev => prev - 1)}
+              className="flex h-7 w-7 items-center justify-center rounded-l-md hover:bg-muted"
             >
-              <span className="w-[140px] shrink-0 text-xs text-muted-foreground">
-                {stage.label}
-              </span>
-              <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ backgroundColor: stage.color }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${stage.value}%` }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                />
-              </div>
-              <span className="w-8 text-right text-sm font-medium">
-                {stage.count}
-              </span>
-            </motion.div>
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="min-w-[90px] border-x px-2 text-center text-xs font-medium">
+              {MONTHS[month]} {year}
+            </span>
+            <button 
+              onClick={() => setMonthOffset(prev => prev + 1)}
+              className="flex h-7 w-7 items-center justify-center rounded-r-md hover:bg-muted"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          {monthOffset !== 0 && (
+            <button 
+              onClick={() => setMonthOffset(0)}
+              className="rounded-md border px-2 py-1 text-[10px] font-medium hover:bg-muted"
+            >
+              Today
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Calendar */}
+      <div className="flex flex-1 flex-col p-2">
+        {/* Days header */}
+        <div className="mb-1 grid grid-cols-7">
+          {DAYS.map((day, i) => (
+            <div key={i} className="text-center text-[10px] font-medium text-muted-foreground">
+              {day}
+            </div>
           ))}
         </div>
-      </CardContent>
+        
+        {/* Calendar grid */}
+        <motion.div 
+          key={`${year}-${month}`}
+          className="grid flex-1 grid-cols-7 grid-rows-5 gap-0.5"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {calendarDays.map((day, index) => {
+            const content = day ? contentItems[day] : null;
+            return (
+              <div
+                key={index}
+                className={cn(
+                  'flex flex-col rounded border border-border/30 p-1',
+                  day === null && 'border-transparent bg-muted/20',
+                  content && 'bg-muted/50'
+                )}
+              >
+                {day !== null && (
+                  <>
+                    <span className="text-[10px] text-muted-foreground">{day}</span>
+                    {content && (
+                      <div className="mt-auto">
+                        {content.generating ? (
+                          <motion.div 
+                            className="flex items-center gap-0.5 text-purple-600 dark:text-purple-400"
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <Sparkles className="h-2.5 w-2.5" />
+                          </motion.div>
+                        ) : (
+                          <div className={cn('rounded px-1 py-0.5 text-[8px] font-medium leading-none', content.color)}>
+                            {content.type}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </motion.div>
+      </div>
     </MotionCard>
   );
 }

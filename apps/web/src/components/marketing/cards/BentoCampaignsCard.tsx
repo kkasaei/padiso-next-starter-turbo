@@ -1,15 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import {
-  BellIcon,
-  CalendarIcon,
-  FileTextIcon,
-  PenToolIcon,
-  SearchIcon,
-  TrendingUpIcon
-} from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 import {
   Card,
@@ -17,63 +10,17 @@ import {
   CardHeader,
   CardTitle
 } from '@workspace/ui/components/card';
-import Autoplay from 'embla-carousel-autoplay';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem
-} from '@workspace/ui/components/carousel';
 import { cn } from '@workspace/common/lib';
 
-const DATA = [
-  {
-    type: 'automation',
-    icon: FileTextIcon,
-    title: 'Meta Description Generation',
-    timing: 'Auto-generated when content is published'
-  },
-  {
-    type: 'automation',
-    icon: BellIcon,
-    title: 'Ranking Drop Alert',
-    timing: 'Alert when keyword drops 5+ positions'
-  },
-  {
-    type: 'automation',
-    icon: CalendarIcon,
-    title: 'Content Calendar Sync',
-    timing: 'Scheduled content optimization reviews'
-  },
-  {
-    type: 'automation',
-    icon: SearchIcon,
-    title: 'New Keyword Opportunities',
-    timing: 'Weekly keyword opportunity reports'
-  },
-  {
-    type: 'automation',
-    icon: PenToolIcon,
-    title: 'Content Optimization Suggestions',
-    timing: 'Real-time SEO scoring updates'
-  },
-  {
-    type: 'automation',
-    icon: TrendingUpIcon,
-    title: 'Ranking Improvement Notifications',
-    timing: 'Daily ranking improvement alerts'
-  },
-  {
-    type: 'automation',
-    icon: FileTextIcon,
-    title: 'Competitor Content Analysis',
-    timing: 'Monthly competitor content reports'
-  },
-  {
-    type: 'automation',
-    icon: CalendarIcon,
-    title: 'High-Priority Keyword Tracking',
-    timing: 'Daily tracking for top 50 keywords'
-  }
+const INTEGRATIONS = [
+  { name: 'Google', icon: '/icons/google.svg' },
+  { name: 'Slack', icon: '/icons/slack.svg' },
+  { name: 'Notion', icon: '/icons/notion.svg' },
+  { name: 'Zapier', icon: '/icons/zapier.svg' },
+  { name: 'WordPress', icon: '/icons/wordpress.svg' },
+  { name: 'Shopify', icon: '/icons/shopify.svg' },
+  { name: 'Linear', icon: '/icons/linear.svg' },
+  { name: 'n8n', icon: '/icons/n8n.svg' },
 ];
 
 const MotionCard = motion.create(Card);
@@ -91,52 +38,35 @@ export function BentoCampaignsCard({
       {...other}
     >
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Opportunities</CardTitle>
+        <CardTitle className="text-xl font-semibold">Integrations</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
-          Automatially explores new opportinities for content and actions to take.
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Connect with 40+ analytics, CMS, and marketing tools seamlessly.
         </p>
-        <Carousel
-          opts={{
-            align: 'start',
-            skipSnaps: true,
-            loop: true,
-            dragFree: true
-          }}
-          plugins={[
-            Autoplay({
-              delay: 2000
-            })
-          ]}
-          orientation="vertical"
-          className="pointer-events-none size-full select-none"
-        >
-          <CarouselContent className="pointer-events-none -mt-1 h-[232px] select-none sm:h-[146px]">
-            {DATA.map(({ title, timing, icon: Icon }, index) => (
-              <CarouselItem
-                key={index}
-                className="pointer-events-none basis-1/4 select-none pt-1 will-change-transform"
-              >
-                <Card className="m-1 p-0">
-                  <CardContent className="flex w-full flex-row items-center justify-start gap-4 p-6">
-                    <div className="rounded-full bg-primary p-2 text-primary-foreground">
-                      <Icon className="size-5 shrink-0" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium sm:text-sm">
-                        {title}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground sm:text-xs">
-                        {timing}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        <div className="grid grid-cols-4 gap-3">
+          {INTEGRATIONS.map((integration, index) => (
+            <motion.div
+              key={integration.name}
+              className="flex flex-col items-center gap-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg border bg-background shadow-sm">
+                <Image
+                  src={integration.icon}
+                  alt={integration.name}
+                  width={24}
+                  height={24}
+                  className="dark:invert"
+                />
+              </div>
+              <span className="text-[10px] text-muted-foreground">{integration.name}</span>
+            </motion.div>
+          ))}
+        </div>
+        <p className="text-center text-xs text-muted-foreground">+32 more integrations</p>
       </CardContent>
     </MotionCard>
   );

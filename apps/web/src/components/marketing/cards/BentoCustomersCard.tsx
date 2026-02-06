@@ -48,7 +48,7 @@ export function BentoCustomersCard({
   return (
     <MotionCard
       className={cn(
-        'relative h-[380px] max-h-[380px] overflow-hidden',
+        'relative h-[300px] max-h-[300px] overflow-hidden',
         className
       )}
       initial={{ opacity: 0, y: 20 }}

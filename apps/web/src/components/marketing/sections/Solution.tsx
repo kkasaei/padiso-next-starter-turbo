@@ -3,10 +3,14 @@ import { CircleCheckBigIcon } from 'lucide-react';
 
 import { AiAdvisorCard } from '@/components/marketing/cards/AiAdvisorCard';
 import { BentoAnalyticsCard } from '@/components/marketing/cards/BentoAnalyticsCard';
+import { BentoBacklinksCard } from '@/components/marketing/cards/BentoBacklinksCard';
 import { BentoCampaignsCard } from '@/components/marketing/cards/BentoCampaignsCard';
+import { BentoCompetitorsCard } from '@/components/marketing/cards/BentoCompetitorsCard';
 import { BentoCustomersCard } from '@/components/marketing/cards/BentoCustomersCard';
+import { BentoEcommerceCard } from '@/components/marketing/cards/BentoEcommerceCard';
 import { BentoMagicInboxCard } from '@/components/marketing/cards/BentoMagicInboxCard';
 import { BentoPipelinesCard } from '@/components/marketing/cards/BentoPipelinesCard';
+import { BentoTechnicalAuditCard } from '@/components/marketing/cards/BentoTechnicalAuditCard';
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 export function Solution(): React.JSX.Element {
@@ -25,32 +29,61 @@ export function Solution(): React.JSX.Element {
             </div>
             <div className="mx-auto xl:container xl:rounded-xl xl:bg-neutral-50 xl:p-6 dark:xl:bg-neutral-900">
               <div className="grid auto-rows-[minmax(200px,auto)] grid-cols-12 gap-6">
-                <BentoCustomersCard
-                  className="col-span-12 md:col-span-6 xl:col-span-4"
+                {/* Row 1: AI Tracking (full width) */}
+                <BentoAnalyticsCard
+                  className="col-span-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 />
+                {/* Row 2: Content (6) + Analytics (6) */}
                 <BentoPipelinesCard
-                  className="col-span-12 md:col-span-6 xl:col-span-8"
+                  className="col-span-12 md:col-span-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                />
+                <BentoCustomersCard
+                  className="col-span-12 md:col-span-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 />
-                <BentoAnalyticsCard
-                  className="col-span-12 md:col-span-6 xl:col-span-4"
+                {/* Row 3: Backlinks (6) + Technical Audit (6) */}
+                <BentoBacklinksCard
+                  className="col-span-12 md:col-span-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                />
+                <BentoTechnicalAuditCard
+                  className="col-span-12 md:col-span-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                />
+                {/* Row 4: Social Listening (6) + Integrations (6) */}
+                <BentoMagicInboxCard
+                  className="col-span-12 md:col-span-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
                 />
                 <BentoCampaignsCard
-                  className="col-span-12 md:col-span-6 xl:col-span-4"
+                  className="col-span-12 md:col-span-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                 />
-                <BentoMagicInboxCard
-                  className="col-span-12 md:col-span-6 xl:col-span-4"
+                {/* Row 5: Competitor Tracking (6) + E-Commerce (6) */}
+                <BentoCompetitorsCard
+                  className="col-span-12 md:col-span-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                />
+                <BentoEcommerceCard
+                  className="col-span-12 md:col-span-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
