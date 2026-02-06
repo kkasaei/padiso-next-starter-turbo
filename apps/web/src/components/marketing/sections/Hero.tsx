@@ -25,6 +25,7 @@ import {
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 import { AEODomainInput } from '@/components/marketing/sections/AeoDomainInput';
+import { HERO_ICONS, ANIMATED_TITLE_LOGOS, type AIPlatform } from '@/lib/ai-platforms';
 
 function HeroPill(): React.JSX.Element {
   return (
@@ -57,28 +58,18 @@ function HeroPill(): React.JSX.Element {
 }
 
 function AnimatedLogo(): React.JSX.Element {
-  const aiLogos = [
-    { name: 'Google', src: '/icons/google.svg' },
-    { name: 'OpenAI', src: '/icons/openai.svg' },
-    { name: 'Perplexity', src: '/icons/perplexity.svg' },
-    { name: 'Claude', src: '/icons/claude.svg' },
-    { name: 'Gemini', src: '/icons/gemini.svg' },
-    { name: 'Grok', src: '/icons/xai.svg' },
-    { name: 'DeepSeek', src: '/icons/deepseek.svg' },
-  ];
-
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % aiLogos.length);
+      setCurrentIndex((prev) => (prev + 1) % ANIMATED_TITLE_LOGOS.length);
     }, 2000);
     return () => clearInterval(interval);
-  }, [aiLogos.length]);
+  }, []);
 
   return (
     <span className="relative inline-flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-16 lg:w-16 xl:h-20 xl:w-20">
-      {aiLogos.map((logo, index) => (
+      {ANIMATED_TITLE_LOGOS.map((logo, index) => (
         <motion.span
           key={logo.name}
           className="absolute inset-0 flex items-center justify-center"
@@ -91,7 +82,7 @@ function AnimatedLogo(): React.JSX.Element {
           transition={{ duration: 0.4 }}
         >
           <Image
-            src={logo.src}
+            src={logo.icon}
             alt={logo.name}
             width={80}
             height={80}
@@ -131,7 +122,7 @@ function HeroDescription(): React.JSX.Element {
   );
 }
 
-function HeroIcon({ icon }: { icon: { name: string; src: string; color: string } }): React.JSX.Element {
+function HeroIcon({ icon }: { icon: AIPlatform }): React.JSX.Element {
   const [isHovered, setIsHovered] = React.useState(false);
   
   return (
@@ -144,7 +135,7 @@ function HeroIcon({ icon }: { icon: { name: string; src: string; color: string }
     >
       {/* Black/grayscale version (default) */}
       <Image
-        src={icon.src}
+        src={icon.icon}
         alt={icon.name}
         width={160}
         height={48}
@@ -153,7 +144,7 @@ function HeroIcon({ icon }: { icon: { name: string; src: string; color: string }
       />
       {/* Colored version (on hover) */}
       <Image
-        src={icon.src}
+        src={icon.icon}
         alt={icon.name}
         width={160}
         height={48}
@@ -165,21 +156,6 @@ function HeroIcon({ icon }: { icon: { name: string; src: string; color: string }
 }
 
 function HeroAIIcons(): React.JSX.Element {
-  const icons = [
-    { name: 'Google', src: '/icons/google.svg', color: '#4285f4' },
-    { name: 'Bing', src: '/icons/bing.svg', color: '#00809d' },
-    { name: 'OpenAI', src: '/icons/openai.svg', color: '#10a37f' },
-    { name: 'Perplexity', src: '/icons/perplexity.svg', color: '#20808d' },
-    { name: 'Gemini', src: '/icons/gemini.svg', color: '#4285f4' },
-    { name: 'Claude', src: '/icons/claude.svg', color: '#d97706' },
-    { name: 'Grok', src: '/icons/grok.svg', color: '#1d9bf0' },
-    { name: 'DeepSeek', src: '/icons/deepseek.svg', color: '#0066ff' },
-    { name: 'Shopify', src: '/icons/shopify_glyph_black.svg', color: '#95bf47' },
-    { name: 'Reddit', src: '/icons/reddit.svg', color: '#ff4500' },
-    { name: 'TikTok', src: '/icons/tiktok.svg', color: '#00f2ea' },
-    { name: 'Meta', src: '/icons/meta.svg', color: '#0082fb' },
-    { name: 'Amazon', src: '/icons/amazon.svg', color: '#ff9900' }
-  ];
 
   return (
     <motion.div
@@ -193,8 +169,8 @@ function HeroAIIcons(): React.JSX.Element {
         <strong className="text-blue-600 dark:text-blue-400">generate content</strong> that ranks in AI search results—<strong className="text-blue-600 dark:text-blue-400">at scale!</strong>
       </span>
       <div className="flex w-full flex-wrap items-center justify-center gap-5 overflow-x-hidden py-2 sm:gap-6 md:gap-6 lg:gap-8">
-        {icons.map((icon) => (
-          <HeroIcon key={icon.name} icon={icon} />
+        {HERO_ICONS.map((platform) => (
+          <HeroIcon key={platform.name} icon={platform} />
         ))}
       </div>
     </motion.div>
