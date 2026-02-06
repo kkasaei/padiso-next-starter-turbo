@@ -142,7 +142,10 @@ class GtagAnalyticsProvider implements AnalyticsProvider {
       );
     }
 
-    if (this.isInitialized) {
+    // If gtag was already loaded by the GoogleAnalytics component (via next/script),
+    // just mark as initialized — no need to inject a duplicate script
+    if (window.gtag) {
+      this.isInitialized = true;
       return Promise.resolve();
     }
 
