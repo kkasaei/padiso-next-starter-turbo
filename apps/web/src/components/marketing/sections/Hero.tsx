@@ -122,6 +122,9 @@ function HeroDescription(): React.JSX.Element {
   );
 }
 
+// Blue filter for hover state (brand blue)
+const BLUE_FILTER = 'brightness(0) saturate(100%) invert(37%) sepia(95%) saturate(1500%) hue-rotate(200deg) brightness(95%)';
+
 function HeroIcon({ icon }: { icon: AIPlatform }): React.JSX.Element {
   const [isHovered, setIsHovered] = React.useState(false);
   
@@ -133,23 +136,15 @@ function HeroIcon({ icon }: { icon: AIPlatform }): React.JSX.Element {
       animate={{ scale: isHovered ? 1.1 : 1 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Black/grayscale version (default) */}
       <Image
         src={icon.icon}
         alt={icon.name}
         width={160}
         height={48}
-        className="h-9 w-auto max-w-[85px] brightness-0 transition-opacity duration-200 dark:invert sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
-        style={{ opacity: isHovered ? 0 : 1 }}
-      />
-      {/* Colored version (on hover) */}
-      <Image
-        src={icon.icon}
-        alt={icon.name}
-        width={160}
-        height={48}
-        className="absolute h-9 w-auto max-w-[85px] transition-opacity duration-200 sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
-        style={{ opacity: isHovered ? 1 : 0 }}
+        className="h-9 w-auto max-w-[85px] transition-all duration-200 sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
+        style={{ 
+          filter: isHovered ? BLUE_FILTER : 'brightness(0) grayscale(100%)',
+        }}
       />
     </motion.div>
   );
@@ -431,7 +426,7 @@ export function Hero(): React.JSX.Element {
         <div className="mt-16 w-full overflow-x-hidden sm:mt-18 md:mt-16 lg:mt-20">
           <HeroAIIcons />
         </div>
-        <div className="mt-20 w-full overflow-x-hidden px-2 sm:mt-24 sm:px-4 md:mt-32 md:px-6 lg:mt-40 lg:px-4">
+        <div className="mt-10 w-full overflow-x-hidden px-2 sm:mt-12 sm:px-4 md:mt-14 md:px-6 lg:mt-16 lg:px-4">
           <HeroIllustration />
         </div>
       </div>
