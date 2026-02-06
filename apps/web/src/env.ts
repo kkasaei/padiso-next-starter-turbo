@@ -18,7 +18,14 @@ export const env = createEnv({
   },
   client: {
     NEXT_PUBLIC_CLIENT_URL: z.string().url(),
-    
+
+    // Google Analytics (optional; only used on production domain)
+    NEXT_PUBLIC_ANALYTICS_GA_MEASUREMENT_ID: z.string().optional(),
+    NEXT_PUBLIC_ANALYTICS_GA_DISABLE_PAGE_VIEWS_TRACKING: z
+      .string()
+      .optional()
+      .transform((v) => v === 'true' || v === '1'),
+
     // Cloudflare Turnstile Site Key (public, used in browser)
     NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM: z.string().min(1).optional(),
   },
@@ -33,5 +40,11 @@ export const env = createEnv({
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     TURNSILE_SECRET_KEY_CONTACT_FORM: process.env.TURNSILE_SECRET_KEY_CONTACT_FORM,
     NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM: process.env.NEXT_PUBLIC_TURNSILE_SITE_KEY_CONTACT_FORM,
+
+    // Google Analytics
+    NEXT_PUBLIC_ANALYTICS_GA_MEASUREMENT_ID:
+      process.env.NEXT_PUBLIC_ANALYTICS_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_ANALYTICS_GA_DISABLE_PAGE_VIEWS_TRACKING:
+      process.env.NEXT_PUBLIC_ANALYTICS_GA_DISABLE_PAGE_VIEWS_TRACKING,
   }
 });
