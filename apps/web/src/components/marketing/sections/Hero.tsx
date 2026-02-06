@@ -127,7 +127,7 @@ const BLUE_FILTER = 'brightness(0) saturate(100%) invert(37%) sepia(95%) saturat
 
 function HeroIcon({ icon }: { icon: AIPlatform }): React.JSX.Element {
   const [isHovered, setIsHovered] = React.useState(false);
-  
+
   return (
     <motion.div
       className="relative flex cursor-pointer items-center justify-center"
@@ -141,10 +141,8 @@ function HeroIcon({ icon }: { icon: AIPlatform }): React.JSX.Element {
         alt={icon.name}
         width={160}
         height={48}
-        className="h-9 w-auto max-w-[85px] transition-all duration-200 sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px]"
-        style={{ 
-          filter: isHovered ? BLUE_FILTER : 'brightness(0) grayscale(100%)',
-        }}
+        className="h-9 w-auto max-w-[85px] transition-all duration-200 sm:h-10 sm:max-w-[110px] md:h-11 md:max-w-[130px] lg:h-14 lg:max-w-[160px] filter-[brightness(0)_grayscale(100%)] dark:filter-[brightness(0)_grayscale(100%)_invert(1)]"
+        style={isHovered ? { filter: BLUE_FILTER } : undefined}
       />
     </motion.div>
   );
