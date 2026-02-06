@@ -47,15 +47,15 @@ const DATA = [
 export function StoryTeam(): React.JSX.Element {
   return (
     <GridSection>
-      <div className="container max-w-6xl py-20">
-        <h2 className="mb-16 text-sm font-medium uppercase tracking-wider text-muted-foreground ">
+      <div className="container py-20">
+        <h2 className="mb-16 text-center text-sm font-medium uppercase tracking-wider text-muted-foreground">
           The visionaries
         </h2>
-        <div className="flex flex-wrap gap-24">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           {DATA.map((person, index) => (
             <div
               key={index}
-              className="space-y-8"
+              className="flex flex-col items-center space-y-8 text-center"
             >
               <Avatar className="size-24 border-4 border-neutral-200 dark:border-neutral-800">
                 <AvatarImage
@@ -71,16 +71,16 @@ export function StoryTeam(): React.JSX.Element {
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-4">
-                <div>
+                <div className="text-center">
                   <h3 className="text-lg font-medium">{person.name}</h3>
                   <p className="text-primary">{person.role}</p>
                 </div>
-                <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="space-y-2 text-center text-base text-muted-foreground">
                   <p>{person.previousRole}</p>
                   {person.education && <p>{person.education}</p>}
                 </div>
                 {(person.linkedin || person.twitter) && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center gap-3">
                     {person.linkedin && (
                       <a
                         href={person.linkedin}

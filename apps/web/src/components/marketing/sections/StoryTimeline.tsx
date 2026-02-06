@@ -4,6 +4,18 @@ import { GridSection } from '@workspace/ui/components/fragments/GridSection';
 
 const DATA = [
   {
+    date: 'February 2026',
+    title: 'Developer tools launch',
+    description:
+      'Launched our API, MCP Server, and developer integrations, empowering developers to build on top of SearchFIT\'s AI visibility platform.'
+  },
+  {
+    date: 'January 2026',
+    title: 'Platform expansion',
+    description:
+      'Expanded our platform with comprehensive SEO tools including Content Generation, Backlinks Analysis, Technical Audits, and Social Listening to provide end-to-end AI visibility solutions.'
+  },
+  {
     date: '2025',
     title: 'Company established',
     description:
