@@ -57,6 +57,13 @@ export const workspaces = pgTable("workspaces", {
   // Onboarding & Setup
   hasCompletedWelcomeScreen: boolean("has_completed_welcome_screen").default(false).notNull(),
   hasCompletedOnboarding: boolean("has_completed_onboarding").default(false).notNull(),
+  onboardingSurvey: json("onboarding_survey").$type<{
+    websiteUrl?: string;
+    role?: string;
+    teamSize?: string;
+    cms?: string;
+    referralSource?: string;
+  }>(),
   
   // Billing & Subscription
   stripeCustomerId: text("stripe_customer_id"),

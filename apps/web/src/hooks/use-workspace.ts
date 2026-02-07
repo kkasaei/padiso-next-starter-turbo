@@ -67,3 +67,16 @@ export function useUpdateWorkspaceOnboarding() {
     },
   });
 }
+
+export function useSaveOnboardingSurvey() {
+  const utils = trpc.useUtils();
+
+  return trpc.workspaces.saveOnboardingSurvey.useMutation({
+    onSuccess: (data) => {
+      utils.workspaces.getById.invalidate({ id: data.id });
+      utils.workspaces.getByClerkOrgId.invalidate({
+        clerkOrgId: data.clerkOrgId,
+      });
+    },
+  });
+}

@@ -190,4 +190,38 @@ export const workspacesRouter = router({
 
       return workspace;
     }),
+
+  /**
+   * Save onboarding survey responses and mark onboarding as completed.
+   */
+  saveOnboardingSurvey: publicProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid(),
+        survey: z.object({
+          websiteUrl: z.string().optional(),
+          role: z.string().optional(),
+          teamSize: z.string().optional(),
+          cms: z.string().optional(),
+          referralSource: z.string().optional(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [workspace] = await ctx.db
+        .update(workspaces)
+        .set({
+          onboardingSurvey: input.survey,
+          hasCompletedOnboarding: true,
+          updatedAt: new Date(),
+        })
+        .where(eq(workspaces.id, input.workspaceId))
+        .returning();
+
+      if (!workspace) {
+        throw new Error("Workspace not found");
+      }
+
+      return workspace;
+    }),
 });

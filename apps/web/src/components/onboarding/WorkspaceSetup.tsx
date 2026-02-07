@@ -26,7 +26,7 @@ import {
   AlertCircle,
   CircleDashed,
 } from "lucide-react";
-import { useCreateWorkspace, useCheckSlugAvailability } from "@/hooks/use-workspace";
+import { useCreateWorkspace, useCheckSlugAvailability, useSaveOnboardingSurvey } from "@/hooks/use-workspace";
 import { useProvisionAfterCheckout } from "@/hooks/use-subscription";
 import { routes } from "@workspace/common";
 import { cn } from "@workspace/ui/lib/utils";
@@ -213,6 +213,7 @@ export function WorkspaceSetup() {
   // ─── Step 3: Provisioning state ───
   const [provisionStatus, setProvisionStatus] = useState<ProvisionStatus>("idle");
   const [provisionError, setProvisionError] = useState<string | null>(null);
+  const [createdWorkspaceId, setCreatedWorkspaceId] = useState<string | null>(null);
   const provisionAttemptedRef = useRef(false);
 
   // ─── Step 4: Survey state ───
@@ -229,6 +230,7 @@ export function WorkspaceSetup() {
   const { signOut } = useClerk();
   const createWorkspace = useCreateWorkspace();
   const provisionAfterCheckout = useProvisionAfterCheckout();
+  const saveOnboardingSurvey = useSaveOnboardingSurvey();
 
   // ─── Provisioning logic (Step 3) ───
   const runProvisioning = useCallback(async () => {
@@ -288,8 +290,9 @@ export function WorkspaceSetup() {
         workspaceId: workspace.id,
       });
 
-      // Done! Clean up
+      // Done! Clean up and store workspace ID for survey
       clearPendingSetup();
+      setCreatedWorkspaceId(workspace.id);
       setProvisionStatus("done");
     } catch (err) {
       console.error("Provisioning failed:", err);
@@ -453,18 +456,22 @@ export function WorkspaceSetup() {
   const handleSubmitSurvey = async () => {
     setIsSubmittingSurvey(true);
 
-    // TODO: Save survey response to DB
-    if (selectedSource || selectedCms || selectedRole || selectedTeamSize || websiteUrl) {
+    // Save survey responses to DB
+    if (createdWorkspaceId && (selectedSource || selectedCms || selectedRole || selectedTeamSize || websiteUrl)) {
       try {
-        console.log("Survey response:", {
-          source: selectedSource,
-          cms: selectedCms,
-          role: selectedRole,
-          teamSize: selectedTeamSize,
-          websiteUrl,
+        await saveOnboardingSurvey.mutateAsync({
+          workspaceId: createdWorkspaceId,
+          survey: {
+            websiteUrl: websiteUrl || undefined,
+            role: selectedRole || undefined,
+            teamSize: selectedTeamSize || undefined,
+            cms: selectedCms || undefined,
+            referralSource: selectedSource || undefined,
+          },
         });
       } catch (err) {
         console.error("Failed to save survey:", err);
+        // Don't block navigation if survey save fails
       }
     }
 
@@ -476,7 +483,19 @@ export function WorkspaceSetup() {
     router.push(routes.dashboard.Home);
   };
 
-  const handleSkipSurvey = () => {
+  const handleSkipSurvey = async () => {
+    // Mark onboarding as completed even if they skip the survey
+    if (createdWorkspaceId) {
+      try {
+        await saveOnboardingSurvey.mutateAsync({
+          workspaceId: createdWorkspaceId,
+          survey: {},
+        });
+      } catch {
+        // Don't block navigation
+      }
+    }
+
     if (typeof window !== "undefined") {
       localStorage.removeItem("selectedPlan");
     }
