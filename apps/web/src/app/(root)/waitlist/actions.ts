@@ -48,7 +48,7 @@ export async function joinWaitlist(
   // Submit to Clerk waitlist
   try {
     const clerk = await clerkClient()
-    await clerk.waitlistEntries.createWaitlistEntry({ emailAddress: email })
+    await clerk.waitlistEntries.create({ emailAddress: email })
     return { success: true }
   } catch (err: unknown) {
     // Clerk returns specific error codes
