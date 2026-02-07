@@ -237,17 +237,34 @@ function BrandQuickIcon({
   )
 }
 
+const BRANDS_QUICK_ACCESS_LIMIT = 6
+
 function BrandsQuickAccess({
   brands,
   onCreateBrand,
 }: {
-  brands: { id: string; brandName: string | null; websiteUrl: string | null; brandColor: string | null; iconUrl: string | null; status: string }[]
+  brands: { id: string; brandName: string | null; websiteUrl: string | null; brandColor: string | null; iconUrl: string | null; status: string; isFavourite: boolean | null }[]
   onCreateBrand: () => void
 }) {
+  // Favourites first, then the rest — capped to keep the dashboard tidy
+  const sorted = [...brands].sort((a, b) => {
+    if (a.isFavourite && !b.isFavourite) return -1
+    if (!a.isFavourite && b.isFavourite) return 1
+    return 0
+  })
+
+  const visible = sorted.slice(0, BRANDS_QUICK_ACCESS_LIMIT)
+  const remaining = brands.length - visible.length
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium">Your Brands</h2>
+        <h2 className="text-lg font-medium">
+          Your Brands
+          <span className="ml-2 text-sm font-normal text-muted-foreground">
+            {brands.length}
+          </span>
+        </h2>
         <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={onCreateBrand}>
           <Plus className="h-4 w-4" />
           Add Brand
@@ -255,7 +272,7 @@ function BrandsQuickAccess({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {brands.map((brand) => {
+        {visible.map((brand) => {
           const domain = getDomain(brand.websiteUrl)
           const isInitializing = brand.status === "initializing"
 
@@ -292,6 +309,18 @@ function BrandsQuickAccess({
           )
         })}
       </div>
+
+      {/* "View all" link when there are more brands than the visible cap */}
+      {remaining > 0 && (
+        <div className="flex justify-center">
+          <Button variant="outline" size="sm" className="gap-1.5" asChild>
+            <Link href="/dashboard/brands">
+              View all {brands.length} brands
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
@@ -502,7 +531,7 @@ export default function DashboardPage() {
 
   const [showWizard, setShowWizard] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
-  
+
   // Mark as completed if user has at least one brand
   const hasBrands = brands.length >= 1
 
