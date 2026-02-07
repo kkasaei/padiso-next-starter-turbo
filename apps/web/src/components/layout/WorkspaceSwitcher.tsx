@@ -55,6 +55,9 @@ export function WorkspaceSwitcher({ expanded }: WorkspaceSwitcherProps) {
   const handleOrgSwitch = async (orgId: string) => {
     await setActive?.({ organization: orgId })
     setOrgSwitcherOpen(false)
+    // Navigate to dashboard — the BrandAccessGuard will handle
+    // redirecting to the first brand or showing the welcome modal
+    router.push(routes.dashboard.Home)
   }
 
   const handleCreateOrg = () => {

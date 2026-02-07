@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { WorkspaceSidebar } from "@/components/layout/WorkspaceSidebar"
 import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/BrandSidebar"
+import { BrandAccessGuard } from "@/components/brands/BrandAccessGuard"
 
 export default function DashboardLayout({
   children,
@@ -28,10 +29,12 @@ export default function DashboardLayout({
           <BrandSidebarProvider>
             <div className="relative flex flex-1 m-2">
               <main className="flex flex-1 rounded-2xl border border-border bg-background overflow-hidden">
-                {isBrandDetailPage && <BrandSidebar />}
-                <div className="flex flex-1 flex-col min-w-0">
-                  {children}
-                </div>
+                <BrandAccessGuard>
+                  {isBrandDetailPage && <BrandSidebar />}
+                  <div className="flex flex-1 flex-col min-w-0">
+                    {children}
+                  </div>
+                </BrandAccessGuard>
               </main>
               {/* Toggle button on main card edge when sidebar is closed */}
               {isBrandDetailPage && <BrandSidebarToggle showWhenOpen={false} className="-left-3" />}
