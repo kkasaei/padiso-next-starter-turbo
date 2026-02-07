@@ -24,6 +24,8 @@ const isPublicRoute = createRouteMatcher([
   '/social-listening(.*)',
   // Public report pages
   '/report(.*)',
+  // OG image
+  '/og-image(.*)',
   // Public API routes for reports
   '/api/reports/(.*)',
   // tRPC routes (needed for public report page to query unlock status)
