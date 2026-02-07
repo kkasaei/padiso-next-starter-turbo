@@ -2,28 +2,25 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X, Sparkles } from 'lucide-react';
 
 import { FEATURE_FLAGS } from '@workspace/common';
 import { Button } from '@workspace/ui/components/button';
 
 interface StickyBottomBarProps {
-  userScore?: number;
-  topCompetitorScore?: number;
+  userScore: number;
   triggerScrollDepth?: number;
 }
 
 export function StickyBottomBar({
-  userScore = 25,
-  topCompetitorScore = 65,
+  userScore,
   triggerScrollDepth = 500
 }: StickyBottomBarProps): React.JSX.Element | null {
   const [isVisible, setIsVisible] = React.useState(false);
   const [isDismissed, setIsDismissed] = React.useState(false);
   const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
   const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'See how to close the gap';
-  const subText = isWaitlist ? 'Early access' : '7-day free trial • No payment required';
+  const ctaText = isWaitlist ? 'Join Waitlist' : 'Improve Your Score';
 
   React.useEffect(() => {
     // Check localStorage for dismissal
@@ -62,40 +59,47 @@ export function StickyBottomBar({
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-5 duration-300"
-      style={{
-        boxShadow: '0px -2px 10px rgba(0,0,0,0.1)'
-      }}
+      className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-5 duration-500"
     >
-      <div className="border-t bg-background">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
-            <div className="text-center text-sm md:text-left">
-              <span className="font-medium">Your score: {userScore}/100</span>
-              <span className="mx-2 text-muted-foreground">•</span>
-              <span className="text-muted-foreground">
-                Top competitor: {topCompetitorScore}/100
-              </span>
+      <div className="border-t bg-background/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="container mx-auto px-4 py-4 md:px-6 md:py-5">
+          <div className="flex items-center justify-between gap-4">
+
+            {/* Left: Score + message */}
+            <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-bold sm:flex dark:border-blue-800 dark:bg-blue-950">
+                <span className="text-blue-600 dark:text-blue-400">{userScore}</span>
+                <span className="text-blue-400 dark:text-blue-500">/100</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold md:text-base">Your AEO score needs work</p>
+                <p className="hidden text-sm text-muted-foreground md:block">Get actionable insights to rank higher in AI answers</p>
+              </div>
             </div>
-            <div className="flex w-full items-center gap-3 md:w-auto">
-              <Button
-                asChild
-                size="default"
-                className="flex-1 md:flex-initial"
-              >
-                <Link href={ctaLink}>
-                  {ctaText}
-                  <ArrowRight className="ml-2 size-4" />
-                </Link>
-              </Button>
-              <span className="hidden text-xs text-muted-foreground md:inline">
-                {subText}
-              </span>
+
+            {/* Right: CTA + trial + dismiss */}
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center gap-1">
+                <Button
+                  asChild
+                  size="lg"
+                  className="rounded-full bg-blue-600 px-8 text-base font-semibold shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/30"
+                >
+                  <Link href={ctaLink}>
+                    <Sparkles className="mr-2 size-4" />
+                    {ctaText}
+                    <ArrowRight className="ml-2 size-4" />
+                  </Link>
+                </Button>
+                <span className="hidden text-center text-xs text-muted-foreground lg:block">
+                  7-day free trial · No payment required
+                </span>
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleDismiss}
-                className="shrink-0"
+                className="size-8 shrink-0 rounded-full text-muted-foreground hover:text-foreground"
                 aria-label="Dismiss"
               >
                 <X className="size-4" />
@@ -107,4 +111,3 @@ export function StickyBottomBar({
     </div>
   );
 }
-

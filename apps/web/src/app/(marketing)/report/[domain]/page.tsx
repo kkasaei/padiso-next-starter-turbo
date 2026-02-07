@@ -178,8 +178,7 @@ export default function ReportPage(): React.JSX.Element {
 
       {/* Sticky Bottom Bar */}
       <StickyBottomBar
-        userScore={25}
-        topCompetitorScore={65}
+        userScore={averageScore}
         triggerScrollDepth={REPORT_CONFIG.STICKY_BAR_TRIGGER_DEPTH}
       />
 
