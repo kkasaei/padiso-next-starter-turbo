@@ -212,7 +212,7 @@ function MainMobileMenu({
               {FEATURE_FLAGS.IS_WAITLIST ? 'Join Waitlist' : 'Get started'}
             </Link>
             <Link
-              href='/signin'
+              href='/auth/sign-in'
               onClick={onLinkClicked}
               className={cn(
                 buttonVariants({

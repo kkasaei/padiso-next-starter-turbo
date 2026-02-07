@@ -240,7 +240,7 @@ export function Navbar(): React.JSX.Element {
             ) : (
               <>
                 <Link
-                  href='/signin'
+                  href='/auth/sign-in'
                   className={cn(
                     buttonVariants({
                       variant: 'outline'
