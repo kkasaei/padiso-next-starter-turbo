@@ -16,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
   '/integrations(.*)',
   '/story(.*)',
   '/sales(.*)',
+  '/waitlist(.*)',
   // Feature pages
   '/ai-tracking(.*)',
   '/content(.*)',

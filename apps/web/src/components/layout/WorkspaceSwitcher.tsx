@@ -11,18 +11,27 @@ import {
   MoreHorizontal,
   Settings,
   Plus,
+  ChevronDown,
 } from "lucide-react"
 import { useOrganization, useOrganizationList } from "@clerk/nextjs"
 import { cn } from "@workspace/common/lib"
 import { routes } from "@workspace/common"
+import { useSubscriptionStatus } from "@/hooks/use-subscription"
 
-export function WorkspaceSwitcher() {
+type WorkspaceSwitcherProps = {
+  expanded?: boolean
+}
+
+export function WorkspaceSwitcher({ expanded }: WorkspaceSwitcherProps) {
   const router = useRouter()
   const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false)
   const [search, setSearch] = useState("")
   const prevOrgIdRef = useRef<string | null>(null)
 
   const { organization: activeOrg } = useOrganization()
+  const { data: subscription } = useSubscriptionStatus(activeOrg?.id)
+  const planName = subscription?.planName ?? subscription?.plan?.name ?? "Growth"
+
   const { userMemberships, setActive } = useOrganizationList({
     userMemberships: {
       pageSize: 50,
@@ -54,23 +63,42 @@ export function WorkspaceSwitcher() {
   }
 
   return (
-    <div className="flex items-center justify-center p-4">
       <Popover open={orgSwitcherOpen} onOpenChange={setOrgSwitcherOpen}>
         <PopoverTrigger asChild>
           <button 
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity overflow-hidden",
-              !activeOrg?.imageUrl && "bg-primary text-primary-foreground shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)]"
+              "flex items-center gap-3 hover:opacity-90 transition-all",
+              expanded && "w-full rounded-xl border border-border px-2 py-1.5 hover:bg-accent/40"
             )}
           >
-            {activeOrg?.imageUrl ? (
-              <img
-                src={activeOrg.imageUrl}
-                alt={activeOrg.name}
-                className="h-10 w-10 rounded-xl object-cover"
-              />
-            ) : (
-              activeOrg?.name?.charAt(0).toUpperCase() ?? "W"
+            <div
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-semibold overflow-hidden",
+                !activeOrg?.imageUrl && "bg-primary text-primary-foreground shadow-[inset_0_-5px_6.6px_0_rgba(0,0,0,0.25)]"
+              )}
+            >
+              {activeOrg?.imageUrl ? (
+                <img
+                  src={activeOrg.imageUrl}
+                  alt={activeOrg.name}
+                  className="h-10 w-10 rounded-xl object-cover"
+                />
+              ) : (
+                activeOrg?.name?.charAt(0).toUpperCase() ?? "W"
+              )}
+            </div>
+            {expanded && (
+              <>
+                <div className="flex flex-1 flex-col min-w-0 text-left">
+                  <span className="text-sm font-semibold truncate">
+                    {activeOrg?.name ?? "Workspace"}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground leading-tight">
+                    {planName} plan
+                  </span>
+                </div>
+                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </>
             )}
           </button>
         </PopoverTrigger>
@@ -78,8 +106,8 @@ export function WorkspaceSwitcher() {
         <PopoverContent
           className="w-[240px] p-0 rounded-xl shadow-lg"
           align="start"
-          side="right"
-          sideOffset={12}
+          side={expanded ? "bottom" : "right"}
+          sideOffset={expanded ? 8 : 12}
         >
           {/* Search */}
           <div className="p-2">
@@ -183,7 +211,6 @@ export function WorkspaceSwitcher() {
           </div>
         </PopoverContent>
       </Popover>
-    </div>
   )
 }
 

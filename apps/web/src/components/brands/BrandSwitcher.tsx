@@ -124,14 +124,22 @@ export function BrandSwitcher() {
                 <span className="text-sm font-medium truncate w-full">
                   {currentProject?.brandName ?? "Select Brand"}
                 </span>
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1 truncate">
                   {currentProject?.status === 'initializing' ? (
                     <>
                       <Loader2 className="h-3 w-3 animate-spin" />
                       <span>Setting up...</span>
                     </>
                   ) : (
-                    currentProject?.status ?? "Brand"
+                    (() => {
+                      const raw = currentProject?.websiteUrl
+                      if (!raw) return "Brand"
+                      try {
+                        return new URL(raw.startsWith("http") ? raw : `https://${raw}`).hostname.replace(/^www\./, "")
+                      } catch {
+                        return raw.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "")
+                      }
+                    })()
                   )}
                 </span>
               </div>
