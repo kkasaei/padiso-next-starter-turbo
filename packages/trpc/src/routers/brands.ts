@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq, desc } from "drizzle-orm";
-import { brands } from "@workspace/db/schema";
+import { brands, workspaces } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 import { analyzeBrandWebsite } from "@workspace/ai";
 
@@ -86,6 +86,20 @@ export const brandsRouter = router({
         throw new Error("Failed to create brand");
       }
 
+      // Mark onboarding as completed when the first brand is created
+      const existingBrands = await ctx.db
+        .select()
+        .from(brands)
+        .where(eq(brands.workspaceId, input.workspaceId))
+        .limit(2);
+
+      if (existingBrands.length === 1) {
+        await ctx.db
+          .update(workspaces)
+          .set({ hasCompletedOnboarding: true, updatedAt: new Date() })
+          .where(eq(workspaces.id, input.workspaceId));
+      }
+
       return brand;
     }),
 
@@ -139,6 +153,31 @@ export const brandsRouter = router({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(brands).where(eq(brands.id, input.id));
       return { success: true };
+    }),
+
+  /**
+   * Check if a sitemap URL exists and is reachable
+   */
+  checkSitemap: publicProcedure
+    .input(z.object({ url: z.string().min(1) }))
+    .query(async ({ input }) => {
+      let url = input.url;
+      if (!/^https?:\/\//i.test(url)) {
+        url = `https://${url}`;
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: "HEAD",
+          signal: AbortSignal.timeout(5000),
+          headers: { "User-Agent": "SearchFit-SitemapChecker/1.0" },
+          redirect: "follow",
+        });
+
+        return { exists: response.ok, status: response.status };
+      } catch {
+        return { exists: false, status: 0 };
+      }
     }),
 
   /**

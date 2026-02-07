@@ -212,7 +212,6 @@ export const workspacesRouter = router({
         .update(workspaces)
         .set({
           onboardingSurvey: input.survey,
-          hasCompletedOnboarding: true,
           updatedAt: new Date(),
         })
         .where(eq(workspaces.id, input.workspaceId))

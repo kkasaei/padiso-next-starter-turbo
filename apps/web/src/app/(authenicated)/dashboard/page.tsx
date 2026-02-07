@@ -17,8 +17,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
+import { useOrganization } from "@clerk/nextjs"
 import { BrandWizard } from "@/components/brands/brand-wizard/BrandWizard"
+import { WelcomeModal } from "@/components/dashboard/WelcomeModal"
 import { useBrands } from "@/hooks/use-brands"
+import { useWorkspaceByClerkOrgId, useUpdateWorkspaceOnboarding } from "@/hooks/use-workspace"
 
 function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCreateBrand: () => void }) {
   return (
@@ -361,11 +364,44 @@ function TrainingCard() {
 }
 
 export default function DashboardPage() {
-  const { data: brands = [] } = useBrands()
+  const { organization } = useOrganization()
+  const { data: workspace } = useWorkspaceByClerkOrgId(organization?.id || "")
+  const { data: brands = [], isLoading: isBrandsLoading } = useBrands()
+  const updateOnboarding = useUpdateWorkspaceOnboarding()
+
   const [showWizard, setShowWizard] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(false)
   
   // Mark as completed if user has at least one brand
   const hasBrands = brands.length >= 1
+
+  // Auto-show welcome modal for fresh accounts (no brands, welcome screen not yet completed)
+  useEffect(() => {
+    if (isBrandsLoading || !workspace) return
+    if (hasBrands) return
+    if (workspace.hasCompletedWelcomeScreen) return
+
+    setShowWelcome(true)
+  }, [isBrandsLoading, hasBrands, workspace])
+
+  const markWelcomeCompleted = () => {
+    if (!workspace?.id) return
+    updateOnboarding.mutate({
+      id: workspace.id,
+      hasCompletedWelcomeScreen: true,
+    })
+  }
+
+  const handleDismissWelcome = () => {
+    setShowWelcome(false)
+    markWelcomeCompleted()
+  }
+
+  const handleSetupBrand = () => {
+    setShowWelcome(false)
+    markWelcomeCompleted()
+    setShowWizard(true)
+  }
 
   return (
     <div className="mt-10">
@@ -381,6 +417,14 @@ export default function DashboardPage() {
           <TrainingCard />
         </div>
       </div>
+
+      {/* Welcome Modal for fresh accounts */}
+      {showWelcome && (
+        <WelcomeModal
+          onSetupBrand={handleSetupBrand}
+          onDismiss={handleDismissWelcome}
+        />
+      )}
 
       {/* Brand Wizard Modal */}
       {showWizard && (

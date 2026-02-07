@@ -141,7 +141,7 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
   const isOptionalStep = step === 3;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ 
@@ -150,7 +150,7 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className={cn(
-          "flex w-full max-w-[900px] overflow-hidden rounded-[24px] bg-background shadow-2xl",
+          "flex w-full max-w-[900px] max-h-[calc(100vh-2rem)] overflow-hidden rounded-[24px] bg-background shadow-2xl",
           step === 0 ? "max-w-[480px]" : ""
         )}
       >
@@ -178,7 +178,7 @@ export function BrandWizard({ onClose }: BrandWizardProps) {
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col">
               {/* Header: Close button */}
               <div className="flex items-start justify-end px-8 pt-6 pb-0">
                 <Button

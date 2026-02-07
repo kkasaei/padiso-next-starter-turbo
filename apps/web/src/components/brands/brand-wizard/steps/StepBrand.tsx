@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Globe, Info, Check } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Globe, Info, Check, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { cn } from "@workspace/ui/lib/utils";
+import { trpc } from "@/lib/trpc/client";
 import { BusinessData } from "../types";
 
 interface StepBrandProps {
@@ -32,8 +33,89 @@ const BRAND_COLORS = [
   { id: "slate", value: "#64748B", label: "Slate" },
 ];
 
+// Derive a capitalised brand name from a domain hostname
+// e.g. "padiso.co" -> "Padiso", "my-brand.com" -> "My Brand"
+function domainToBrandName(websiteUrl?: string): string {
+  if (!websiteUrl) return "";
+  try {
+    let raw = websiteUrl.trim();
+    if (!/^https?:\/\//i.test(raw)) raw = `https://${raw}`;
+    const hostname = new URL(raw).hostname;
+    // Strip www. and take the part before the TLD
+    const name = hostname.replace(/^www\./i, "").split(".")[0] || "";
+    return name
+      .split(/[-_]/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  } catch {
+    return "";
+  }
+}
+
+// Pick a deterministic color from the palette based on the domain name
+function pickDefaultColor(websiteUrl?: string): string {
+  if (!websiteUrl) return BRAND_COLORS[10]!.value; // blue fallback
+  let hash = 0;
+  for (let i = 0; i < websiteUrl.length; i++) {
+    hash = (hash * 31 + websiteUrl.charCodeAt(i)) | 0;
+  }
+  return BRAND_COLORS[Math.abs(hash) % BRAND_COLORS.length]!.value;
+}
+
 export function StepBrand({ data, updateData }: StepBrandProps) {
   const [showCustomColor, setShowCustomColor] = useState(false);
+  const [autoPopulated, setAutoPopulated] = useState(false);
+
+  // Derive a suggested sitemap URL from the website URL
+  const suggestedSitemapUrl = useMemo(() => {
+    if (!data.websiteUrl) return "";
+    try {
+      let raw = data.websiteUrl.trim();
+      if (!/^https?:\/\//i.test(raw)) raw = `https://${raw}`;
+      const hostname = new URL(raw).hostname;
+      return `${hostname}/sitemap.xml`;
+    } catch {
+      return "";
+    }
+  }, [data.websiteUrl]);
+
+  // Auto-populate brand name, color, and sitemap URL once when the step first mounts
+  useEffect(() => {
+    if (autoPopulated) return;
+
+    const updates: Partial<BusinessData> = {};
+
+    if (!data.brandName) {
+      const suggested = domainToBrandName(data.websiteUrl);
+      if (suggested) updates.brandName = suggested;
+    }
+
+    if (!data.brandColor) {
+      updates.brandColor = pickDefaultColor(data.websiteUrl);
+    }
+
+    if (!data.sitemapUrl && suggestedSitemapUrl) {
+      updates.sitemapUrl = suggestedSitemapUrl;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      updateData(updates);
+    }
+
+    setAutoPopulated(true);
+  }, [autoPopulated, data.brandName, data.brandColor, data.sitemapUrl, data.websiteUrl, suggestedSitemapUrl, updateData]);
+
+  // Validate the sitemap URL
+  const sitemapUrl = data.sitemapUrl?.trim() || "";
+  const { data: sitemapCheck, isFetching: isCheckingSitemap } =
+    trpc.brands.checkSitemap.useQuery(
+      { url: sitemapUrl },
+      {
+        enabled: sitemapUrl.length > 5 && sitemapUrl.includes("."),
+        staleTime: 60_000,
+        retry: false,
+      }
+    );
 
   const isCustomColor = data.brandColor && !BRAND_COLORS.some(c => c.value === data.brandColor);
 
@@ -194,11 +276,41 @@ export function StepBrand({ data, updateData }: StepBrandProps) {
             <Input
               value={data.sitemapUrl || ""}
               onChange={(e) => updateData({ sitemapUrl: e.target.value })}
-              placeholder="yourbrandname.com/sitemap.xml"
-              className="h-10 pl-4 pr-10 bg-background border-border rounded-xl"
+              placeholder={suggestedSitemapUrl || "yourbrandname.com/sitemap.xml"}
+              className={cn(
+                "h-10 pl-4 pr-10 bg-background border-border rounded-xl",
+                sitemapUrl && sitemapCheck && !isCheckingSitemap && (
+                  sitemapCheck.exists
+                    ? "border-emerald-500 focus-visible:ring-emerald-500"
+                    : "border-red-400 focus-visible:ring-red-400"
+                )
+              )}
             />
-            <Globe className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              {isCheckingSitemap ? (
+                <Loader2 className="size-4 animate-spin text-muted-foreground" />
+              ) : sitemapUrl && sitemapCheck ? (
+                sitemapCheck.exists ? (
+                  <CheckCircle2 className="size-4 text-emerald-500" />
+                ) : (
+                  <XCircle className="size-4 text-red-400" />
+                )
+              ) : (
+                <Globe className="size-4 text-muted-foreground" />
+              )}
+            </div>
           </div>
+
+          {sitemapUrl && sitemapCheck && !isCheckingSitemap && (
+            <p className={cn(
+              "text-xs",
+              sitemapCheck.exists ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"
+            )}>
+              {sitemapCheck.exists
+                ? "Sitemap found and reachable"
+                : "Sitemap not found at this URL. Double-check the path or leave blank to skip."}
+            </p>
+          )}
         </div>
       </div>
     </div>
