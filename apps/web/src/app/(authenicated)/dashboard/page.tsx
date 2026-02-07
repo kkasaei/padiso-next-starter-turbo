@@ -16,12 +16,17 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
+  Plus,
+  ArrowRight,
+  Globe,
 } from "lucide-react"
 import { useOrganization } from "@clerk/nextjs"
 import { BrandWizard } from "@/components/brands/brand-wizard/BrandWizard"
 import { WelcomeModal } from "@/components/dashboard/WelcomeModal"
 import { useBrands } from "@/hooks/use-brands"
 import { useWorkspaceByClerkOrgId, useUpdateWorkspaceOnboarding } from "@/hooks/use-workspace"
+import Image from "next/image"
+import { cn } from "@workspace/common/lib"
 
 function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCreateBrand: () => void }) {
   return (
@@ -168,6 +173,132 @@ function OnboardingCard({ hasBrands, onCreateBrand }: { hasBrands: boolean; onCr
     </div>
   )
 }
+
+/* ------------------------------------------------------------------ */
+/*  Quick-access brand cards                                           */
+/* ------------------------------------------------------------------ */
+
+function getFaviconUrl(websiteUrl: string | null | undefined): string | null {
+  if (!websiteUrl) return null
+  try {
+    const url = new URL(websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`)
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`
+  } catch {
+    return null
+  }
+}
+
+function getDomain(websiteUrl: string | null | undefined): string | null {
+  if (!websiteUrl) return null
+  try {
+    return new URL(websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`).hostname.replace(/^www\./, "")
+  } catch {
+    return websiteUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "")
+  }
+}
+
+function BrandQuickIcon({
+  iconUrl,
+  websiteUrl,
+  brandName,
+  brandColor,
+}: {
+  iconUrl?: string | null
+  websiteUrl?: string | null
+  brandName?: string | null
+  brandColor?: string | null
+}) {
+  const [imgError, setImgError] = useState(false)
+  const faviconUrl = iconUrl || getFaviconUrl(websiteUrl)
+  const showFavicon = faviconUrl && !imgError
+
+  if (showFavicon) {
+    return (
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted overflow-hidden">
+        <Image
+          src={faviconUrl}
+          alt={brandName || "Brand"}
+          width={40}
+          height={40}
+          className="h-full w-full object-cover"
+          onError={() => setImgError(true)}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-semibold text-white"
+      style={{ backgroundColor: brandColor || "#6366f1" }}
+    >
+      {(brandName || "B").charAt(0).toUpperCase()}
+    </div>
+  )
+}
+
+function BrandsQuickAccess({
+  brands,
+  onCreateBrand,
+}: {
+  brands: { id: string; brandName: string | null; websiteUrl: string | null; brandColor: string | null; iconUrl: string | null; status: string }[]
+  onCreateBrand: () => void
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium">Your Brands</h2>
+        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={onCreateBrand}>
+          <Plus className="h-4 w-4" />
+          Add Brand
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {brands.map((brand) => {
+          const domain = getDomain(brand.websiteUrl)
+          const isInitializing = brand.status === "initializing"
+
+          return (
+            <Link
+              key={brand.id}
+              href={`/dashboard/brands/${brand.id}`}
+              className={cn(
+                "group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-all hover:border-border/80 hover:shadow-sm",
+                isInitializing && "opacity-75"
+              )}
+            >
+              <BrandQuickIcon
+                iconUrl={brand.iconUrl}
+                websiteUrl={brand.websiteUrl}
+                brandName={brand.brandName}
+                brandColor={brand.brandColor}
+              />
+              <div className="flex flex-1 flex-col min-w-0">
+                <span className="text-sm font-medium truncate">
+                  {brand.brandName || "Untitled Brand"}
+                </span>
+                {isInitializing ? (
+                  <span className="text-xs text-blue-600 dark:text-blue-400">Setting up...</span>
+                ) : domain ? (
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground truncate">
+                    <Globe className="h-3 w-3 shrink-0" />
+                    {domain}
+                  </span>
+                ) : null}
+              </div>
+              <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+            </Link>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Training resources carousel                                        */
+/* ------------------------------------------------------------------ */
 
 function TrainingCard() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -411,6 +542,14 @@ export default function DashboardPage() {
           hasBrands={hasBrands} 
           onCreateBrand={() => setShowWizard(true)}
         />
+
+        {/* Quick access to brands */}
+        {hasBrands && (
+          <BrandsQuickAccess
+            brands={brands}
+            onCreateBrand={() => setShowWizard(true)}
+          />
+        )}
 
         <div className="flex flex-col gap-4">
           <h2 className="text-lg font-medium">Training Resources</h2>
