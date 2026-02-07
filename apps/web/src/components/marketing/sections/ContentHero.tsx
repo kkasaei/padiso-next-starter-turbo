@@ -1261,7 +1261,7 @@ function TestimonialSection() {
 }
 
 // Bottom CTA
-function BottomCTA() {
+export function BottomCTA() {
   return (
     <GridSection>
       <div className="container relative overflow-hidden py-24 md:py-32">
@@ -1273,7 +1273,7 @@ function BottomCTA() {
           </BlurFade>
           <BlurFade inView delay={0.2}>
             <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-              Join thousands of marketers using SearchFIT to create SEO-optimized content 10x faster.
+              Join growing number of savvy marketers using SearchFIT to create SEO-optimized content 10x faster.
             </p>
           </BlurFade>
           <BlurFade inView delay={0.4}>
