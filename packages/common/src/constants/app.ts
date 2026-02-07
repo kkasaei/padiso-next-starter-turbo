@@ -3,8 +3,8 @@
  */
 
 export const APP_NAME = 'SearchFIT' as const
-
 export const APP_DESCRIPTION = 'Track your brand presence in AI search, Generate content that ranks in AI search results, and Understand your performance through intelligent analytics' as const
+export const APP_TAGLINE = '#1 AI Search Engine Optimization Platform' as const
 
 export const STATUS = {
   ACTIVE: 'active',

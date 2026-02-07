@@ -38,3 +38,5 @@ npm-debug.log*
 # ENV
 env.preview
 env.production
+env.development
+ENV_REFERENCE.md
