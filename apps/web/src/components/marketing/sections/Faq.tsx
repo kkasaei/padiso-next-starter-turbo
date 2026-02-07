@@ -62,7 +62,7 @@ export function FAQ(): React.JSX.Element {
             <p className="mt-6 hidden text-muted-foreground md:block lg:max-w-[75%]">
               Haven&apos;t found what you&apos;re looking for? Try{' '}
               <Link
-                href='/contact'
+                href='/sales'
                 className="font-normal text-inherit underline hover:text-foreground"
               >
                 contacting

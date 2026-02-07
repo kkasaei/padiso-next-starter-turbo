@@ -246,8 +246,8 @@ function HeroSection() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full px-8">
-              <Link href="/contact">
-                Get in Touch
+              <Link href="/sales">
+                Need a Custom Solution?
                 <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
@@ -1285,8 +1285,8 @@ export function BottomCTA() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full px-8">
-                <Link href="/contact">
-                  Get in Touch
+                <Link href="/sales">
+                  Need a Custom Solution?
                   <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>

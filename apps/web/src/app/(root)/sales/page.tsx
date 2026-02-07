@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Check, Building2, Users, TrendingUp, Zap, Shield, Headphones, Loader2 } from 'lucide-react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { toast } from 'sonner';
@@ -26,26 +26,29 @@ import {
 } from '@workspace/ui/components/card';
 
 export default function SalesPage(): React.JSX.Element {
+  const router = useRouter();
+
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid lg:grid-cols-2">
       {/* Left Column - Information */}
-      <div className="flex flex-col justify-center bg-background px-8 py-12 lg:px-20 lg:py-16 xl:px-28">
+      <div className="flex flex-col bg-background px-8 py-12 lg:px-20 lg:py-16 xl:px-28 lg:sticky lg:top-0 lg:h-screen lg:justify-center">
         <div className="mx-auto w-full max-w-xl space-y-12">
-          {/* Back to Pricing Link */}
-          <Link
-            href="/pricing"
+          {/* Back Link */}
+          <button
+            type="button"
+            onClick={() => router.back()}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-4" />
-            <span>Back to pricing</span>
-          </Link>
+            <span>Go back</span>
+          </button>
 
           {/* Header Section */}
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5">
               <Building2 className="size-4 text-primary" />
               <span className="text-sm font-medium text-primary">
-                Enterprise Solutions
+                Custom Solutions
               </span>
             </div>
 
@@ -57,7 +60,7 @@ export default function SalesPage(): React.JSX.Element {
                 </span>
               </h1>
               <p className="text-xl leading-snug text-foreground/90">
-                Get a tailored AI search optimization solution with dedicated support, custom integrations, and enterprise-grade features.
+                Get a tailored AI search optimization solution with dedicated support, custom integrations, and advanced features.
               </p>
             </div>
           </div>
@@ -99,8 +102,8 @@ export default function SalesPage(): React.JSX.Element {
                 <Shield className="size-3 text-primary" strokeWidth={3} />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Advanced Security & Compliance</h3>
-                <p className="mt-1 text-sm text-muted-foreground">SOC 2 compliance, custom SLAs, and advanced security features.</p>
+                <h3 className="font-semibold text-foreground">Advanced Security</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Built on SOC 2 compliant infrastructure, custom SLAs, and advanced security features. Compliance certification in progress.</p>
               </div>
             </div>
 
@@ -128,14 +131,14 @@ export default function SalesPage(): React.JSX.Element {
           {/* Stat Callout */}
           <div className="border-l-2 border-primary pl-5">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              <span className="font-bold text-foreground">Enterprise clients see an average 3.5x increase</span> in AI search visibility within 90 days
+              <span className="font-bold text-foreground">Custom plan clients see an average 3.5x increase</span> in AI search visibility within 90 days
             </p>
           </div>
         </div>
       </div>
 
       {/* Right Column - Custom Package Form */}
-      <div className="flex items-center justify-center bg-muted/30 px-8 py-12 lg:px-16 lg:py-16">
+      <div className="flex items-start justify-center bg-muted/30 px-8 py-12 lg:px-16 lg:py-16">
         <div className="w-full max-w-md">
           <CustomPackageForm />
         </div>
@@ -250,14 +253,14 @@ function CustomPackageForm(): React.JSX.Element {
   }
 
   return (
-    <Card className="shadow-2xl flex flex-col h-[640px]">
-      <CardHeader className="shrink-0">
+    <Card className="shadow-2xl">
+      <CardHeader>
         <CardTitle className="text-2xl">Request a Custom Package</CardTitle>
         <CardDescription>
           Fill out the form below and our sales team will reach out within 24 hours to discuss your needs.
         </CardDescription>
       </CardHeader>
-      <CardContent className="overflow-y-auto flex-1">
+      <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div className="space-y-2">

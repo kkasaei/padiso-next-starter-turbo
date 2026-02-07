@@ -19,12 +19,6 @@ export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_MONTHLY_ID =
 export const NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_YEARLY_ID = 
   process.env.NEXT_PUBLIC_BILLING_PRICE_GRWOTH_PLAN_YEARLY_ID || '';
 
-// Custom Plan
-export const NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID || '';
-export const NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID = 
-  process.env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID || '';
-
 // Environment object (compatible with the existing usage pattern)
 export const env = {
   // Server-side keys
@@ -34,10 +28,6 @@ export const env = {
   // Public price IDs - Growth Plan
   NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_MONTHLY_ID,
   NEXT_PUBLIC_BILLING_PRICE_GROWTH_PLAN_YEARLY_ID,
-  
-  // Public price IDs - Custom Plan
-  NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID,
-  NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID,
 } as const;
 
 /**

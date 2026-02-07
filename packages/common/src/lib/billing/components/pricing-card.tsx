@@ -142,7 +142,7 @@ export function PricingCard({
         {/* CTA Button - always at bottom */}
         {isEnterprise ? (
           <Link
-            href={'/contact'}
+            href={'/sales'}
             className={cn(
               buttonVariants({ variant: 'outline', size: 'lg' }),
               'group relative overflow-hidden rounded-full border-2 font-semibold',

@@ -29,7 +29,7 @@ export const routes = {
     Pricing: '/pricing',
     Blog: '/blog',
     Story: '/story',
-    Contact: '/contact',
+    Contact: '/sales',
     Docs: '/docs',
     Waitlist: '/waitlist',
   },

@@ -44,13 +44,13 @@ export function CTA(): React.JSX.Element {
                 Start 7-Day Free Trial
               </Link>
               <Link
-                href="/contact"
+                href="/sales"
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
                   'rounded-full px-8'
                 )}
               >
-                Get in Touch
+                Need a Custom Solution?
                 <ArrowRight className="ml-2 size-4" />
               </Link>
             </div>

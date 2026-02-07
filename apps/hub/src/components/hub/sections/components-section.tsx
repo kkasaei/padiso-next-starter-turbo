@@ -1813,7 +1813,7 @@ function PricingCardsSection() {
                 {/* CTA Button */}
                 {plan.isEnterprise ? (
                   <Button asChild variant="default" className="group flex items-center justify-center gap-1">
-                    <Link href="/contact">
+                    <Link href="/sales">
                       Contact Sales
                       <ChevronRightIcon className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </Link>
@@ -2003,7 +2003,7 @@ function PricingFAQSection() {
           <p className="mt-4 text-muted-foreground lg:max-w-[75%]">
             Have questions about our pricing or plans?{' '}
             <Link
-              href="/contact"
+              href="/sales"
               className="font-normal text-inherit underline hover:text-foreground"
             >
               Contact us

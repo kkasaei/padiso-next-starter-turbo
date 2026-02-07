@@ -174,19 +174,6 @@ export const PLANS = {
     name: 'Custom',
     description: 'For agencies and large brands with custom needs and unlimited scale.',
     isEnterprise: true,
-    trialDays: 7,
-    prices: {
-      month: {
-        id: env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_MONTHLY_ID || 'price_custom_month',
-        amount: 2000,
-        currency: 'USD',
-      },
-      year: {
-        id: env.NEXT_PUBLIC_BILLING_PRICE_CUSTOM_PLAN_YEARLY_ID || 'price_custom_year',
-        amount: 20000,
-        currency: 'USD',
-      },
-    },
     features: [
       'Unlimited brands',
       'Unlimited prompts',
@@ -226,7 +213,7 @@ export function getPlanLimits(planId: string) {
 
 export function getPlanIdFromPriceId(priceId: string): PlanId {
   for (const [planId, plan] of Object.entries(PLANS)) {
-    if (plan.prices.month.id === priceId || plan.prices.year.id === priceId) {
+    if ('prices' in plan && (plan.prices.month.id === priceId || plan.prices.year.id === priceId)) {
       return planId as PlanId;
     }
   }
@@ -235,7 +222,7 @@ export function getPlanIdFromPriceId(priceId: string): PlanId {
 
 export function getIntervalFromPriceId(priceId: string): 'month' | 'year' {
   for (const plan of Object.values(PLANS)) {
-    if (plan.prices.year.id === priceId) return 'year';
+    if ('prices' in plan && plan.prices.year.id === priceId) return 'year';
   }
   return 'month';
 }
