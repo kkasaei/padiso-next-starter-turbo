@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -47,25 +48,61 @@ const STEPS = [
 const GROWTH_FEATURES = PLANS.growth.features.slice(0, 11) as readonly string[];
 
 const REFERRAL_SOURCES = [
-  { id: "google", label: "Google" },
-  { id: "linkedin", label: "LinkedIn" },
-  { id: "twitter", label: "Twitter / X" },
-  { id: "youtube", label: "YouTube" },
-  { id: "ai-search", label: "ChatGPT / Perplexity" },
-  { id: "friend", label: "Friend or colleague" },
-  { id: "other", label: "Other" },
+  { id: "google", label: "Google", icon: "/icons/google-color.svg" },
+  { id: "linkedin", label: "LinkedIn", icon: "/icons/linkedin.svg" },
+  { id: "twitter", label: "Twitter / X", icon: "/icons/twitter.svg" },
+  { id: "youtube", label: "YouTube", icon: "/icons/youtube.svg" },
+  { id: "ai-search", label: "ChatGPT / Perplexity", icon: "/icons/chatgpt.svg" },
+  { id: "friend", label: "Friend or colleague", icon: null as string | null },
+  { id: "other", label: "Other", icon: null as string | null },
 ];
 
 const CMS_OPTIONS = [
-  { id: "wordpress", label: "WordPress" },
-  { id: "shopify", label: "Shopify" },
-  { id: "webflow", label: "Webflow" },
-  { id: "wix", label: "Wix" },
-  { id: "squarespace", label: "Squarespace" },
-  { id: "custom", label: "Custom / Headless" },
-  { id: "nextjs", label: "Next.js" },
+  { id: "wordpress", label: "WordPress", icon: "/icons/wordpress.svg" },
+  { id: "shopify", label: "Shopify", icon: "/icons/shopify.svg" },
+  { id: "webflow", label: "Webflow", icon: "/icons/webflow.svg" },
+  { id: "wix", label: "Wix", icon: "/icons/wix.svg" },
+  { id: "squarespace", label: "Squarespace", icon: "/icons/squarespace.svg" },
+  { id: "drupal", label: "Drupal", icon: "/icons/drupal.svg" },
+  { id: "ghost", label: "Ghost", icon: "/icons/ghost.svg" },
+  { id: "bigcommerce", label: "BigCommerce", icon: "/icons/bigcommerce.svg" },
+  { id: "framer", label: "Framer", icon: "/icons/framer.svg" },
+  { id: "contentful", label: "Contentful", icon: "/icons/contentful.svg" },
+  { id: "sanity", label: "Sanity", icon: "/icons/sanity.svg" },
+  { id: "strapi", label: "Strapi", icon: "/icons/strapi.svg" },
+  { id: "nextjs", label: "Next.js", icon: "/icons/vercel.svg" },
+  { id: "custom", label: "Custom / Headless", icon: null as string | null },
+  { id: "other", label: "Other", icon: null as string | null },
+];
+
+// Role options
+const ROLE_OPTIONS = [
+  { id: "founder", label: "Founder / CEO" },
+  { id: "marketing-lead", label: "Head of Marketing" },
+  { id: "seo-manager", label: "SEO Manager" },
+  { id: "content-manager", label: "Content Manager" },
+  { id: "developer", label: "Developer" },
+  { id: "agency", label: "Agency / Consultant" },
   { id: "other", label: "Other" },
 ];
+
+// Team size options
+const TEAM_SIZE_OPTIONS = [
+  { id: "solo", label: "Just me" },
+  { id: "2-5", label: "2–5" },
+  { id: "6-20", label: "6–20" },
+  { id: "21-50", label: "21–50" },
+  { id: "51-200", label: "51–200" },
+  { id: "200+", label: "200+" },
+];
+
+// Step illustrations — add more images to /public/workspace-setup/ as needed
+const STEP_ILLUSTRATIONS: Record<number, { src: string; alt: string }> = {
+  1: { src: "/workspace-setup/step-01.png", alt: "Create your workspace" },
+  2: { src: "/workspace-setup/step-01.png", alt: "Select your plan" },
+  3: { src: "/workspace-setup/step-02.png", alt: "Setting up your workspace" },
+  4: { src: "/workspace-setup/step-02.png", alt: "Quick questions" },
+};
 
 // LocalStorage key for persisting pending workspace data across Stripe redirect
 const PENDING_SETUP_KEY = "pendingWorkspaceSetup";
@@ -181,6 +218,9 @@ export function WorkspaceSetup() {
   // ─── Step 4: Survey state ───
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedCms, setSelectedCms] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedTeamSize, setSelectedTeamSize] = useState<string | null>(null);
+  const [websiteUrl, setWebsiteUrl] = useState("");
   const [isSubmittingSurvey, setIsSubmittingSurvey] = useState(false);
 
   // ─── Clerk & tRPC ───
@@ -414,11 +454,14 @@ export function WorkspaceSetup() {
     setIsSubmittingSurvey(true);
 
     // TODO: Save survey response to DB
-    if (selectedSource || selectedCms) {
+    if (selectedSource || selectedCms || selectedRole || selectedTeamSize || websiteUrl) {
       try {
         console.log("Survey response:", {
           source: selectedSource,
           cms: selectedCms,
+          role: selectedRole,
+          teamSize: selectedTeamSize,
+          websiteUrl,
         });
       } catch (err) {
         console.error("Failed to save survey:", err);
@@ -1011,24 +1054,61 @@ export function WorkspaceSetup() {
                   </p>
 
                   <div className="space-y-6 mb-6">
-                    {/* How did you hear about us? */}
+                    {/* Website URL */}
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">
+                        What&apos;s your website URL?
+                      </p>
+                      <Input
+                        value={websiteUrl}
+                        onChange={(e) => setWebsiteUrl(e.target.value)}
+                        placeholder="https://example.com"
+                        className="h-10"
+                        type="url"
+                      />
+                    </div>
+
+                    {/* What's your role? */}
                     <div>
                       <p className="text-sm font-medium text-foreground mb-3">
-                        How did you hear about us?
+                        What&apos;s your role?
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        {REFERRAL_SOURCES.map((source) => (
+                        {ROLE_OPTIONS.map((role) => (
                           <button
-                            key={source.id}
-                            onClick={() => setSelectedSource(source.id)}
+                            key={role.id}
+                            onClick={() => setSelectedRole(role.id)}
                             className={cn(
                               "px-3 py-1.5 rounded-lg border text-sm transition-colors",
-                              selectedSource === source.id
+                              selectedRole === role.id
                                 ? "border-foreground/30 bg-muted"
                                 : "border-border hover:bg-muted/50"
                             )}
                           >
-                            {source.label}
+                            {role.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Team size */}
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-3">
+                        How big is your team?
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {TEAM_SIZE_OPTIONS.map((size) => (
+                          <button
+                            key={size.id}
+                            onClick={() => setSelectedTeamSize(size.id)}
+                            className={cn(
+                              "px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                              selectedTeamSize === size.id
+                                ? "border-foreground/30 bg-muted"
+                                : "border-border hover:bg-muted/50"
+                            )}
+                          >
+                            {size.label}
                           </button>
                         ))}
                       </div>
@@ -1045,13 +1125,42 @@ export function WorkspaceSetup() {
                             key={cms.id}
                             onClick={() => setSelectedCms(cms.id)}
                             className={cn(
-                              "px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                              "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors",
                               selectedCms === cms.id
                                 ? "border-foreground/30 bg-muted"
                                 : "border-border hover:bg-muted/50"
                             )}
                           >
+                            {cms.icon && (
+                              <Image src={cms.icon} alt="" width={16} height={16} className="w-4 h-4 shrink-0" />
+                            )}
                             {cms.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* How did you hear about us? */}
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-3">
+                        How did you hear about us?
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {REFERRAL_SOURCES.map((source) => (
+                          <button
+                            key={source.id}
+                            onClick={() => setSelectedSource(source.id)}
+                            className={cn(
+                              "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors",
+                              selectedSource === source.id
+                                ? "border-foreground/30 bg-muted"
+                                : "border-border hover:bg-muted/50"
+                            )}
+                          >
+                            {source.icon && (
+                              <Image src={source.icon} alt="" width={16} height={16} className="w-4 h-4 shrink-0" />
+                            )}
+                            {source.label}
                           </button>
                         ))}
                       </div>
@@ -1091,11 +1200,40 @@ export function WorkspaceSetup() {
         </div>
       </div>
 
-      {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-muted/30 items-center justify-center p-10">
-        <div className="max-w-md">
-          {/* Simple decorative element */}
-        </div>
+      {/* Right Side - Step Illustration */}
+      <div className="hidden lg:flex flex-1 bg-muted/30 items-center justify-center p-10 overflow-hidden">
+        <AnimatePresence mode="wait">
+          {STEP_ILLUSTRATIONS[step] ? (
+            <motion.div
+              key={`illustration-${step}`}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-3xl"
+            >
+              <Image
+                src={STEP_ILLUSTRATIONS[step].src}
+                alt={STEP_ILLUSTRATIONS[step].alt}
+                width={900}
+                height={750}
+                className="w-full h-auto object-contain"
+                priority={step === 1}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="illustration-empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md"
+            >
+              {/* Placeholder for steps without illustrations */}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
