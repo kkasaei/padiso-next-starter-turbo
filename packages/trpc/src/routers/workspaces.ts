@@ -5,6 +5,47 @@ import { router, publicProcedure } from "../trpc";
 
 export const workspacesRouter = router({
   /**
+   * Check if a Clerk organization slug is available.
+   * Uses the Clerk REST API directly to avoid adding @clerk/nextjs dependency.
+   */
+  checkSlugAvailability: publicProcedure
+    .input(z.object({ slug: z.string().min(1).max(48) }))
+    .query(async ({ input }) => {
+      const clerkSecretKey = process.env.CLERK_SECRET_KEY;
+      if (!clerkSecretKey) {
+        throw new Error("CLERK_SECRET_KEY not configured");
+      }
+
+      try {
+        // Clerk allows looking up an organization by slug directly
+        const response = await fetch(
+          `https://api.clerk.com/v1/organizations/${encodeURIComponent(input.slug)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${clerkSecretKey}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 404 || response.status === 400) {
+          // 404 = not found, slug is available
+          return { available: true, slug: input.slug };
+        }
+
+        if (response.ok) {
+          // Org with this slug exists
+          return { available: false, slug: input.slug };
+        }
+
+        // Unexpected status - treat as unavailable for safety
+        return { available: false, slug: input.slug };
+      } catch {
+        throw new Error("Failed to check slug availability");
+      }
+    }),
+
+  /**
    * Get all workspaces (admin only)
    */
   getAll: publicProcedure.query(async ({ ctx }) => {

@@ -37,3 +37,7 @@ export function useCheckLimit(
 export function useSyncSubscription() {
   return trpc.subscriptions.syncFromStripe.useMutation();
 }
+
+export function useProvisionAfterCheckout() {
+  return trpc.subscriptions.provisionAfterCheckout.useMutation();
+}

@@ -19,6 +19,18 @@ export function useCreateWorkspace() {
   });
 }
 
+export function useCheckSlugAvailability(slug: string) {
+  return trpc.workspaces.checkSlugAvailability.useQuery(
+    { slug },
+    {
+      enabled: slug.length >= 3,
+      // Don't refetch automatically - only on slug change
+      staleTime: 30_000,
+      retry: false,
+    }
+  );
+}
+
 export function useWorkspaceByClerkOrgId(clerkOrgId: string) {
   return trpc.workspaces.getByClerkOrgId.useQuery(
     { clerkOrgId },

@@ -115,14 +115,19 @@ function mapWorkspaceStatus(subscriptionStatus: string, isActive: boolean): 'act
 }
 
 /**
- * Create or update workspace from Stripe webhook payload
+ * Create or update workspace from Stripe webhook payload.
+ * Gracefully handles the case where workspace doesn't exist yet
+ * (e.g. during new setup flow where workspace is created AFTER payment).
  */
 async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
   // Find workspace ID - it should be in organizationId (passed as client_reference_id)
   let workspaceId = payload.organizationId;
   
-  if (!workspaceId) {
-    // Try to find by existing workspace with this Stripe subscription ID
+  // Skip if this is a pending setup (workspace not created yet).
+  // The provisionAfterCheckout tRPC mutation will handle linking Stripe data
+  // to the workspace once it's created on the client.
+  if (!workspaceId || workspaceId.startsWith('setup_')) {
+    // Try to find by existing workspace with this Stripe subscription ID (for updates)
     const [existingWorkspace] = await db
       .select({ id: workspaces.id })
       .from(workspaces)
@@ -132,8 +137,10 @@ async function upsertSubscription(payload: SubscriptionPayload): Promise<void> {
     if (existingWorkspace) {
       workspaceId = existingWorkspace.id;
     } else {
-      console.error('Workspace not found for subscription:', payload.subscriptionId);
-      throw new Error('Workspace not found for subscription');
+      // No workspace found - this is expected during new setup flow.
+      // The client-side provisionAfterCheckout will handle this.
+      console.log('[Webhook] No workspace found for subscription (pending setup):', payload.subscriptionId);
+      return;
     }
   }
 

@@ -342,4 +342,141 @@ export const subscriptionsRouter = router({
         },
       };
     }),
+
+  /**
+   * Provision a workspace after Stripe checkout completes.
+   * Called AFTER Clerk org + DB workspace are created on the client.
+   * Links the Stripe checkout session (customer + subscription) to the workspace.
+   */
+  provisionAfterCheckout: publicProcedure
+    .input(
+      z.object({
+        stripeSessionId: z.string(),
+        workspaceId: z.string().uuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // 1. Verify workspace exists
+      const [workspace] = await ctx.db
+        .select()
+        .from(workspaces)
+        .where(eq(workspaces.id, input.workspaceId))
+        .limit(1);
+
+      if (!workspace) {
+        throw new Error("Workspace not found");
+      }
+
+      // 2. Retrieve Stripe checkout session with expanded subscription
+      const stripe = getStripe();
+      const session = await stripe.checkout.sessions.retrieve(input.stripeSessionId);
+
+      if (!session) {
+        throw new Error("Stripe session not found");
+      }
+
+      // Verify payment completed (paid for immediate charge, no_payment_required for trials)
+      if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") {
+        throw new Error("Payment not completed");
+      }
+
+      // 3. Get subscription
+      const subscriptionId =
+        typeof session.subscription === "string"
+          ? session.subscription
+          : session.subscription?.id;
+
+      if (!subscriptionId) {
+        throw new Error("No subscription found for this checkout session");
+      }
+
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const firstItem = subscription.items.data[0];
+
+      if (!firstItem) {
+        throw new Error("No subscription items found");
+      }
+
+      // 4. Derive plan info from the price
+      const priceId = firstItem.price?.id || "";
+      const planId = getPlanIdFromPriceId(priceId);
+      const plan = getPlanById(planId);
+      const interval = getIntervalFromPriceId(priceId);
+      const limits = getPlanLimits(planId);
+      const customerId = (session.customer as string) || "";
+
+      type WorkspaceStatus = "active" | "trialing" | "past_due" | "canceled" | "unpaid" | "incomplete" | "incomplete_expired" | "paused";
+      const statusMap: Record<string, WorkspaceStatus> = {
+        active: "active",
+        trialing: "trialing",
+        past_due: "past_due",
+        canceled: "canceled",
+        unpaid: "unpaid",
+        incomplete: "incomplete",
+        incomplete_expired: "incomplete_expired",
+        paused: "paused",
+      };
+
+      // 5. Update workspace with all Stripe data
+      const [updated] = await ctx.db
+        .update(workspaces)
+        .set({
+          status: statusMap[subscription.status] || "active",
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscription.id,
+          stripePriceId: priceId,
+          planId,
+          planName: plan?.name || "Growth",
+          billingInterval: interval,
+          priceAmount: String((firstItem.price?.unit_amount ?? 0) / 100),
+          currency: subscription.currency,
+          trialStartsAt: subscription.trial_start
+            ? new Date(subscription.trial_start * 1000)
+            : null,
+          trialEndsAt: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000)
+            : null,
+          subscriptionPeriodStartsAt: new Date(
+            (firstItem.current_period_start ?? 0) * 1000
+          ),
+          subscriptionPeriodEndsAt: new Date(
+            (firstItem.current_period_end ?? 0) * 1000
+          ),
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          limitBrands: limits.brands.max === -1 ? null : limits.brands.max,
+          limitApiCallsPerMonth:
+            limits.api.maxCalls === -1 ? null : limits.api.maxCalls,
+          limitAiCreditsPerMonth:
+            limits.visibility.maxInsightsQueries === -1
+              ? null
+              : limits.visibility.maxInsightsQueries,
+          updatedAt: new Date(),
+        })
+        .where(eq(workspaces.id, input.workspaceId))
+        .returning();
+
+      // 6. Update Stripe customer + subscription metadata to point to the real workspace ID
+      // This ensures future webhooks can find the workspace
+      if (customerId) {
+        await stripe.customers.update(customerId, {
+          metadata: { organizationId: input.workspaceId },
+        });
+      }
+      await stripe.subscriptions.update(subscription.id, {
+        metadata: { organizationId: input.workspaceId, planId },
+      });
+
+      return {
+        success: true,
+        workspace: updated,
+        subscription: {
+          id: subscription.id,
+          status: subscription.status,
+          planId,
+          trialEnd: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000)
+            : null,
+        },
+      };
+    }),
 });
