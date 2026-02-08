@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, ne } from "drizzle-orm";
 import { workspaces } from "@workspace/db/schema";
 import { router, publicProcedure } from "../trpc";
 
@@ -47,11 +47,13 @@ export const workspacesRouter = router({
 
   /**
    * Get all workspaces (admin only)
+   * Excludes deleted workspaces
    */
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allWorkspaces = await ctx.db
       .select()
       .from(workspaces)
+      .where(ne(workspaces.status, "deleted"))
       .orderBy(desc(workspaces.createdAt));
 
     return allWorkspaces;

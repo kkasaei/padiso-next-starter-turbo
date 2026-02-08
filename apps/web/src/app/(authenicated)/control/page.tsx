@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { Users, Layers, Plus, FileText } from "lucide-react"
 import { trpc } from "@/lib/trpc/client"
 import type { Workspace } from "@workspace/db"
+import { getClerkOrganizations } from "@/lib/admin-actions/workspaces"
 import {
   Select,
   SelectContent,
@@ -144,54 +145,78 @@ type AdminStats = {
 function AnalyticsSection({ workspaces, adminStats }: { workspaces: Workspace[]; adminStats?: AdminStats }) {
   const [dateRange, setDateRange] = useState("7d")
 
+  // Calculate date range based on selection
+  const getDateRangeString = (range: string): string => {
+    const today = new Date()
+    const startDate = new Date()
+    
+    if (range === "7d") {
+      startDate.setDate(today.getDate() - 7)
+    } else if (range === "30d") {
+      startDate.setDate(today.getDate() - 30)
+    } else if (range === "90d") {
+      startDate.setDate(today.getDate() - 90)
+    }
+    
+    const formatDate = (date: Date) => {
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    }
+    
+    return `${formatDate(startDate)} – ${formatDate(today)}`
+  }
+
   const totalWorkspaces = workspaces.length
   const trialingWorkspaces = workspaces.filter(w => w.status === "trialing").length
-  const trialToSignupRatio = totalWorkspaces > 0
-    ? Math.round((trialingWorkspaces / totalWorkspaces) * 100)
+  const activeWorkspaces = workspaces.filter(w => w.status === "active").length
+  // Calculate conversion rate: active workspaces / (trialing + active) * 100
+  const trialToSignupRatio = (trialingWorkspaces + activeWorkspaces) > 0
+    ? Math.round((activeWorkspaces / (trialingWorkspaces + activeWorkspaces)) * 100)
     : 0
   const growthPlanWorkspaces = workspaces.filter(w => w.planId === "growth").length
   const customPlanWorkspaces = workspaces.filter(w => w.planId === "custom" || w.planId === "enterprise").length
+
+  const dateRangeString = getDateRangeString(dateRange)
 
   const cards = [
     {
       title: "Total Workspaces",
       value: totalWorkspaces,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: projectsData,
       color: "#3b82f6",
     },
     {
       title: "Trials to Signups",
       value: `${trialToSignupRatio}%`,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: visibilityData,
       color: "#10b981",
     },
     {
       title: "Total Growth Plan",
       value: growthPlanWorkspaces,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: projectsData,
       color: "#f59e0b",
     },
     {
       title: "Total Custom Plans",
       value: customPlanWorkspaces,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: visibilityData,
       color: "#8b5cf6",
     },
     {
       title: "Public Reports",
       value: adminStats?.publicReports ?? 0,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: reportsData,
       color: "#ec4899",
     },
     {
       title: "Waitlist Requests",
       value: adminStats?.waitlistRequests ?? 0,
-      dateRange: "Jan 19 – Jan 26, 2026",
+      dateRange: dateRangeString,
       data: creditsData,
       color: "#06b6d4",
     },
@@ -286,12 +311,12 @@ function OverviewCard({ workspaces, adminStats }: { workspaces: Workspace[]; adm
           </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Total Workspaces</span>
-              <span className="font-semibold">{totalWorkspaces}</span>
+              <span className="text-muted-foreground">Total Users</span>
+              <span className="font-semibold">—</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">With Subscriptions</span>
-              <span className="font-semibold text-emerald-600">{activeWorkspaces}</span>
+              <span className="text-muted-foreground">Verified Users</span>
+              <span className="font-semibold text-emerald-600">—</span>
             </div>
             <Button asChild className="w-full mt-2">
               <Link href="/control/users">Manage Users</Link>
@@ -338,8 +363,31 @@ function OverviewCard({ workspaces, adminStats }: { workspaces: Workspace[]; adm
 }
 
 export default function AdminDashboard() {
-  const { data: workspaces = [] } = trpc.workspaces.getAll.useQuery()
+  const { data: dbWorkspaces = [] } = trpc.workspaces.getAll.useQuery()
   const { data: adminStats } = trpc.admin.getStats.useQuery()
+  const [clerkOrgs, setClerkOrgs] = useState<Array<{ id: string }> | null>(null)
+
+  // Fetch Clerk organizations to filter out orphaned workspaces
+  useEffect(() => {
+    getClerkOrganizations()
+      .then(orgs => setClerkOrgs(orgs))
+      .catch(err => {
+        console.error("Failed to fetch Clerk orgs:", err)
+        // If Clerk fetch fails, set to empty array to filter nothing (show all as fallback)
+        setClerkOrgs([])
+      })
+  }, [])
+
+  // Filter workspaces to only include those with existing Clerk organizations
+  const workspaces = useMemo(() => {
+    // If Clerk orgs haven't loaded yet, return all dbWorkspaces (will update once loaded)
+    if (clerkOrgs === null) {
+      return dbWorkspaces
+    }
+    // Once loaded, filter to only include workspaces with matching Clerk orgs
+    const clerkOrgIds = new Set(clerkOrgs.map(org => org.id))
+    return dbWorkspaces.filter(w => clerkOrgIds.has(w.clerkOrgId))
+  }, [dbWorkspaces, clerkOrgs])
 
   return (
     <div className="mt-10">
