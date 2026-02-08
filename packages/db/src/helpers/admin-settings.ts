@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 
 /**
  * Check if waitlist mode is enabled
- * Returns true if auth_mode is set to "waitlist", false if "open"
+ * Returns true if use_waitlist_mode is true, false otherwise
  * 
  * Security: Defaults to TRUE (waitlist/closed) on error to fail-safe
  */
@@ -19,8 +19,8 @@ export async function isWaitlistMode(): Promise<boolean> {
       return false; // Default to open mode if setting doesn't exist
     }
 
-    const mode = (authModeSetting.value as any).mode;
-    return mode === "waitlist";
+    const use_waitlist_mode = (authModeSetting.value as any).use_waitlist_mode;
+    return use_waitlist_mode === true;
   } catch (error) {
     console.error("Error checking waitlist mode:", error);
     // Fail-closed: default to waitlist mode for security

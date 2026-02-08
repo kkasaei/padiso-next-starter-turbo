@@ -80,17 +80,14 @@ export default function SettingsPage() {
     newValue: any
   ): { required: boolean; title: string; message: string } => {
     // Auth mode changes require confirmation
-    if (setting.key === "auth_mode" && path[0] === "mode") {
-      const currentMode = (setting.value as SettingValue).mode
-      const modeLabel = newValue === "waitlist" ? "Waitlist" : "Open Signup"
-      const currentLabel = currentMode === "waitlist" ? "Waitlist" : "Open Signup"
+    if (setting.key === "auth_mode" && path[0] === "use_waitlist_mode") {
+      const modeLabel = newValue === true ? "Waitlist Mode" : "Open Signup"
+      const currentLabel = !newValue ? "Waitlist Mode" : "Open Signup"
       
-      if (currentMode !== newValue) {
-        return {
-          required: true,
-          title: "Change Authentication Mode?",
-          message: `Are you sure you want to change authentication from "${currentLabel}" to "${modeLabel}"? This will affect how users sign up and access the platform.`,
-        }
+      return {
+        required: true,
+        title: "Change Authentication Mode?",
+        message: `Are you sure you want to change authentication from "${currentLabel}" to "${modeLabel}"? ${newValue ? 'Users will need to join the waitlist.' : 'Users can sign up freely.'}`,
       }
     }
 
@@ -151,15 +148,15 @@ export default function SettingsPage() {
     settings.forEach((setting) => {
       const value = setting.value as SettingValue
 
-      // Handle auth_mode as a toggle (open vs waitlist)
+      // Handle auth_mode as a simple toggle
       if (setting.key === "auth_mode") {
         items.push({
           settingKey: setting.key,
           category: setting.category,
           label: "Waitlist Mode",
-          description: "Control user registration: OFF = Open signup enabled, ON = Waitlist (require approval)",
-          path: ["mode"],
-          value: value.mode === "waitlist",
+          description: "Enable waitlist mode to require approval for new signups. When OFF, users can sign up freely.",
+          path: ["use_waitlist_mode"],
+          value: value.use_waitlist_mode === true,
           setting,
           type: "toggle",
         })
@@ -235,12 +232,7 @@ export default function SettingsPage() {
     path: string[],
     currentValue: boolean
   ) => {
-    let newValue: any = !currentValue
-    
-    // Special handling for auth_mode - convert boolean to mode string
-    if (setting.key === "auth_mode" && path[0] === "mode") {
-      newValue = currentValue ? "open" : "waitlist"
-    }
+    const newValue: any = !currentValue
     
     const confirmation = requiresConfirmation(setting, path, newValue)
 

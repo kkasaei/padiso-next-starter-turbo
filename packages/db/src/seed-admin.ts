@@ -8,33 +8,9 @@ async function seed() {
     {
       key: "auth_mode",
       category: "authentication",
-      description: "Controls authentication flow (waitlist | open)",
+      description: "Controls authentication flow: waitlist mode (true) or open signup (false)",
       value: {
-        mode: "open",
-        settings: {
-          waitlist: {
-            enabled: false,
-            message: "Join our waitlist to get early access!",
-            success_message: "Thank you! We'll notify you when your account is approved.",
-            auto_approve: false,
-            manual_approval: true,
-            approval_notification_email: true,
-            max_approvals_per_day: 100,
-            priority_domains: [],
-            collect_additional_info: {
-              company: false,
-              use_case: true,
-              referral_source: true,
-              team_size: false,
-            },
-          },
-          open_signup: {
-            enabled: true,
-            require_email_verification: true,
-            allowed_domains: [],
-            blocked_domains: ["tempmail.com", "throwaway.email"],
-          },
-        },
+        use_waitlist_mode: true,
       },
       isActive: true,
       metadata: {},
