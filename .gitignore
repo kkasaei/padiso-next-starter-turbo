@@ -42,3 +42,5 @@ env.development
 env-old
 ENV_REFERENCE.md
 old-envs.zip
+.env*.local
+setup-vercel-envs.sh
