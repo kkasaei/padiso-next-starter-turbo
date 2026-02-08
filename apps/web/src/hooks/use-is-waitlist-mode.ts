@@ -14,7 +14,7 @@ export function useIsWaitlistMode() {
   )
 
   const isWaitlistMode = authModeSetting?.value 
-    ? (authModeSetting.value as any).mode === "waitlist"
+    ? (authModeSetting.value as any).use_waitlist_mode === true
     : false
 
   return {
