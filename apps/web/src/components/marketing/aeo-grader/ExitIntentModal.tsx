@@ -4,14 +4,14 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, X } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { Button } from '@workspace/ui/components/button';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 export function ExitIntentModal(): React.JSX.Element | null {
   const [isVisible, setIsVisible] = React.useState(false);
-  const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'Start 7-Day Free Trial';
+  const { isWaitlistMode } = useIsWaitlistMode();
+  const ctaLink = isWaitlistMode ? '/waitlist' : '/auth/sign-up';
+  const ctaText = isWaitlistMode ? 'Join Waitlist' : 'Start 7-Day Free Trial';
 
   React.useEffect(() => {
     // Check if modal was already shown in this session
@@ -122,7 +122,7 @@ export function ExitIntentModal(): React.JSX.Element | null {
                 </Link>
               </Button>
               <p className="text-center text-xs text-muted-foreground">
-                {isWaitlist ? 'Be the first to know when we launch' : 'No payment required • Cancel anytime'}
+                {isWaitlistMode ? 'Be the first to know when we launch' : 'No payment required • Cancel anytime'}
               </p>
               <button
                 onClick={() => setIsVisible(false)}

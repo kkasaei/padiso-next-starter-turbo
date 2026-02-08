@@ -7,7 +7,6 @@ import { ChevronDownIcon, ChevronUpIcon, LogOutIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser, useClerk } from '@clerk/nextjs';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { baseURL, getPathname } from '@workspace/common';
 import {
   Avatar,
@@ -28,6 +27,7 @@ import { cn } from '@workspace/common/lib';
 
 import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { DOCS_LINKS, MENU_LINKS } from '@/components/marketing/MarketingLinks';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 function getInitials(name?: string | null): string {
   if (!name) return 'U';
@@ -141,6 +141,7 @@ function MainMobileMenu({
   const { isSignedIn, user } = useUser();
   const router = useRouter();
   const { signOut } = useClerk();
+  const { isWaitlistMode } = useIsWaitlistMode();
 
   const dashboardUrl = '/dashboard';
 
@@ -199,7 +200,7 @@ function MainMobileMenu({
         ) : (
           <div className="flex w-full flex-col gap-2">
             <Link
-              href={FEATURE_FLAGS.IS_WAITLIST ? '/waitlist' : '/auth/sign-up'}
+              href={isWaitlistMode ? '/waitlist' : '/auth/sign-up'}
               className={cn(
                 buttonVariants({
                   variant: 'default',
@@ -209,7 +210,7 @@ function MainMobileMenu({
               )}
               onClick={onLinkClicked}
             >
-              {FEATURE_FLAGS.IS_WAITLIST ? 'Join Waitlist' : 'Get started'}
+              {isWaitlistMode ? 'Join Waitlist' : 'Get started'}
             </Link>
             <Link
               href='/auth/sign-in'

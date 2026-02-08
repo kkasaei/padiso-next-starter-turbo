@@ -4,13 +4,13 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Unlock } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { Button } from '@workspace/ui/components/button';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 export function HeroCTABanner(): React.JSX.Element {
-  const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist for Early Access' : 'Sign up free - No credit card required';
+  const { isWaitlistMode } = useIsWaitlistMode();
+  const ctaLink = isWaitlistMode ? '/waitlist' : '/auth/sign-up';
+  const ctaText = isWaitlistMode ? 'Join Waitlist for Early Access' : 'Sign up free - No credit card required';
 
   return (
     <div className="mb-8 rounded-lg border-l-[3px] border-l-blue-500 bg-blue-50 p-4 dark:bg-blue-950/20 md:p-6">
@@ -18,9 +18,9 @@ export function HeroCTABanner(): React.JSX.Element {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Unlock className="size-5 text-blue-600 dark:text-blue-400" />
-            <h3 className="text-base font-semibold md:text-lg">
-              {isWaitlist ? 'Get notified when we launch' : 'You\'re viewing a limited report'}
-            </h3>
+          <h3 className="text-base font-semibold md:text-lg">
+            {isWaitlistMode ? 'Get notified when we launch' : 'You\'re viewing a limited report'}
+          </h3>
           </div>
           <div className="space-y-1 text-sm text-muted-foreground">
             <p className="flex items-start gap-2">

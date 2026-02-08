@@ -2,3 +2,5 @@ node_modules
 drizzle
 .env
 *.log
+
+scripts/*

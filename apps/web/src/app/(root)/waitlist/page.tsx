@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Check } from 'lucide-react';
-import { FEATURE_FLAGS } from '@workspace/common';
+import { isWaitlistMode } from '@workspace/db';
 import { WaitlistForm } from './WaitlistForm';
 
 const AI_PLATFORMS = [
@@ -38,8 +38,10 @@ const BENEFITS = [
   },
 ];
 
-export default function WaitlistPage(): React.JSX.Element {
-  if (!FEATURE_FLAGS.IS_WAITLIST) {
+export default async function WaitlistPage(): Promise<React.JSX.Element> {
+  const isWaitlist = await isWaitlistMode();
+  
+  if (!isWaitlist) {
     redirect('/');
   }
 

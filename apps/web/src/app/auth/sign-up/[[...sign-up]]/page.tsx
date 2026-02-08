@@ -1,9 +1,15 @@
-'use client';
-
+import { redirect } from 'next/navigation';
 import { SignUp } from '@clerk/nextjs';
+import { getWaitlistMode } from '@/lib/get-waitlist-mode';
 
+export default async function SignUpPage() {
+  const isWaitlistMode = await getWaitlistMode();
+  
+  // Redirect to waitlist if waitlist mode is enabled
+  if (isWaitlistMode) {
+    redirect('/waitlist');
+  }
 
-export default function SignUpPage() {
   return (
     <SignUp
       appearance={{

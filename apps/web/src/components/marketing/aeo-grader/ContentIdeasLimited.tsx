@@ -4,9 +4,9 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Lightbulb, FileText, Target, TrendingUp, Lock } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 interface ContentIdea {
   title: string;
@@ -41,10 +41,10 @@ export function ContentIdeasLimited({
 }: ContentIdeasLimitedProps): React.JSX.Element {
   const visibleIdeas = ideas.slice(0, visibleCount);
   const lockedIdeas = ideas.slice(visibleCount);
-  const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'Unlock all content ideas';
-  const lockMessage = isWaitlist ? 'Join our waitlist to get access when we launch' : 'Free signup required';
+  const { isWaitlistMode } = useIsWaitlistMode();
+  const ctaLink = isWaitlistMode ? '/waitlist' : '/auth/sign-up';
+  const ctaText = isWaitlistMode ? 'Join Waitlist' : 'Unlock all content ideas';
+  const lockMessage = isWaitlistMode ? 'Join our waitlist to get access when we launch' : 'Free signup required';
 
   return (
     <div className="space-y-6">

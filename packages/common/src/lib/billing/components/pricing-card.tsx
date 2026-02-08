@@ -57,6 +57,8 @@ export function PricingCard({
           timestamp: Date.now(),
         }));
       }
+      // Note: This will be intercepted by middleware/server-side check
+      // If waitlist mode is on, sign-up page will redirect to /waitlist
       router.push('/auth/sign-up');
     }
   };

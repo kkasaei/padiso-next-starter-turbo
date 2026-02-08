@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useUser, useClerk, useOrganizationList } from '@clerk/nextjs';
 import { LogOutIcon, SettingsIcon } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { baseURL, getPathname, routes } from '@workspace/common';
 import {
   Avatar,
@@ -39,6 +38,7 @@ import { cn } from '@workspace/common/lib';
 import { ExternalLink } from '@workspace/ui/components/fragments/ExternalLink';
 import { MENU_LINKS } from '@/components/marketing/MarketingLinks';
 import { MobileMenu } from '@/components/marketing/MobileMenu';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 function getInitials(name?: string | null): string {
   if (!name) return 'U';
@@ -55,6 +55,7 @@ export function Navbar(): React.JSX.Element {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
+  const { isWaitlistMode } = useIsWaitlistMode();
 
   const dashboardUrl = '/dashboard';
 
@@ -251,7 +252,7 @@ export function Navbar(): React.JSX.Element {
                   Sign in
                 </Link>
                 <Link
-                  href={FEATURE_FLAGS.IS_WAITLIST ? '/waitlist' : '/auth/sign-up'}
+                  href={isWaitlistMode ? '/waitlist' : '/auth/sign-up'}
                   className={cn(
                     buttonVariants({
                       variant: 'default'
@@ -259,7 +260,7 @@ export function Navbar(): React.JSX.Element {
                     'rounded-xl'
                   )}
                 >
-                  {FEATURE_FLAGS.IS_WAITLIST ? 'Join Waitlist' : 'Get started'}
+                  {isWaitlistMode ? 'Join Waitlist' : 'Get started'}
                 </Link>
               </>
             )}

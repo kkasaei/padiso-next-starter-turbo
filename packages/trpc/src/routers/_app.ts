@@ -10,6 +10,8 @@ import { contentRouter } from "./content";
 import { integrationsRouter } from "./integrations";
 import { redditRouter } from "./reddit";
 import { adminRouter } from "./admin";
+import { adminSettingsRouter } from "./admin-settings";
+import { adminPromptsRouter } from "./admin-prompts";
 
 export const appRouter = router({
   brands: brandsRouter,
@@ -23,6 +25,8 @@ export const appRouter = router({
   integrations: integrationsRouter,
   reddit: redditRouter,
   admin: adminRouter,
+  adminSettings: adminSettingsRouter,
+  adminPrompts: adminPromptsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Lightbulb, ArrowRight } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 interface InlineCTACardProps {
   brandArchetype?: string;
@@ -13,10 +13,10 @@ interface InlineCTACardProps {
 export function InlineCTACard({
   brandArchetype = 'Innovator'
 }: InlineCTACardProps): React.JSX.Element {
-  const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'Start 7-Day Free Trial';
-  const subText = isWaitlist ? 'Be notified when we launch' : 'See their exact positioning strategies • No payment required';
+  const { isWaitlistMode } = useIsWaitlistMode();
+  const ctaLink = isWaitlistMode ? '/waitlist' : '/auth/sign-up';
+  const ctaText = isWaitlistMode ? 'Join Waitlist' : 'Start 7-Day Free Trial';
+  const subText = isWaitlistMode ? 'Be notified when we launch' : 'See their exact positioning strategies • No payment required';
 
   return (
     <div className="group relative my-8 overflow-hidden rounded-2xl border-2 bg-gradient-to-br from-card via-card to-card/50 transition-all duration-300 hover:border-primary/50 hover:shadow-2xl">

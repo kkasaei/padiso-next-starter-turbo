@@ -12,6 +12,7 @@ import {
   Activity,
   FileText,
   LifeBuoyIcon,
+  MessageSquare,
 } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
 import { UserMenu } from "./UserMenu"
@@ -22,6 +23,7 @@ const navItems = [
   { id: "users", label: "Users", icon: Users, href: "/control/users" },
   { id: "public-reports", label: "Public Reports", icon: FileText, href: "/control/public-reports" },
   { id: "activity", label: "Activity", icon: Activity, href: "/control/activity" },
+  { id: "prompts", label: "Prompts", icon: MessageSquare, href: "/control/prompts" },
   { id: "settings", label: "Settings", icon: Settings, href: "/control/settings" },
 ] as const
 
@@ -34,6 +36,7 @@ export function AdminSidebar() {
     if (id === "workspaces") return pathname.startsWith("/control/workspaces")
     if (id === "public-reports") return pathname.startsWith("/control/public-reports")
     if (id === "activity") return pathname.startsWith("/control/activity")
+    if (id === "prompts") return pathname.startsWith("/control/prompts")
     if (id === "settings") return pathname.startsWith("/control/settings")
     return false
   }

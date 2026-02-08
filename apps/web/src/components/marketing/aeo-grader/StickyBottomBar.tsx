@@ -4,8 +4,8 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, X, Sparkles } from 'lucide-react';
 
-import { FEATURE_FLAGS } from '@workspace/common';
 import { Button } from '@workspace/ui/components/button';
+import { useIsWaitlistMode } from '@/hooks/use-is-waitlist-mode';
 
 interface StickyBottomBarProps {
   userScore: number;
@@ -18,9 +18,9 @@ export function StickyBottomBar({
 }: StickyBottomBarProps): React.JSX.Element | null {
   const [isVisible, setIsVisible] = React.useState(false);
   const [isDismissed, setIsDismissed] = React.useState(false);
-  const isWaitlist = FEATURE_FLAGS.IS_WAITLIST;
-  const ctaLink = isWaitlist ? '/waitlist' : '/auth/sign-up';
-  const ctaText = isWaitlist ? 'Join Waitlist' : 'Improve Your Score';
+  const { isWaitlistMode } = useIsWaitlistMode();
+  const ctaLink = isWaitlistMode ? '/waitlist' : '/auth/sign-up';
+  const ctaText = isWaitlistMode ? 'Join Waitlist' : 'Improve Your Score';
 
   React.useEffect(() => {
     // Check localStorage for dismissal
