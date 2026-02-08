@@ -39,4 +39,6 @@ npm-debug.log*
 env.preview
 env.production
 env.development
+env-old
 ENV_REFERENCE.md
+old-envs.zip
