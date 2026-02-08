@@ -94,6 +94,6 @@ SearchFIT integrates with:
 ## Contact
 
 - Website: https://searchfit.ai
-- Email: hello@searchfit.ai
+- Email: hi@searchfit.ai
 - Demo: https://searchfit.ai/pricing
 - Social: @searchfitai on X/Twitter and LinkedIn

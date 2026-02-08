@@ -22,10 +22,9 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
   const blogFiles = fs.readdirSync(blogDir).filter(file => file.endsWith('.mdx'));
 
   // ============================================================
-  // STATIC MARKETING PAGES
-  // Manually defined to ensure all pages are included in sitemap
+  // CORE PAGES — Highest priority
   // ============================================================
-  const staticPages: SitemapEntry[] = [
+  const corePages: SitemapEntry[] = [
     {
       url: `${baseUrl}/`,
       lastModified: new Date(),
@@ -39,10 +38,10 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
       changeFreq: 'weekly'
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      priority: 0.8,
-      changeFreq: 'monthly'
+      priority: 0.9,
+      changeFreq: 'daily'
     },
     {
       url: `${baseUrl}/story`,
@@ -51,10 +50,10 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
       changeFreq: 'monthly'
     },
     {
-      url: `${baseUrl}/blog`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      priority: 0.8,
-      changeFreq: 'daily'
+      priority: 0.7,
+      changeFreq: 'monthly'
     },
     {
       url: `${baseUrl}/docs`,
@@ -68,30 +67,143 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
       priority: 0.7,
       changeFreq: 'weekly'
     },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      priority: 0.3,
-      changeFreq: 'yearly'
-    },
-    {
-      url: `${baseUrl}/terms-of-use`,
-      lastModified: new Date(),
-      priority: 0.3,
-      changeFreq: 'yearly'
-    },
-    {
-      url: `${baseUrl}/cookie-policy`,
-      lastModified: new Date(),
-      priority: 0.3,
-      changeFreq: 'yearly'
-    }
   ];
 
   // ============================================================
-  // DYNAMIC CONTENT PAGES
-  // Blog posts: Manually scanned from filesystem (workaround for content-collections bug)
-  // Docs: From content-collections
+  // FEATURE PAGES — Product features
+  // ============================================================
+  const featurePages: SitemapEntry[] = [
+    'ai-tracking',
+    'content',
+    'analytics',
+    'backlinks',
+    'technical-audit',
+    'social-listening',
+    'integrations',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.8,
+    changeFreq: 'monthly' as const
+  }));
+
+  // ============================================================
+  // PLATFORM / INTEGRATION PAGES
+  // ============================================================
+  const platformPages: SitemapEntry[] = [
+    'shopify',
+    'wordpress',
+    'webflow',
+    'woocommerce',
+    'wix',
+    'bigcommerce',
+    'squarespace',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly' as const
+  }));
+
+  // ============================================================
+  // USE CASE / SOLUTION PAGES
+  // ============================================================
+  const useCasePages: SitemapEntry[] = [
+    'ecommerce',
+    'answer-engine-optimization',
+    'generative-engine-optimization',
+    'rank-on-chatgpt',
+    'content-automation',
+    'content-strategy',
+    'automated-publishing',
+    'seo-automation',
+    'keyword-research',
+    'keyword-clustering',
+    'keyword-discovery',
+    'link-building',
+    'backlink-building',
+    'backlink-exchange',
+    'multilingual-seo',
+    'json-ld-schema',
+    'article-generator',
+    'ai-blog-writer',
+    'ai-content-marketing',
+    'ai-seo-agent',
+    'auto-linking',
+    'autoblog',
+    'domain-authority',
+    'organic-traffic',
+    'seo-audit-software',
+    'roi-calculator',
+    'use-cases',
+    'compare',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly' as const
+  }));
+
+  // ============================================================
+  // COMPANY / RESOURCE PAGES
+  // ============================================================
+  const companyPages: SitemapEntry[] = [
+    'careers',
+    'partners',
+    'press',
+    'reviews',
+    'success-stories',
+    'resources',
+    'templates',
+    'webinars',
+    'changelog',
+    'developers',
+    'seo-agency',
+    'seo-agencies',
+    'affiliate',
+    'whitelabel',
+    'glossary',
+    'status',
+    'gdpr',
+    'security',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.5,
+    changeFreq: 'monthly' as const
+  }));
+
+  // ============================================================
+  // FREE TOOLS
+  // ============================================================
+  const freeToolPages: SitemapEntry[] = [
+    'free-tools/geo-audit',
+    'free-tools/jsonld-schema',
+    'free-tools/missing-keywords',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.6,
+    changeFreq: 'monthly' as const
+  }));
+
+  // ============================================================
+  // LEGAL PAGES
+  // ============================================================
+  const legalPages: SitemapEntry[] = [
+    'privacy-policy',
+    'terms-of-use',
+    'cookie-policy',
+  ].map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    priority: 0.3,
+    changeFreq: 'yearly' as const
+  }));
+
+  // ============================================================
+  // DYNAMIC CONTENT — Blog posts
+  // Manually scanned from filesystem (workaround for content-collections bug)
   // ============================================================
   const blogPosts: SitemapEntry[] = blogFiles.map((file) => {
     const slug = file.replace('.mdx', '');
@@ -103,15 +215,29 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
     };
   });
 
+  // ============================================================
+  // DYNAMIC CONTENT — Docs
+  // ============================================================
+  const docPages: SitemapEntry[] = allDocs.map((doc) => ({
+    url: `${baseUrl}${doc.slug}`,
+    lastModified: new Date(),
+    priority: 0.8,
+    changeFreq: 'weekly'
+  }));
+
+  // ============================================================
+  // COMBINE ALL ENTRIES
+  // ============================================================
   const sitemap: SitemapEntry[] = [
-    ...staticPages,
-    ...allDocs.map((doc) => ({
-      url: `${baseUrl}${doc.slug}`,
-      lastModified: new Date(),
-      priority: 0.8,
-      changeFreq: 'weekly'
-    })),
-    ...blogPosts
+    ...corePages,
+    ...featurePages,
+    ...platformPages,
+    ...useCasePages,
+    ...companyPages,
+    ...freeToolPages,
+    ...legalPages,
+    ...blogPosts,
+    ...docPages,
   ];
 
   // Sort alphabetically by URL for consistency

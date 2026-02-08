@@ -26,7 +26,7 @@ export function OrganizationJsonLd() {
     ],
     contactPoint: {
       '@type': 'ContactPoint',
-      email: 'hello@searchfit.ai',
+      email: 'hi@searchfit.ai',
       contactType: 'customer service',
     },
   };
