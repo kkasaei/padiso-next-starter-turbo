@@ -226,6 +226,125 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
   }));
 
   // ============================================================
+  // PROGRAMMATIC PAGES — Competitors
+  // ============================================================
+  const competitors = ['ahrefs', 'semrush', 'moz', 'surfer', 'clearscope', 'frase', 'jasper', 'marketmuse', 'scalenut', 'writesonic'];
+  const competitorPages: SitemapEntry[] = competitors.map((competitor) => ({
+    url: `${baseUrl}/compare/${competitor}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Glossary Terms
+  // ============================================================
+  const glossaryTerms = ['seo', 'aeo', 'geo', 'backlink', 'domain-authority', 'keyword', 'serp', 'crawling', 'indexing', 'organic-traffic', 'meta-tags', 'schema-markup', 'canonical-url', 'bounce-rate', 'long-tail-keywords'];
+  const glossaryTermPages: SitemapEntry[] = glossaryTerms.map((term) => ({
+    url: `${baseUrl}/glossary/${term}`,
+    lastModified: new Date(),
+    priority: 0.6,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Industries
+  // ============================================================
+  const industries = ['restaurants', 'dentists', 'lawyers', 'real-estate', 'healthcare', 'ecommerce', 'gyms', 'plumbers', 'accountants', 'photographers'];
+  const industryPages: SitemapEntry[] = industries.map((industry) => ({
+    url: `${baseUrl}/industries/${industry}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Integrations
+  // ============================================================
+  const integrations = ['google-search-console', 'google-analytics', 'shopify', 'wordpress', 'webflow', 'slack', 'zapier', 'notion', 'airtable', 'hubspot', 'semrush', 'ahrefs'];
+  const integrationPages: SitemapEntry[] = integrations.map((integration) => ({
+    url: `${baseUrl}/integrations/${integration}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Languages
+  // ============================================================
+  const languages = ['german', 'french', 'spanish', 'italian', 'portuguese', 'japanese', 'korean', 'chinese', 'arabic', 'dutch'];
+  const languagePages: SitemapEntry[] = languages.map((language) => ({
+    url: `${baseUrl}/languages/${language}`,
+    lastModified: new Date(),
+    priority: 0.6,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Platforms
+  // ============================================================
+  const platformsList = ['shopify', 'woocommerce', 'wordpress', 'webflow', 'wix', 'squarespace', 'bigcommerce', 'magento', 'ghost', 'drupal'];
+  const platformDetailPages: SitemapEntry[] = platformsList.map((platform) => ({
+    url: `${baseUrl}/platforms/${platform}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — SEO Agency Cities
+  // ============================================================
+  const cities = [
+    // USA
+    'new-york', 'los-angeles', 'chicago', 'houston', 'phoenix', 'philadelphia', 'san-antonio', 'san-diego', 'dallas', 'san-jose', 'austin', 'san-francisco', 'seattle', 'denver', 'boston', 'miami', 'atlanta', 'portland', 'las-vegas', 'detroit',
+    // UK
+    'london', 'manchester', 'birmingham', 'leeds', 'glasgow', 'liverpool', 'edinburgh', 'bristol',
+    // Europe
+    'berlin', 'munich', 'paris', 'amsterdam', 'barcelona', 'madrid', 'rome', 'milan', 'dublin', 'stockholm',
+    // Australia
+    'sydney', 'melbourne', 'brisbane', 'perth', 'adelaide', 'gold-coast', 'newcastle', 'canberra', 'wollongong', 'hobart', 'geelong', 'townsville', 'cairns', 'darwin', 'toowoomba', 'ballarat', 'bendigo', 'launceston', 'sunshine-coast', 'central-coast', 'mackay', 'rockhampton', 'bunbury', 'bundaberg', 'hervey-bay', 'wagga-wagga', 'albury', 'mildura', 'shepparton', 'tamworth', 'port-macquarie', 'orange', 'dubbo', 'geraldton', 'kalgoorlie', 'alice-springs',
+    // Canada
+    'toronto', 'vancouver', 'montreal',
+    // Asia
+    'singapore', 'hong-kong', 'tokyo', 'dubai'
+  ];
+  const cityPages: SitemapEntry[] = cities.map((city) => ({
+    url: `${baseUrl}/seo-agency/${city}`,
+    lastModified: new Date(),
+    priority: 0.6,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // PROGRAMMATIC PAGES — Use Cases
+  // ============================================================
+  const useCases = ['marketing-teams', 'agencies', 'startups', 'enterprises', 'ecommerce', 'saas', 'publishers', 'freelancers', 'content-creators', 'local-business'];
+  const useCaseDetailPages: SitemapEntry[] = useCases.map((usecase) => ({
+    url: `${baseUrl}/use-cases/${usecase}`,
+    lastModified: new Date(),
+    priority: 0.7,
+    changeFreq: 'monthly'
+  }));
+
+  // ============================================================
+  // OTHER PAGES
+  // ============================================================
+  const otherPages: SitemapEntry[] = [
+    {
+      url: `${baseUrl}/sales`,
+      lastModified: new Date(),
+      priority: 0.5,
+      changeFreq: 'monthly'
+    },
+    {
+      url: `${baseUrl}/waitlist`,
+      lastModified: new Date(),
+      priority: 0.5,
+      changeFreq: 'monthly'
+    },
+  ];
+
+  // ============================================================
   // COMBINE ALL ENTRIES
   // ============================================================
   const sitemap: SitemapEntry[] = [
@@ -238,6 +357,15 @@ export default async function Sitemap(): Promise<SitemapEntry[]> {
     ...legalPages,
     ...blogPosts,
     ...docPages,
+    ...competitorPages,
+    ...glossaryTermPages,
+    ...industryPages,
+    ...integrationPages,
+    ...languagePages,
+    ...platformDetailPages,
+    ...cityPages,
+    ...useCaseDetailPages,
+    ...otherPages,
   ];
 
   // Sort alphabetically by URL for consistency
