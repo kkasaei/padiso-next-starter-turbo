@@ -42,7 +42,10 @@ export async function POST(req: Request): Promise<Response> {
       );
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    // Use Vercel URL in production/staging, fallback to localhost for development
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const returnUrl = `${baseUrl}/workspace-setup`;
 
     // ─── Flow 1: Existing workspace (re-subscribe, plan change) ───
