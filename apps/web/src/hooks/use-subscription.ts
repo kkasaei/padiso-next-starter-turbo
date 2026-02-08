@@ -34,6 +34,14 @@ export function useCheckLimit(
   );
 }
 
+export function useCancelSubscription() {
+  return trpc.subscriptions.cancelAtPeriodEnd.useMutation();
+}
+
+export function useReactivateSubscription() {
+  return trpc.subscriptions.reactivateSubscription.useMutation();
+}
+
 export function useSyncSubscription() {
   return trpc.subscriptions.syncFromStripe.useMutation();
 }

@@ -344,6 +344,100 @@ export const subscriptionsRouter = router({
     }),
 
   /**
+   * Cancel subscription at end of billing period.
+   * Does NOT cancel immediately — user keeps access until period ends.
+   */
+  cancelAtPeriodEnd: publicProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid(),
+        reason: z.string().optional(),
+        feedback: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [workspace] = await ctx.db
+        .select({
+          stripeSubscriptionId: workspaces.stripeSubscriptionId,
+        })
+        .from(workspaces)
+        .where(eq(workspaces.id, input.workspaceId))
+        .limit(1);
+
+      if (!workspace) {
+        throw new Error("Workspace not found");
+      }
+
+      if (!workspace.stripeSubscriptionId) {
+        throw new Error("No active subscription found");
+      }
+
+      const stripe = getStripe();
+
+      // Set cancel_at_period_end in Stripe (does not cancel immediately)
+      await stripe.subscriptions.update(workspace.stripeSubscriptionId, {
+        cancel_at_period_end: true,
+        metadata: {
+          cancel_reason: input.reason || "",
+          cancel_feedback: input.feedback || "",
+        },
+      });
+
+      // Update local DB
+      await ctx.db
+        .update(workspaces)
+        .set({
+          cancelAtPeriodEnd: true,
+          updatedAt: new Date(),
+        })
+        .where(eq(workspaces.id, input.workspaceId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Reactivate a subscription that was scheduled for cancellation.
+   * Removes the cancel_at_period_end flag.
+   */
+  reactivateSubscription: publicProcedure
+    .input(z.object({ workspaceId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const [workspace] = await ctx.db
+        .select({
+          stripeSubscriptionId: workspaces.stripeSubscriptionId,
+        })
+        .from(workspaces)
+        .where(eq(workspaces.id, input.workspaceId))
+        .limit(1);
+
+      if (!workspace) {
+        throw new Error("Workspace not found");
+      }
+
+      if (!workspace.stripeSubscriptionId) {
+        throw new Error("No subscription found");
+      }
+
+      const stripe = getStripe();
+
+      // Remove cancel_at_period_end in Stripe
+      await stripe.subscriptions.update(workspace.stripeSubscriptionId, {
+        cancel_at_period_end: false,
+      });
+
+      // Update local DB
+      await ctx.db
+        .update(workspaces)
+        .set({
+          cancelAtPeriodEnd: false,
+          updatedAt: new Date(),
+        })
+        .where(eq(workspaces.id, input.workspaceId));
+
+      return { success: true };
+    }),
+
+  /**
    * Provision a workspace after Stripe checkout completes.
    * Called AFTER Clerk org + DB workspace are created on the client.
    * Links the Stripe checkout session (customer + subscription) to the workspace.

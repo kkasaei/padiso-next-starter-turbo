@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useOrganization } from "@clerk/nextjs";
-import { Check, ChevronRight, Zap, HelpCircle, CreditCard, FileText, ArrowUpRight } from "lucide-react";
+import { Check, ChevronRight, Zap, HelpCircle, CreditCard, FileText, ArrowUpRight, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@workspace/ui/components/button";
@@ -13,8 +14,9 @@ import { cn } from "@workspace/ui/lib/utils";
 import { APP_NAME } from "@workspace/common/constants";
 import { routes } from "@workspace/common";
 
-import { useSubscriptionStatus, useSubscriptionUsage, useBillingPortal } from "@/hooks/use-subscription";
+import { useSubscriptionStatus, useSubscriptionUsage, useBillingPortal, useCancelSubscription, useReactivateSubscription } from "@/hooks/use-subscription";
 import { getFeatureComparison } from "@workspace/billing";
+import { CancelSubscriptionDialog } from "./CancelSubscriptionDialog";
 
 // Plan data
 const PLANS = [
@@ -141,10 +143,13 @@ function UsageRow({
 }
 
 export function SettingsBilling() {
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const { organization } = useOrganization();
-  const { data: subscription, isLoading } = useSubscriptionStatus(organization?.id);
+  const { data: subscription, isLoading, refetch } = useSubscriptionStatus(organization?.id);
   const { data: usage } = useSubscriptionUsage(subscription?.id);
   const billingPortal = useBillingPortal();
+  const cancelSubscription = useCancelSubscription();
+  const reactivateSubscription = useReactivateSubscription();
 
   const handleManagePlan = async () => {
     if (!subscription?.id) return;
@@ -159,11 +164,39 @@ export function SettingsBilling() {
     }
   };
 
+  const handleCancelConfirm = async (reason: string, feedback: string) => {
+    if (!subscription?.id) return;
+    try {
+      await cancelSubscription.mutateAsync({
+        workspaceId: subscription.id,
+        reason,
+        feedback,
+      });
+      setCancelDialogOpen(false);
+      refetch();
+    } catch (error) {
+      console.error("Failed to cancel subscription:", error);
+    }
+  };
+
+  const handleReactivate = async () => {
+    if (!subscription?.id) return;
+    try {
+      await reactivateSubscription.mutateAsync({
+        workspaceId: subscription.id,
+      });
+      refetch();
+    } catch (error) {
+      console.error("Failed to reactivate subscription:", error);
+    }
+  };
+
   const planName = subscription?.planName || subscription?.plan?.name || "Growth";
   const isTrialing = subscription?.isTrialing;
   const trialEndsAt = subscription?.trialEndsAt;
   const trialDaysRemaining = getDaysRemaining(trialEndsAt);
   const cancelAtPeriodEnd = subscription?.cancelAtPeriodEnd;
+  const hasActiveSubscription = subscription?.stripeSubscriptionId && !subscription?.isCanceled;
 
   return (
     <div className="space-y-10">
@@ -210,6 +243,8 @@ export function SettingsBilling() {
                     <p className="text-sm text-muted-foreground">
                       {isTrialing 
                         ? `Trial ends ${formatDate(trialEndsAt)}`
+                        : cancelAtPeriodEnd
+                        ? `Access until ${formatDate(subscription?.subscriptionPeriodEndsAt)}`
                         : `Renews ${formatDate(subscription?.subscriptionPeriodEndsAt)}`
                       }
                     </p>
@@ -259,10 +294,58 @@ export function SettingsBilling() {
                   </AccordionItem>
                 </Accordion>
               </div>
+
+              {/* Cancel / Reactivate Section */}
+              {hasActiveSubscription && (
+                <div className="mt-5 pt-5 border-t border-border">
+                  {cancelAtPeriodEnd ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          Your subscription is set to cancel on{" "}
+                          <span className="font-medium text-foreground">
+                            {formatDate(subscription?.subscriptionPeriodEndsAt)}
+                          </span>
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleReactivate}
+                        disabled={reactivateSubscription.isPending}
+                        className="shrink-0"
+                      >
+                        <RotateCcw className="mr-2 h-4 w-4" />
+                        {reactivateSubscription.isPending ? "Reactivating..." : "Reactivate Subscription"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCancelDialogOpen(true)}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        Cancel Subscription
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
       </section>
+
+      {/* Cancel Subscription Dialog */}
+      <CancelSubscriptionDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        onConfirm={handleCancelConfirm}
+        isPending={cancelSubscription.isPending}
+        periodEndDate={subscription?.subscriptionPeriodEndsAt as string | null | undefined}
+      />
 
       {/* Section 2: Simple Plan Cards */}
       <section className="space-y-4">
