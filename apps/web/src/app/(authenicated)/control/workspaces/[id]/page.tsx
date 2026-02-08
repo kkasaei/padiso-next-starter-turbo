@@ -64,10 +64,10 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function SyncIndicator({ hasDbRecord, hasStripeCustomer, hasStripeSubscription }: { 
+function SyncIndicator({ hasDbRecord, hasStripeCustomer, hasStripeSubscription }: {
   hasDbRecord: boolean
   hasStripeCustomer: boolean
-  hasStripeSubscription: boolean 
+  hasStripeSubscription: boolean
 }) {
   return (
     <div className="flex items-center gap-1" title={`DB: ${hasDbRecord ? '✓' : '✗'} | Stripe Customer: ${hasStripeCustomer ? '✓' : '✗'} | Subscription: ${hasStripeSubscription ? '✓' : '✗'}`}>
@@ -96,12 +96,12 @@ export default function WorkspaceDetailsPage() {
   const params = useParams()
   const router = useRouter()
   const clerkOrgId = params.id as string // This is the Clerk org ID
-  
+
   const [workspace, setWorkspace] = useState<WorkspaceWithClerk | null>(null)
   const [members, setMembers] = useState<WorkspaceMember[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
-  
+
   // Edit mode states
   const [isEditingLimits, setIsEditingLimits] = useState(false)
   const [isEditingTrial, setIsEditingTrial] = useState(false)
@@ -151,7 +151,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await extendTrial(workspaceId, days)
       if (result.success) {
         toast.success(`Trial extended by ${days} days`)
@@ -166,7 +166,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await cancelSubscription(workspaceId, immediately)
       if (result.success) {
         toast.success(immediately ? "Subscription canceled" : "Subscription will cancel at period end")
@@ -181,7 +181,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await reactivateSubscription(workspaceId)
       if (result.success) {
         toast.success("Subscription reactivated")
@@ -196,7 +196,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await updateWorkspaceStatus(workspaceId, "admin_suspended")
       if (result.success) {
         toast.success("Workspace suspended")
@@ -211,7 +211,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await updateWorkspaceStatus(workspaceId, "active")
       if (result.success) {
         toast.success("Workspace reactivated")
@@ -240,7 +240,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await updateWorkspacePlanLimits(workspaceId, editLimits)
       if (result.success) {
         toast.success("Plan limits updated")
@@ -255,7 +255,7 @@ export default function WorkspaceDetailsPage() {
   const handleStartEditTrial = () => {
     if (!workspace) return
     // Format date for input: YYYY-MM-DD
-    const currentDate = workspace.trialEndsAt 
+    const currentDate = workspace.trialEndsAt
       ? new Date(workspace.trialEndsAt).toISOString().split('T')[0]
       : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     setTrialEndInput(currentDate)
@@ -270,7 +270,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const trialEndDate = new Date(trialEndInput + 'T23:59:59')
       const result = await setTrialEndDate(workspaceId, trialEndDate)
       if (result.success) {
@@ -292,7 +292,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await addBonusCredits(workspaceId, credits)
       if (result.success) {
         toast.success(`Added ${credits.toLocaleString()} bonus credits`)
@@ -308,7 +308,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await resetUsage(workspaceId, type)
       if (result.success) {
         toast.success(`Usage ${type === "all" ? "counters" : type} reset successfully`)
@@ -332,7 +332,7 @@ export default function WorkspaceDetailsPage() {
     startTransition(async () => {
       const workspaceId = await ensureDbRecord()
       if (!workspaceId) return
-      
+
       const result = await updateUsage(workspaceId, editUsage)
       if (result.success) {
         toast.success("Usage updated")
@@ -394,8 +394,8 @@ export default function WorkspaceDetailsPage() {
             </Button>
             <div className="flex items-center gap-4">
               {workspace.logoUrl ? (
-                <img 
-                  src={workspace.logoUrl} 
+                <img
+                  src={workspace.logoUrl}
                   alt={workspace.name}
                   className="h-16 w-16 rounded-xl object-cover"
                 />
@@ -417,8 +417,8 @@ export default function WorkspaceDetailsPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               onClick={loadWorkspace}
               disabled={isPending}
@@ -493,7 +493,7 @@ export default function WorkspaceDetailsPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Sync Status</span>
-                  <SyncIndicator 
+                  <SyncIndicator
                     hasDbRecord={hasDbRecord}
                     hasStripeCustomer={hasStripeCustomer}
                     hasStripeSubscription={hasStripeSubscription}
@@ -523,8 +523,8 @@ export default function WorkspaceDetailsPage() {
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Trial Ends</span>
                     <span className="text-blue-600 font-medium">
-                      {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', { 
-                        month: 'long', 
+                      {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', {
+                        month: 'long',
                         day: 'numeric',
                         year: 'numeric'
                       })}
@@ -535,8 +535,8 @@ export default function WorkspaceDetailsPage() {
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Period Ends</span>
                     <span>
-                      {new Date(workspace.subscriptionPeriodEndsAt).toLocaleDateString('en-US', { 
-                        month: 'long', 
+                      {new Date(workspace.subscriptionPeriodEndsAt).toLocaleDateString('en-US', {
+                        month: 'long',
                         day: 'numeric',
                         year: 'numeric'
                       })}
@@ -723,199 +723,199 @@ export default function WorkspaceDetailsPage() {
 
             {/* Trial Management */}
             <div className="rounded-2xl border border-border bg-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950">
-                      <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h3 className="font-medium">Trial Management</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950">
+                    <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="font-medium">Trial Management</h3>
+                </div>
+              </div>
+
+              {isEditingTrial ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Trial End Date</label>
+                    <input
+                      type="date"
+                      value={trialEndInput}
+                      onChange={(e) => setTrialEndInput(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setIsEditingTrial(false)}>
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleSaveTrialEnd} disabled={isPending}>
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Set Trial End"}
+                    </Button>
                   </div>
                 </div>
-
-                {isEditingTrial ? (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Trial End Date</label>
-                      <input
-                        type="date"
-                        value={trialEndInput}
-                        onChange={(e) => setTrialEndInput(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                      />
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setIsEditingTrial(false)}>
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={handleSaveTrialEnd} disabled={isPending}>
-                        {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Set Trial End"}
-                      </Button>
-                    </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Current Status</span>
+                    <StatusBadge status={workspace.status} />
                   </div>
-                ) : (
-                  <div className="space-y-4">
+                  {workspace.trialEndsAt && (
                     <div className="flex items-center justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Current Status</span>
-                      <StatusBadge status={workspace.status} />
+                      <span className="text-muted-foreground">Trial Ends</span>
+                      <span className="text-blue-600 font-medium">
+                        {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </span>
                     </div>
-                    {workspace.trialEndsAt && (
-                      <div className="flex items-center justify-between py-2 border-b border-border">
-                        <span className="text-muted-foreground">Trial Ends</span>
-                        <span className="text-blue-600 font-medium">
-                          {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', { 
-                            month: 'long', 
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <div className="pt-2 space-y-3">
-                      <p className="text-sm font-medium text-muted-foreground">Quick Actions</p>
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleExtendTrial(7)}>
-                          +7 Days
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleExtendTrial(14)}>
-                          +14 Days
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleExtendTrial(30)}>
-                          +30 Days
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={handleStartEditTrial}>
-                          Set Custom Date
-                        </Button>
-                      </div>
+                  )}
+
+                  <div className="pt-2 space-y-3">
+                    <p className="text-sm font-medium text-muted-foreground">Quick Actions</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" onClick={() => handleExtendTrial(7)}>
+                        +7 Days
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleExtendTrial(14)}>
+                        +14 Days
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleExtendTrial(30)}>
+                        +30 Days
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleStartEditTrial}>
+                        Set Custom Date
+                      </Button>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
 
             {/* Credits & Usage Management */}
             <div className="rounded-2xl border border-border bg-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-950">
-                      <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <h3 className="font-medium">Credits & Usage</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-950">
+                    <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
-                  {!isEditingUsage && (
-                    <Button variant="outline" size="sm" onClick={handleStartEditUsage}>
-                      Edit Usage
-                    </Button>
-                  )}
+                  <h3 className="font-medium">Credits & Usage</h3>
                 </div>
-
-                {isEditingUsage ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm text-muted-foreground mb-1 block">AI Credits Used</label>
-                        <input
-                          type="number"
-                          value={editUsage.usageAiCreditsUsed}
-                          onChange={(e) => setEditUsage(prev => ({ ...prev, usageAiCreditsUsed: parseInt(e.target.value) || 0 }))}
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm text-muted-foreground mb-1 block">API Calls Used</label>
-                        <input
-                          type="number"
-                          value={editUsage.usageApiCallsCount}
-                          onChange={(e) => setEditUsage(prev => ({ ...prev, usageApiCallsCount: parseInt(e.target.value) || 0 }))}
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setIsEditingUsage(false)}>
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={handleSaveUsage} disabled={isPending}>
-                        {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Usage"}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Current Usage */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-3 rounded-lg bg-muted/50">
-                        <p className="text-sm text-muted-foreground mb-1">AI Credits</p>
-                        <p className="text-xl font-semibold">
-                          {workspace.usageAiCreditsUsed.toLocaleString()}
-                          <span className="text-muted-foreground font-normal text-sm"> / {workspace.limitAiCreditsPerMonth?.toLocaleString() ?? "∞"}</span>
-                        </p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-muted/50">
-                        <p className="text-sm text-muted-foreground mb-1">API Calls</p>
-                        <p className="text-xl font-semibold">
-                          {workspace.usageApiCallsCount.toLocaleString()}
-                          <span className="text-muted-foreground font-normal text-sm"> / {workspace.limitApiCallsPerMonth?.toLocaleString() ?? "∞"}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Add Bonus Credits */}
-                    <div className="pt-2 border-t border-border">
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Add Bonus Credits</p>
-                      <div className="flex gap-2">
-                        <input
-                          type="number"
-                          value={bonusCreditsInput}
-                          onChange={(e) => setBonusCreditsInput(e.target.value)}
-                          placeholder="Enter amount"
-                          className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        />
-                        <Button size="sm" onClick={handleAddBonusCredits} disabled={isPending || !bonusCreditsInput}>
-                          Add Credits
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        This increases the monthly credit limit by the specified amount
-                      </p>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="pt-2 border-t border-border">
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Quick Add</p>
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("100"); }}>
-                          +100
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("500"); }}>
-                          +500
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("1000"); }}>
-                          +1,000
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("5000"); }}>
-                          +5,000
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Reset Usage */}
-                    <div className="pt-2 border-t border-border">
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Reset Usage</p>
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" className="text-amber-600" onClick={() => handleResetUsage("credits")}>
-                          Reset Credits
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-amber-600" onClick={() => handleResetUsage("api")}>
-                          Reset API Calls
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleResetUsage("all")}>
-                          Reset All Usage
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                {!isEditingUsage && (
+                  <Button variant="outline" size="sm" onClick={handleStartEditUsage}>
+                    Edit Usage
+                  </Button>
                 )}
               </div>
+
+              {isEditingUsage ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm text-muted-foreground mb-1 block">AI Credits Used</label>
+                      <input
+                        type="number"
+                        value={editUsage.usageAiCreditsUsed}
+                        onChange={(e) => setEditUsage(prev => ({ ...prev, usageAiCreditsUsed: parseInt(e.target.value) || 0 }))}
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm text-muted-foreground mb-1 block">API Calls Used</label>
+                      <input
+                        type="number"
+                        value={editUsage.usageApiCallsCount}
+                        onChange={(e) => setEditUsage(prev => ({ ...prev, usageApiCallsCount: parseInt(e.target.value) || 0 }))}
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setIsEditingUsage(false)}>
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleSaveUsage} disabled={isPending}>
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Usage"}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Current Usage */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <p className="text-sm text-muted-foreground mb-1">AI Credits</p>
+                      <p className="text-xl font-semibold">
+                        {workspace.usageAiCreditsUsed.toLocaleString()}
+                        <span className="text-muted-foreground font-normal text-sm"> / {workspace.limitAiCreditsPerMonth?.toLocaleString() ?? "∞"}</span>
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <p className="text-sm text-muted-foreground mb-1">API Calls</p>
+                      <p className="text-xl font-semibold">
+                        {workspace.usageApiCallsCount.toLocaleString()}
+                        <span className="text-muted-foreground font-normal text-sm"> / {workspace.limitApiCallsPerMonth?.toLocaleString() ?? "∞"}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Add Bonus Credits */}
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Add Bonus Credits</p>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        value={bonusCreditsInput}
+                        onChange={(e) => setBonusCreditsInput(e.target.value)}
+                        placeholder="Enter amount"
+                        className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      />
+                      <Button size="sm" onClick={handleAddBonusCredits} disabled={isPending || !bonusCreditsInput}>
+                        Add Credits
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      This increases the monthly credit limit by the specified amount
+                    </p>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Quick Add</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("100"); }}>
+                        +100
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("500"); }}>
+                        +500
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("1000"); }}>
+                        +1,000
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => { setBonusCreditsInput("5000"); }}>
+                        +5,000
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Reset Usage */}
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Reset Usage</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" className="text-amber-600" onClick={() => handleResetUsage("credits")}>
+                        Reset Credits
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-amber-600" onClick={() => handleResetUsage("api")}>
+                        Reset API Calls
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleResetUsage("all")}>
+                        Reset All Usage
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Members */}
             <InfoCard title={`Members (${members.length})`} icon={Users}>
@@ -924,15 +924,15 @@ export default function WorkspaceDetailsPage() {
               ) : (
                 <div className="space-y-3">
                   {members.map((member) => (
-                    <div 
-                      key={member.id} 
+                    <div
+                      key={member.id}
                       className="flex items-center justify-between py-2 hover:bg-muted/30 rounded-lg px-2 -mx-2 cursor-pointer transition-colors"
-                      onClick={() => router.push(`/users/${member.id}`)}
+                      onClick={() => router.push(`/control/users/${member.id}`)}
                     >
                       <div className="flex items-center gap-3">
                         {member.imageUrl ? (
-                          <img 
-                            src={member.imageUrl} 
+                          <img
+                            src={member.imageUrl}
                             alt={member.fullName}
                             className="h-8 w-8 rounded-full object-cover"
                           />
@@ -1020,8 +1020,8 @@ export default function WorkspaceDetailsPage() {
             <InfoCard title="Admin Actions" icon={Shield}>
               <div className="space-y-3">
                 {workspace.status === "admin_suspended" ? (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full text-emerald-600"
                     onClick={handleUnsuspend}
                   >
@@ -1029,8 +1029,8 @@ export default function WorkspaceDetailsPage() {
                     Unsuspend Workspace
                   </Button>
                 ) : (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full text-red-600"
                     onClick={handleSuspend}
                   >

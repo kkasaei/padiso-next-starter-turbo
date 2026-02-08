@@ -146,8 +146,8 @@ function AnalyticsSection({ workspaces, adminStats }: { workspaces: Workspace[];
 
   const totalWorkspaces = workspaces.length
   const trialingWorkspaces = workspaces.filter(w => w.status === "trialing").length
-  const trialToSignupRatio = totalWorkspaces > 0 
-    ? Math.round((trialingWorkspaces / totalWorkspaces) * 100) 
+  const trialToSignupRatio = totalWorkspaces > 0
+    ? Math.round((trialingWorkspaces / totalWorkspaces) * 100)
     : 0
   const growthPlanWorkspaces = workspaces.filter(w => w.planId === "growth").length
   const customPlanWorkspaces = workspaces.filter(w => w.planId === "custom" || w.planId === "enterprise").length

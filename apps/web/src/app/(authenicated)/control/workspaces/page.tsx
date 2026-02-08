@@ -79,35 +79,35 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function SyncIndicator({ hasDbRecord, hasStripeCustomer, hasStripeSubscription }: { 
+function SyncIndicator({ hasDbRecord, hasStripeCustomer, hasStripeSubscription }: {
   hasDbRecord: boolean
   hasStripeCustomer: boolean
-  hasStripeSubscription: boolean 
+  hasStripeSubscription: boolean
 }) {
   return (
     <div className="flex items-center gap-1">
-      <div 
-        className={`h-2 w-2 rounded-full ${hasDbRecord ? 'bg-emerald-500' : 'bg-red-500'}`} 
+      <div
+        className={`h-2 w-2 rounded-full ${hasDbRecord ? 'bg-emerald-500' : 'bg-red-500'}`}
         title={hasDbRecord ? 'DB Record: Yes' : 'DB Record: No'}
       />
-      <div 
-        className={`h-2 w-2 rounded-full ${hasStripeCustomer ? 'bg-emerald-500' : 'bg-slate-300'}`} 
+      <div
+        className={`h-2 w-2 rounded-full ${hasStripeCustomer ? 'bg-emerald-500' : 'bg-slate-300'}`}
         title={hasStripeCustomer ? 'Stripe Customer: Yes' : 'Stripe Customer: No'}
       />
-      <div 
-        className={`h-2 w-2 rounded-full ${hasStripeSubscription ? 'bg-emerald-500' : 'bg-slate-300'}`} 
+      <div
+        className={`h-2 w-2 rounded-full ${hasStripeSubscription ? 'bg-emerald-500' : 'bg-slate-300'}`}
         title={hasStripeSubscription ? 'Subscription: Yes' : 'Subscription: No'}
       />
     </div>
   )
 }
 
-function WorkspaceActionsMenu({ 
-  workspace, 
+function WorkspaceActionsMenu({
+  workspace,
   onExtendTrial,
   onCancelSubscription,
   onReactivate,
-}: { 
+}: {
   workspace: WorkspaceWithClerk
   onExtendTrial: (days: number) => void
   onCancelSubscription: (immediately: boolean) => void
@@ -121,20 +121,20 @@ function WorkspaceActionsMenu({
 
   return (
     <div className="relative">
-      <Button 
-        variant="ghost" 
-        size="icon" 
+      <Button
+        variant="ghost"
+        size="icon"
         className="h-8 w-8"
         onClick={() => setIsOpen(!isOpen)}
       >
         <MoreHorizontal className="h-4 w-4" />
       </Button>
-      
+
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-10" 
-            onClick={() => setIsOpen(false)} 
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg py-1">
             {hasSubscription && (
@@ -165,7 +165,7 @@ function WorkspaceActionsMenu({
                     <div className="my-1 border-t border-border" />
                   </>
                 )}
-                
+
                 {isCanceling ? (
                   <button
                     onClick={() => { onReactivate(); setIsOpen(false) }}
@@ -194,7 +194,7 @@ function WorkspaceActionsMenu({
                 )}
               </>
             )}
-            
+
             {workspace.stripeCustomerId && (
               <>
                 <div className="my-1 border-t border-border" />
@@ -249,7 +249,7 @@ export default function WorkspacesPage() {
   // Combine Clerk orgs with DB workspaces
   const workspacesList = useMemo<WorkspaceWithClerk[]>(() => {
     if (!dbWorkspaces) return []
-    
+
     // Create a map of clerkOrgId -> dbWorkspace
     const dbWorkspaceMap = new Map(
       dbWorkspaces.map(w => [w.clerkOrgId, w])
@@ -258,7 +258,7 @@ export default function WorkspacesPage() {
     // Map Clerk orgs to combined data
     return clerkOrgs.map((org) => {
       const dbWorkspace = dbWorkspaceMap.get(org.id)
-      
+
       const hasDbRecord = !!dbWorkspace
       const hasStripeCustomer = !!dbWorkspace?.stripeCustomerId
       const hasStripeSubscription = !!dbWorkspace?.stripeSubscriptionId
@@ -345,7 +345,7 @@ export default function WorkspacesPage() {
     })
   }
 
-  const filteredWorkspaces = workspacesList.filter(w => 
+  const filteredWorkspaces = workspacesList.filter(w =>
     w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     w.slug?.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -367,8 +367,8 @@ export default function WorkspacesPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               onClick={loadWorkspaces}
               disabled={isLoading}
@@ -466,14 +466,14 @@ export default function WorkspacesPage() {
                     <tr
                       key={workspace.clerkOrgId}
                       className="hover:bg-muted/30 transition-colors cursor-pointer group"
-                      onClick={() => router.push(`/workspaces/${workspace.clerkOrgId}`)}
+                      onClick={() => router.push(`/control/workspaces/${workspace.clerkOrgId}`)}
                     >
                       {/* Workspace Info */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {workspace.logoUrl ? (
-                            <img 
-                              src={workspace.logoUrl} 
+                            <img
+                              src={workspace.logoUrl}
                               alt={workspace.name}
                               className="h-10 w-10 rounded-lg object-cover shrink-0"
                             />
@@ -500,7 +500,7 @@ export default function WorkspacesPage() {
                       {/* Sync Status */}
                       <td className="px-4 py-4">
                         <div className="flex justify-center">
-                          <SyncIndicator 
+                          <SyncIndicator
                             hasDbRecord={workspace.hasDbRecord}
                             hasStripeCustomer={workspace.hasStripeCustomer}
                             hasStripeSubscription={workspace.hasStripeSubscription}
@@ -528,8 +528,8 @@ export default function WorkspacesPage() {
                               <Clock className="h-3.5 w-3.5 shrink-0" />
                               <span className="text-xs font-medium">Trial ends:</span>
                               <span className="text-xs">
-                                {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', { 
-                                  month: 'short', 
+                                {new Date(workspace.trialEndsAt).toLocaleDateString('en-US', {
+                                  month: 'short',
                                   day: 'numeric',
                                   year: 'numeric'
                                 })}
@@ -542,8 +542,8 @@ export default function WorkspacesPage() {
                               <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                               <span className="text-xs text-muted-foreground">Renews:</span>
                               <span className="text-xs">
-                                {new Date(workspace.subscriptionPeriodEndsAt).toLocaleDateString('en-US', { 
-                                  month: 'short', 
+                                {new Date(workspace.subscriptionPeriodEndsAt).toLocaleDateString('en-US', {
+                                  month: 'short',
                                   day: 'numeric',
                                   year: 'numeric'
                                 })}

@@ -14,11 +14,11 @@ interface PromptEditorProps {
   className?: string
 }
 
-export function PromptEditor({ 
-  value, 
-  onChange, 
+export function PromptEditor({
+  value,
+  onChange,
   placeholder = "Enter prompt instructions...",
-  className 
+  className
 }: PromptEditorProps) {
   const editor = useEditor({
     extensions: [

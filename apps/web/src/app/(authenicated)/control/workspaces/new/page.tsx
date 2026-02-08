@@ -30,13 +30,13 @@ export default function NewWorkspacePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     startTransition(async () => {
       const result = await createWorkspace(formData)
-      
+
       if (result.success) {
         toast.success("Workspace created successfully!")
-        router.push("/workspaces")
+        router.push("/control/workspaces")
       } else {
         toast.error(result.error || "Failed to create workspace")
       }
@@ -199,17 +199,17 @@ export default function NewWorkspacePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { 
-                    id: "growth", 
-                    name: "Growth", 
-                    price: "$99/mo", 
-                    features: ["5 brands", "Unlimited users", "AI tracking", "7-day trial"] 
+                  {
+                    id: "growth",
+                    name: "Growth",
+                    price: "$99/mo",
+                    features: ["5 brands", "Unlimited users", "AI tracking", "7-day trial"]
                   },
-                  { 
-                    id: "custom", 
-                    name: "Custom / Enterprise", 
-                    price: "Custom", 
-                    features: ["Unlimited brands", "Dedicated support", "Custom features", "No trial"] 
+                  {
+                    id: "custom",
+                    name: "Custom / Enterprise",
+                    price: "Custom",
+                    features: ["Unlimited brands", "Dedicated support", "Custom features", "No trial"]
                   },
                 ].map((plan) => (
                   <button
@@ -217,11 +217,10 @@ export default function NewWorkspacePage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, plan: plan.id })}
                     disabled={isPending}
-                    className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
-                      formData.plan === plan.id
-                        ? "border-primary bg-primary/5 ring-2 ring-primary"
-                        : "border-border hover:border-primary/50"
-                    } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${formData.plan === plan.id
+                      ? "border-primary bg-primary/5 ring-2 ring-primary"
+                      : "border-border hover:border-primary/50"
+                      } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <span className="font-medium">{plan.name}</span>
                     <span className="text-lg font-semibold mt-1">{plan.price}</span>

@@ -102,7 +102,7 @@ function formatTimeAgo(date: Date): string {
 export default function UserDetailsPage() {
   const params = useParams()
   const userId = params.id as string
-  
+
   const [user, setUser] = useState<UserWithOrgs | null>(null)
   const [activities, setActivities] = useState<ActivityItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -186,8 +186,8 @@ export default function UserDetailsPage() {
             </Button>
             <div className="flex items-center gap-4">
               {user.imageUrl ? (
-                <img 
-                  src={user.imageUrl} 
+                <img
+                  src={user.imageUrl}
                   alt={user.fullName}
                   className="h-16 w-16 rounded-full object-cover"
                 />
@@ -243,8 +243,8 @@ export default function UserDetailsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Joined</p>
                 <p className="font-semibold">
-                  {new Date(user.createdAt).toLocaleDateString('en-US', { 
-                    month: 'long', 
+                  {new Date(user.createdAt).toLocaleDateString('en-US', {
+                    month: 'long',
                     day: 'numeric',
                     year: 'numeric'
                   })}
@@ -260,12 +260,12 @@ export default function UserDetailsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Last Sign In</p>
                 <p className="font-semibold">
-                  {user.lastSignInAt 
-                    ? new Date(user.lastSignInAt).toLocaleDateString('en-US', { 
-                        month: 'long', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      })
+                  {user.lastSignInAt
+                    ? new Date(user.lastSignInAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })
                     : "Never"
                   }
                 </p>
@@ -319,15 +319,14 @@ export default function UserDetailsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        org.role === "org:admin" 
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${org.role === "org:admin"
                           ? "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
                           : "bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400"
-                      }`}>
+                        }`}>
                         {org.role.replace("org:", "")}
                       </span>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/workspaces`}>
+                        <Link href={`/control/workspaces/${org.id}`}>
                           <ExternalLink className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -430,14 +429,14 @@ export default function UserDetailsPage() {
               <div>
                 <dt className="text-sm text-muted-foreground">Last Sign In</dt>
                 <dd className="text-sm mt-1">
-                  {user.lastSignInAt 
+                  {user.lastSignInAt
                     ? new Date(user.lastSignInAt).toLocaleString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
+                    })
                     : "Never"
                   }
                 </dd>

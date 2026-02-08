@@ -28,11 +28,11 @@ import {
 } from "@/lib/admin-actions/users"
 import { toast } from "sonner"
 
-function UserActionsMenu({ 
-  user, 
+function UserActionsMenu({
+  user,
   onDelete,
   onBan,
-}: { 
+}: {
   user: UserWithOrgs
   onDelete: () => void
   onBan: () => void
@@ -41,20 +41,20 @@ function UserActionsMenu({
 
   return (
     <div className="relative">
-      <Button 
-        variant="ghost" 
-        size="icon" 
+      <Button
+        variant="ghost"
+        size="icon"
         className="h-8 w-8"
         onClick={() => setIsOpen(!isOpen)}
       >
         <MoreHorizontal className="h-4 w-4" />
       </Button>
-      
+
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-10" 
-            onClick={() => setIsOpen(false)} 
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg py-1">
             <a
@@ -117,7 +117,7 @@ export default function UsersPage() {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       return
     }
-    
+
     startTransition(async () => {
       const result = await deleteUser(userId)
       if (result.success) {
@@ -133,7 +133,7 @@ export default function UsersPage() {
     if (!confirm("Are you sure you want to ban this user?")) {
       return
     }
-    
+
     startTransition(async () => {
       const result = await banUser(userId)
       if (result.success) {
@@ -145,7 +145,7 @@ export default function UsersPage() {
     })
   }
 
-  const filteredUsers = usersList.filter(u => 
+  const filteredUsers = usersList.filter(u =>
     u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -167,8 +167,8 @@ export default function UsersPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               onClick={loadUsers}
               disabled={isLoading}
@@ -259,14 +259,14 @@ export default function UsersPage() {
                     <tr
                       key={user.id}
                       className="hover:bg-muted/30 transition-colors cursor-pointer group"
-                      onClick={() => router.push(`/users/${user.id}`)}
+                      onClick={() => router.push(`/control/users/${user.id}`)}
                     >
                       {/* User Info */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {user.imageUrl ? (
-                            <img 
-                              src={user.imageUrl} 
+                            <img
+                              src={user.imageUrl}
                               alt={user.fullName}
                               className="h-10 w-10 rounded-full object-cover shrink-0"
                             />
@@ -300,7 +300,7 @@ export default function UsersPage() {
                         {user.organizations.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
                             {user.organizations.slice(0, 2).map((org) => (
-                              <span 
+                              <span
                                 key={org.id}
                                 className="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-950 px-2 py-0.5 text-xs font-medium text-purple-700 dark:text-purple-400"
                                 title={`${org.name} (${org.role})`}
@@ -325,8 +325,8 @@ export default function UsersPage() {
                           <div className="flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                             <span className="text-xs">
-                              {new Date(user.lastSignInAt).toLocaleDateString('en-US', { 
-                                month: 'short', 
+                              {new Date(user.lastSignInAt).toLocaleDateString('en-US', {
+                                month: 'short',
                                 day: 'numeric',
                                 year: 'numeric'
                               })}
@@ -342,8 +342,8 @@ export default function UsersPage() {
                         <div className="flex items-center gap-1.5">
                           <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                           <span className="text-xs">
-                            {new Date(user.createdAt).toLocaleDateString('en-US', { 
-                              month: 'short', 
+                            {new Date(user.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
                               day: 'numeric',
                               year: '2-digit'
                             })}
