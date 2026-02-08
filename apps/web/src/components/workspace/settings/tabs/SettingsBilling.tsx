@@ -197,6 +197,59 @@ export function SettingsBilling() {
   const trialDaysRemaining = getDaysRemaining(trialEndsAt);
   const cancelAtPeriodEnd = subscription?.cancelAtPeriodEnd;
   const hasActiveSubscription = subscription?.stripeSubscriptionId && !subscription?.isCanceled;
+  
+  // Check if user is on Custom plan
+  const isCustomPlan = subscription?.planId?.includes('custom') || planName.toLowerCase() === 'custom';
+
+  // If on Custom plan, show simplified view
+  if (isCustomPlan) {
+    return (
+      <div className="space-y-6">
+        <section className="space-y-4">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold">Current Subscription</h2>
+            <p className="text-sm text-muted-foreground">Your plan and billing details</p>
+          </div>
+          
+          {isLoading ? (
+            <Card className="rounded-2xl">
+              <CardContent className="py-6">
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64" />
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-2xl">
+              <CardContent className="py-6">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-lg">{planName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Custom enterprise plan with dedicated support
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                    <p className="text-sm text-muted-foreground">
+                      For billing inquiries, plan changes, or support, please contact your dedicated{" "}
+                      <span className="font-medium text-foreground">Account Manager</span>.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10">

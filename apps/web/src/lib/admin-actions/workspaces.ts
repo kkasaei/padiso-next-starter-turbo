@@ -1,6 +1,6 @@
 "use server"
 
-import { clerkClient } from "@clerk/nextjs/server"
+import { clerkClient, auth } from "@clerk/nextjs/server"
 import { db, workspaces, eq } from "@workspace/db"
 import { getStripe } from "@workspace/billing/server"
 
@@ -627,18 +627,25 @@ export async function createDbRecordForClerkOrg(clerkOrgId: string): Promise<{ s
 export async function createWorkspace(data: {
   name: string
   slug: string
-  ownerEmail: string
-  ownerName: string
   plan: string
+  inviteEmails?: string[]
+  memberRoles?: Record<string, "org:admin" | "org:member">
+  stripeCustomerId?: string
+  stripeSubscriptionId?: string
 }): Promise<{ success: boolean; error?: string; workspaceId?: string; clerkOrgId?: string }> {
   try {
     const clerk = await clerkClient()
+    const { userId } = await auth()
     
-    // Create organization in Clerk
+    if (!userId) {
+      return { success: false, error: "User not authenticated" }
+    }
+    
+    // Create organization in Clerk with the authenticated user as creator
     const org = await clerk.organizations.createOrganization({
       name: data.name,
       slug: data.slug,
-      createdBy: undefined, // Will be created without an owner initially
+      createdBy: userId, // Set the authenticated admin as the creator/owner
     })
 
     // Create workspace in database
@@ -649,38 +656,84 @@ export async function createWorkspace(data: {
       planName: data.plan,
     }).returning()
 
-    // Create Stripe customer
     const stripe = getStripe()
-    const customer = await stripe.customers.create({
-      name: data.ownerName,
-      email: data.ownerEmail,
-      metadata: {
-        workspaceId: newWorkspace.id,
-        clerkOrgId: org.id,
-        organizationName: data.name,
-      },
-    })
+    let customerId = data.stripeCustomerId
 
-    // Update workspace with Stripe customer ID
+    // Create or use existing Stripe customer
+    if (customerId) {
+      // Verify the customer exists in Stripe
+      try {
+        await stripe.customers.retrieve(customerId)
+      } catch (error) {
+        console.error("Invalid Stripe Customer ID provided:", error)
+        customerId = undefined // Will create new customer below
+      }
+    }
+    
+    if (!customerId) {
+      // Create new Stripe customer - use workspace name as placeholder
+      const customer = await stripe.customers.create({
+        name: data.name,
+        email: undefined, // No email for now, can be updated later
+        metadata: {
+          workspaceId: newWorkspace.id,
+          clerkOrgId: org.id,
+          organizationName: data.name,
+        },
+      })
+      customerId = customer.id
+    }
+
+    // Update workspace with Stripe customer ID and subscription ID if provided
     await db.update(workspaces)
       .set({ 
-        stripeCustomerId: customer.id,
-        billingEmail: data.ownerEmail,
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: data.stripeSubscriptionId || null,
+        billingEmail: null, // No owner email anymore
         updatedAt: new Date(),
       })
       .where(eq(workspaces.id, newWorkspace.id))
 
-    // Invite the owner to the organization
-    try {
-      await clerk.organizations.createOrganizationInvitation({
-        organizationId: org.id,
-        emailAddress: data.ownerEmail,
-        role: "org:admin",
-        inviterUserId: undefined,
-      })
-    } catch (inviteError) {
-      console.error("Failed to send invitation:", inviteError)
-      // Don't fail the whole operation if invite fails
+    // If subscription ID is provided, sync subscription details from Stripe
+    if (data.stripeSubscriptionId) {
+      try {
+        const subscription = await stripe.subscriptions.retrieve(data.stripeSubscriptionId)
+        
+        // Update workspace with subscription details
+        await db.update(workspaces)
+          .set({
+            status: subscription.status as any,
+            stripePriceId: subscription.items.data[0]?.price.id || null,
+            subscriptionPeriodStartsAt: new Date(subscription.current_period_start * 1000),
+            subscriptionPeriodEndsAt: new Date(subscription.current_period_end * 1000),
+            trialStartsAt: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
+            trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            updatedAt: new Date(),
+          })
+          .where(eq(workspaces.id, newWorkspace.id))
+      } catch (error) {
+        console.error("Failed to sync subscription from Stripe:", error)
+        // Don't fail the whole operation if subscription sync fails
+      }
+    }
+
+    // Invite team members with their roles
+    if (data.inviteEmails && data.inviteEmails.length > 0) {
+      for (const email of data.inviteEmails) {
+        try {
+          const role = data.memberRoles?.[email] || "org:member"
+          await clerk.organizations.createOrganizationInvitation({
+            organizationId: org.id,
+            emailAddress: email,
+            role: role,
+            inviterUserId: userId, // Set the authenticated admin as inviter
+          })
+        } catch (inviteError) {
+          console.error(`Failed to send invitation to ${email}:`, inviteError)
+          // Continue with other invitations even if one fails
+        }
+      }
     }
 
     return { 

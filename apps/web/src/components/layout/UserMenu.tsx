@@ -11,8 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import { LogOut, Settings, User, Map, History, Headphones, Send } from "lucide-react"
+import { LogOut, Settings, User, Map, History, Headphones, Send, ShieldCheck } from "lucide-react"
 import { footerItems, type SidebarFooterItemId } from "@workspace/common"
+import { useIsSuperAdmin } from "@/hooks/use-is-super-admin"
 
 const footerItemIcons: Record<SidebarFooterItemId, React.ComponentType<{ className?: string }>> = {
   roadmap: Map,
@@ -30,6 +31,7 @@ export function UserMenu({ variant = "full", className }: UserMenuProps) {
   const { user } = useUser()
   const { signOut } = useClerk()
   const router = useRouter()
+  const { isSuperAdmin } = useIsSuperAdmin()
 
   const handleSignOut = async () => {
     await signOut()
@@ -98,6 +100,15 @@ export function UserMenu({ variant = "full", className }: UserMenuProps) {
           )
         })}
         <DropdownMenuSeparator />
+        {isSuperAdmin && (
+          <>
+            <DropdownMenuItem onClick={() => router.push("/control/workspaces")}>
+              <ShieldCheck className="mr-2 h-4 w-4" />
+              <span>Admin Dashboard</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem onClick={() => router.push("/profile")}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
