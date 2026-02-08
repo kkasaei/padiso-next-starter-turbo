@@ -16,6 +16,7 @@ import {
 import { useOrganization, useOrganizationList } from "@clerk/nextjs"
 import { cn } from "@workspace/common/lib"
 import { routes } from "@workspace/common"
+import { Skeleton } from "@workspace/ui/components/skeleton"
 import { useSubscriptionStatus } from "@/hooks/use-subscription"
 
 type WorkspaceSwitcherProps = {
@@ -28,7 +29,7 @@ export function WorkspaceSwitcher({ expanded }: WorkspaceSwitcherProps) {
   const [search, setSearch] = useState("")
   const prevOrgIdRef = useRef<string | null>(null)
 
-  const { organization: activeOrg } = useOrganization()
+  const { organization: activeOrg, isLoaded: isOrgLoaded } = useOrganization()
   const { data: subscription } = useSubscriptionStatus(activeOrg?.id)
   const planName = subscription?.planName ?? subscription?.plan?.name ?? "Growth"
 
@@ -63,6 +64,26 @@ export function WorkspaceSwitcher({ expanded }: WorkspaceSwitcherProps) {
   const handleCreateOrg = () => {
     setOrgSwitcherOpen(false)
     router.push(routes.dashboard.WorkspaceSetup)
+  }
+
+  // Show skeleton while Clerk is still loading the active organization
+  if (!isOrgLoaded) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-3",
+          expanded && "w-full rounded-xl border border-border px-2 py-1.5"
+        )}
+      >
+        <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+        {expanded && (
+          <div className="flex flex-1 flex-col gap-1.5 min-w-0">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
