@@ -1,0 +1,95 @@
+---
+title: "Shopify URL Structure Mistakes That Tank Rankings: /products/ vs /collections/ Explained"
+description: Understand Shopify's URL structure issues including /products/ vs /collections/ paths, duplicate URLs, and canonical tag management for SEO.
+published: 2025-12-09T12:00:00.000Z
+category: Technical SEO
+author: houman
+---
+
+‍
+
+Shopify's URL structure is both a blessing and a curse for SEO. It's clean and consistent, but it creates hidden duplicate content problems that silently erode your rankings. The most common culprit: the `/collections/[name]/products/[product]` vs `/products/[product]` duplicate path issue. Here's everything you need to know—and how to fix it.
+
+‍
+
+## The Shopify URL Problem
+
+Every Shopify product has at least two URLs:
+- `/products/blue-running-shoe` (canonical product URL)
+- `/collections/running-shoes/products/blue-running-shoe` (collection-context URL)
+
+If a product appears in 5 collections, it has 6 URLs—all showing the same content. Google must decide which one to index, and it doesn't always choose correctly.
+
+## Why This Matters for SEO
+
+- **Authority dilution** — backlinks and internal links may point to different URL versions
+- **Crawl waste** — Googlebot crawls the same content multiple times
+- **Analytics confusion** — traffic is split across multiple URLs in reporting
+- **Inconsistent indexation** — Google might index the collection-context URL instead of the canonical
+
+## Shopify's Built-in Fix (and Its Limitations)
+
+Shopify automatically adds canonical tags pointing collection-context URLs to the `/products/` canonical URL. This helps, but doesn't solve everything:
+
+- Internal links in your theme may still use collection-context URLs
+- Some apps generate links with collection paths
+- XML sitemap includes only canonical URLs (good), but internal linking may not match
+- Google doesn't always respect canonical tags
+
+## How to Audit Your URL Structure
+
+### Step 1: Check Internal Links
+Crawl your site and identify all internal links pointing to `/collections/*/products/*` URLs. These should point to `/products/*` instead.
+
+### Step 2: Review Theme Templates
+Check your Liquid templates for product URL generation:
+- `{{ product.url }}` — returns the canonical `/products/` URL (correct)
+- `{{ product.url | within: collection }}` — returns the collection-context URL (avoid for SEO)
+
+### Step 3: Check App-Generated Links
+Review any apps that generate product links. Many apps use collection-context URLs.
+
+### Step 4: Verify Canonical Tags
+Use Google's URL Inspection tool to confirm Google is respecting your canonical tags for key product pages.
+
+## The Fix: Ensuring Clean URLs
+
+### In Your Theme
+Always use `{{ product.url }}` without the `within: collection` filter in templates where SEO matters (product grids, search results, recommended products).
+
+### In Your Navigation
+Mega menus and navigation links should point to `/products/` URLs where possible, or to collection pages (not collection-context product URLs).
+
+### In Your Content
+Blog posts and editorial content should always link to `/products/` canonical URLs.
+
+### Additional URL Issues to Watch
+- **Trailing slashes** — Shopify doesn't use them; ensure consistency
+- **Tag pages** — `/collections/all/[tag]` creates additional duplicate collection views; consider noindexing
+- **Pagination** — `/collections/shoes?page=2` needs proper handling
+- **Variant URLs** — `?variant=12345` parameters need canonical management
+
+## AI-Powered URL Management
+
+AI tools can:
+- Crawl your entire store and identify all duplicate URL issues
+- Generate redirect maps for any URL changes
+- Monitor for new duplicate content as products are added
+- Validate canonical tag implementation across all pages
+
+## FAQs
+
+- **Should I worry about this if Shopify adds canonical tags automatically?**
+Yes—because internal links still pass authority to the wrong URLs, and Google doesn't always respect canonical hints.
+
+- **Will fixing URL structure immediately improve rankings?**
+You should see improvements within 2-4 weeks as Google consolidates signals to the canonical URLs.
+
+- **Can I change Shopify's default URL structure?**
+No—Shopify enforces `/products/` and `/collections/` prefixes. You can't change this without going headless. But you can ensure all links and references use the canonical version.
+
+## Conclusion
+
+Shopify's URL structure creates hidden duplicate content issues that silently erode rankings. Auditing your internal links, theme templates, and app-generated URLs—then ensuring everything points to canonical `/products/` URLs—consolidates your SEO authority and improves rankings.
+
+Book a demo at [https://searchfit.ai](https://searchfit.ai) or reach out to hello@searchfit.ai so we can show you how to get a 5.3% revenue increase in only 4 weeks, not months.

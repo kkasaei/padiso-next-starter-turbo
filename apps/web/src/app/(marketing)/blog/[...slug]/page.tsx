@@ -7,6 +7,7 @@ import { allPosts } from 'content-collections';
 import { baseURL } from '@workspace/common';
 
 import { BlogPost } from '@/components/marketing/sections/BlogPost';
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/marketing/JsonLd';
 
 async function getBlogPostFromParams(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params;
@@ -56,5 +57,28 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
   if (!post) {
     return notFound();
   }
-  return <BlogPost post={post} />;
+
+  const postUrl = `${baseURL}${post.slug}`;
+
+  return (
+    <>
+      <ArticleJsonLd
+        title={post.title}
+        description={post.description}
+        url={postUrl}
+        datePublished={post.published}
+        authorName={post.author?.name ?? 'SearchFIT'}
+        authorAvatar={post.author?.avatar}
+        category={post.category}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', url: baseURL },
+          { name: 'Blog', url: `${baseURL}/blog` },
+          { name: post.title, url: postUrl },
+        ]}
+      />
+      <BlogPost post={post} />
+    </>
+  );
 }
