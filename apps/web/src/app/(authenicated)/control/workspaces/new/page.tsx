@@ -14,7 +14,7 @@ import {
   Check,
   Loader2,
 } from "lucide-react"
-import { createWorkspace } from "@/lib/actions/workspaces"
+import { createWorkspace } from "@/lib/admin-actions/workspaces"
 import { toast } from "sonner"
 
 export default function NewWorkspacePage() {
@@ -56,7 +56,7 @@ export default function NewWorkspacePage() {
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/workspaces">
+            <Link href="/control/workspaces">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
@@ -242,7 +242,7 @@ export default function NewWorkspacePage() {
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 mt-6">
             <Button variant="outline" asChild disabled={isPending}>
-              <Link href="/workspaces">Cancel</Link>
+              <Link href="/control/workspaces">Cancel</Link>
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? (

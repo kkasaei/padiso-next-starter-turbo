@@ -1,7 +1,7 @@
 "use client"
 
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
-import { AdminSidebar } from "@/components/layout/admin-nav"
+import { AdminSidebar } from "@/components/admin/layout/admin-nav"
 
 export const dynamic = 'force-dynamic'
 

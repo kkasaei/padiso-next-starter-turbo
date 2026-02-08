@@ -20,7 +20,7 @@ import {
   X,
   Bot,
 } from "lucide-react"
-import { PromptEditor } from "@/components/PromptEditor"
+import { PromptEditor } from "@/components/admin/PromptEditor"
 
 type Provider = "claude" | "openai" | "gemini"
 

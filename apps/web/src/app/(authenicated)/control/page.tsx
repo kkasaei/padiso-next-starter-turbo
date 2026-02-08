@@ -257,10 +257,10 @@ function OverviewCard({ workspaces, adminStats }: { workspaces: Workspace[]; adm
             </div>
             <div className="flex gap-2 mt-2">
               <Button asChild variant="outline" className="flex-1">
-                <Link href="/workspaces">View All</Link>
+                <Link href="/control/workspaces">View All</Link>
               </Button>
               <Button asChild className="flex-1">
-                <Link href="/workspaces/new" className="flex items-center gap-1">
+                <Link href="/control/workspaces/new" className="flex items-center gap-1">
                   <Plus className="h-4 w-4" />
                   New
                 </Link>
@@ -294,7 +294,7 @@ function OverviewCard({ workspaces, adminStats }: { workspaces: Workspace[]; adm
               <span className="font-semibold text-emerald-600">{activeWorkspaces}</span>
             </div>
             <Button asChild className="w-full mt-2">
-              <Link href="/users">Manage Users</Link>
+              <Link href="/control/users">Manage Users</Link>
             </Button>
           </div>
         </div>
@@ -328,7 +328,7 @@ function OverviewCard({ workspaces, adminStats }: { workspaces: Workspace[]; adm
               <span className="font-semibold text-emerald-600">{adminStats?.contactRequests ?? 0}</span>
             </div>
             <Button asChild className="w-full mt-2">
-              <Link href="/public-reports">View Reports</Link>
+              <Link href="/control/public-reports">View Reports</Link>
             </Button>
           </div>
         </div>

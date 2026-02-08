@@ -25,7 +25,7 @@ import {
   deleteUser,
   banUser,
   type UserWithOrgs,
-} from "@/lib/actions/users"
+} from "@/lib/admin-actions/users"
 import { toast } from "sonner"
 
 function UserActionsMenu({ 

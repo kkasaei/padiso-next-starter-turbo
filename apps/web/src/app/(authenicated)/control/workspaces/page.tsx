@@ -26,7 +26,7 @@ import {
   cancelSubscription,
   reactivateSubscription,
   type ClerkOrganization,
-} from "@/lib/actions/workspaces"
+} from "@/lib/admin-actions/workspaces"
 import { trpc } from "@/lib/trpc/client"
 import { toast } from "sonner"
 
@@ -376,7 +376,7 @@ export default function WorkspacesPage() {
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             <Button asChild>
-              <Link href="/workspaces/new" className="flex items-center gap-2">
+              <Link href="/control/workspaces/new" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 New Workspace
               </Link>

@@ -39,7 +39,7 @@ import {
   type WorkspaceWithClerk,
   type WorkspaceMember,
   type PlanLimitsUpdate,
-} from "@/lib/actions/workspaces"
+} from "@/lib/admin-actions/workspaces"
 import { toast } from "sonner"
 
 function StatusBadge({ status }: { status: string }) {
@@ -371,7 +371,7 @@ export default function WorkspaceDetailsPage() {
         <h2 className="text-xl font-semibold mb-2">Workspace not found</h2>
         <p className="text-muted-foreground mb-4">The workspace you're looking for doesn't exist.</p>
         <Button asChild>
-          <Link href="/workspaces">Back to Workspaces</Link>
+          <Link href="/control/workspaces">Back to Workspaces</Link>
         </Button>
       </div>
     )
@@ -388,7 +388,7 @@ export default function WorkspaceDetailsPage() {
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/workspaces">
+              <Link href="/control/workspaces">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>

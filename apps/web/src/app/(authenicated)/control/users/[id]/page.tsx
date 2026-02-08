@@ -22,7 +22,7 @@ import {
   CreditCard,
   AlertTriangle,
 } from "lucide-react"
-import { getUserById, deleteUser, banUser, type UserWithOrgs } from "@/lib/actions/users"
+import { getUserById, deleteUser, banUser, type UserWithOrgs } from "@/lib/admin-actions/users"
 import { toast } from "sonner"
 
 type ActivityItem = {
@@ -166,7 +166,7 @@ export default function UserDetailsPage() {
           <Users className="h-12 w-12 mb-4 opacity-50" />
           <p className="text-lg font-medium">User not found</p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/users">Back to Users</Link>
+            <Link href="/control/users">Back to Users</Link>
           </Button>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function UserDetailsPage() {
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/users">
+              <Link href="/control/users">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>

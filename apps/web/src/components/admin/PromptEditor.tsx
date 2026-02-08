@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Placeholder from "@tiptap/extension-placeholder"
 import { useEffect } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@workspace/ui/lib/utils"
 import "@workspace/ui/styles/tiptap.css"
 
 interface PromptEditorProps {

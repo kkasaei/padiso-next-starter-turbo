@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LogoIcon } from "@/components/layout/LogoIcon";
+import { LogoIcon } from "@/components/admin/layout/LogoIcon";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@workspace/ui/components/tooltip"
 import {
   LayoutDashboard,
@@ -13,28 +13,28 @@ import {
   FileText,
   LifeBuoyIcon,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "@workspace/ui/lib/utils"
 import { UserMenu } from "./UserMenu"
 
 const navItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { id: "workspaces", label: "Workspaces", icon: Layers, href: "/workspaces" },
-  { id: "users", label: "Users", icon: Users, href: "/users" },
-  { id: "public-reports", label: "Public Reports", icon: FileText, href: "/public-reports" },
-  { id: "activity", label: "Activity", icon: Activity, href: "/activity" },
-  { id: "settings", label: "Settings", icon: Settings, href: "/settings" },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/control" },
+  { id: "workspaces", label: "Workspaces", icon: Layers, href: "/control/workspaces" },
+  { id: "users", label: "Users", icon: Users, href: "/control/users" },
+  { id: "public-reports", label: "Public Reports", icon: FileText, href: "/control/public-reports" },
+  { id: "activity", label: "Activity", icon: Activity, href: "/control/activity" },
+  { id: "settings", label: "Settings", icon: Settings, href: "/control/settings" },
 ] as const
 
 export function AdminSidebar() {
   const pathname = usePathname()
 
   const isItemActive = (id: string): boolean => {
-    if (id === "dashboard") return pathname === "/"
-    if (id === "users") return pathname.startsWith("/users")
-    if (id === "workspaces") return pathname.startsWith("/workspaces")
-    if (id === "public-reports") return pathname.startsWith("/public-reports")
-    if (id === "activity") return pathname.startsWith("/activity")
-    if (id === "settings") return pathname.startsWith("/settings")
+    if (id === "dashboard") return pathname === "/control"
+    if (id === "users") return pathname.startsWith("/control/users")
+    if (id === "workspaces") return pathname.startsWith("/control/workspaces")
+    if (id === "public-reports") return pathname.startsWith("/control/public-reports")
+    if (id === "activity") return pathname.startsWith("/control/activity")
+    if (id === "settings") return pathname.startsWith("/control/settings")
     return false
   }
 
