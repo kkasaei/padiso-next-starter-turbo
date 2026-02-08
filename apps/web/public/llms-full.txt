@@ -1,0 +1,99 @@
+# SearchFIT — Complete AI Context
+
+> SearchFIT is the #1 AI Search Engine Optimization (AEO) platform. It tracks brand visibility across AI search engines (ChatGPT, Claude, Perplexity, Gemini), generates content that ranks in AI search results, provides technical SEO audits, and builds backlinks — delivering measurable organic revenue growth in weeks, not months.
+
+## About SearchFIT
+
+SearchFIT is an AI-native Answer Engine Optimization (AEO) platform built for ecommerce brands, Shopify stores, and businesses that need to be visible in AI-powered search engines.
+
+Traditional SEO tools like Semrush and Ahrefs track Google rankings and backlinks. But AI engines like ChatGPT, Claude, and Perplexity work differently — they synthesize information from multiple sources and recommend brands directly. SearchFIT is purpose-built for this new paradigm.
+
+### Core Problem We Solve
+Most brands have 0% visibility in AI search. When consumers ask ChatGPT "what's the best [product] for [use case]?", they either mention your brand or they don't. There's no page 2 — you're recommended or you're invisible.
+
+### How We Solve It
+1. **Track**: Monitor how your brand appears across ChatGPT, Claude, Perplexity, and Gemini in real-time
+2. **Optimize**: Generate AI-optimized content that gets your brand recommended
+3. **Measure**: Attribute organic revenue to specific SEO and AEO actions
+
+## Product & Pricing
+
+### Growth Engine — $99/month
+- 7-day free trial, no credit card required
+- Track brands with prompts across all major AI engines
+- Competitor and keyword monitoring
+- SEO & AI-optimized articles published monthly
+- Premium backlinks from vetted partner sites (valued at $800+/mo)
+- Real-time AI-driven research & expert-backed content
+- Articles with citations, internal links & branded infographics
+- Reddit agent for brand visibility (coming soon)
+- JSON-LD schema markup for featured snippets
+- Technical SEO audit (Google & AI crawlability)
+- Visibility dashboard with weekly refresh
+- Integrates with WordPress, Webflow, Shopify, Wix & API
+- Webhook support & weekly email digest
+- Email support (24hr response)
+- Articles available in 20+ languages (add-on)
+
+### Scale Partner — Custom Pricing
+- Tailormade solution for agencies, enterprises, and teams
+- Dedicated Customer Success Manager
+- Priority support
+- Custom integrations and workflows
+
+### Annual Billing
+- Growth Engine: $83/mo billed annually ($990/year — save $198/year)
+
+## Key Features
+
+### AI Visibility Tracking
+Monitor how your brand appears in AI search results across ChatGPT (OpenAI), Claude (Anthropic), Perplexity AI, Google Gemini, and emerging AI engines. Track brand mentions, analyze sentiment, and compare against competitors.
+
+### Content Generation
+AI-powered content creation optimized for both traditional SEO and AI search engines. Produces articles with citations, internal links, branded infographics, and proper schema markup. Supports 20+ languages.
+
+### Technical SEO Audit
+Comprehensive crawlability audit for both Google and AI search engines. Identifies indexation issues, schema markup gaps, Core Web Vitals problems, and AI-readability issues.
+
+### Premium Backlinks
+Access to a growing network of vetted partner sites providing high-quality backlinks. Natural link building that compounds domain authority over time.
+
+### JSON-LD Schema Markup
+Automated generation of structured data for products, FAQs, articles, reviews, and breadcrumbs. Optimized for Google rich results and AI Overview citations.
+
+### Competitor Analysis
+Track how competitors appear in AI search results. Identify content gaps, visibility differences, and strategic opportunities.
+
+## Platform Integrations
+
+SearchFIT integrates with:
+- **WordPress**: Direct integration for seamless content publishing
+- **Webflow**: Automatic publishing to Webflow CMS
+- **Shopify**: Optimize Shopify stores for AI search visibility
+- **Wix**: Easy integration via API
+- **BigCommerce**: Ecommerce optimization
+- **Squarespace**: Site integration
+- **Custom sites**: API integration for any platform
+- **Webhooks**: Real-time event notifications
+
+## Target Audience
+
+- **Ecommerce brands** (especially Shopify stores) wanting AI search visibility
+- **DTC brands** reducing paid ad dependency through organic growth
+- **Marketing teams** needing AI-powered content at scale
+- **SEO agencies** managing client visibility across AI engines
+- **Enterprise brands** with 10,000+ SKUs across multiple regions
+
+## Key Results
+
+- 5.3% organic revenue increase in 4 weeks
+- 48% organic traffic increase within 30 days
+- 80% reduction in content production time
+- 3-5x marketing output improvement with AI tools
+
+## Contact
+
+- Website: https://searchfit.ai
+- Email: hello@searchfit.ai
+- Demo: https://searchfit.ai/pricing
+- Social: @searchfitai on X/Twitter and LinkedIn

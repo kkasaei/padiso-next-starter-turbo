@@ -1,0 +1,107 @@
+# SearchFIT
+
+> SearchFIT is the #1 AI Search Engine Optimization (AEO) platform. It tracks brand visibility across AI search engines (ChatGPT, Claude, Perplexity, Gemini), generates content that ranks in AI search results, provides technical SEO audits, and builds backlinks — delivering measurable organic revenue growth in weeks, not months.
+
+SearchFIT helps ecommerce brands (especially Shopify stores) and businesses monitor how AI engines recommend their products, optimize content for answer engine visibility, and measure ROI from organic search. The platform integrates with WordPress, Webflow, Shopify, Wix, and custom sites via API.
+
+Key capabilities:
+- AI Visibility Tracking across ChatGPT, Claude, Perplexity, and Gemini
+- SEO & AI-optimized content generation and automated publishing
+- Technical SEO auditing (Google & AI crawlability)
+- Premium backlink building from vetted partner sites
+- JSON-LD schema markup generation
+- Competitor analysis and keyword monitoring
+- Reddit agent for brand visibility (coming soon)
+- Multi-language support (20+ languages)
+
+## Docs
+
+- [Homepage](https://searchfit.ai/): Main landing page with product overview, features, testimonials, and FAQ
+- [Pricing](https://searchfit.ai/pricing): Growth Engine plan at $99/mo with 7-day free trial, Scale Partner for enterprise
+- [Story](https://searchfit.ai/story): Company background, team, vision, and values
+- [Blog](https://searchfit.ai/blog): 170+ articles on AI SEO, Shopify optimization, content strategy, and ecommerce growth
+
+## Features
+
+- [AI Tracking](https://searchfit.ai/ai-tracking): Monitor brand visibility across AI search engines
+- [Content](https://searchfit.ai/content): AI-powered content generation and optimization
+- [Analytics](https://searchfit.ai/analytics): SEO performance analytics and revenue attribution
+- [Backlinks](https://searchfit.ai/backlinks): Premium backlink building network
+- [Technical Audit](https://searchfit.ai/technical-audit): AI-powered site audit for Google and AI crawlability
+- [Social Listening](https://searchfit.ai/social-listening): Monitor brand mentions across social platforms
+- [Integrations](https://searchfit.ai/integrations): WordPress, Webflow, Shopify, Wix, and API integrations
+
+## Platform Integrations
+
+- [Shopify](https://searchfit.ai/shopify): Shopify SEO optimization and integration
+- [WordPress](https://searchfit.ai/wordpress): WordPress SEO integration
+- [Webflow](https://searchfit.ai/webflow): Webflow CMS integration
+- [WooCommerce](https://searchfit.ai/woocommerce): WooCommerce SEO integration
+- [Wix](https://searchfit.ai/wix): Wix site integration
+- [BigCommerce](https://searchfit.ai/bigcommerce): BigCommerce integration
+- [Squarespace](https://searchfit.ai/squarespace): Squarespace integration
+
+## Use Cases
+
+- [Ecommerce](https://searchfit.ai/ecommerce): AI SEO for online stores
+- [Answer Engine Optimization](https://searchfit.ai/answer-engine-optimization): Optimize for AI-powered search
+- [Generative Engine Optimization](https://searchfit.ai/generative-engine-optimization): Rank in generative AI results
+- [Rank on ChatGPT](https://searchfit.ai/rank-on-chatgpt): Get recommended by ChatGPT
+- [Content Automation](https://searchfit.ai/content-automation): Automated content publishing
+- [SEO Automation](https://searchfit.ai/seo-automation): Automated SEO workflows
+- [Keyword Research](https://searchfit.ai/keyword-research): AI-powered keyword discovery
+- [Keyword Clustering](https://searchfit.ai/keyword-clustering): Semantic keyword grouping
+- [Link Building](https://searchfit.ai/link-building): Premium backlink acquisition
+- [Multilingual SEO](https://searchfit.ai/multilingual-seo): Content in 20+ languages
+- [JSON-LD Schema](https://searchfit.ai/json-ld-schema): Automated structured data markup
+- [Article Generator](https://searchfit.ai/article-generator): AI content generation
+- [SEO Audit Software](https://searchfit.ai/seo-audit-software): Technical site auditing
+
+## Blog — AI SEO & Ecommerce
+
+- [GPT-5.2 for Shopify Product Descriptions](https://searchfit.ai/blog/gpt-5-2-for-shopify-product-descriptions-generate-10000-sku-pages-that-rank-and-convert): Generate 10,000 unique product descriptions at scale
+- [ChatGPT Search Is the New Google](https://searchfit.ai/blog/chatgpt-search-is-the-new-google-how-to-optimize-your-ecommerce-store-for-openai-search-2026): How to optimize for OpenAI's search engine
+- [Claude 4.6 Opus for Shopify Collection Pages](https://searchfit.ai/blog/claude-4-6-opus-for-shopify-collection-pages-long-form-category-content-that-wins-ai-overviews): Long-form category content for AI Overviews
+- [GPT-5.2 vs Claude 4.5 Sonnet for SEO Content](https://searchfit.ai/blog/gpt-5-2-vs-claude-4-5-sonnet-for-seo-content-which-llm-wins-for-ecommerce-2026): Which LLM wins for ecommerce content
+- [Claude MCP for SEO](https://searchfit.ai/blog/claude-mcp-model-context-protocol-for-seo-connect-ai-to-search-console-ga4-shopify): Connect AI to Search Console, GA4, and Shopify
+- [Agentic SEO in 2026](https://searchfit.ai/blog/agentic-seo-in-2026-openai-operator-claude-computer-use-cursor-agents-replacing-manual-seo): How AI agents are replacing manual SEO work
+- [AI Agent Skills for Ecommerce Marketing](https://searchfit.ai/blog/ai-agent-skills-for-ecommerce-marketing-what-they-are-and-why-they-matter-for-shopify): What agent skills mean for marketing teams
+- [The AI SEO Tech Stack for 2026](https://searchfit.ai/blog/the-ai-seo-tech-stack-for-2026-gpt-5-2-claude-4-6-opus-cursor-searchfit-shopify-guide): Complete guide to GPT-5.2, Claude 4.6 Opus, Cursor, and SearchFIT
+- [AI SEO for Shopify: 30-Day Revenue Playbook](https://searchfit.ai/blog/ai-seo-for-shopify-30-day-revenue-playbook-weeks-not-months): Week-by-week Shopify SEO playbook
+- [Shopify Internal Linking at Scale](https://searchfit.ai/blog/shopify-internal-linking-at-scale-ai-graphs-that-lift-collections-and-pdps): AI link graphs for collections and PDPs
+
+## Blog — Shopify Industry Guides
+
+- [Fashion SEO for Shopify](https://searchfit.ai/blog/fashion-seo-that-sells-how-ai-turns-shopify-lookbooks-into-organic-revenue): AI-powered lookbook SEO strategy
+- [Beauty and Skincare SEO](https://searchfit.ai/blog/ingredient-search-to-add-to-cart-ai-powered-seo-for-skincare-and-beauty-on-shopify): Ingredient-driven search optimization
+- [Health and Supplements SEO](https://searchfit.ai/blog/ahpra-safe-content-that-ranks-ai-seo-for-australian-health-and-supplement-shopify-stores): AHPRA-compliant content that ranks
+- [Jewelry Store SEO](https://searchfit.ai/blog/high-aov-product-pages-that-win-rich-results-ai-seo-for-shopify-jewelry-stores): High-AOV product pages with rich results
+- [Pet Store SEO](https://searchfit.ai/blog/breed-specific-queries-and-lifestyle-content-ai-seo-playbook-for-shopify-pet-stores): Breed-specific queries and lifestyle content
+- [Food and Beverage SEO](https://searchfit.ai/blog/recipe-pages-farm-stories-and-fsanz-compliance-ai-seo-for-shopify-food-and-beverage): Recipe content and FSANZ compliance
+- [Home and Furniture SEO](https://searchfit.ai/blog/room-by-room-content-strategy-ai-seo-for-shopify-home-and-furniture-stores): Room-based content strategy
+- [Fitness and Activewear SEO](https://searchfit.ai/blog/seasonal-drops-and-workout-trends-ai-seo-for-shopify-fitness-and-activewear-brands): Seasonal drops and workout trends
+
+## Blog — Platform Comparisons
+
+- [Shopify vs WooCommerce SEO](https://searchfit.ai/blog/shopify-vs-woocommerce-for-seo-which-platform-actually-ranks-better-in-2025): Which platform ranks better
+- [Shopify vs BigCommerce SEO](https://searchfit.ai/blog/shopify-vs-bigcommerce-seo-head-to-head-technical-and-content-comparison): Technical and content comparison
+- [Shopify vs Magento SEO](https://searchfit.ai/blog/shopify-vs-magento-seo-why-ecommerce-brands-are-migrating-for-ai-native-optimization): Why brands are migrating to Shopify
+- [Shopify vs Squarespace SEO](https://searchfit.ai/blog/shopify-vs-squarespace-for-ecommerce-seo-when-to-upgrade-to-a-real-commerce-platform): When to upgrade to Shopify
+
+## Legal
+
+- [Privacy Policy](https://searchfit.ai/privacy-policy)
+- [Terms of Use](https://searchfit.ai/terms-of-use)
+- [Cookie Policy](https://searchfit.ai/cookie-policy)
+
+## Optional
+
+- [GDPR](https://searchfit.ai/gdpr): GDPR compliance information
+- [Security](https://searchfit.ai/security): Security practices and policies
+- [Status](https://searchfit.ai/status): System status page
+- [Developers](https://searchfit.ai/developers): API documentation for developers
+- [Partners](https://searchfit.ai/partners): Partnership program
+- [Careers](https://searchfit.ai/careers): Job openings
+- [Press](https://searchfit.ai/press): Press and media resources
+- [ROI Calculator](https://searchfit.ai/roi-calculator): Calculate your SEO ROI
+- [Glossary](https://searchfit.ai/glossary): SEO and AEO terminology
