@@ -52,6 +52,101 @@ async function seed() {
       isActive: true,
       metadata: {},
     },
+    {
+      key: "app_features",
+      category: "features",
+      description: "Enable or disable app features - disabled features show as 'Coming Soon'",
+      value: {
+        tasks: true, // ✅ Enabled by default
+        workspace_prompts: true, // ✅ Enabled by default
+        brands: {
+          content: true, // ✅ Enabled by default
+          analytics: true, // ✅ Enabled by default
+          ai_tracking: true, // ✅ Enabled by default
+          backlinks: false, // ❌ Disabled by default
+          technical_audit: true, // ✅ Enabled by default
+          social_listening: true, // ✅ Enabled by default
+          tasks: true, // ✅ Enabled by default
+        },
+      },
+      isActive: true,
+      metadata: {},
+    },
+    {
+      key: "integrations",
+      category: "integrations",
+      description: "Enable or disable third-party integrations - disabled integrations show as 'Coming Soon'",
+      value: {
+        // Search & Knowledge
+        google: true, // ✅ Enabled by default
+        microsoft: false,
+        
+        // Communication
+        slack: false,
+        microsoft_teams: false,
+        
+        // Project Management
+        linear: false,
+        
+        // Analytics
+        adobe_analytics: false,
+        mixpanel: false,
+        
+        // Content & CMS
+        wordpress: true, // ✅ Enabled by default
+        webflow: true, // ✅ Enabled by default
+        
+        // Version Control
+        github: false,
+        
+        // Social Media & Commerce
+        twitter: false,
+        linkedin: false,
+        discord: false,
+        tiktok: false,
+        
+        // SEO Tools
+        ahrefs: false,
+        moz: false,
+        semrush: false,
+        kw_finder: false,
+        
+        // Automation & Integrations
+        zapier: false,
+        make: false,
+        n8n: false,
+        
+        // E-commerce
+        shopify: true, // ✅ Enabled by default
+        
+        // Advertisement
+        meta_ads: false,
+        
+        // AI & Platforms
+        api: false,
+        mcp: false,
+        webhooks: true, // ✅ Enabled by default
+        
+        // Platforms
+        davinci: false,
+        fabriq: false,
+        klaviyo: false,
+        apifox: false,
+        airtable: false,
+        
+        // CRM & Sales
+        salesforce: false,
+        intercom: false,
+        hubspot: false,
+        
+        // AI Search
+        perplexity: false,
+        gemini: false,
+        chatgpt: false,
+      },
+      isActive: true,
+      metadata: {},
+    },
   ];
 
   for (const setting of settings) {
