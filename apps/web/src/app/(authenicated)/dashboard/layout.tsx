@@ -1,16 +1,19 @@
 "use client"
 
 import { useEffect } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { SignedIn, SignedOut, RedirectToSignIn, useOrganization, useOrganizationList } from "@clerk/nextjs"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Logo } from "@workspace/ui/components/logo"
 import { WorkspaceSidebar } from "@/components/layout/WorkspaceSidebar"
 import { BrandSidebar, BrandSidebarProvider, BrandSidebarToggle } from "@/components/brands/BrandSidebar"
 import { BrandAccessGuard } from "@/components/brands/BrandAccessGuard"
+import { routes } from "@workspace/common"
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const { organization: activeOrg, isLoaded: isOrgLoaded } = useOrganization()
   const { userMemberships, setActive, isLoaded: isListLoaded } = useOrganizationList({
     userMemberships: { pageSize: 50 },
@@ -29,6 +32,22 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     }
   }, [isOrgLoaded, isListLoaded, activeOrg, userMemberships.data, setActive])
 
+  // Redirect to workspace-setup if no workspace exists
+  useEffect(() => {
+    if (
+      isOrgLoaded &&
+      isListLoaded &&
+      !activeOrg &&
+      userMemberships.data &&
+      userMemberships.data.length === 0
+    ) {
+      toast.error("No workspace found. Please create a workspace to continue.", {
+        position: "top-center",
+      })
+      router.push(routes.dashboard.WorkspaceSetup)
+    }
+  }, [isOrgLoaded, isListLoaded, activeOrg, userMemberships.data, router])
+
   // Show brand sidebar only on brand detail pages: /dashboard/brands/[id]
   const isBrandDetailPage =
     pathname.startsWith("/dashboard/brands/") &&
@@ -36,7 +55,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     pathname !== "/dashboard/brands/new"
 
   // Full-page loader while Clerk is initialising or auto-selecting an org
-  const isReady = isOrgLoaded && isListLoaded && activeOrg
+  // Also show loader if we're redirecting (no workspace)
+  const isRedirecting = isOrgLoaded && isListLoaded && !activeOrg && userMemberships.data?.length === 0
+  const isReady = isOrgLoaded && isListLoaded && activeOrg && !isRedirecting
   if (!isReady) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-sidebar">
