@@ -1,41 +1,57 @@
-import { env } from '@/env';
+/**
+ * Plan configuration for marketing/pricing UI components.
+ *
+ * All numerical limits are derived from @workspace/billing (limits.json)
+ * which is the single source of truth. Do NOT hardcode numbers here.
+ */
+
+import {
+  PLAN_LIMITS as BILLING_LIMITS,
+  formatLimit,
+  type PlanLimits,
+} from '@workspace/billing';
 
 // Feature type that supports optional badges
 export type PlanFeature = string | { text: string; badge: string };
 
-// Plan limits configuration based on pricing structure
-// -1 = unlimited, 0 = feature not included
+// ─── Plan Limits (derived from @workspace/billing) ──────────
+// Flat structure for backward compatibility with existing consumers.
+// "scale" maps to billing's "custom" plan for marketing naming.
 
 export const PLAN_LIMITS = {
   growth: {
-    maxBrands: 5,
-    maxPrompts: 150,
-    maxCompetitors: 10,
-    maxKeywords: 10,
-    maxIntegrations: 5,
-    maxInsightsQueries: 30,
-    maxSiteAuditPages: 25,
-    maxContentGen: 30,
-    maxImageGen: 0,
-    maxAudioMinutes: 0,
-    maxApiCalls: -1,
+    maxBrands: BILLING_LIMITS.growth.brands.max,
+    maxPrompts: BILLING_LIMITS.growth.prompts.maxGlobal,
+    maxCompetitors: BILLING_LIMITS.growth.competitors.maxPerBrand,
+    maxKeywords: BILLING_LIMITS.growth.keywords.maxPerBrand,
+    maxIntegrations: BILLING_LIMITS.growth.integrations.max,
+    maxInsightsQueries: BILLING_LIMITS.growth.visibility.maxInsightsQueries,
+    maxSiteAuditPages: BILLING_LIMITS.growth.technicalAudit.maxPages,
+    maxContentGen: BILLING_LIMITS.growth.content.maxPerBrand,
+    maxImageGen: BILLING_LIMITS.growth.media.maxImageGen,
+    maxAudioMinutes: BILLING_LIMITS.growth.media.maxAudioMinutes,
+    maxApiCalls: BILLING_LIMITS.growth.api.maxCalls,
   },
   scale: {
-    maxBrands: -1,
-    maxPrompts: -1,
-    maxCompetitors: -1,
-    maxKeywords: -1,
-    maxIntegrations: -1,
-    maxInsightsQueries: -1,
-    maxSiteAuditPages: -1,
-    maxContentGen: -1,
-    maxImageGen: -1,
-    maxAudioMinutes: -1,
-    maxApiCalls: -1,
+    maxBrands: BILLING_LIMITS.custom.brands.max,
+    maxPrompts: BILLING_LIMITS.custom.prompts.maxGlobal,
+    maxCompetitors: BILLING_LIMITS.custom.competitors.maxPerBrand,
+    maxKeywords: BILLING_LIMITS.custom.keywords.maxPerBrand,
+    maxIntegrations: BILLING_LIMITS.custom.integrations.max,
+    maxInsightsQueries: BILLING_LIMITS.custom.visibility.maxInsightsQueries,
+    maxSiteAuditPages: BILLING_LIMITS.custom.technicalAudit.maxPages,
+    maxContentGen: BILLING_LIMITS.custom.content.maxPerBrand,
+    maxImageGen: BILLING_LIMITS.custom.media.maxImageGen,
+    maxAudioMinutes: BILLING_LIMITS.custom.media.maxAudioMinutes,
+    maxApiCalls: BILLING_LIMITS.custom.api.maxCalls,
   },
-} as const;
+};
 
 export type PlanId = keyof typeof PLAN_LIMITS;
+
+// Helper: shorthand references
+const gL = BILLING_LIMITS.growth;
+const cL = BILLING_LIMITS.custom;
 
 // Plan pricing configuration
 export const PLANS = {
@@ -61,21 +77,21 @@ export const PLANS = {
       },
     },
     features: [
-      '5 brands with 150 prompts tracked',
-      { text: '10 competitors & 50 keywords monitoring', badge: 'Coming soon' },
-      '30 SEO & AI-optimized articles published monthly',
-      { text: 'Premium backlinks from 2,500+ vetted partner sites (worth $800+/mo)', badge: 'Coming soon' },
+      `${formatLimit(gL.brands.max)} brands with ${formatLimit(gL.prompts.maxGlobal)} prompts tracked`,
+      { text: `${formatLimit(gL.competitors.maxPerBrand)} competitors & ${formatLimit(gL.keywords.maxPerBrand)} keywords monitoring`, badge: 'Coming soon' },
+      `${formatLimit(gL.content.maxPerBrand)} SEO & AI-optimized articles published monthly`,
+      { text: 'Premium backlinks from a growing network of vetted partner sites (worth $800+/mo)', badge: 'Coming soon' },
       'Real-time AI-driven research & expert-backed content',
       'Articles with citations, internal links & branded infographics',
       { text: 'Reddit agent that builds your brand visibility & authority', badge: 'Coming soon' },
       'JSON-LD schema markup for featured snippets',
-      'Technical SEO audit (Google & AI crawlability)',
+      `Technical SEO audit (Google & AI crawlability)`,
       'Visibility dashboard with weekly refresh',
       'Integrates with WordPress, Webflow, Shopify, Wix & API',
       'Webhook support & weekly email digest',
       'Email support (24hr response)',
       { text: 'Articles available in 20+ languages', badge: 'Add-on' },
-    ],
+    ] as PlanFeature[],
   },
   scale: {
     id: 'scale',
@@ -99,7 +115,7 @@ export const PLANS = {
       'Tailormade solution for your needs',
       'Customer Success Manager',
       'Priority support',
-    ],
+    ] as PlanFeature[],
   },
 } as const;
 

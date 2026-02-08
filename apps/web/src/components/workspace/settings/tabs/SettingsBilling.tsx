@@ -14,12 +14,13 @@ import { APP_NAME } from "@workspace/common/constants";
 import { routes } from "@workspace/common";
 
 import { useSubscriptionStatus, useSubscriptionUsage, useBillingPortal } from "@/hooks/use-subscription";
+import { getFeatureComparison } from "@workspace/billing";
 
 // Plan data
 const PLANS = [
   {
     id: "growth-monthly",
-    name: "Growth Engine",
+    name: "Growth",
     tagline: "Monthly",
     price: "$99",
     interval: "month",
@@ -27,17 +28,17 @@ const PLANS = [
   },
   {
     id: "growth-yearly",
-    name: "Growth Engine",
-    tagline: "Annual · Save 20%",
-    price: "$79",
+    name: "Growth",
+    tagline: "Annual · Save $198/yr",
+    price: "$83",
     interval: "month",
-    billingNote: "Billed annually ($948/year)",
+    billingNote: "Billed annually ($990/year)",
     recommended: true,
     trialDays: 7,
   },
   {
-    id: "scale",
-    name: "Scale Partner",
+    id: "custom",
+    name: "Custom",
     tagline: "For Agencies & Enterprises",
     price: "Custom",
     isEnterprise: true,
@@ -45,61 +46,33 @@ const PLANS = [
   },
 ];
 
-// Features for the detailed comparison
-const PLAN_FEATURES = [
-  { category: "Brands & Tracking", features: [
-    { name: "Brands", growth: "2", scale: "Unlimited" },
-    { name: "Prompts tracked", growth: "50 (25/brand)", scale: "Unlimited" },
-    { name: "Competitors", growth: "50 (10/brand)", scale: "Unlimited" },
-    { name: "Keywords", growth: "200 (50/brand)", scale: "Unlimited" },
-  ]},
-  { category: "Content & Media", features: [
-    { name: "Content pieces/month", growth: "180 (30/brand)", scale: "Unlimited" },
-    { name: "AI images/month", growth: "10", scale: "Unlimited" },
-    { name: "Audio minutes/month", growth: "30", scale: "Unlimited" },
-    { name: "Content refresh", growth: "Weekly", scale: "Daily" },
-  ]},
-  { category: "AI Visibility", features: [
-    { name: "Visibility queries", growth: "30", scale: "Unlimited" },
-    { name: "Visibility refresh", growth: "Weekly", scale: "Daily" },
-    { name: "Technical audit pages", growth: "25", scale: "Unlimited" },
-  ]},
-  { category: "Reddit & Social", features: [
-    { name: "Reddit keywords/brand", growth: "5", scale: "Unlimited" },
-    { name: "Reddit scans/brand", growth: "30", scale: "Unlimited" },
-    { name: "Total Reddit scans", growth: "60", scale: "Unlimited" },
-  ]},
-  { category: "Team & Integrations", features: [
-    { name: "Team members", growth: "2", scale: "Unlimited" },
-    { name: "Integrations", growth: "5", scale: "Unlimited" },
-    { name: "Webhooks/brand", growth: "1", scale: "Unlimited" },
-    { name: "API calls/month", growth: "1,000", scale: "Unlimited" },
-  ]},
-  { category: "Storage & History", features: [
-    { name: "Storage/brand", growth: "1 GB", scale: "Unlimited" },
-    { name: "History retention", growth: "16 months", scale: "Unlimited" },
-    { name: "Extensions", growth: "Unlimited", scale: "Unlimited" },
-    { name: "Tasks", growth: "Unlimited", scale: "Unlimited" },
-  ]},
-];
+// Features for the detailed comparison — derived from limits.json via @workspace/billing
+const PLAN_FEATURES = getFeatureComparison().map((category) => ({
+  category: category.category,
+  features: category.features.map((f) => ({
+    name: f.name,
+    growth: f.growth,
+    scale: f.custom, // "custom" in billing maps to "Custom" plan here
+  })),
+}));
 
 // FAQ data
 const FAQ_DATA = [
   {
     question: `What pricing plans does ${APP_NAME} offer?`,
-    answer: `We offer two plans: Growth Engine ($99/mo) for growing businesses with all essential features, and Scale Partner (custom pricing) for agencies and enterprises with unlimited resources and dedicated support.`
+    answer: `We offer two plans: Growth ($99/mo) for growing businesses with all essential features, and Custom (custom pricing) for agencies and enterprises with unlimited resources and dedicated support.`
   },
   {
     question: "What's included in the free trial?",
-    answer: "The 7-day free trial gives you full access to all Growth Engine features. No credit card required to start. Your subscription begins automatically after the trial unless you cancel."
+    answer: "The 7-day free trial gives you full access to all Growth plan features. No credit card required to start. Your subscription begins automatically after the trial unless you cancel."
   },
   {
     question: "Can I upgrade or downgrade at any time?",
-    answer: "Yes! You can upgrade to Scale Partner anytime. Changes take effect immediately, and we'll prorate your billing accordingly."
+    answer: "Yes! You can upgrade to a Custom plan anytime. Changes take effect immediately, and we'll prorate your billing accordingly."
   },
   {
     question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover) through Stripe. Scale Partner customers can request invoice-based billing."
+    answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover) through Stripe. Custom plan customers can request invoice-based billing."
   },
   {
     question: "Can I cancel anytime?",
@@ -107,7 +80,7 @@ const FAQ_DATA = [
   },
   {
     question: "Do you offer annual billing?",
-    answer: "Yes! Save 20% with annual billing on Growth Engine ($79/mo billed annually). Contact us for annual pricing on Scale Partner."
+    answer: "Yes! Save with annual billing on the Growth plan ($83/mo billed annually, $990/year). Contact us for annual pricing on Custom plans."
   },
 ];
 
@@ -305,7 +278,7 @@ export function SettingsBilling() {
             const isCurrent = (plan.id === "growth-monthly" && isOnGrowthMonthly) || 
                             (plan.id === "growth-yearly" && isOnGrowthYearly);
             // Recommend yearly if on monthly, Scale if already on yearly
-            const isRecommended = plan.recommended || (isOnGrowthMonthly && plan.id === "growth-yearly") || (isOnGrowthYearly && plan.id === "scale");
+            const isRecommended = plan.recommended || (isOnGrowthMonthly && plan.id === "growth-yearly") || (isOnGrowthYearly && plan.id === "custom");
             
             return (
               <Card 
@@ -393,8 +366,8 @@ export function SettingsBilling() {
             {/* Header */}
             <div className="grid grid-cols-3 gap-4 px-4 py-3 border-b border-border bg-muted/30">
               <div className="text-sm font-medium">Feature</div>
-              <div className="text-sm font-medium text-center">Growth Engine</div>
-              <div className="text-sm font-medium text-center">Scale Partner</div>
+              <div className="text-sm font-medium text-center">Growth</div>
+              <div className="text-sm font-medium text-center">Custom</div>
             </div>
             
             {/* Feature Groups */}

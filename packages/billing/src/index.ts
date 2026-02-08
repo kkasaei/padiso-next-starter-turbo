@@ -17,12 +17,19 @@ export {
   getPlanLimits,
   getPlanIdFromPriceId,
   getIntervalFromPriceId,
+  // Display helpers — use these to format limit values from PLAN_LIMITS
+  formatLimit,
+  formatLimitWithUnit,
+  // Feature comparison — use this for plan comparison tables
+  getFeatureComparison,
 } from './plans';
 export type {
   PlanFeature,
   PlanId,
   PlanLimits,
   RefreshRate,
+  FeatureComparisonItem,
+  FeatureComparisonCategory,
   // Functional area types
   WorkspacesLimits,
   TeamLimits,

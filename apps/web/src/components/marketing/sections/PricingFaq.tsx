@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { APP_NAME } from '@workspace/common/constants';
 import { routes } from '@workspace/common';
+import { PLAN_LIMITS, formatLimit } from '@workspace/billing';
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +12,9 @@ import {
 } from '@workspace/ui/components/accordion';
 
 import { GridSection } from '@workspace/ui/components/fragments/GridSection';
+
+// Shorthand references to avoid repeating PLAN_LIMITS.growth everywhere
+const gL = PLAN_LIMITS.growth;
 
 const DATA = [
   {
@@ -37,18 +41,18 @@ const DATA = [
       <div>
         Growth Engine ($99/mo) includes everything for sustainable organic growth:
         <ul className="mt-2 list-disc pl-5">
-          <li>5 brands with 150 prompts tracked</li>
-          <li>10 competitors & 50 keywords monitoring (coming soon)</li>
-          <li>30 SEO & AI-optimized articles published monthly</li>
-          <li>Premium backlinks from 2,500+ vetted partner sites - worth $800+/mo (coming soon)</li>
-          <li>Real-time AI-driven research & expert-backed content</li>
-          <li>Articles with citations, internal links & branded infographics</li>
-          <li>Reddit agent that builds your brand visibility & authority (coming soon)</li>
+          <li>{formatLimit(gL.brands.max)} brands with {formatLimit(gL.prompts.maxGlobal)} prompts tracked</li>
+          <li>{formatLimit(gL.competitors.maxPerBrand)} competitors &amp; {formatLimit(gL.keywords.maxPerBrand)} keywords monitoring (coming soon)</li>
+          <li>{formatLimit(gL.content.maxPerBrand)} SEO &amp; AI-optimized articles published monthly</li>
+          <li>Premium backlinks from a growing network of vetted partner sites - worth $800+/mo (coming soon)</li>
+          <li>Real-time AI-driven research &amp; expert-backed content</li>
+          <li>Articles with citations, internal links &amp; branded infographics</li>
+          <li>Reddit agent that builds your brand visibility &amp; authority (coming soon)</li>
           <li>JSON-LD schema markup for featured snippets</li>
-          <li>Technical SEO audit (Google & AI crawlability)</li>
+          <li>Technical SEO audit (Google &amp; AI crawlability)</li>
           <li>Visibility dashboard with weekly refresh</li>
-          <li>Integrates with WordPress, Webflow, Shopify, Wix & API</li>
-          <li>Webhook support & weekly email digest</li>
+          <li>Integrates with WordPress, Webflow, Shopify, Wix &amp; API</li>
+          <li>Webhook support &amp; weekly email digest</li>
           <li>Email support (24hr response)</li>
           <li>Articles available in 20+ languages (add-on)</li>
         </ul>
@@ -90,7 +94,7 @@ const DATA = [
       <div>
         Our backlink network is one of the most valuable parts of Growth Engine (coming soon):
         <ul className="mt-2 list-disc pl-5">
-          <li>Access to 2,500+ vetted partner sites</li>
+          <li>Access to a growing network of vetted partner sites</li>
           <li>Premium backlinks valued at $800+ per month</li>
           <li>Natural link building that grows your domain authority</li>
         </ul>
@@ -106,7 +110,7 @@ const DATA = [
       <div>
         {APP_NAME} tracks how your brand appears in AI search results (ChatGPT, Perplexity, etc.):
         <ul className="mt-2 list-disc pl-5">
-          <li>Monitor 150 prompts to see when AI recommends your brand</li>
+          <li>Monitor {formatLimit(gL.prompts.maxGlobal)} prompts to see when AI recommends your brand</li>
           <li>Track competitors to understand your market position</li>
           <li>Visibility dashboard gives you a clear picture of your AI presence</li>
         </ul>
@@ -125,9 +129,9 @@ const DATA = [
     question: 'Do you offer annual billing?',
     answer: (
       <div>
-        Yes! Save 20% with annual billing:
+        Yes! Save with annual billing:
         <ul className="mt-2 list-disc pl-5">
-          <li><strong>Growth Engine:</strong> $79/mo billed annually (save $240/year)</li>
+          <li><strong>Growth Engine:</strong> $83/mo billed annually ($990/year — save $198/year)</li>
         </ul>
         <p className="mt-2">Contact us for annual pricing on Scale Partner.</p>
       </div>

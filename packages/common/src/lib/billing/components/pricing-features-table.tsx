@@ -4,47 +4,50 @@ import * as React from 'react';
 import { CheckIcon, XIcon } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { cn } from '@workspace/common/lib';
-import { PLANS, type PlanFeature } from '../plans';
+import { PLAN_LIMITS, formatLimit } from '@workspace/billing';
 
-// Define feature categories for better organization
+// All numerical values derived from PLAN_LIMITS (limits.json) — single source of truth.
+const gL = PLAN_LIMITS.growth;
+const cL = PLAN_LIMITS.custom;
+
 const FEATURE_CATEGORIES = [
   {
     name: 'Brand & Tracking',
     features: [
-      { key: 'brands', label: 'Brands tracked', growth: '5 brands', scale: 'Unlimited' },
-      { key: 'prompts', label: 'Prompts monitored', growth: '150 prompts', scale: 'Unlimited' },
-      { key: 'competitors', label: 'Competitors & keywords', growth: '10 competitors & 50 keywords', scale: 'Unlimited', badge: 'Coming soon' },
+      { key: 'brands', label: 'Brands tracked', growth: `${formatLimit(gL.brands.max)} brands`, scale: formatLimit(cL.brands.max) },
+      { key: 'prompts', label: 'Prompts monitored', growth: `${formatLimit(gL.prompts.maxGlobal)} prompts`, scale: formatLimit(cL.prompts.maxGlobal) },
+      { key: 'competitors', label: 'Competitors & keywords', growth: `${formatLimit(gL.competitors.maxPerBrand)} competitors & ${formatLimit(gL.keywords.maxPerBrand)} keywords`, scale: formatLimit(cL.competitors.maxGlobal), badge: 'Coming soon' },
     ]
   },
   {
     name: 'Content & SEO',
     features: [
-      { key: 'articles', label: 'AI-optimized articles/month', growth: '30 articles', scale: 'Unlimited' },
-      { key: 'backlinks', label: 'Premium backlinks', growth: true, scale: true, badge: 'Coming soon' },
-      { key: 'research', label: 'AI-driven research & expert content', growth: true, scale: true },
-      { key: 'citations', label: 'Citations, internal links & infographics', growth: true, scale: true },
-      { key: 'schema', label: 'JSON-LD schema markup', growth: true, scale: true },
+      { key: 'articles', label: 'AI-optimized articles/month', growth: `${formatLimit(gL.content.maxPerBrand)} articles`, scale: formatLimit(cL.content.maxGlobal) },
+      { key: 'backlinks', label: 'Premium backlinks', growth: true as boolean | string, scale: true as boolean | string, badge: 'Coming soon' },
+      { key: 'research', label: 'AI-driven research & expert content', growth: true as boolean | string, scale: true as boolean | string },
+      { key: 'citations', label: 'Citations, internal links & infographics', growth: true as boolean | string, scale: true as boolean | string },
+      { key: 'schema', label: 'JSON-LD schema markup', growth: true as boolean | string, scale: true as boolean | string },
     ]
   },
   {
     name: 'Tools & Integrations',
     features: [
-      { key: 'reddit', label: 'Reddit agent', growth: true, scale: true, badge: 'Coming soon' },
-      { key: 'audit', label: 'Technical SEO audit', growth: true, scale: true },
-      { key: 'dashboard', label: 'Visibility dashboard', growth: 'Weekly refresh', scale: 'Real-time' },
-      { key: 'integrations', label: 'Platform integrations', growth: 'WordPress, Webflow, Shopify, Wix & API', scale: 'All platforms + custom' },
-      { key: 'webhook', label: 'Webhook & email digest', growth: true, scale: true },
+      { key: 'reddit', label: 'Reddit agent', growth: true as boolean | string, scale: true as boolean | string, badge: 'Coming soon' },
+      { key: 'audit', label: 'Technical SEO audit', growth: true as boolean | string, scale: true as boolean | string },
+      { key: 'dashboard', label: 'Visibility dashboard', growth: `${gL.visibility.refreshRate.charAt(0).toUpperCase() + gL.visibility.refreshRate.slice(1)} refresh` as boolean | string, scale: `${cL.visibility.refreshRate.charAt(0).toUpperCase() + cL.visibility.refreshRate.slice(1)} refresh` as boolean | string },
+      { key: 'integrations', label: 'Platform integrations', growth: 'WordPress, Webflow, Shopify, Wix & API' as boolean | string, scale: 'All platforms + custom' as boolean | string },
+      { key: 'webhook', label: 'Webhook & email digest', growth: true as boolean | string, scale: true as boolean | string },
     ]
   },
   {
     name: 'Support & Extras',
     features: [
-      { key: 'support', label: 'Support', growth: 'Email (24hr)', scale: 'Priority + dedicated manager' },
-      { key: 'languages', label: 'Article languages', growth: '20+ languages', scale: '20+ languages', badge: 'Add-on' },
-      { key: 'custom', label: 'Custom solutions', growth: false, scale: true },
+      { key: 'support', label: 'Support', growth: 'Email (24hr)' as boolean | string, scale: 'Priority + dedicated manager' as boolean | string },
+      { key: 'languages', label: 'Article languages', growth: '20+ languages' as boolean | string, scale: '20+ languages' as boolean | string, badge: 'Add-on' },
+      { key: 'custom', label: 'Custom solutions', growth: false as boolean | string, scale: true as boolean | string },
     ]
   },
-] as const;
+];
 
 export type PricingFeaturesTableProps = React.HtmlHTMLAttributes<HTMLDivElement>;
 
@@ -98,7 +101,7 @@ export function PricingFeaturesTable({ className, ...other }: PricingFeaturesTab
                     <td className="py-4 px-4 text-sm">
                       <div className="flex items-center gap-2">
                         {feature.label}
-                        {feature.badge && (
+                        {'badge' in feature && feature.badge && (
                           <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
                             {feature.badge}
                           </Badge>

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.8",
+    "@workspace/billing": "workspace:*",
     "@workspace/db": "workspace:*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
