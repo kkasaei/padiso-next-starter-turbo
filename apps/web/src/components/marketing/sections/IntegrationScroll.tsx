@@ -19,6 +19,7 @@ interface IntegrationItem {
 const ROW_1: IntegrationItem[] = [
   { name: 'Google', icon: '/icons/google.svg' },
   { name: 'OpenAI', icon: '/icons/openai.svg', invertDark: true },
+  { name: 'OpenClaw', icon: '/icons/openclaw.svg' },
   { name: 'Slack', icon: '/icons/slack.svg' },
   { name: 'WordPress', icon: '/icons/wordpress.svg', invertDark: true },
   { name: 'Shopify', icon: '/icons/shopify_glyph_black.svg', invertDark: true },
